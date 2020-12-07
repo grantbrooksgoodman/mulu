@@ -82,6 +82,45 @@ class TeamSerialiser
         }
     }
     
+    /**
+     Gets and deserialises multiple **Team** objects from a given array of identifier strings.
+     
+     - Parameter withIdentifiers: The identifiers to query for.
+     
+     - Parameter completion: Returns an array of deserialised **Team** objects if successful. If unsuccessful, an array of strings describing the error(s) encountered. *Mutually exclusive.*
+     */
+    func getTeams(withIdentifiers: [String], completion: @escaping(_ returnedTeams: [Team]?, _ errorDescriptors: [String]?) -> Void)
+    {
+        var teamArray: [Team]! = []
+        var errorDescriptorArray: [String]! = []
+        
+        if withIdentifiers.count > 0
+        {
+            for individualIdentifier in withIdentifiers
+            {
+                getTeam(withIdentifier: individualIdentifier) { (returnedTeam, errorDescriptor) in
+                    if let team = returnedTeam
+                    {
+                        teamArray.append(team)
+                    }
+                    else
+                    {
+                        errorDescriptorArray.append(errorDescriptor!)
+                    }
+                    
+                    if teamArray.count + errorDescriptorArray.count == withIdentifiers.count
+                    {
+                        completion(teamArray.count == 0 ? nil : teamArray, errorDescriptorArray.count == 0 ? nil : errorDescriptorArray)
+                    }
+                }
+            }
+        }
+        else
+        {
+            completion(nil, ["No identifiers passed!"])
+        }
+    }
+    
     //==================================================//
     
     /* Private Functions */

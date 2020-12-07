@@ -76,16 +76,16 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
         
         view.setBackground(withImageNamed: "Background Image")
         
-        //        UserSerialiser().createUser(associatedTeams: ["!"], emailAddress: "me@grantbrooks.io", firstName: "Grant", lastName: "Brooks Goodman", profileImageData: nil, pushTokens: nil) { (returnedIdentifier, errorDescriptor) in
-        //            if let error = errorDescriptor
-        //            {
-        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //            }
-        //            else if let identifier = returnedIdentifier
-        //            {
-        //                print("It worked! \(identifier)")
-        //            }
-        //        }
+        //                UserSerialiser().createUser(associatedTeams: ["!"], emailAddress: "me@grantbrooks.io", firstName: "Grant", lastName: "Brooks Goodman", profileImageData: nil, pushTokens: nil) { (returnedIdentifier, errorDescriptor) in
+        //                    if let error = errorDescriptor
+        //                    {
+        //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        //                    }
+        //                    else if let identifier = returnedIdentifier
+        //                    {
+        //                        print("It worked! \(identifier)")
+        //                    }
+        //                }
         
         //        TeamSerialiser().createTeam(name: "Team Berkeley", participantIdentifiers: ["-MNuzhwBe-c3yz_qtaAu"]) { (returnedIdentifier, errorDescriptor) in
         //            if let error = errorDescriptor
@@ -110,6 +110,28 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
         //                    print("It worked! \(completedChallenges[0].metadata[0].user.firstName!)")
         //                }
         //                else { print("It worked! \(team.name!)") }
+        //            }
+        //        }
+        
+        //        UserSerialiser().getUser(withIdentifier: "-MNuzhwBe-c3yz_qtaAu") { (returnedUser, errorDescriptor) in
+        //            if let error = errorDescriptor
+        //            {
+        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        //            }
+        //            else if let user = returnedUser
+        //            {
+        //                print("It worked! \(user.firstName!)")
+        //
+        //                user.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
+        //                    if let error = errorDescriptor
+        //                    {
+        //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        //                    }
+        //                    else if let teams = returnedTeams
+        //                    {
+        //                        print("Successfully deserialised Teams! \(teams[0].name!)")
+        //                    }
+        //                }
         //            }
         //        }
     }
