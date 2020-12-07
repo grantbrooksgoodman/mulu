@@ -75,6 +75,43 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
         initialiseController()
         
         view.setBackground(withImageNamed: "Background Image")
+        
+        //        UserSerialiser().createUser(associatedTeams: ["!"], emailAddress: "me@grantbrooks.io", firstName: "Grant", lastName: "Brooks Goodman", profileImageData: nil, pushTokens: nil) { (returnedIdentifier, errorDescriptor) in
+        //            if let error = errorDescriptor
+        //            {
+        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        //            }
+        //            else if let identifier = returnedIdentifier
+        //            {
+        //                print("It worked! \(identifier)")
+        //            }
+        //        }
+        
+        //        TeamSerialiser().createTeam(name: "Team Berkeley", participantIdentifiers: ["-MNuzhwBe-c3yz_qtaAu"]) { (returnedIdentifier, errorDescriptor) in
+        //            if let error = errorDescriptor
+        //            {
+        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        //            }
+        //            else if let identifier = returnedIdentifier
+        //            {
+        //                print("It worked! \(identifier)")
+        //            }
+        //        }
+        
+        //        TeamSerialiser().getTeam(withIdentifier: "-MNuzz05xikHmAIbUDnH") { (returnedTeam, errorDescriptor) in
+        //            if let error = errorDescriptor
+        //            {
+        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        //            }
+        //            else if let team = returnedTeam
+        //            {
+        //                if let completedChallenges = team.completedChallenges
+        //                {
+        //                    print("It worked! \(completedChallenges[0].metadata[0].user.firstName!)")
+        //                }
+        //                else { print("It worked! \(team.name!)") }
+        //            }
+        //        }
     }
     
     override func viewWillAppear(_ animated: Bool)

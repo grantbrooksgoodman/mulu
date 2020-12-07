@@ -25,31 +25,28 @@ class GenericSerialiser
      
      - Parameter completionHandler: Returns the Firebase snapshot value.
      */
-    func getValues(atPath: String, completionHandler: @escaping (Any?) -> Void)
+    func getValues(atPath: String, completion: @escaping (Any?) -> Void)
     {
         Database.database().reference().child(atPath).observeSingleEvent(of: .value, with: { (returnedSnapshot) in
-            completionHandler(returnedSnapshot.value)
+            completion(returnedSnapshot.value)
         })
     }
     
-    func setValue(onKey: String, withData: Any, completionHandler: @escaping (Error?) -> Void)
+    func setValue(onKey: String, withData: Any, completion: @escaping (Error?) -> Void)
     {
         Database.database().reference().child(onKey).setValue(withData) { (returnedError, returnedDatabase) in
-            if returnedError != nil
+            if let error = returnedError
             {
-                completionHandler(returnedError!)
+                completion(error)
             }
-            else
-            {
-                completionHandler(nil)
-            }
+            else { completion(nil) }
         }
     }
     
     /**
      Updates a value on the server for a given key and data bundle.
      
-     - Parameter atPath: The server path at which to retrieve values.
+     - Parameter onKey: The server path at which to retrieve values.
      - Parameter withData: The data bundle to update the server with.
      
      - Parameter completion: Returns an Error if unable to update values.
@@ -57,14 +54,11 @@ class GenericSerialiser
     func updateValue(onKey: String, withData: [String:Any], completion: @escaping (Error?) -> Void)
     {
         Database.database().reference().child(onKey).updateChildValues(withData, withCompletionBlock: { (returnedError, returnedDatabase) in
-            if returnedError != nil
+            if let error = returnedError
             {
-                completion(returnedError!)
+                completion(error)
             }
-            else
-            {
-                completion(nil)
-            }
+            else { completion(nil) }
         })
     }
 }

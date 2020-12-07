@@ -16,12 +16,8 @@ class Team
     /* Class-Level Variable Declarations */
     
     //Arrays
-    var completedChallenges:    [Challenge]?
+    var completedChallenges:    [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]?
     var participantIdentifiers: [String]!
-    
-    //Dictionaries
-    var participationDates: [String:[Date]]? //String = user ID
-    var pointDistribution:  [String:Int]! //String = user ID
     
     //Strings
     var associatedIdentifier: String!
@@ -32,18 +28,14 @@ class Team
     /* Constructor Function */
     
     init(associatedIdentifier:   String,
-         completedChallenges:    [Challenge]?,
+         completedChallenges:    [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]?,
          name:                   String,
-         participantIdentifiers: [String],
-         participationDates:     [String:[Date]]?,
-         pointDistribution:      [String:Int])
+         participantIdentifiers: [String])
     {
         self.associatedIdentifier = associatedIdentifier
         self.completedChallenges = completedChallenges
         self.name = name
         self.participantIdentifiers = participantIdentifiers
-        self.participationDates = participationDates
-        self.pointDistribution = pointDistribution
     }
     
     //==================================================//
@@ -54,9 +46,12 @@ class Team
     {
         var total = 0
         
-        for value in Array(pointDistribution.values)
+        if let challenges = completedChallenges
         {
-            total += value
+            for challenge in challenges
+            {
+                total += challenge.challenge.pointValue
+            }
         }
         
         return total
