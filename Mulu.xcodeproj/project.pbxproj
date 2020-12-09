@@ -45,6 +45,8 @@
 		A2CA2D15257984BF0012DB17 /* San Francisco (Medium Italic).otf in Resources */ = {isa = PBXBuildFile; fileRef = A2CA2D09257984BF0012DB17 /* San Francisco (Medium Italic).otf */; };
 		A2CA2D16257984BF0012DB17 /* San Francisco (Light).otf in Resources */ = {isa = PBXBuildFile; fileRef = A2CA2D0A257984BF0012DB17 /* San Francisco (Light).otf */; };
 		A2CA2D17257984BF0012DB17 /* San Francisco (Bold).otf in Resources */ = {isa = PBXBuildFile; fileRef = A2CA2D0B257984BF0012DB17 /* San Francisco (Bold).otf */; };
+		A2D6DFB32580376900725D5C /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2D6DFB22580376900725D5C /* HomeController.swift */; };
+		A2D6DFB7258039B900725D5C /* Gradient.png in Resources */ = {isa = PBXBuildFile; fileRef = A2D6DFB6258039B900725D5C /* Gradient.png */; };
 		A2DA693324D74929000CD116 /* AlertKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DA693224D74929000CD116 /* AlertKit.swift */; };
 /* End PBXBuildFile section */
 
@@ -93,6 +95,8 @@
 		A2CA2D09257984BF0012DB17 /* San Francisco (Medium Italic).otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "San Francisco (Medium Italic).otf"; sourceTree = "<group>"; };
 		A2CA2D0A257984BF0012DB17 /* San Francisco (Light).otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "San Francisco (Light).otf"; sourceTree = "<group>"; };
 		A2CA2D0B257984BF0012DB17 /* San Francisco (Bold).otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "San Francisco (Bold).otf"; sourceTree = "<group>"; };
+		A2D6DFB22580376900725D5C /* HomeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
+		A2D6DFB6258039B900725D5C /* Gradient.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Gradient.png; sourceTree = "<group>"; };
 		A2DA693224D74929000CD116 /* AlertKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertKit.swift; sourceTree = "<group>"; };
 		B38ED19D0819B455AFA08D33 /* Pods-Application.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Application.release.xcconfig"; path = "Pods/Target Support Files/Pods-Application/Pods-Application.release.xcconfig"; sourceTree = "<group>"; };
 		CB738F8CAB51C5457F19BB41 /* Pods-Mulu.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mulu.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mulu/Pods-Mulu.debug.xcconfig"; sourceTree = "<group>"; };
@@ -166,6 +170,7 @@
 		682A9B201C8E64F700014EA5 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				A2D6DFB22580376900725D5C /* HomeController.swift */,
 				68D29A121DD79C8A00BFF4D5 /* InitialController.swift */,
 				687404471CB1AB3400BD2632 /* MainController.swift */,
 				68EB1C821DD7B7070074737B /* SampleController.swift */,
@@ -197,6 +202,7 @@
 			isa = PBXGroup;
 			children = (
 				6874044B1CB1AB4400BD2632 /* Assets.xcassets */,
+				A2D6DFB6258039B900725D5C /* Gradient.png */,
 				687404491CB1AB4400BD2632 /* Info.plist */,
 				A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */,
 			);
@@ -363,6 +369,7 @@
 				A2CA2D14257984BF0012DB17 /* San Francisco (Semibold).otf in Resources */,
 				68E589211DD6F6040028B703 /* NT (Black).png in Resources */,
 				A2CA2D16257984BF0012DB17 /* San Francisco (Light).otf in Resources */,
+				A2D6DFB7258039B900725D5C /* Gradient.png in Resources */,
 				A2CA2D10257984BF0012DB17 /* San Francisco (Light Italic).otf in Resources */,
 				A2CA2D17257984BF0012DB17 /* San Francisco (Bold).otf in Resources */,
 				68D29A111DD79C7D00BFF4D5 /* Chord.mp3 in Resources */,
@@ -471,6 +478,7 @@
 				6881EA4C1E29CD360007D873 /* SystemInformation.swift in Sources */,
 				68D29A131DD79C8A00BFF4D5 /* InitialController.swift in Sources */,
 				A2AEDD4A257BDE220074CA11 /* GenericSerialiser.swift in Sources */,
+				A2D6DFB32580376900725D5C /* HomeController.swift in Sources */,
 				68EB1C831DD7B7070074737B /* SampleController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
