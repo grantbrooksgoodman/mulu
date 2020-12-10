@@ -40,7 +40,7 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
     
     //Overridden Variables
     override var prefersStatusBarHidden:            Bool                 { return false }
-    override var preferredStatusBarStyle:           UIStatusBarStyle     { return .lightContent }
+    override var preferredStatusBarStyle:           UIStatusBarStyle     { return .default }
     override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation { return .slide }
     
     //Other Declarations
@@ -73,6 +73,8 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
         super.viewDidLoad()
         
         initialiseController()
+        
+        setNeedsStatusBarAppearanceUpdate()
         
         view.setBackground(withImageNamed: "Background Image")
         
@@ -134,6 +136,22 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
         //                }
         //            }
         //        }
+        
+        UserSerialiser().createAccount(associatedTeams: ["!"],
+                                       emailAddress: "\(Int().random(min: 0, max: 500))@mulu.app",
+                                       firstName: bunchaLetters(),
+                                       lastName: bunchaLetters(),
+                                       password: "123456", profileImageData: nil, pushTokens: nil) { (returnedUser, errorDescriptor) in
+            if let error = errorDescriptor
+            {
+                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+            else if let user = returnedUser
+            {
+                print(user.firstName!)
+            }
+            else { report("An unknown error occurred.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -177,6 +195,11 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
     //==================================================//
     
     /* Other Functions */
+    
+    func bunchaLetters() -> String
+    {
+        return "abcdefghijklmnopqrstuvwxyz".stringCharacters.shuffled()[0...Int().random(min: 1, max: 5)].joined().capitalized
+    }
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {

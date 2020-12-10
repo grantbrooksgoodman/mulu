@@ -296,6 +296,11 @@ extension String
         return ((Array("abcdefghijklmnopqrstuvwxyz").firstIndex(of: Character(lowercased())))! + 1)
     }
     
+    var isValidEmail: Bool
+    {
+        return NSPredicate(format:"SELF MATCHES[c] %@", "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{1,4}$").evaluate(with: self)
+    }
+    
     var leadingWhitespaceRemoved: String
     {
         var mutableSelf = self
@@ -680,6 +685,31 @@ extension UIView
         }
         
         return nil
+    }
+    
+    /**
+     Attempts to find a subview for a given tag.
+     
+     - Parameter forTag: The tag by which to search for the view.
+     */
+    func subviews(_ forTag: Int) -> [UIView]?
+    {
+        var matchingSubviews: [UIView] = []
+        
+        for (index, individualSubview) in subviews.enumerated()
+        {
+            if individualSubview.tag == forTag
+            {
+                matchingSubviews.append(individualSubview)
+            }
+            
+            //            if index == subviews.count - 1
+            //            {
+            //                return matchingSubviews
+            //            }
+        }
+        
+        return matchingSubviews.count > 0 ? matchingSubviews : nil
     }
     
     //--------------------------------------------------//

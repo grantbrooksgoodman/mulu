@@ -62,11 +62,14 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
         
         view.setBackground(withImageNamed: "Gradient.png")
         
-        doneButton.layer.borderWidth = 5
-        doneButton.layer.borderColor = UIColor(hex: 0xB9CDA3).cgColor
+        doneButton.layer.cornerRadius = 5
+        skippedButton.layer.cornerRadius = 5
+    }
+    
+    func setUpButton(with button: UIButton)
+    {
+        button.layer.cornerRadius = 5
         
-        skippedButton.layer.borderWidth = 5
-        skippedButton.layer.borderColor = UIColor(hex: 0xB9CDA3).cgColor
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -97,7 +100,9 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
                     else if let teams = returnedTeams
                     {
                         print("Successfully deserialised Teams! \(teams[0].name!)")
-                        self.statisticsTextView.text = "🏆 UChicago Tournament\n💪 \(teams[0].name!)\n🔥 11 day streak"
+                        self.statisticsTextView.text = "= UCHICAGO TOURNAMENT\n= \(teams[0].name!.uppercased())\n= 11 DAY STREAK"
+                        
+                        //print(teams[0].completedChallenges(for: user))
                     }
                 }
             }

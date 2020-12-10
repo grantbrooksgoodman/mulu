@@ -37,7 +37,7 @@ class User
          emailAddress:         String,
          firstName:            String,
          lastName:             String,
-         profileImageData:     String,
+         profileImageData:     String?,
          pushTokens:           [String]?)
     {
         self.associatedIdentifier = associatedIdentifier

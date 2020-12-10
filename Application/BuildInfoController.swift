@@ -16,7 +16,7 @@ class BuildInfoController: UIViewController
     
     //Overriden Variables
     override var prefersStatusBarHidden:            Bool                 { return false }
-    override var preferredStatusBarStyle:           UIStatusBarStyle     { return .lightContent }
+    override var preferredStatusBarStyle:           UIStatusBarStyle     { return .default }
     override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation { return .slide }
     
     //Other Declarations

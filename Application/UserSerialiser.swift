@@ -10,6 +10,7 @@
 import UIKit
 
 /* Third-party Frameworks */
+import FirebaseAuth
 import FirebaseDatabase
 
 class UserSerialiser
@@ -19,7 +20,7 @@ class UserSerialiser
     /* Public Functions */
     
     /**
-     Creates a **User** on the server.
+     Creates an account for a new user, as well as a serialised **User** object on the server.
      
      - Parameter associatedTeams: An array containing the identifiers of the **Teams** this **User** is a member of.
      - Parameter emailAddress: The **User's** e-mail address.
@@ -32,7 +33,74 @@ class UserSerialiser
      
      - Parameter completion: Returns with the identifier of the newly created **User** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
      */
-    func createUser(associatedTeams: [String],
+    func createAccount(associatedTeams: [String],
+                       emailAddress: String,
+                       firstName: String,
+                       lastName: String,
+                       password: String,
+                       profileImageData: String?,
+                       pushTokens: [String]?,
+                       completion: @escaping(_ returnedUser: User?, _ errorDescriptor: String?) -> Void)
+    {
+        guard emailAddress.isValidEmail else
+        { completion(nil, "The e-mail address was improperly formatted."); return }
+        
+        Auth.auth().createUser(withEmail: emailAddress, password: password) { (returnedResult, returnedError) in
+            if let error = returnedError
+            {
+                completion(nil, errorInformation(forError: (error as NSError)))
+            }
+            else if let result = returnedResult
+            {
+                UserSerialiser().createUser(associatedIdentifier: result.user.uid,
+                                            associatedTeams:      associatedTeams,
+                                            emailAddress:         emailAddress,
+                                            firstName:            firstName,
+                                            lastName:             lastName,
+                                            profileImageData:     profileImageData,
+                                            pushTokens:           pushTokens) { (returnedIdentifier, errorDescriptor) in
+                    if let error = errorDescriptor
+                    {
+                        completion(nil, error)
+                    }
+                    else if let identifier = returnedIdentifier
+                    {
+                        let newUser = User(associatedIdentifier: identifier,
+                                           associatedTeams:      associatedTeams,
+                                           emailAddress:         emailAddress,
+                                           firstName:            firstName,
+                                           lastName:             lastName,
+                                           profileImageData:     profileImageData,
+                                           pushTokens:           pushTokens)
+                        
+                        completion(newUser, nil)
+                    }
+                }
+            }
+            else
+            {
+                completion(nil, "An unknown error occurred.")
+            }
+        }
+    }
+    
+    /**
+     Creates a **User** on the server.
+     
+     - Parameter associatedIdentifier: The identifier of the **User** to create. Provided after running `createAccount(...)`. If not provided, an identifier will be **auto-generated.**
+     - Parameter associatedTeams: An array containing the identifiers of the **Teams** this **User** is a member of.
+     
+     - Parameter emailAddress: The **User's** e-mail address.
+     - Parameter firstName: The **User's** first name.
+     - Parameter lastName: The **User's** last name.
+     
+     - Parameter profileImageData: An optional `base64Encoded` string containg the **User's** profile image data.
+     - Parameter pushTokens: An optional array of strings containing the UUIDs of the devices the **User** has opted to receive push notifications for.
+     
+     - Parameter completion: Returns with the identifier of the newly created **User** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     */
+    func createUser(associatedIdentifier: String?,
+                    associatedTeams: [String],
                     emailAddress: String,
                     firstName: String,
                     lastName: String,
@@ -50,7 +118,17 @@ class UserSerialiser
         dataBundle["pushTokens"] = pushTokens ?? ["!"]
         
         //Generate a key for the new Team.
-        if let generatedKey = Database.database().reference().child("/allUsers/").childByAutoId().key
+        if let identifier = associatedIdentifier
+        {
+            GenericSerialiser().updateValue(onKey: "/allUsers/\(identifier)", withData: dataBundle) { (returnedError) in
+                if let error = returnedError
+                {
+                    completion(nil, errorInformation(forError: (error as NSError)))
+                }
+                else { completion(identifier, nil) }
+            }
+        }
+        else if let generatedKey = Database.database().reference().child("/allUsers/").childByAutoId().key
         {
             GenericSerialiser().updateValue(onKey: "/allUsers/\(generatedKey)", withData: dataBundle) { (returnedError) in
                 if let error = returnedError
