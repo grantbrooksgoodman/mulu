@@ -9,6 +9,8 @@
 /* First-party Frameworks */
 import MessageUI
 import UIKit
+/* Third-party Frameworks */
+import Firebase
 
 class HomeController: UIViewController, MFMailComposeViewControllerDelegate
 {
@@ -64,6 +66,12 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
         
         doneButton.layer.cornerRadius = 5
         skippedButton.layer.cornerRadius = 5
+        
+        Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+            AnalyticsParameterItemID: "id-\(title!)",
+            AnalyticsParameterItemName: title!,
+            AnalyticsParameterContentType: "cont"
+        ])
     }
     
     func setUpButton(with button: UIButton)
@@ -80,33 +88,6 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
         buildInfoController?.view.isHidden = false
         
         challengeView.layer.cornerRadius = 10
-        
-        UserSerialiser().getUser(withIdentifier: "-MNuzhwBe-c3yz_qtaAu") { (returnedUser, errorDescriptor) in
-            if let error = errorDescriptor
-            {
-                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-            }
-            else if let user = returnedUser
-            {
-                print("It worked! \(user.firstName!)")
-                
-                self.welcomeLabel.text = "WELCOME BACK \(user.firstName.uppercased())!"
-                
-                user.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
-                    if let error = errorDescriptor
-                    {
-                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                    }
-                    else if let teams = returnedTeams
-                    {
-                        print("Successfully deserialised Teams! \(teams[0].name!)")
-                        self.statisticsTextView.text = "= UCHICAGO TOURNAMENT\n= \(teams[0].name!.uppercased())\n= 11 DAY STREAK"
-                        
-                        //print(teams[0].completedChallenges(for: user))
-                    }
-                }
-            }
-        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)

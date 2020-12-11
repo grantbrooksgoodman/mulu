@@ -45,6 +45,8 @@ var buildType: Build.BuildType = .preAlpha
 var informationDictionary: [String:String]!
 var touchTimer: Timer?
 
+var currentUser: User?
+
 //==================================================//
 
 @UIApplicationMain class AppDelegate: UIResponder, MFMailComposeViewControllerDelegate, UIApplicationDelegate, UIGestureRecognizerDelegate
@@ -82,7 +84,36 @@ var touchTimer: Timer?
         //Set the array of information.
         Build(nil)
         
+        FirebaseConfiguration.shared.setLoggerLevel(.min)
         FirebaseApp.configure()
+        
+        UserSerialiser().getUser(withIdentifier: "-MNuzhwBe-c3yz_qtaAu") { (returnedUser, errorDescriptor) in
+            if let error = errorDescriptor
+            {
+                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+            else if let user = returnedUser
+            {
+                print("It worked! \(user.firstName!)")
+                
+                currentUser = user
+                
+                user.setDSAssociatedTeams()
+                
+                //                user.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
+                //                    if let error = errorDescriptor
+                //                    {
+                //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                //                    }
+                //                    else if let teams = returnedTeams
+                //                    {
+                //                        print("Successfully deserialised Teams! \(teams[0].name!)")
+                //
+                //                        //print(teams[0].completedChallenges(for: user))
+                //                    }
+                //                }
+            }
+        }
         
         return true
     }

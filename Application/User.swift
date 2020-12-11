@@ -53,6 +53,29 @@ class User
     
     /* Public Functions */
     
+    func completedChallenges() -> [(date: Date, challenge: Challenge)]?
+    {
+        guard let DSAssociatedTeams = DSAssociatedTeams else { report("Teams haven't been deserialised.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
+        
+        var matchingChallenges: [(date: Date, challenge: Challenge)] = []
+        
+        for team in DSAssociatedTeams
+        {
+            if let challenges = team.completedChallenges
+            {
+                for challenge in challenges
+                {
+                    if challenge.metadata.filter({$0.user.associatedIdentifier == associatedIdentifier}).count > 0
+                    {
+                        matchingChallenges.append((challenge.metadata.first(where: {$0.user.associatedIdentifier == associatedIdentifier})!.dateCompleted, challenge.challenge))
+                    }
+                }
+            }
+        }
+        
+        return matchingChallenges
+    }
+    
     /**
      Gets and deserialises all of the **Teams** the **User** is a member of using the *associatedTeams* array.
      
@@ -81,4 +104,29 @@ class User
         }
     }
     
+    /**
+     Sets the *DSAssociatedTeams* value on the **User** without closures. *Dumps errors to console.*
+     */
+    func setDSAssociatedTeams()
+    {
+        if DSAssociatedTeams != nil
+        {
+            report("«DSAssociatedTeams» already set.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        }
+        else
+        {
+            TeamSerialiser().getTeams(withIdentifiers: associatedTeams) { (returnedTeams, errorDescriptors) in
+                if let errors = errorDescriptors
+                {
+                    report(errors.joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                }
+                else if let teams = returnedTeams
+                {
+                    self.DSAssociatedTeams = teams
+                    
+                    report("Successfully set DSAssociatedTeams.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                }
+            }
+        }
+    }
 }

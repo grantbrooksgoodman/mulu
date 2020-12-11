@@ -42,24 +42,6 @@ class Team
     
     /* Public Functions */
     
-    func completedChallenges(for user: User) -> [Challenge]?
-    {
-        var matchingChallenges: [Challenge] = []
-        
-        if let challenges = completedChallenges
-        {
-            for challenge in challenges
-            {
-                if challenge.metadata.filter({$0.user.associatedIdentifier == "-MNuzhwBe-c3yz_qtaAu"}).count > 0
-                {
-                    matchingChallenges.append(challenge.challenge)
-                }
-            }
-        }
-        
-        return matchingChallenges
-    }
-    
     func getTotalPoints() -> Int
     {
         var total = 0

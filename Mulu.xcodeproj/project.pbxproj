@@ -67,6 +67,7 @@
 		A2CA2D17257984BF0012DB17 /* San Francisco (Bold).otf in Resources */ = {isa = PBXBuildFile; fileRef = A2CA2D0B257984BF0012DB17 /* San Francisco (Bold).otf */; };
 		A2D6DFB32580376900725D5C /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2D6DFB22580376900725D5C /* HomeController.swift */; };
 		A2DA693324D74929000CD116 /* AlertKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DA693224D74929000CD116 /* AlertKit.swift */; };
+		A2EFF34325835A590070B320 /* DateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EFF34225835A590070B320 /* DateCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -136,6 +137,7 @@
 		A2CA2D0B257984BF0012DB17 /* San Francisco (Bold).otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "San Francisco (Bold).otf"; sourceTree = "<group>"; };
 		A2D6DFB22580376900725D5C /* HomeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		A2DA693224D74929000CD116 /* AlertKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertKit.swift; sourceTree = "<group>"; };
+		A2EFF34225835A590070B320 /* DateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateCell.swift; sourceTree = "<group>"; };
 		B38ED19D0819B455AFA08D33 /* Pods-Application.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Application.release.xcconfig"; path = "Pods/Target Support Files/Pods-Application/Pods-Application.release.xcconfig"; sourceTree = "<group>"; };
 		CB738F8CAB51C5457F19BB41 /* Pods-Mulu.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mulu.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mulu/Pods-Mulu.debug.xcconfig"; sourceTree = "<group>"; };
 		DEE150186288F802B88DC825 /* Pods-Mulu.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mulu.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mulu/Pods-Mulu.release.xcconfig"; sourceTree = "<group>"; };
@@ -242,6 +244,7 @@
 			isa = PBXGroup;
 			children = (
 				6874044B1CB1AB4400BD2632 /* Assets.xcassets */,
+				A2EFF34225835A590070B320 /* DateCell.swift */,
 				687404491CB1AB4400BD2632 /* Info.plist */,
 				A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */,
 			);
@@ -484,6 +487,7 @@
 				"${PODS_ROOT}/Target Support Files/Pods-Mulu/Pods-Mulu-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/JTAppleCalendar/JTAppleCalendar.framework",
 				"${BUILT_PRODUCTS_DIR}/PKHUD/PKHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
 				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework",
@@ -494,6 +498,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JTAppleCalendar.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PKHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
@@ -560,6 +565,7 @@
 				68E73D321DEFB296008CD686 /* RoundedButton.swift in Sources */,
 				A24A232E257DB9900063FE87 /* TeamSerialiser.swift in Sources */,
 				6881EA4C1E29CD360007D873 /* SystemInformation.swift in Sources */,
+				A2EFF34325835A590070B320 /* DateCell.swift in Sources */,
 				68D29A131DD79C8A00BFF4D5 /* InitialController.swift in Sources */,
 				A2AEDD4A257BDE220074CA11 /* GenericSerialiser.swift in Sources */,
 				A2D6DFB32580376900725D5C /* HomeController.swift in Sources */,

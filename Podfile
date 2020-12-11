@@ -6,8 +6,10 @@ target 'Mulu' do
   use_frameworks!
 
   # Pods for Mulu
+    pod 'Firebase/Analytics'
     pod 'Firebase/Auth'
     pod 'Firebase/Database'
+    pod 'JTAppleCalendar', '~> 7.1'
     pod 'PKHUD', '~> 5.0'
     pod 'ReachabilitySwift'
 end
