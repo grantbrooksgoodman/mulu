@@ -20,12 +20,10 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
     /* Interface Builder UI Elements */
     
     //UILabels
-    @IBOutlet weak var streakLabel: UILabel!
     @IBOutlet weak var titleLabel:  UILabel!
     
     //Other Elements
-    @IBOutlet weak var calendarCollectionView: JTAppleCalendarView!
-    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var collectionView: UICollectionView!
     
     //==================================================//
     
@@ -63,8 +61,6 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
             }
         }
         
-        roundCorners(forViews: [calendarCollectionView], withCornerType: 4)
-        roundCorners(forViews: [streakLabel], withCornerType: 3)
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -80,6 +76,11 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
         //
         //            }
         //        }
+        
+        //roundCorners(forViews: [calendarCollectionView], withCornerType: 4)
+        
+        collectionView.dataSource = self
+        collectionView.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -158,5 +159,79 @@ extension TeamController: JTAppleCalendarViewDelegate
     func calendar(_ calendar: JTAppleCalendarView, didScrollToDateSegmentWith visibleDates: DateSegmentInfo)
     {
         calendar.reloadData(withanchor: visibleDates.monthDates.first!.date, completionHandler: nil)
+    }
+}
+
+extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
+{
+    func numberOfSections(in collectionView: UICollectionView) -> Int
+    {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    {
+        return 2
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
+    {
+        let scrollerCell = collectionView.dequeueReusableCell(withReuseIdentifier: "scrollCell", for: indexPath) as! ScrollerCell
+        
+        if indexPath.row == 1
+        {
+            for view in scrollerCell.subviews
+            {
+                view.removeFromSuperview()
+            }
+            
+            let encapsulatingView = UIView(frame: scrollerCell.bounds)
+            encapsulatingView.alpha = 0.75
+            encapsulatingView.backgroundColor = UIColor(hex: 0x353635)
+            roundCorners(forViews: [encapsulatingView], withCornerType: 0)
+            
+            let leaderboardLabel = UILabel(frame: CGRect(x: scrollerCell.center.x, y: 20, width: scrollerCell.frame.width, height: 30))
+            leaderboardLabel.font = UIFont(name: "SFUIText-Bold", size: 30)
+            
+            leaderboardLabel.text = "LEADERBOARD"
+            leaderboardLabel.textAlignment = .center
+            leaderboardLabel.textColor = .white
+            
+            encapsulatingView.addSubview(leaderboardLabel)
+            leaderboardLabel.center.x = encapsulatingView.center.x
+            
+            let scoreLabel = UILabel(frame: CGRect(x: 0, y: 30, width: scrollerCell.frame.width, height: scrollerCell.frame.height - 30))
+            
+            scoreLabel.font = UIFont(name: "Montserrat-Bold", size: 17)
+            scoreLabel.numberOfLines = 10
+            
+            scoreLabel.textAlignment = .center
+            scoreLabel.textColor = .white
+            scoreLabel.text = "1. TEAM PIERCE                               15500 PTS\n2. TEAM TILE                                     13400 PTS"
+            
+            encapsulatingView.addSubview(scoreLabel)
+            scoreLabel.center.x = encapsulatingView.center.x
+            
+            scrollerCell.addSubview(encapsulatingView)
+            scrollerCell.bringSubviewToFront(encapsulatingView)
+        }
+        else
+        {
+            roundCorners(forViews: [scrollerCell], withCornerType: 0)
+            
+            scrollerCell.subviews[0].backgroundColor = UIColor(hex: 0x353635)
+            scrollerCell.subviews[0].alpha = 0.79
+            roundCorners(forViews: [scrollerCell.subviews[0]], withCornerType: 4)
+            
+            if let streakLabel = scrollerCell.subviews[0].subview(aTagFor("streakLabel"))
+            {
+                streakLabel.backgroundColor = UIColor(hex: 0x353635)
+                roundCorners(forViews: [streakLabel], withCornerType: 3)
+            }
+        }
+        
+        scrollerCell.layoutIfNeeded()
+        
+        return scrollerCell
     }
 }

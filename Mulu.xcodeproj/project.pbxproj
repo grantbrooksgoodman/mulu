@@ -43,6 +43,7 @@
 		A24A232E257DB9900063FE87 /* TeamSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24A232D257DB9900063FE87 /* TeamSerialiser.swift */; };
 		A24A2331257DC1AA0063FE87 /* UserSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24A2330257DC1AA0063FE87 /* UserSerialiser.swift */; };
 		A26961F522376F4600812759 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A26961F322376F4600812759 /* Main.storyboard */; };
+		A288D20025844F55002AFB51 /* ScrollerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A288D1FF25844F55002AFB51 /* ScrollerCell.swift */; };
 		A28E99B7257AA47D00D8A4F7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */; };
 		A2A554962577FFBF006D3B3E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A554952577FFBF006D3B3E /* Extensions.swift */; };
 		A2A5549A25780BCB006D3B3E /* Builder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A5549925780BCB006D3B3E /* Builder.swift */; };
@@ -113,6 +114,7 @@
 		A24A232D257DB9900063FE87 /* TeamSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamSerialiser.swift; sourceTree = "<group>"; };
 		A24A2330257DC1AA0063FE87 /* UserSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSerialiser.swift; sourceTree = "<group>"; };
 		A26961F422376F4600812759 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A288D1FF25844F55002AFB51 /* ScrollerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollerCell.swift; sourceTree = "<group>"; };
 		A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A2A554952577FFBF006D3B3E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		A2A5549925780BCB006D3B3E /* Builder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Builder.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 			children = (
 				6874044B1CB1AB4400BD2632 /* Assets.xcassets */,
 				A2EFF34225835A590070B320 /* DateCell.swift */,
+				A288D1FF25844F55002AFB51 /* ScrollerCell.swift */,
 				687404491CB1AB4400BD2632 /* Info.plist */,
 				A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */,
 			);
@@ -554,6 +557,7 @@
 				A2A5549D25780BDD006D3B3E /* BuildInfoController.swift in Sources */,
 				A2AEDD50257BE0540074CA11 /* Team.swift in Sources */,
 				6874044D1CB1AB4400BD2632 /* AppDelegate.swift in Sources */,
+				A288D20025844F55002AFB51 /* ScrollerCell.swift in Sources */,
 				A2AEDD53257BE61E0074CA11 /* Challenge.swift in Sources */,
 				A20700002581C2C9004E70A6 /* TeamController.swift in Sources */,
 				A2B1F7612458EC8900CB20AF /* ShadowButton.swift in Sources */,
