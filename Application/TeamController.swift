@@ -30,6 +30,7 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
     /* Class-level Variable Declarations */
     
     var buildInstance: Build!
+    var completedChallenges: [(date: Date, challenge: Challenge)]?
     
     //==================================================//
     
@@ -79,8 +80,26 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
         
         //roundCorners(forViews: [calendarCollectionView], withCornerType: 4)
         
-        collectionView.dataSource = self
-        collectionView.delegate = self
+        if let user = currentUser
+        {
+            user.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
+                if let error = errorDescriptor
+                {
+                    report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                }
+                else
+                {
+                    if let challenges = user.completedChallenges()
+                    {
+                        self.completedChallenges = challenges
+                        
+                        self.collectionView.dataSource = self
+                        self.collectionView.delegate = self
+                    }
+                    else { report("Couldn't get completed Challenges.", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
+                }
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -130,7 +149,7 @@ extension TeamController: JTAppleCalendarViewDelegate
     {
         let cell = calendar.dequeueReusableJTAppleCell(withReuseIdentifier: "dateCell", for: indexPath) as! DateCell
         
-        if Int(cellState.text)! % 2 == 0
+        if let challenges = completedChallenges, challenges.dates().contains(Calendar.current.startOfDay(for: date))
         {
             cell.titleLabel.text = "🔥"
         }
@@ -233,5 +252,38 @@ extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
         scrollerCell.layoutIfNeeded()
         
         return scrollerCell
+    }
+}
+
+extension Array where Element == (Challenge, [(User, Date)])
+{
+    func dates() -> [Date]
+    {
+        var dates: [Date] = []
+        
+        for challengeTuple in self
+        {
+            for datum in challengeTuple.1
+            {
+                dates.append(datum.1)
+            }
+        }
+        
+        return dates
+    }
+}
+
+extension Array where Element == (date: Date, challenge: Challenge)
+{
+    func dates() -> [Date]
+    {
+        var dates: [Date] = []
+        
+        for tuple in self
+        {
+            dates.append(Calendar.current.startOfDay(for: tuple.date))
+        }
+        
+        return dates
     }
 }

@@ -72,6 +72,17 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
             AnalyticsParameterItemName: title!,
             AnalyticsParameterContentType: "cont"
         ])
+        
+        if let user = currentUser
+        {
+            welcomeLabel.text = "WELCOME BACK \(user.firstName!)!"
+            
+            if let completedChallenges = user.completedChallenges()
+            {
+                subtitleLabel.text = completedChallenges[0].challenge.title
+                promptTextView.text = completedChallenges[0].challenge.prompt
+            }
+        }
     }
     
     func setUpButton(with button: UIButton)

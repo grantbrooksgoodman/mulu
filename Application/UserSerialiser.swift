@@ -172,6 +172,46 @@ class UserSerialiser
         }
     }
     
+    /**
+     Gets random **User** identifiers from the server.
+     
+     - Parameter amountToGet: An optional integer specifying the amount of random **User** identifiers to get. *Defaults to all.*
+     
+     - Parameter completion: Returns an array of **User** identifier strings if successful. May also return a string describing an event or error encountered. *NOT mutually exclusive.*
+     */
+    func getRandomUsers(amountToGet: Int?, completion: @escaping(_ returnedIdentifiers: [String]?, _ noticeDescriptor: String?) -> Void)
+    {
+        Database.database().reference().child("allUsers").observeSingleEvent(of: .value) { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let userIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
+            {
+                if amountToGet == nil
+                {
+                    completion(userIdentifiers.shuffledValue, nil)
+                }
+                else
+                {
+                    if amountToGet! > userIdentifiers.count
+                    {
+                        completion(userIdentifiers.shuffledValue, "Requested amount was larger than database size.")
+                    }
+                    else if amountToGet! == userIdentifiers.count
+                    {
+                        completion(userIdentifiers.shuffledValue, nil)
+                    }
+                    else if amountToGet! < userIdentifiers.count
+                    {
+                        completion(Array(userIdentifiers.shuffledValue[0...amountToGet!]), nil)
+                    }
+                }
+            }
+            else
+            {
+                completion(nil, "Unable to deserialise snapshot.")
+            }
+        }
+    }
+    
     //==================================================//
     
     /* Private Functions */

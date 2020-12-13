@@ -1,0 +1,96 @@
+//
+//  UserTestingSerialiser.swift
+//  Mulu Party
+//
+//  Created by Grant Brooks Goodman on 12/12/2020.
+//  Copyright © 2013-2020 NEOTechnica Corporation. All rights reserved.
+//
+
+/* First-party Frameworks */
+import UIKit
+
+class UserTestingSerialiser
+{
+    //==================================================//
+    
+    /* Public Functions */
+    
+    func createRandomUsers(amountToCreate: Int?, completion: @escaping(_ returnedUsers: [User]?, _ errorDescriptor: String?) -> Void)
+    {
+        var amount = amountToCreate ?? 1
+        
+        if amount == 0
+        {
+            amount = 1
+        }
+        
+        let group = DispatchGroup()
+        
+        var users: [User] = []
+        var errors: [String] = []
+        
+        for _ in 0..<amount
+        {
+            group.enter()
+            
+            createRandomUser { (returnedUser, errorDescriptor) in
+                if let error = errorDescriptor
+                {
+                    errors.append(error)
+                    group.leave()
+                }
+                else if let user = returnedUser
+                {
+                    users.append(user)
+                    group.leave()
+                }
+            }
+        }
+        
+        group.notify(queue: .main) {
+            completion(users, errors.count > 0 ? errors.joined(separator: "\n") : nil)
+        }
+    }
+    
+    //==================================================//
+    
+    /* Private Functions */
+    
+    private func createRandomUser(completion: @escaping(_ returnedUser: User?, _ errorDescriptor: String?) -> Void)
+    {
+        let firstNames = ["James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda", "William", "Elizabeth", "David", "Barbara", "Richard", "Susan", "Joseph", "Jessica", "Thomas", "Sarah", "Charles", "Karen"]
+        
+        let firstPart = firstNames.randomElement() ?? "John"
+        let secondPart = firstNames.randomElement() ?? "James"
+        
+        let randomFirstName = "\(firstPart)-\(secondPart)"
+        let randomLastName = "\(firstPart.stringCharacters[0...firstPart.count / 2].joined().capitalized)\(secondPart.stringCharacters[secondPart.count / 2...secondPart.count - 1].joined().lowercased())"
+        
+        let randomEmail = "\(randomLastName.stringCharacters[0...randomLastName.count / 2].joined().lowercased())-\(Int().random(min: 100, max: 1000))@mulu.app"
+        
+        UserSerialiser().createUser(associatedIdentifier: nil,
+                                    associatedTeams:      ["!"],
+                                    emailAddress:         randomEmail,
+                                    firstName:            randomFirstName,
+                                    lastName:             randomLastName,
+                                    profileImageData:     nil,
+                                    pushTokens:           nil) { (returnedIdentifier, errorDescriptor) in
+            if let error = errorDescriptor
+            {
+                completion(nil, error)
+            }
+            else if let identifier = returnedIdentifier
+            {
+                let newUser = User(associatedIdentifier: identifier,
+                                   associatedTeams:      nil,
+                                   emailAddress:         randomEmail,
+                                   firstName:            randomFirstName,
+                                   lastName:             randomLastName,
+                                   profileImageData:     nil,
+                                   pushTokens:           nil)
+                
+                completion(newUser, nil)
+            }
+        }
+    }
+}

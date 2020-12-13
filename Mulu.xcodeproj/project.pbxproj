@@ -43,6 +43,10 @@
 		A24A232E257DB9900063FE87 /* TeamSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24A232D257DB9900063FE87 /* TeamSerialiser.swift */; };
 		A24A2331257DC1AA0063FE87 /* UserSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24A2330257DC1AA0063FE87 /* UserSerialiser.swift */; };
 		A26961F522376F4600812759 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A26961F322376F4600812759 /* Main.storyboard */; };
+		A278D31A25858A52008D22D1 /* UserTestingSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278D31925858A52008D22D1 /* UserTestingSerialiser.swift */; };
+		A278D31F2585A036008D22D1 /* ChallengeTestingSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278D31E2585A036008D22D1 /* ChallengeTestingSerialiser.swift */; };
+		A278D3222585A0AC008D22D1 /* TeamTestingSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278D3212585A0AC008D22D1 /* TeamTestingSerialiser.swift */; };
+		A278D3252585A19C008D22D1 /* GenericTestingSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278D3242585A19C008D22D1 /* GenericTestingSerialiser.swift */; };
 		A288D20025844F55002AFB51 /* ScrollerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A288D1FF25844F55002AFB51 /* ScrollerCell.swift */; };
 		A28E99B7257AA47D00D8A4F7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */; };
 		A2A554962577FFBF006D3B3E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A554952577FFBF006D3B3E /* Extensions.swift */; };
@@ -114,6 +118,10 @@
 		A24A232D257DB9900063FE87 /* TeamSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamSerialiser.swift; sourceTree = "<group>"; };
 		A24A2330257DC1AA0063FE87 /* UserSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSerialiser.swift; sourceTree = "<group>"; };
 		A26961F422376F4600812759 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A278D31925858A52008D22D1 /* UserTestingSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTestingSerialiser.swift; sourceTree = "<group>"; };
+		A278D31E2585A036008D22D1 /* ChallengeTestingSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeTestingSerialiser.swift; sourceTree = "<group>"; };
+		A278D3212585A0AC008D22D1 /* TeamTestingSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamTestingSerialiser.swift; sourceTree = "<group>"; };
+		A278D3242585A19C008D22D1 /* GenericTestingSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTestingSerialiser.swift; sourceTree = "<group>"; };
 		A288D1FF25844F55002AFB51 /* ScrollerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollerCell.swift; sourceTree = "<group>"; };
 		A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A2A554952577FFBF006D3B3E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -331,11 +339,15 @@
 			children = (
 				A2AEDD52257BE61E0074CA11 /* Challenge.swift */,
 				A2AEDD56257BE77D0074CA11 /* ChallengeSerialiser.swift */,
+				A278D31E2585A036008D22D1 /* ChallengeTestingSerialiser.swift */,
 				A2AEDD49257BDE220074CA11 /* GenericSerialiser.swift */,
+				A278D3242585A19C008D22D1 /* GenericTestingSerialiser.swift */,
 				A2AEDD4F257BE0540074CA11 /* Team.swift */,
 				A24A232D257DB9900063FE87 /* TeamSerialiser.swift */,
+				A278D3212585A0AC008D22D1 /* TeamTestingSerialiser.swift */,
 				A2AEDD4C257BDE6E0074CA11 /* User.swift */,
 				A24A2330257DC1AA0063FE87 /* UserSerialiser.swift */,
+				A278D31925858A52008D22D1 /* UserTestingSerialiser.swift */,
 			);
 			name = "Serialisation Layer";
 			sourceTree = "<group>";
@@ -553,16 +565,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				A2AEDD4D257BDE6E0074CA11 /* User.swift in Sources */,
+				A278D31A25858A52008D22D1 /* UserTestingSerialiser.swift in Sources */,
 				A24A2331257DC1AA0063FE87 /* UserSerialiser.swift in Sources */,
 				A2A5549D25780BDD006D3B3E /* BuildInfoController.swift in Sources */,
 				A2AEDD50257BE0540074CA11 /* Team.swift in Sources */,
 				6874044D1CB1AB4400BD2632 /* AppDelegate.swift in Sources */,
 				A288D20025844F55002AFB51 /* ScrollerCell.swift in Sources */,
 				A2AEDD53257BE61E0074CA11 /* Challenge.swift in Sources */,
+				A278D3222585A0AC008D22D1 /* TeamTestingSerialiser.swift in Sources */,
 				A20700002581C2C9004E70A6 /* TeamController.swift in Sources */,
 				A2B1F7612458EC8900CB20AF /* ShadowButton.swift in Sources */,
 				A2A5549A25780BCB006D3B3E /* Builder.swift in Sources */,
 				687404481CB1AB3400BD2632 /* MainController.swift in Sources */,
+				A278D3252585A19C008D22D1 /* GenericTestingSerialiser.swift in Sources */,
 				A2DA693324D74929000CD116 /* AlertKit.swift in Sources */,
 				A2A554962577FFBF006D3B3E /* Extensions.swift in Sources */,
 				A2AEDD57257BE77D0074CA11 /* ChallengeSerialiser.swift in Sources */,
@@ -573,6 +588,7 @@
 				68D29A131DD79C8A00BFF4D5 /* InitialController.swift in Sources */,
 				A2AEDD4A257BDE220074CA11 /* GenericSerialiser.swift in Sources */,
 				A2D6DFB32580376900725D5C /* HomeController.swift in Sources */,
+				A278D31F2585A036008D22D1 /* ChallengeTestingSerialiser.swift in Sources */,
 				68EB1C831DD7B7070074737B /* SampleController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

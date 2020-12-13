@@ -31,6 +31,7 @@ class ChallengeSerialiser
      */
     func createChallenge(title: String,
                          prompt: String,
+                         datePosted: Date?,
                          pointValue: Int,
                          videoLink: URL?,
                          completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
@@ -39,7 +40,7 @@ class ChallengeSerialiser
         
         dataBundle["title"] = title
         dataBundle["prompt"] = prompt
-        dataBundle["datePosted"] = secondaryDateFormatter.string(from: Date())
+        dataBundle["datePosted"] = secondaryDateFormatter.string(from: datePosted == nil ? Date() : datePosted!)
         dataBundle["pointValue"] = pointValue
         
         if let videoLink = videoLink

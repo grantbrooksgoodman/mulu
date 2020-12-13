@@ -78,80 +78,15 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
         
         view.setBackground(withImageNamed: "Background Image")
         
-        //                UserSerialiser().createUser(associatedTeams: ["!"], emailAddress: "me@grantbrooks.io", firstName: "Grant", lastName: "Brooks Goodman", profileImageData: nil, pushTokens: nil) { (returnedIdentifier, errorDescriptor) in
-        //                    if let error = errorDescriptor
-        //                    {
-        //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //                    }
-        //                    else if let identifier = returnedIdentifier
-        //                    {
-        //                        print("It worked! \(identifier)")
-        //                    }
-        //                }
-        
-        //        TeamSerialiser().createTeam(name: "Team Berkeley", participantIdentifiers: ["-MNuzhwBe-c3yz_qtaAu"]) { (returnedIdentifier, errorDescriptor) in
-        //            if let error = errorDescriptor
-        //            {
-        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //            }
-        //            else if let identifier = returnedIdentifier
-        //            {
-        //                print("It worked! \(identifier)")
-        //            }
-        //        }
-        
-        //        TeamSerialiser().getTeam(withIdentifier: "-MNuzz05xikHmAIbUDnH") { (returnedTeam, errorDescriptor) in
-        //            if let error = errorDescriptor
-        //            {
-        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //            }
-        //            else if let team = returnedTeam
-        //            {
-        //                if let completedChallenges = team.completedChallenges
-        //                {
-        //                    print("It worked! \(completedChallenges[0].metadata[0].user.firstName!)")
-        //                }
-        //                else { print("It worked! \(team.name!)") }
-        //            }
-        //        }
-        
-        //        UserSerialiser().getUser(withIdentifier: "-MNuzhwBe-c3yz_qtaAu") { (returnedUser, errorDescriptor) in
-        //            if let error = errorDescriptor
-        //            {
-        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //            }
-        //            else if let user = returnedUser
-        //            {
-        //                print("It worked! \(user.firstName!)")
-        //
-        //                user.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
-        //                    if let error = errorDescriptor
-        //                    {
-        //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //                    }
-        //                    else if let teams = returnedTeams
-        //                    {
-        //                        print("Successfully deserialised Teams! \(teams[0].name!)")
-        //                    }
-        //                }
-        //            }
-        //        }
-        
-        UserSerialiser().createAccount(associatedTeams: ["!"],
-                                       emailAddress: "\(Int().random(min: 0, max: 500))@mulu.app",
-                                       firstName: bunchaLetters(),
-                                       lastName: bunchaLetters(),
-                                       password: "123456", profileImageData: nil, pushTokens: nil) { (returnedUser, errorDescriptor) in
-            if let error = errorDescriptor
+        GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 5, numberOfChallenges: 7) { (exitCode, status) in
+            if exitCode == 0
             {
-                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                print("Created Database. First team:\n\(status)")
             }
-            else if let user = returnedUser
-            {
-                print(user.firstName!)
-            }
-            else { report("An unknown error occurred.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+            else { report(status, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
         }
+        
+        //trashDatabase()
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -204,5 +139,35 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
+    }
+}
+
+extension Array where Element == User
+{
+    func identifiers() -> [String]
+    {
+        var identifiers: [String] = []
+        
+        for user in self
+        {
+            identifiers.append(user.associatedIdentifier)
+        }
+        
+        return identifiers
+    }
+}
+
+extension Array where Element == Challenge
+{
+    func titles() -> [String]
+    {
+        var titles: [String] = []
+        
+        for challenge in self
+        {
+            titles.append(challenge.title)
+        }
+        
+        return titles
     }
 }

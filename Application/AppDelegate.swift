@@ -87,31 +87,27 @@ var currentUser: User?
         FirebaseConfiguration.shared.setLoggerLevel(.min)
         FirebaseApp.configure()
         
-        UserSerialiser().getUser(withIdentifier: "-MNuzhwBe-c3yz_qtaAu") { (returnedUser, errorDescriptor) in
+        UserSerialiser().getRandomUsers(amountToGet: 1) { (returnedUsers, errorDescriptor) in
             if let error = errorDescriptor
             {
                 report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
             }
-            else if let user = returnedUser
+            else if let user = returnedUsers
             {
-                print("It worked! \(user.firstName!)")
-                
-                currentUser = user
-                
-                user.setDSAssociatedTeams()
-                
-                //                user.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
-                //                    if let error = errorDescriptor
-                //                    {
-                //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                //                    }
-                //                    else if let teams = returnedTeams
-                //                    {
-                //                        print("Successfully deserialised Teams! \(teams[0].name!)")
-                //
-                //                        //print(teams[0].completedChallenges(for: user))
-                //                    }
-                //                }
+                UserSerialiser().getUser(withIdentifier: user[0]) { (returnedUser, errorDescriptor) in
+                    if let error = errorDescriptor
+                    {
+                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    }
+                    else if let user = returnedUser
+                    {
+                        print("It worked! \(user.firstName!)")
+                        
+                        currentUser = user
+                        
+                        user.setDSAssociatedTeams()
+                    }
+                }
             }
         }
         

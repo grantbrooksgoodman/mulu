@@ -18,6 +18,130 @@ class TeamSerialiser
     
     /* Public Functions */
     
+    func addCompletedChallenges(_ withBundle: [(Challenge, [(User, Date)])], toTeam: String, overwrite: Bool, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        let serialisedChallenges = serialiseCompletedChallenges(withBundle)
+        
+        let key = overwrite ? "/allTeams/\(toTeam)" : "/allTeams/\(toTeam)/completedChallenges"
+        let data: [String:Any] = overwrite ? ["completedChallenges": serialisedChallenges] : serialisedChallenges
+        
+        GenericSerialiser().updateValue(onKey: key, withData: data) { (returnedError) in
+            if let error = returnedError
+            {
+                completion(errorInformation(forError: (error as NSError)))
+            }
+            else
+            {
+                completion(nil)
+            }
+        }
+    }
+    
+    func addUsers(_ users: [User], toTeam: Team, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        let group = DispatchGroup()
+        
+        var errors: [String] = []
+        
+        for user in users
+        {
+            group.enter()
+            
+            var newAssociatedTeams = user.associatedTeams ?? []
+            newAssociatedTeams.append(toTeam.associatedIdentifier)
+            
+            GenericSerialiser().updateValue(onKey: "/allUsers/\(user.associatedIdentifier!)", withData: ["associatedTeams": newAssociatedTeams]) { (returnedError) in
+                if let error = returnedError
+                {
+                    errors.append(errorInformation(forError: (error as NSError)))
+                    group.leave()
+                }
+                else { group.leave() }
+            }
+        }
+        
+        group.notify(queue: .main) {
+            var newParticipantIdentifiers = toTeam.participantIdentifiers!
+            newParticipantIdentifiers.append(contentsOf: users.identifiers())
+            
+            GenericSerialiser().updateValue(onKey: "/allTeams/\(toTeam.associatedIdentifier!)", withData: ["participantIdentifiers": newParticipantIdentifiers]) { (returnedError) in
+                if let error = returnedError
+                {
+                    completion(errors.count > 0 ? "\(errors.joined(separator: "\n"))\n\(errorInformation(forError: (error as NSError)))" : nil)
+                }
+                else
+                { completion(errors.count > 0 ? errors.joined(separator: "\n") : nil) }
+            }
+        }
+    }
+    
+    func serialiseCompletedChallenges(_ with: [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]) -> [String:[String]]
+    {
+        var dataBundle: [String:[String]] = [:]
+        
+        for bundle in with
+        {
+            //["challengeId":["userId – dateString"]]
+            var serialisedMetadata: [String] = []
+            
+            for datum in bundle.metadata
+            {
+                let metadataString = "\(datum.user.associatedIdentifier!) – \(secondaryDateFormatter.string(from: datum.dateCompleted))"
+                serialisedMetadata.append(metadataString)
+            }
+            
+            dataBundle["\(bundle.challenge.associatedIdentifier!)"] = serialisedMetadata
+        }
+        
+        return dataBundle
+    }
+    
+    func addUser(_ withIdentifier: String, toTeam: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        Database.database().reference().child("allTeams").child(toTeam).observeSingleEvent(of: .value, with: { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let asDataBundle =                 returnedSnapshotAsDictionary as? [String:Any]
+            {
+                var mutableDataBundle = asDataBundle
+                mutableDataBundle["associatedIdentifier"] = withIdentifier
+                
+                guard self.validateTeamMetadata(mutableDataBundle) == true else
+                { completion("Improperly formatted metadata."); return }
+                
+                var newUserList = mutableDataBundle["participantIdentifiers"] as! [String]
+                newUserList.append(withIdentifier)
+                
+                GenericSerialiser().updateValue(onKey: "/allTeams/\(toTeam)", withData: ["participantIdentifiers": newUserList]) { (returnedError) in
+                    if let error = returnedError
+                    {
+                        completion(errorInformation(forError: (error as NSError)))
+                    }
+                    else
+                    {
+                        GenericSerialiser().updateValue(onKey: "/allUsers/\(withIdentifier)", withData: ["associatedTeams": toTeam]) { (returnedError) in
+                            if let error = returnedError
+                            {
+                                completion(errorInformation(forError: (error as NSError)))
+                            }
+                            else
+                            {
+                                report("Successfully added User to Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                                
+                                completion(nil)
+                            }
+                        }
+                    }
+                }
+                
+            }
+            else { completion("No Team exists with the identifier \"\(toTeam)\".") }
+        })
+        { (returnedError) in
+            
+            completion("Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
+        }
+    }
+    
     /**
      Creates a **Team** on the server.
      
@@ -42,7 +166,26 @@ class TeamSerialiser
                 {
                     completion(nil, errorInformation(forError: (error as NSError)))
                 }
-                else { completion(generatedKey, nil) }
+                else
+                {
+                    for (index, user) in participantIdentifiers.enumerated()
+                    {
+                        GenericSerialiser().updateValue(onKey: "/allUsers/\(user)", withData: ["associatedTeams": [generatedKey]]) { (returnedError) in
+                            if let error = returnedError
+                            {
+                                completion(nil, errorInformation(forError: (error as NSError)))
+                            }
+                            else
+                            {
+                                if index == participantIdentifiers.count - 1
+                                {
+                                    completion(generatedKey, nil)
+                                }
+                            }
+                        }
+                    }
+                    
+                }
             }
         }
         else { completion(nil, "Unable to create key in database.") }
@@ -56,9 +199,13 @@ class TeamSerialiser
      */
     func getTeam(withIdentifier: String, completion: @escaping(_ returnedTeam: Team?, _ errorDescriptor: String?) -> Void)
     {
+        print("getting team")
+        
         Database.database().reference().child("allTeams").child(withIdentifier).observeSingleEvent(of: .value, with: { (returnedSnapshot) in
             if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary, let asDataBundle = returnedSnapshotAsDictionary as? [String:Any]
             {
+                print("returned snapshot")
+                
                 var mutableDataBundle = asDataBundle
                 
                 mutableDataBundle["associatedIdentifier"] = withIdentifier
@@ -66,11 +213,19 @@ class TeamSerialiser
                 self.deSerialiseTeam(from: mutableDataBundle) { (returnedTeam, errorDescriptor) in
                     if let error = errorDescriptor
                     {
+                        print("failed to deserialise team")
+                        
                         completion(nil, error)
                     }
                     else if let team = returnedTeam
                     {
+                        print("deserialised team")
+                        
                         completion(team, nil)
+                    }
+                    else
+                    {
+                        
                     }
                 }
             }
@@ -96,22 +251,35 @@ class TeamSerialiser
         
         if withIdentifiers.count > 0
         {
+            let dispatchGroup = DispatchGroup()
+            
             for individualIdentifier in withIdentifiers
             {
+                print("entered group")
+                dispatchGroup.enter()
+                
                 getTeam(withIdentifier: individualIdentifier) { (returnedTeam, errorDescriptor) in
                     if let team = returnedTeam
                     {
                         teamArray.append(team)
+                        
+                        print("left group")
+                        dispatchGroup.leave()
                     }
                     else
                     {
                         errorDescriptorArray.append(errorDescriptor!)
+                        
+                        print("left group")
+                        dispatchGroup.leave()
                     }
-                    
-                    if teamArray.count + errorDescriptorArray.count == withIdentifiers.count
-                    {
-                        completion(teamArray.count == 0 ? nil : teamArray, errorDescriptorArray.count == 0 ? nil : errorDescriptorArray)
-                    }
+                }
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                if teamArray.count + errorDescriptorArray.count == withIdentifiers.count
+                {
+                    completion(teamArray.count == 0 ? nil : teamArray, errorDescriptorArray.count == 0 ? nil : errorDescriptorArray)
                 }
             }
         }
@@ -121,10 +289,51 @@ class TeamSerialiser
         }
     }
     
+    /**
+     Gets random **Team** identifiers from the server.
+     
+     - Parameter amountToGet: An optional integer specifying the amount of random **Team** identifiers to get. *Defaults to all.*
+     
+     - Parameter completion: Returns an array of **Team** identifier strings if successful. May also return a string describing an event or error encountered. *NOT mutually exclusive.*
+     */
+    func getRandomTeams(amountToGet: Int?, completion: @escaping(_ returnedIdentifiers: [String]?, _ noticeDescriptor: String?) -> Void)
+    {
+        Database.database().reference().child("allTeams").observeSingleEvent(of: .value) { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let teamIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
+            {
+                if amountToGet == nil
+                {
+                    completion(teamIdentifiers.shuffledValue, nil)
+                }
+                else
+                {
+                    if amountToGet! > teamIdentifiers.count
+                    {
+                        completion(teamIdentifiers.shuffledValue, "Requested amount was larger than database size.")
+                    }
+                    else if amountToGet! == teamIdentifiers.count
+                    {
+                        completion(teamIdentifiers.shuffledValue, nil)
+                    }
+                    else if amountToGet! < teamIdentifiers.count
+                    {
+                        completion(Array(teamIdentifiers.shuffledValue[0...amountToGet!]), nil)
+                    }
+                }
+            }
+            else
+            {
+                completion(nil, "Unable to deserialise snapshot.")
+            }
+        }
+    }
+    
     //==================================================//
     
     /* Private Functions */
     
+    #warning("This function does not always work. Something to do with the dispatch queues.")
     /**
      Deserialises an array of completed **Challenges** from a given data bundle. Returns an array of deserialised `(Challenge, [(User, Date)]` tuples if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
      
@@ -132,6 +341,7 @@ class TeamSerialiser
      */
     private func deSerialiseCompletedChallenges(with challenges: [String:[String]], completion: @escaping(_ completedChallenges: [(Challenge, [(user: User, dateCompleted: Date)])]?, _ errorDescriptor: String?) -> Void)
     {
+        print("deserialising completed challenges")
         var deSerialisedCompletedChallenges: [(Challenge, [(user: User, dateCompleted: Date)])] = []
         
         //serialised completed challenges = ["challengeId":["userId – dateString"]]
@@ -145,6 +355,8 @@ class TeamSerialiser
                 }
                 else if let challenge = returnedChallenge, let metadata = challenges[challengeIdentifier]
                 {
+                    let group = DispatchGroup()
+                    
                     var deSerialisedMetadata: [(User, Date)] = []
                     
                     for (index, string) in metadata.enumerated()
@@ -159,9 +371,13 @@ class TeamSerialiser
                         
                         let userIdentifier = components[0]
                         
+                        group.enter()
+                        
                         UserSerialiser().getUser(withIdentifier: userIdentifier) { (returnedUser, errorDescriptor)  in
                             if let error = errorDescriptor
                             {
+                                group.leave()
+                                
                                 completion(nil, "While getting a User for a Challenge: \(error)")
                             }
                             else if let user = returnedUser
@@ -174,13 +390,21 @@ class TeamSerialiser
                                     
                                     if deSerialisedCompletedChallenges.count == challenges.count
                                     {
-                                        completion(deSerialisedCompletedChallenges, nil)
+                                        group.leave()
                                     }
-                                    else { completion(nil, "The deserialised completed Challenges array was malformed.") }
                                 }
                             }
-                            else { completion(nil, "An unknown error occurred while getting a User for a Challenge.") }
+                            else
+                            {
+                                group.leave()
+                                
+                                completion(nil, "An unknown error occurred while getting a User for a Challenge.")
+                            }
                         }
+                    }
+                    
+                    group.notify(queue: .main) {
+                        completion(deSerialisedCompletedChallenges, nil)
                     }
                 }
                 else { completion(nil, "An unknown error occurred while getting a Challenge.") }
@@ -195,23 +419,23 @@ class TeamSerialiser
      */
     private func deSerialiseTeam(from dataBundle: [String:Any], completion: @escaping(_ deSerialisedTeam: Team?, _ errorDescriptor: String?) -> Void)
     {
-        guard let associatedIdentifier = dataBundle["associatedIdentifier"] as? String else
-        { completion(nil, "Unable to deserialise «associatedIdentifier»."); return }
+        print("deserialising team")
         
-        guard let completedChallenges = dataBundle["completedChallenges"] as? [String:[String]] else
-        { completion(nil, "Unable to deserialise «completedChallenges»."); return }
+        guard validateTeamMetadata(dataBundle) == true else
+        { completion(nil, "Improperly formatted metadata."); return }
         
-        guard let name = dataBundle["name"] as? String else
-        { completion(nil, "Unable to deserialise «name»."); return }
-        
-        guard let participantIdentifiers = dataBundle["participantIdentifiers"] as? [String] else
-        { completion(nil, "Unable to deserialise «participantIdentifiers»."); return }
+        let associatedIdentifier = dataBundle["associatedIdentifier"] as! String
+        let completedChallenges = dataBundle["completedChallenges"] as! [String:[String]]
+        let name = dataBundle["name"] as! String
+        let participantIdentifiers = dataBundle["participantIdentifiers"] as! [String]
         
         if completedChallenges.keys.first != "!"
         {
             deSerialiseCompletedChallenges(with: completedChallenges) { (completedChallenges, errorDescriptor) in
                 if let error = errorDescriptor
                 {
+                    print("failed to deserialise completed challenges")
+                    
                     completion(nil, error)
                 }
                 else if let challenges = completedChallenges
@@ -221,7 +445,13 @@ class TeamSerialiser
                                                 name:                   name,
                                                 participantIdentifiers: participantIdentifiers)
                     
+                    print("deserialised completed challenges")
+                    
                     completion(deSerialisedTeam, nil)
+                }
+                else
+                {
+                    
                 }
             }
         }
@@ -232,7 +462,26 @@ class TeamSerialiser
                                         name:                   name,
                                         participantIdentifiers: participantIdentifiers)
             
+            print("deserialised team")
+            
             completion(deSerialisedTeam, nil)
         }
+    }
+    
+    private func validateTeamMetadata(_ withDataBundle: [String:Any]) -> Bool
+    {
+        guard withDataBundle["associatedIdentifier"] as? String != nil else
+        { report("Malformed «associatedIdentifier».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
+        
+        guard withDataBundle["completedChallenges"] as? [String:[String]] != nil else
+        { report("Malformed «completedChallenges».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
+        
+        guard withDataBundle["name"] as? String != nil else
+        { report("Malformed «name».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
+        
+        guard withDataBundle["participantIdentifiers"] as? [String] != nil else
+        { report("Malformed «participantIdentifiers».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
+        
+        return true
     }
 }

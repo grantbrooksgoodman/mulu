@@ -16,7 +16,7 @@ class User
     /* Class-Level Variable Declarations */
     
     //Arrays
-    var associatedTeams: [String]! //String = team ID
+    var associatedTeams: [String]? //String = team ID
     var pushTokens:      [String]?
     
     //Strings
@@ -33,7 +33,7 @@ class User
     /* Constructor Function */
     
     init(associatedIdentifier: String,
-         associatedTeams:      [String],
+         associatedTeams:      [String]?,
          emailAddress:         String,
          firstName:            String,
          lastName:             String,
@@ -87,7 +87,7 @@ class User
         {
             completion(DSAssociatedTeams, nil)
         }
-        else
+        else if let associatedTeams = associatedTeams
         {
             TeamSerialiser().getTeams(withIdentifiers: associatedTeams) { (returnedTeams, errorDescriptors) in
                 if let errors = errorDescriptors
@@ -100,7 +100,15 @@ class User
                     
                     completion(teams, nil)
                 }
+                else
+                {
+                    
+                }
             }
+        }
+        else
+        {
+            report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
         }
     }
     
@@ -113,7 +121,7 @@ class User
         {
             report("«DSAssociatedTeams» already set.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
         }
-        else
+        else if let associatedTeams = associatedTeams
         {
             TeamSerialiser().getTeams(withIdentifiers: associatedTeams) { (returnedTeams, errorDescriptors) in
                 if let errors = errorDescriptors
@@ -127,6 +135,10 @@ class User
                     report("Successfully set DSAssociatedTeams.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
                 }
             }
+        }
+        else
+        {
+            report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
         }
     }
 }
