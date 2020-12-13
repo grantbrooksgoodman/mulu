@@ -101,7 +101,7 @@ var currentUser: User?
                     }
                     else if let user = returnedUser
                     {
-                        print("It worked! \(user.firstName!)")
+                        print("Signed in as \(user.firstName!).")
                         
                         currentUser = user
                         

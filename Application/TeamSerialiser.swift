@@ -199,12 +199,12 @@ class TeamSerialiser
      */
     func getTeam(withIdentifier: String, completion: @escaping(_ returnedTeam: Team?, _ errorDescriptor: String?) -> Void)
     {
-        print("getting team")
+        if verboseFunctionExposure { print("getting team") }
         
         Database.database().reference().child("allTeams").child(withIdentifier).observeSingleEvent(of: .value, with: { (returnedSnapshot) in
             if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary, let asDataBundle = returnedSnapshotAsDictionary as? [String:Any]
             {
-                print("returned snapshot")
+                if verboseFunctionExposure { print("returned snapshot") }
                 
                 var mutableDataBundle = asDataBundle
                 
@@ -213,19 +213,19 @@ class TeamSerialiser
                 self.deSerialiseTeam(from: mutableDataBundle) { (returnedTeam, errorDescriptor) in
                     if let error = errorDescriptor
                     {
-                        print("failed to deserialise team")
+                        if verboseFunctionExposure { print("failed to deserialise team") }
                         
                         completion(nil, error)
                     }
                     else if let team = returnedTeam
                     {
-                        print("deserialised team")
+                        if verboseFunctionExposure { print("deserialised team") }
                         
                         completion(team, nil)
                     }
                     else
                     {
-                        
+                        completion(nil, "An unknown error occurred.")
                     }
                 }
             }
@@ -255,7 +255,7 @@ class TeamSerialiser
             
             for individualIdentifier in withIdentifiers
             {
-                print("entered group")
+                if verboseFunctionExposure { print("entered group") }
                 dispatchGroup.enter()
                 
                 getTeam(withIdentifier: individualIdentifier) { (returnedTeam, errorDescriptor) in
@@ -263,14 +263,14 @@ class TeamSerialiser
                     {
                         teamArray.append(team)
                         
-                        print("left group")
+                        if verboseFunctionExposure { print("left group") }
                         dispatchGroup.leave()
                     }
                     else
                     {
                         errorDescriptorArray.append(errorDescriptor!)
                         
-                        print("left group")
+                        if verboseFunctionExposure { print("left group") }
                         dispatchGroup.leave()
                     }
                 }
@@ -333,7 +333,6 @@ class TeamSerialiser
     
     /* Private Functions */
     
-    #warning("This function does not always work. Something to do with the dispatch queues.")
     /**
      Deserialises an array of completed **Challenges** from a given data bundle. Returns an array of deserialised `(Challenge, [(User, Date)]` tuples if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
      
@@ -341,13 +340,15 @@ class TeamSerialiser
      */
     private func deSerialiseCompletedChallenges(with challenges: [String:[String]], completion: @escaping(_ completedChallenges: [(Challenge, [(user: User, dateCompleted: Date)])]?, _ errorDescriptor: String?) -> Void)
     {
-        print("deserialising completed challenges")
+        if verboseFunctionExposure { print("deserialising completed challenges") }
         var deSerialisedCompletedChallenges: [(Challenge, [(user: User, dateCompleted: Date)])] = []
         
         //serialised completed challenges = ["challengeId":["userId – dateString"]]
         
         for challengeIdentifier in Array(challenges.keys)
         {
+            if verboseFunctionExposure { print("processing \(challengeIdentifier)") }
+            
             ChallengeSerialiser().getChallenge(withIdentifier: challengeIdentifier) { (returnedChallenge, errorDescriptor) in
                 if let error = errorDescriptor
                 {
@@ -355,8 +356,6 @@ class TeamSerialiser
                 }
                 else if let challenge = returnedChallenge, let metadata = challenges[challengeIdentifier]
                 {
-                    let group = DispatchGroup()
-                    
                     var deSerialisedMetadata: [(User, Date)] = []
                     
                     for (index, string) in metadata.enumerated()
@@ -371,13 +370,9 @@ class TeamSerialiser
                         
                         let userIdentifier = components[0]
                         
-                        group.enter()
-                        
                         UserSerialiser().getUser(withIdentifier: userIdentifier) { (returnedUser, errorDescriptor)  in
                             if let error = errorDescriptor
                             {
-                                group.leave()
-                                
                                 completion(nil, "While getting a User for a Challenge: \(error)")
                             }
                             else if let user = returnedUser
@@ -390,21 +385,15 @@ class TeamSerialiser
                                     
                                     if deSerialisedCompletedChallenges.count == challenges.count
                                     {
-                                        group.leave()
+                                        completion(deSerialisedCompletedChallenges, nil)
                                     }
                                 }
                             }
                             else
                             {
-                                group.leave()
-                                
                                 completion(nil, "An unknown error occurred while getting a User for a Challenge.")
                             }
                         }
-                    }
-                    
-                    group.notify(queue: .main) {
-                        completion(deSerialisedCompletedChallenges, nil)
                     }
                 }
                 else { completion(nil, "An unknown error occurred while getting a Challenge.") }
@@ -419,7 +408,7 @@ class TeamSerialiser
      */
     private func deSerialiseTeam(from dataBundle: [String:Any], completion: @escaping(_ deSerialisedTeam: Team?, _ errorDescriptor: String?) -> Void)
     {
-        print("deserialising team")
+        if verboseFunctionExposure { print("deserialising team") }
         
         guard validateTeamMetadata(dataBundle) == true else
         { completion(nil, "Improperly formatted metadata."); return }
@@ -434,7 +423,7 @@ class TeamSerialiser
             deSerialiseCompletedChallenges(with: completedChallenges) { (completedChallenges, errorDescriptor) in
                 if let error = errorDescriptor
                 {
-                    print("failed to deserialise completed challenges")
+                    if verboseFunctionExposure { print("failed to deserialise completed challenges") }
                     
                     completion(nil, error)
                 }
@@ -445,13 +434,13 @@ class TeamSerialiser
                                                 name:                   name,
                                                 participantIdentifiers: participantIdentifiers)
                     
-                    print("deserialised completed challenges")
+                    if verboseFunctionExposure { print("deserialised completed challenges") }
                     
                     completion(deSerialisedTeam, nil)
                 }
                 else
                 {
-                    
+                    completion(nil, "An unknown error occurred.")
                 }
             }
         }
@@ -462,7 +451,7 @@ class TeamSerialiser
                                         name:                   name,
                                         participantIdentifiers: participantIdentifiers)
             
-            print("deserialised team")
+            if verboseFunctionExposure { print("deserialised team") }
             
             completion(deSerialisedTeam, nil)
         }

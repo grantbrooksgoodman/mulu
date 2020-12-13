@@ -26,7 +26,7 @@ class User
     var lastName:             String!
     var profileImageData:     String?
     
-    private var DSAssociatedTeams: [Team]?
+    private(set) var DSAssociatedTeams: [Team]?
     
     //==================================================//
     
@@ -102,7 +102,7 @@ class User
                 }
                 else
                 {
-                    
+                    completion(nil, "No returned Teams, but no error either.")
                 }
             }
         }
@@ -111,6 +111,17 @@ class User
             report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
         }
     }
+    
+    //    func getDSAssociatedTeams() -> [Team]?
+    //    {
+    //        if let DSAssociatedTeams = DSAssociatedTeams
+    //        {
+    //            return DSAssociatedTeams
+    //        }
+    //        else { report("«DSAssociatedTeams» has not been set. Run setDSAssociatedTeams().", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+    //
+    //        return nil
+    //    }
     
     /**
      Sets the *DSAssociatedTeams* value on the **User** without closures. *Dumps errors to console.*

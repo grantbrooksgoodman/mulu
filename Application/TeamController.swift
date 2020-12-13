@@ -32,6 +32,8 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
     var buildInstance: Build!
     var completedChallenges: [(date: Date, challenge: Challenge)]?
     
+    var user: User!
+    
     //==================================================//
     
     /* Initialiser Function */
@@ -54,31 +56,20 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
         
         view.setBackground(withImageNamed: "Gradient.png")
         
-        if let subviews = view.subviews(aTagFor("view"))
-        {
-            for subview in subviews
-            {
-                subview.frame.size.height = titleLabel.frame.height
-            }
-        }
+        guard currentUser != nil else
+        { report("No current User!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
         
+        user = currentUser
+        
+        guard user.DSAssociatedTeams != nil else
+        { user.setDSAssociatedTeams(); return }
+        
+        titleLabel.text = user.DSAssociatedTeams![0].name.uppercased()
     }
     
     override func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(animated)
-        
-        //        if let user = currentUser, let completedChallenges = user.completedChallenges()
-        //        {
-        //            var dates: [Date] = []
-        //
-        //            for challenge in completedChallenges
-        //            {
-        //
-        //            }
-        //        }
-        
-        //roundCorners(forViews: [calendarCollectionView], withCornerType: 4)
         
         if let user = currentUser
         {
