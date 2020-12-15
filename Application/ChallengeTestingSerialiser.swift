@@ -40,6 +40,13 @@ class ChallengeTestingSerialiser
     
     /* Public Functions */
     
+    /**
+     Creates a specified number of random **Challenges** on the server.
+     
+     - Parameter amountToCreate: The amount of **Challenges** to create.
+     
+     - Parameter completion: Returns with an array **Challenge** objects if successful. If unsuccessful, a string describing the error(s) encountered. *NOT mutually exclusive.*
+     */
     func createRandomChallenges(amountToCreate: Int?, completion: @escaping(_ returnedChallenges: [Challenge]?, _ errorDescriptor: String?) -> Void)
     {
         let amount = amountToCreate ?? 1
@@ -78,6 +85,12 @@ class ChallengeTestingSerialiser
         }
     }
     
+    /**
+     Generates an random array of completed **Challenges** from an array of provided **Challenges**.
+     
+     - Parameter fromChallenges: The **Challenge** objects from which to create the array.
+     - Parameter withUsers: The **Users** objects from which to generate random metadata.
+     */
     func randomCompletedChallenges(fromChallenges challenges: [Challenge], withUsers users: [User]) -> [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]
     {
         var completedChallenges: [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])] = []
@@ -118,6 +131,11 @@ class ChallengeTestingSerialiser
     
     /* Private Functions */
     
+    /**
+     Returns an array of unique metadata from an array of provided completed **Challenge** metadata.
+     
+     - Parameter metadata: The metadata tuples to clean.
+     */
     private func cleanMetadata(_ metadata: [(user: User, dateCompleted: Date)]) -> [(user: User, dateCompleted: Date)]
     {
         var cleanedMetadata: [(user: User, dateCompleted: Date)] = []
@@ -133,6 +151,13 @@ class ChallengeTestingSerialiser
         return cleanedMetadata
     }
     
+    /**
+     Creates a random **Challenge** on the server.
+     
+     - Parameter excludingTitles: An optional array providing title strings to exclude when generating a random title.
+     
+     - Parameter completion: Returns with a **Challenge** object if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     */
     private func createRandomChallenge(excludingTitles: [String]?, completion: @escaping(_ returnedChallenge: Challenge?, _ errorDescriptor: String?) -> Void)
     {
         let randomDate = masterDateFormatter.date(from: "2020-12-\(Int().random(min: 1, max: Calendar.current.component(.day, from: Date())))")!

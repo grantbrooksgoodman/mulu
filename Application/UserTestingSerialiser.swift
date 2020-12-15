@@ -15,6 +15,13 @@ class UserTestingSerialiser
     
     /* Public Functions */
     
+    /**
+     Creates a specified number of random **Users** on the server.
+     
+     - Parameter amountToCreate: The amount of **Users** to create.
+     
+     - Parameter completion: Returns with an array **User** objects if successful. If unsuccessful, a string describing the error(s) encountered. *NOT mutually exclusive.*
+     */
     func createRandomUsers(amountToCreate: Int?, completion: @escaping(_ returnedUsers: [User]?, _ errorDescriptor: String?) -> Void)
     {
         var amount = amountToCreate ?? 1
@@ -56,6 +63,11 @@ class UserTestingSerialiser
     
     /* Private Functions */
     
+    /**
+     Creates a random **User** on the server.
+     
+     - Parameter completion: Returns with a **User** object if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     */
     private func createRandomUser(completion: @escaping(_ returnedUser: User?, _ errorDescriptor: String?) -> Void)
     {
         let firstNames = ["James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda", "William", "Elizabeth", "David", "Barbara", "Richard", "Susan", "Joseph", "Jessica", "Thomas", "Sarah", "Charles", "Karen"]

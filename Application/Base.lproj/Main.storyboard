@@ -502,7 +502,7 @@ Wide squat stance</string>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" fixedFrame="YES" reuseIdentifier="scrollCell" translatesAutoresizingMaskIntoConstraints="NO" id="SLF-Gb-QVL" customClass="ScrollerCell" customModule="Mulu" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="scrollCell" translatesAutoresizingMaskIntoConstraints="NO" id="SLF-Gb-QVL" customClass="ScrollerCell" customModule="Mulu" customModuleProvider="target">
                                         <rect key="frame" x="14" y="0.0" width="400" height="356"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="F9A-43-FP1">
@@ -553,9 +553,9 @@ Wide squat stance</string>
                                                         <outlet property="ibCalendarDelegate" destination="uRl-I6-vGh" id="8sF-2D-8YP"/>
                                                     </connections>
                                                 </collectionView>
-                                                <label opaque="NO" userInteractionEnabled="NO" alpha="0.75" tag="12905455" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YOUR STREAK" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wsx-O2-q16">
+                                                <label opaque="NO" userInteractionEnabled="NO" alpha="0.77000000000000002" tag="12905455" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YOUR STREAK" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wsx-O2-q16">
                                                     <rect key="frame" x="0.0" y="0.0" width="400" height="60"/>
-                                                    <color key="backgroundColor" cyan="0.0" magenta="0.0" yellow="0.0" black="0.83385240709999997" alpha="1" colorSpace="custom" customColorSpace="genericCMYKColorSpace"/>
+                                                    <color key="backgroundColor" red="0.20784313725490194" green="0.21176470588235294" blue="0.20784313725490194" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="60" id="oRY-qv-07i"/>
                                                         <constraint firstAttribute="height" constant="60" id="ors-vP-745"/>

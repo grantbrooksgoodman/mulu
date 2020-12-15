@@ -15,6 +15,14 @@ class TeamTestingSerialiser
     
     /* Public Functions */
     
+    /**
+     Creates a random **Team** on the server.
+     
+     - Parameter with: The identifier of the **Users** to populate this **Team** with.
+     - Parameter completedChallenges: The randomly generated completed **Challenges** to add to this **Team**.
+     
+     - Parameter completion: Returns with the identifier of the newly created **Team** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     */
     func createRandomTeam(with users: [User], completedChallenges: [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])], completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
     {
         let universityNames = ["Princeton", "Harvard", "Columbia", "MIT", "Yale", "Stanford", "UChicago", "UPenn", "Caltech", "Johns Hopkins", "Northwestern", "Duke", "Dartmouth", "Brown", "Vanderbilt", "Rice", "WashU St. Louis", "Cornell", "Notre Dame", "UCLA", "Emory", "UC Berkeley", "Georgetown", "UMich", "USC", "UVA", "UNC Chapel Hill", "Wake Forest", "NYU", "Tufts", "UCSB"]

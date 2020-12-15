@@ -53,6 +53,9 @@ class User
     
     /* Public Functions */
     
+    /**
+     If *DSAssociatedTeams* has been set, returns the **User's** completed **Challenges**.
+     */
     func completedChallenges() -> [(date: Date, challenge: Challenge)]?
     {
         guard let DSAssociatedTeams = DSAssociatedTeams else { report("Teams haven't been deserialised.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }

@@ -78,13 +78,13 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
         
         view.setBackground(withImageNamed: "Background Image")
         
-        GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 5, numberOfChallenges: 7) { (exitCode, status) in
-            if exitCode == 0
-            {
-                print("Created Database. First team:\n\(status)")
-            }
-            else { report(status, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
-        }
+        //        GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 3, numberOfChallenges: 5) { (exitCode, status) in
+        //            if exitCode == 0
+        //            {
+        //                print("Created Database. First team:\n\(status)")
+        //            }
+        //            else { report(status, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
+        //        }
         
         //trashDatabase()
     }

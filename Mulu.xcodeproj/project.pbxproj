@@ -73,6 +73,8 @@
 		A2D6DFB32580376900725D5C /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2D6DFB22580376900725D5C /* HomeController.swift */; };
 		A2DA693324D74929000CD116 /* AlertKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DA693224D74929000CD116 /* AlertKit.swift */; };
 		A2EFF34325835A590070B320 /* DateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EFF34225835A590070B320 /* DateCell.swift */; };
+		A2F32EE5258856E70054C55A /* Tournament.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F32EE4258856E70054C55A /* Tournament.swift */; };
+		A2F32EE8258858830054C55A /* TournamentSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F32EE7258858830054C55A /* TournamentSerialiser.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -148,6 +150,8 @@
 		A2D6DFB22580376900725D5C /* HomeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		A2DA693224D74929000CD116 /* AlertKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertKit.swift; sourceTree = "<group>"; };
 		A2EFF34225835A590070B320 /* DateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateCell.swift; sourceTree = "<group>"; };
+		A2F32EE4258856E70054C55A /* Tournament.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tournament.swift; sourceTree = "<group>"; };
+		A2F32EE7258858830054C55A /* TournamentSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentSerialiser.swift; sourceTree = "<group>"; };
 		B38ED19D0819B455AFA08D33 /* Pods-Application.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Application.release.xcconfig"; path = "Pods/Target Support Files/Pods-Application/Pods-Application.release.xcconfig"; sourceTree = "<group>"; };
 		CB738F8CAB51C5457F19BB41 /* Pods-Mulu.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mulu.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mulu/Pods-Mulu.debug.xcconfig"; sourceTree = "<group>"; };
 		DEE150186288F802B88DC825 /* Pods-Mulu.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mulu.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mulu/Pods-Mulu.release.xcconfig"; sourceTree = "<group>"; };
@@ -345,6 +349,8 @@
 				A2AEDD4F257BE0540074CA11 /* Team.swift */,
 				A24A232D257DB9900063FE87 /* TeamSerialiser.swift */,
 				A278D3212585A0AC008D22D1 /* TeamTestingSerialiser.swift */,
+				A2F32EE4258856E70054C55A /* Tournament.swift */,
+				A2F32EE7258858830054C55A /* TournamentSerialiser.swift */,
 				A2AEDD4C257BDE6E0074CA11 /* User.swift */,
 				A24A2330257DC1AA0063FE87 /* UserSerialiser.swift */,
 				A278D31925858A52008D22D1 /* UserTestingSerialiser.swift */,
@@ -569,6 +575,7 @@
 				A24A2331257DC1AA0063FE87 /* UserSerialiser.swift in Sources */,
 				A2A5549D25780BDD006D3B3E /* BuildInfoController.swift in Sources */,
 				A2AEDD50257BE0540074CA11 /* Team.swift in Sources */,
+				A2F32EE8258858830054C55A /* TournamentSerialiser.swift in Sources */,
 				6874044D1CB1AB4400BD2632 /* AppDelegate.swift in Sources */,
 				A288D20025844F55002AFB51 /* ScrollerCell.swift in Sources */,
 				A2AEDD53257BE61E0074CA11 /* Challenge.swift in Sources */,
@@ -576,6 +583,7 @@
 				A20700002581C2C9004E70A6 /* TeamController.swift in Sources */,
 				A2B1F7612458EC8900CB20AF /* ShadowButton.swift in Sources */,
 				A2A5549A25780BCB006D3B3E /* Builder.swift in Sources */,
+				A2F32EE5258856E70054C55A /* Tournament.swift in Sources */,
 				687404481CB1AB3400BD2632 /* MainController.swift in Sources */,
 				A278D3252585A19C008D22D1 /* GenericTestingSerialiser.swift in Sources */,
 				A2DA693324D74929000CD116 /* AlertKit.swift in Sources */,

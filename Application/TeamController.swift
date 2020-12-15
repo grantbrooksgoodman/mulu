@@ -65,6 +65,18 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
         { user.setDSAssociatedTeams(); return }
         
         titleLabel.text = user.DSAssociatedTeams![0].name.uppercased()
+        
+        if let teams = user.DSAssociatedTeams,
+           let tournaments = teams[0].associatedTournaments
+        {
+            teams[0].getRank(in: tournaments[0]) { (returnedRank, errorDescriptor) in
+                if let rank = returnedRank
+                {
+                    print("rank \(rank)")
+                }
+                else { report(errorDescriptor!, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+            }
+        }
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -229,13 +241,13 @@ extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
         {
             roundCorners(forViews: [scrollerCell], withCornerType: 0)
             
-            scrollerCell.subviews[0].backgroundColor = UIColor(hex: 0x353635)
-            scrollerCell.subviews[0].alpha = 0.79
+            //            scrollerCell.subviews[0].backgroundColor = UIColor(hex: 0x353635)
+            //            scrollerCell.subviews[0].alpha = 0.79
             roundCorners(forViews: [scrollerCell.subviews[0]], withCornerType: 4)
             
             if let streakLabel = scrollerCell.subviews[0].subview(aTagFor("streakLabel"))
             {
-                streakLabel.backgroundColor = UIColor(hex: 0x353635)
+                //streakLabel.backgroundColor = UIColor(hex: 0x353635)
                 roundCorners(forViews: [streakLabel], withCornerType: 3)
             }
         }

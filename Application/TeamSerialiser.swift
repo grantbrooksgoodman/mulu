@@ -18,6 +18,15 @@ class TeamSerialiser
     
     /* Public Functions */
     
+    /**
+     Adds an array of completed **Challenges** to a **Team** on the server.
+     
+     - Parameter withBundle: The completed **Challenges** to add to or populate this **Team** with.
+     - Parameter toTeam: The identifier of the **Team** to add these **Challenges** to.
+     - Parameter overwrite: A Boolean describing whether to add these **Challenges** to the **Team** with or without overwriting the previous data.
+     
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     */
     func addCompletedChallenges(_ withBundle: [(Challenge, [(User, Date)])], toTeam: String, overwrite: Bool, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
         let serialisedChallenges = serialiseCompletedChallenges(withBundle)
@@ -37,6 +46,14 @@ class TeamSerialiser
         }
     }
     
+    /**
+     Adds an array of **Users** to a **Team**.
+     
+     - Parameter users: The **Users** to add to this **Team**.
+     - Parameter toTeam: The **Team** to add these **Users** to.
+     
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     */
     func addUsers(_ users: [User], toTeam: Team, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
         let group = DispatchGroup()
@@ -75,29 +92,155 @@ class TeamSerialiser
         }
     }
     
-    func serialiseCompletedChallenges(_ with: [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]) -> [String:[String]]
+    func addTeams(_ withIdentifiers: [String], toTournament: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
-        var dataBundle: [String:[String]] = [:]
+        let group = DispatchGroup()
         
-        for bundle in with
+        for identifier in withIdentifiers
         {
-            //["challengeId":["userId – dateString"]]
-            var serialisedMetadata: [String] = []
+            group.enter()
             
-            for datum in bundle.metadata
-            {
-                let metadataString = "\(datum.user.associatedIdentifier!) – \(secondaryDateFormatter.string(from: datum.dateCompleted))"
-                serialisedMetadata.append(metadataString)
+            addTeam(identifier, toTournament: toTournament) { (errorDescriptor) in
+                if let error = errorDescriptor
+                {
+                    group.leave()
+                    
+                    completion(error)
+                }
             }
-            
-            dataBundle["\(bundle.challenge.associatedIdentifier!)"] = serialisedMetadata
         }
         
-        return dataBundle
+        group.notify(queue: .main) {
+            completion(nil)
+        }
     }
     
+    /**
+     Adds a **Team** to a **Tournament.**
+     
+     - Parameter withIdentifier: The identifier of the **Team** to add to this **Tournament.**
+     - Parameter toTournament: The identifier of the **Tournament** to add this **Team** to.
+     
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     */
+    func addTeam(_ withIdentifier: String, toTournament: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        let group = DispatchGroup()
+        
+        group.enter()
+        
+        var newAssociatedTournaments: [String]?
+        var newTeamIdentifiers: [String]?
+        
+        Database.database().reference().child("allTeams").child(withIdentifier).observeSingleEvent(of: .value, with: { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let asDataBundle =                 returnedSnapshotAsDictionary as? [String:Any]
+            {
+                var mutableDataBundle = asDataBundle
+                mutableDataBundle["associatedIdentifier"] = withIdentifier
+                
+                guard self.validateTeamMetadata(mutableDataBundle) == true else
+                { completion("Improperly formatted metadata."); return }
+                
+                newAssociatedTournaments = (mutableDataBundle["associatedTournaments"] as! [String])
+                
+                newAssociatedTournaments = newAssociatedTournaments!.filter({$0 != "!"})
+                newAssociatedTournaments!.append(toTournament)
+                
+                group.leave()
+            }
+        })
+        { (returnedError) in
+            
+            completion("Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
+        }
+        
+        group.notify(queue: .main) {
+            guard newAssociatedTournaments != nil else
+            { completion("Couldn't get new associated Tournaments."); return }
+            
+            group.enter()
+            
+            Database.database().reference().child("allTournaments").child(toTournament).observeSingleEvent(of: .value, with: { (returnedSnapshot) in
+                if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+                   let asDataBundle =                 returnedSnapshotAsDictionary as? [String:Any]
+                {
+                    guard var teamIdentifiers = asDataBundle["teamIdentifiers"] as? [String] else
+                    { completion("This Tournament has corrupted «teamIdentifiers»."); return }
+                    
+                    teamIdentifiers = teamIdentifiers.filter({$0 != "!"})
+                    
+                    teamIdentifiers.append(withIdentifier)
+                    newTeamIdentifiers = teamIdentifiers
+                    
+                    group.leave()
+                }
+            })
+            { (returnedError) in
+                
+                completion("Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
+            }
+            
+            group.notify(queue: .main) {
+                guard let newAssociatedTournaments = newAssociatedTournaments else
+                { completion("Couldn't get new associated Tournaments."); return }
+                
+                guard let newTeamIdentifiers = newTeamIdentifiers else
+                { completion("Couldn't get new associated Teams."); return }
+                
+                guard newAssociatedTournaments.unique() == newAssociatedTournaments && newTeamIdentifiers.unique() == newTeamIdentifiers else
+                { completion("This Team is already participating in that Tournament."); return }
+                
+                group.enter()
+                
+                GenericSerialiser().updateValue(onKey: "/allTeams/\(withIdentifier)", withData: ["associatedTournaments": newAssociatedTournaments]) { (returnedError) in
+                    if let error = returnedError
+                    {
+                        group.leave()
+                        
+                        completion(errorInformation(forError: (error as NSError)))
+                    }
+                    else
+                    {
+                        GenericSerialiser().updateValue(onKey: "/allTournaments/\(toTournament)", withData: ["teamIdentifiers": newTeamIdentifiers]) { (returnedError) in
+                            if let error = returnedError
+                            {
+                                group.leave()
+                                
+                                completion(errorInformation(forError: (error as NSError)))
+                            }
+                            else
+                            {
+                                report("Successfully added Team to Tournament.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                                
+                                group.leave()
+                                
+                                completion(nil)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     Adds a **User** to a **Team**.
+     
+     - Parameter withIdentifier: The identifier of the **User** to add to this **Team**.
+     - Parameter toTeam: The identifier of the **Team** to add this **User** to.
+     
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     */
     func addUser(_ withIdentifier: String, toTeam: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
+        let group = DispatchGroup()
+        
+        group.enter()
+        
+        var newUserList: [String]?
+        var newAssociatedTeams: [String]?
+        
         Database.database().reference().child("allTeams").child(toTeam).observeSingleEvent(of: .value, with: { (returnedSnapshot) in
             if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
                let asDataBundle =                 returnedSnapshotAsDictionary as? [String:Any]
@@ -108,37 +251,81 @@ class TeamSerialiser
                 guard self.validateTeamMetadata(mutableDataBundle) == true else
                 { completion("Improperly formatted metadata."); return }
                 
-                var newUserList = mutableDataBundle["participantIdentifiers"] as! [String]
-                newUserList.append(withIdentifier)
+                newUserList = (mutableDataBundle["participantIdentifiers"] as! [String])
+                newUserList!.append(withIdentifier)
+                
+                group.leave()
+            }
+        })
+        { (returnedError) in
+            
+            completion("Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
+        }
+        
+        group.notify(queue: .main) {
+            guard newUserList != nil else
+            { completion("Couldn't get new User list."); return }
+            
+            group.enter()
+            
+            Database.database().reference().child("allUsers").child(withIdentifier).observeSingleEvent(of: .value, with: { (returnedSnapshot) in
+                if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+                   let asDataBundle =                 returnedSnapshotAsDictionary as? [String:Any]
+                {
+                    guard var associatedTeams = asDataBundle["associatedTeams"] as? [String] else
+                    { completion("This user has corrupted «associatedTeams»."); return }
+                    
+                    associatedTeams.append(toTeam)
+                    newAssociatedTeams = associatedTeams
+                    
+                    group.leave()
+                }
+            })
+            { (returnedError) in
+                
+                completion("Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
+            }
+            
+            group.notify(queue: .main) {
+                guard let newUserList = newUserList else
+                { completion("Couldn't get new User list."); return }
+                
+                guard let newAssociatedTeams = newAssociatedTeams else
+                { completion("Couldn't get new associated Teams."); return }
+                
+                guard newUserList.unique() == newUserList && newAssociatedTeams.unique() == newAssociatedTeams else
+                { completion("This User is already on that Team."); return }
+                
+                group.enter()
                 
                 GenericSerialiser().updateValue(onKey: "/allTeams/\(toTeam)", withData: ["participantIdentifiers": newUserList]) { (returnedError) in
                     if let error = returnedError
                     {
+                        group.leave()
+                        
                         completion(errorInformation(forError: (error as NSError)))
                     }
                     else
                     {
-                        GenericSerialiser().updateValue(onKey: "/allUsers/\(withIdentifier)", withData: ["associatedTeams": toTeam]) { (returnedError) in
+                        GenericSerialiser().updateValue(onKey: "/allUsers/\(withIdentifier)", withData: ["associatedTeams": newAssociatedTeams]) { (returnedError) in
                             if let error = returnedError
                             {
+                                group.leave()
+                                
                                 completion(errorInformation(forError: (error as NSError)))
                             }
                             else
                             {
                                 report("Successfully added User to Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
                                 
+                                group.leave()
+                                
                                 completion(nil)
                             }
                         }
                     }
                 }
-                
             }
-            else { completion("No Team exists with the identifier \"\(toTeam)\".") }
-        })
-        { (returnedError) in
-            
-            completion("Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
         }
     }
     
@@ -154,6 +341,7 @@ class TeamSerialiser
     {
         var dataBundle: [String:Any] = [:]
         
+        dataBundle["associatedTournaments"] = ["!"]
         dataBundle["completedChallenges"] = ["!":["!"]]
         dataBundle["name"] = name
         dataBundle["participantIdentifiers"] = participantIdentifiers
@@ -414,9 +602,16 @@ class TeamSerialiser
         { completion(nil, "Improperly formatted metadata."); return }
         
         let associatedIdentifier = dataBundle["associatedIdentifier"] as! String
+        let associatedTournaments = dataBundle["associatedTournaments"] as! [String]
         let completedChallenges = dataBundle["completedChallenges"] as! [String:[String]]
         let name = dataBundle["name"] as! String
         let participantIdentifiers = dataBundle["participantIdentifiers"] as! [String]
+        
+        var deSerialisedCompletedChallenges: [(Challenge, [(user: User, dateCompleted: Date)])]?
+        
+        let group = DispatchGroup()
+        
+        group.enter()
         
         if completedChallenges.keys.first != "!"
         {
@@ -425,18 +620,15 @@ class TeamSerialiser
                 {
                     if verboseFunctionExposure { print("failed to deserialise completed challenges") }
                     
+                    group.leave()
+                    
                     completion(nil, error)
                 }
                 else if let challenges = completedChallenges
                 {
-                    let deSerialisedTeam = Team(associatedIdentifier:   associatedIdentifier,
-                                                completedChallenges:    challenges,
-                                                name:                   name,
-                                                participantIdentifiers: participantIdentifiers)
+                    deSerialisedCompletedChallenges = challenges
                     
-                    if verboseFunctionExposure { print("deserialised completed challenges") }
-                    
-                    completion(deSerialisedTeam, nil)
+                    group.leave()
                 }
                 else
                 {
@@ -446,21 +638,91 @@ class TeamSerialiser
         }
         else
         {
-            let deSerialisedTeam = Team(associatedIdentifier:   associatedIdentifier,
-                                        completedChallenges:    nil,
-                                        name:                   name,
-                                        participantIdentifiers: participantIdentifiers)
+            deSerialisedCompletedChallenges = []
             
-            if verboseFunctionExposure { print("deserialised team") }
+            group.leave()
+        }
+        
+        group.notify(queue: .main) {
+            guard let completedChallenges = deSerialisedCompletedChallenges else
+            { completion(nil, "Couldn't get completed Challenges."); return }
             
-            completion(deSerialisedTeam, nil)
+            if associatedTournaments.first != "!"
+            {
+                group.enter()
+                
+                TournamentSerialiser().getTournaments(withIdentifiers: associatedTournaments) { (returnedTournaments, errorDescriptors) in
+                    if let tournaments = returnedTournaments
+                    {
+                        let deSerialisedTeam = Team(associatedIdentifier:   associatedIdentifier,
+                                                    associatedTournaments:  tournaments,
+                                                    completedChallenges:    completedChallenges,
+                                                    name:                   name,
+                                                    participantIdentifiers: participantIdentifiers)
+                        
+                        group.leave()
+                        
+                        completion(deSerialisedTeam, nil)
+                    }
+                    else
+                    {
+                        group.leave()
+                        
+                        completion(nil, errorDescriptors?.joined(separator: "\n"))
+                    }
+                }
+            }
+            else
+            {
+                let deSerialisedTeam = Team(associatedIdentifier:   associatedIdentifier,
+                                            associatedTournaments:  nil,
+                                            completedChallenges:    completedChallenges,
+                                            name:                   name,
+                                            participantIdentifiers: participantIdentifiers)
+                
+                completion(deSerialisedTeam, nil)
+            }
         }
     }
     
+    /**
+     Serialises an array of completed **Challenges** for the server.
+     
+     - Parameter with: The array of completed **Challenges** to serialise.
+     */
+    private func serialiseCompletedChallenges(_ with: [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]) -> [String:[String]]
+    {
+        var dataBundle: [String:[String]] = [:]
+        
+        for bundle in with
+        {
+            //["challengeId":["userId – dateString"]]
+            var serialisedMetadata: [String] = []
+            
+            for datum in bundle.metadata
+            {
+                let metadataString = "\(datum.user.associatedIdentifier!) – \(secondaryDateFormatter.string(from: datum.dateCompleted))"
+                serialisedMetadata.append(metadataString)
+            }
+            
+            dataBundle["\(bundle.challenge.associatedIdentifier!)"] = serialisedMetadata
+        }
+        
+        return dataBundle
+    }
+    
+    /**
+     Validates the contents of a serialised **Team**.
+     
+     - Parameter withDataBundle: The serialised **Team** whose structural integrity will be verified.
+     */
     private func validateTeamMetadata(_ withDataBundle: [String:Any]) -> Bool
     {
         guard withDataBundle["associatedIdentifier"] as? String != nil else
         { report("Malformed «associatedIdentifier».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
+        
+        guard withDataBundle["associatedTournaments"] as? [String] != nil else
+        { report("Malformed «associatedTournaments».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
         
         guard withDataBundle["completedChallenges"] as? [String:[String]] != nil else
         { report("Malformed «completedChallenges».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }

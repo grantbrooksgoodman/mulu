@@ -15,6 +15,14 @@ class GenericTestingSerialiser
     
     /* Public Functions */
     
+    /**
+     Creates a random **Team** on the server, with a number of **Users** and **Challenges** to go along with it.
+     
+     - Parameter numberOfUsers: The number of **Users** to populate the server with.
+     - Parameter numberOfChallenges: The number of **Challenges** to populate the server with.
+     
+     - Parameter completion: Returns with `status` as a string and exit `code` as an integer, where **0 = success** and **1 = failure.** *NOT mutually exclusive.*
+     */
     func createRandomDatabase(numberOfUsers: Int, numberOfChallenges: Int, completion: @escaping(_ code: Int, _ status: String) -> Void)
     {
         let dispatchGroup = DispatchGroup()
@@ -110,6 +118,9 @@ class GenericTestingSerialiser
         }
     }
     
+    /**
+     Deletes all data on the database.
+     */
     func trashDatabase()
     {
         GenericSerialiser().setValue(onKey: "/", withData: "NULL") { (returnedError) in
