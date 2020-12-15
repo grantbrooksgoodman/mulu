@@ -23,8 +23,16 @@ class GenericTestingSerialiser
      
      - Parameter completion: Returns with `status` as a string and exit `code` as an integer, where **0 = success** and **1 = failure.** *NOT mutually exclusive.*
      */
-    func createRandomDatabase(numberOfUsers: Int, numberOfChallenges: Int, completion: @escaping(_ code: Int, _ status: String) -> Void)
+    func createRandomDatabase(numberOfUsers: Int, numberOfChallenges: Int, numberOfTeams: Int, completion: @escaping(_ status: String?) -> Void)
     {
+        //at least 2 people per team
+        //so can't be an odd number < 5, can't be 2 Teams 1 User, 3 Users. Must be ≥4.
+        
+        if numberOfTeams > 1 && numberOfUsers < 4
+        {
+            completion("Can't make Teams from \(numberOfUsers) user\(numberOfUsers == 1 ? "." : "s.")")
+        }
+        
         let dispatchGroup = DispatchGroup()
         
         if verboseFunctionExposure { print("entering createRandomChallenges() group") }
@@ -35,7 +43,7 @@ class GenericTestingSerialiser
         ChallengeTestingSerialiser().createRandomChallenges(amountToCreate: numberOfChallenges) { (returnedChallenges, errorDescriptor) in
             if let error = errorDescriptor
             {
-                completion(1, error)
+                completion(error)
                 
                 dispatchGroup.leave()
             }
@@ -52,7 +60,7 @@ class GenericTestingSerialiser
             if verboseFunctionExposure { print("createRandomChallenges() completed") }
             
             guard let randomChallenges = randomChallenges else
-            { completion(1, "Couldn't get random challenges."); return }
+            { completion("Couldn't get random challenges."); return }
             
             if verboseFunctionExposure { print("entering createRandomUsers() group") }
             dispatchGroup.enter()
@@ -62,7 +70,7 @@ class GenericTestingSerialiser
             UserTestingSerialiser().createRandomUsers(amountToCreate: numberOfUsers) { (returnedUsers, errorDescriptor) in
                 if let error = errorDescriptor
                 {
-                    completion(1, error)
+                    completion(error)
                     
                     if verboseFunctionExposure { print("leaving createRandomUsers() group") }
                     dispatchGroup.leave()
@@ -76,43 +84,97 @@ class GenericTestingSerialiser
                 }
             }
             
-            var firstTeamIdentifier: String?
-            
             dispatchGroup.notify(queue: .main) {
                 if verboseFunctionExposure { print("createRandomUsers() completed") }
                 
                 guard let randomUsers = randomUsers else
-                { completion(1, "Couldn't get random Users."); return }
+                { completion("Couldn't get random Users."); return }
                 
                 let completedChallenges = ChallengeTestingSerialiser().randomCompletedChallenges(fromChallenges: randomChallenges, withUsers: randomUsers)
                 
-                if verboseFunctionExposure { print("entering createRandomTeam() group") }
+                if verboseFunctionExposure { print("entering createRandomTeams() group") }
                 dispatchGroup.enter()
                 
-                TeamTestingSerialiser().createRandomTeam(with: randomUsers, completedChallenges: completedChallenges) { (returnedIdentier, errorDescriptor) in
+                var userArray2D: [[User]] = []
+                var challengeArray2D: [[(Challenge, [(User, Date)])]] = []
+                
+                for _ in 0..<numberOfTeams
+                {
+                    let halfwayUsersIndex = (randomUsers.count - 1) / 2
+                    let halfwayChallengesIndex = (completedChallenges.count - 1) / 2
+                    
+                    userArray2D.append(Array(randomUsers.shuffled()[0...halfwayUsersIndex]))
+                    challengeArray2D.append(Array(completedChallenges.shuffled()[0...halfwayChallengesIndex]))
+                }
+                
+                var teamIdentifiers: [String]?
+                
+                TeamTestingSerialiser().createRandomTeams(with: userArray2D, completedChallenges: challengeArray2D, amount: numberOfTeams - 1) { (returnedIdentifiers, errorDescriptor) in
                     if let error = errorDescriptor
                     {
-                        completion(1, error)
+                        completion(error)
                         
-                        if verboseFunctionExposure { print("leaving createRandomTeam() group") }
+                        if verboseFunctionExposure { print("leaving createRandomTeams() group") }
                         dispatchGroup.leave()
                     }
-                    else if let identifier = returnedIdentier
+                    else if let identifiers = returnedIdentifiers
                     {
-                        firstTeamIdentifier = identifier
+                        teamIdentifiers = identifiers
                         
-                        if verboseFunctionExposure { print("leaving createRandomTeam() group") }
+                        if verboseFunctionExposure { print("leaving createRandomTeams() group") }
                         dispatchGroup.leave()
                     }
                 }
                 
+                TeamTestingSerialiser().createRandomTeam(with: randomUsers, completedChallenges: completedChallenges) { (returnedIdentier, errorDescriptor) in
+                    
+                }
+                
                 dispatchGroup.notify(queue: .main) {
-                    if verboseFunctionExposure { print("createRandomTeam() completed") }
+                    if verboseFunctionExposure { print("createRandomTeams() completed") }
                     
-                    guard let firstTeamIdentifier = firstTeamIdentifier else
-                    { completion(1, "Couldn't get first Team identifier."); return }
+                    guard let teamIdentifiers = teamIdentifiers else
+                    { completion("Couldn't get Team identifiers."); return }
                     
-                    completion(0, firstTeamIdentifier)
+                    let universityNames = ["Princeton", "Harvard", "Columbia", "MIT", "Yale", "Stanford", "UChicago", "UPenn", "Caltech", "Johns Hopkins", "Northwestern", "Duke", "Dartmouth", "Brown", "Vanderbilt", "Rice", "WashU St. Louis", "Cornell", "Notre Dame", "UCLA", "Emory", "UC Berkeley", "Georgetown", "UMich", "USC", "UVA", "UNC Chapel Hill", "Wake Forest", "NYU", "Tufts", "UCSB"]
+                    
+                    let randomTournamentCount = Int().random(min: 1, max: numberOfTeams)
+                    
+                    let halfwayTeamsIndex = (teamIdentifiers.count - 1) / 2
+                    
+                    var errors: [String] = []
+                    
+                    for _ in 0...randomTournamentCount
+                    {
+                        dispatchGroup.enter()
+                        
+                        let randomName = "\(universityNames.randomElement()!) Tournament (\(Int().random(min: 100, max: 999)))"
+                        
+                        let randomStartDate = Date().addingTimeInterval(TimeInterval(Int("-\(Int().random(min: 86400, max: 604800))")!))
+                        let randomEndDate = Date().addingTimeInterval(TimeInterval(Int().random(min: 604800, max: 1209600)))
+                        
+                        TournamentSerialiser().createTournament(name: randomName, startDate: randomStartDate, endDate: randomEndDate, teamIdentifiers: Array(teamIdentifiers.shuffled()[0...halfwayTeamsIndex])) { (returnedIdentifier, errorDescriptor) in
+                            if let identifier = returnedIdentifier
+                            {
+                                report("\(randomName): \(identifier)", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                                
+                                dispatchGroup.leave()
+                            }
+                            else if let error = errorDescriptor
+                            {
+                                if error != "This Team is already participating in that Tournament."
+                                {
+                                    errors.append(error)
+                                    
+                                    dispatchGroup.leave()
+                                }
+                            }
+                        }
+                    }
+                    
+                    dispatchGroup.notify(queue: .main) {
+                        completion(nil)
+                    }
                 }
             }
         }

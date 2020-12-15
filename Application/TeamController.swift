@@ -56,6 +56,23 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
         
         view.setBackground(withImageNamed: "Gradient.png")
         
+        //        GenericTestingSerialiser().trashDatabase()
+        //
+        //        GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 10, numberOfChallenges: 8, numberOfTeams: 5) { (errorDescriptor) in
+        //            if let error = errorDescriptor
+        //            {
+        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        //            }
+        //            else { report("Successfully created database.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+        //        }
+        
+        //        TeamSerialiser().addTeam("-MOca9L7zswJ8XgThXhz", toTournament: "-MOca9O0tTbaLZLf2v6x") { (errorDescriptor) in
+        //            if let error = errorDescriptor
+        //            {
+        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        //            }
+        //        }
+        
         guard currentUser != nil else
         { report("No current User!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
         
@@ -67,9 +84,10 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
         titleLabel.text = user.DSAssociatedTeams![0].name.uppercased()
         
         if let teams = user.DSAssociatedTeams,
-           let tournaments = teams[0].associatedTournaments
+           let havingAssociatedTournaments = teams.first(where: {$0.associatedTournaments != nil}),
+           let tournaments = havingAssociatedTournaments.associatedTournaments
         {
-            teams[0].getRank(in: tournaments[0]) { (returnedRank, errorDescriptor) in
+            havingAssociatedTournaments.getRank(in: tournaments[0]) { (returnedRank, errorDescriptor) in
                 if let rank = returnedRank
                 {
                     print("rank \(rank)")

@@ -94,27 +94,25 @@ class TeamSerialiser
     
     func addTeams(_ withIdentifiers: [String], toTournament: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
-        let group = DispatchGroup()
-        
-        for identifier in withIdentifiers
+        for (index, identifier) in withIdentifiers.enumerated()
         {
-            group.enter()
-            
             addTeam(identifier, toTournament: toTournament) { (errorDescriptor) in
                 if let error = errorDescriptor
                 {
-                    group.leave()
-                    
                     completion(error)
+                }
+                else
+                {
+                    if index == withIdentifiers.count - 1
+                    {
+                        completion(nil)
+                    }
                 }
             }
         }
-        
-        group.notify(queue: .main) {
-            completion(nil)
-        }
     }
     
+    #warning("Sometimes «associatedTournaments» is not correctly set.")
     /**
      Adds a **Team** to a **Tournament.**
      
@@ -182,22 +180,18 @@ class TeamSerialiser
             }
             
             group.notify(queue: .main) {
-                guard let newAssociatedTournaments = newAssociatedTournaments else
+                guard let newAssociatedTournaments = newAssociatedTournaments?.unique() else
                 { completion("Couldn't get new associated Tournaments."); return }
                 
-                guard let newTeamIdentifiers = newTeamIdentifiers else
+                guard let newTeamIdentifiers = newTeamIdentifiers?.unique() else
                 { completion("Couldn't get new associated Teams."); return }
                 
-                guard newAssociatedTournaments.unique() == newAssociatedTournaments && newTeamIdentifiers.unique() == newTeamIdentifiers else
-                { completion("This Team is already participating in that Tournament."); return }
-                
-                group.enter()
+                //                guard newAssociatedTournaments.unique() == newAssociatedTournaments && newTeamIdentifiers.unique() == newTeamIdentifiers else
+                //                { completion("This Team is already participating in that Tournament."); return }
                 
                 GenericSerialiser().updateValue(onKey: "/allTeams/\(withIdentifier)", withData: ["associatedTournaments": newAssociatedTournaments]) { (returnedError) in
                     if let error = returnedError
                     {
-                        group.leave()
-                        
                         completion(errorInformation(forError: (error as NSError)))
                     }
                     else
@@ -205,16 +199,10 @@ class TeamSerialiser
                         GenericSerialiser().updateValue(onKey: "/allTournaments/\(toTournament)", withData: ["teamIdentifiers": newTeamIdentifiers]) { (returnedError) in
                             if let error = returnedError
                             {
-                                group.leave()
-                                
                                 completion(errorInformation(forError: (error as NSError)))
                             }
                             else
                             {
-                                report("Successfully added Team to Tournament.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                                
-                                group.leave()
-                                
                                 completion(nil)
                             }
                         }
