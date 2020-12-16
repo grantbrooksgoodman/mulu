@@ -115,17 +115,6 @@ class User
         }
     }
     
-    //    func getDSAssociatedTeams() -> [Team]?
-    //    {
-    //        if let DSAssociatedTeams = DSAssociatedTeams
-    //        {
-    //            return DSAssociatedTeams
-    //        }
-    //        else { report("«DSAssociatedTeams» has not been set. Run setDSAssociatedTeams().", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
-    //
-    //        return nil
-    //    }
-    
     /**
      Sets the *DSAssociatedTeams* value on the **User** without closures. *Dumps errors to console.*
      */
@@ -146,7 +135,7 @@ class User
                 {
                     self.DSAssociatedTeams = teams
                     
-                    report("Successfully set DSAssociatedTeams.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    report("Successfully set «DSAssociatedTeams».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
                 }
             }
         }

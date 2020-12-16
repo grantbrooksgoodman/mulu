@@ -40,6 +40,24 @@
 		A207FFFB2581B714004E70A6 /* Montserrat-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A207FFE92581B714004E70A6 /* Montserrat-Italic.ttf */; };
 		A207FFFC2581B714004E70A6 /* Montserrat-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A207FFEA2581B714004E70A6 /* Montserrat-SemiBoldItalic.ttf */; };
 		A207FFFD2581B714004E70A6 /* Montserrat-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A207FFEB2581B714004E70A6 /* Montserrat-ExtraBoldItalic.ttf */; };
+		A22169D2258A611D001C036D /* Gotham-XLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C0258A611D001C036D /* Gotham-XLight.otf */; };
+		A22169D3258A611D001C036D /* Gotham-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C1258A611D001C036D /* Gotham-Thin.otf */; };
+		A22169D4258A611D001C036D /* Gotham-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C2258A611D001C036D /* Gotham-Black.otf */; };
+		A22169D5258A611D001C036D /* Gotham-XLightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C3258A611D001C036D /* Gotham-XLightItalic.otf */; };
+		A22169D6258A611D001C036D /* GothamLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C4258A611D001C036D /* GothamLight.ttf */; };
+		A22169D7258A611D001C036D /* Gotham-UltraItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C5258A611D001C036D /* Gotham-UltraItalic.otf */; };
+		A22169D8258A611D001C036D /* Gotham-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C6258A611D001C036D /* Gotham-Bold.otf */; };
+		A22169D9258A611D001C036D /* GothamMediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C7258A611D001C036D /* GothamMediumItalic.ttf */; };
+		A22169DA258A611D001C036D /* GothamBookItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C8258A611D001C036D /* GothamBookItalic.ttf */; };
+		A22169DB258A611D001C036D /* Gotham-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C9258A611D001C036D /* Gotham-ThinItalic.otf */; };
+		A22169DC258A611D001C036D /* GothamMedium_1.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A22169CA258A611D001C036D /* GothamMedium_1.ttf */; };
+		A22169DD258A611D001C036D /* Gotham-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169CB258A611D001C036D /* Gotham-Light.otf */; };
+		A22169DE258A611D001C036D /* GothamBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A22169CC258A611D001C036D /* GothamBold.ttf */; };
+		A22169DF258A611D001C036D /* Gotham-BookItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169CD258A611D001C036D /* Gotham-BookItalic.otf */; };
+		A22169E0258A611D001C036D /* GothamBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A22169CE258A611D001C036D /* GothamBoldItalic.ttf */; };
+		A22169E1258A611D001C036D /* GothamBook.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A22169CF258A611D001C036D /* GothamBook.ttf */; };
+		A22169E2258A611D001C036D /* GothamLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A22169D0258A611D001C036D /* GothamLightItalic.ttf */; };
+		A22169E3258A611D001C036D /* GothamMedium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A22169D1258A611D001C036D /* GothamMedium.ttf */; };
 		A24A232E257DB9900063FE87 /* TeamSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24A232D257DB9900063FE87 /* TeamSerialiser.swift */; };
 		A24A2331257DC1AA0063FE87 /* UserSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24A2330257DC1AA0063FE87 /* UserSerialiser.swift */; };
 		A26961F522376F4600812759 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A26961F322376F4600812759 /* Main.storyboard */; };
@@ -117,6 +135,24 @@
 		A207FFEA2581B714004E70A6 /* Montserrat-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		A207FFEB2581B714004E70A6 /* Montserrat-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		A207FFFF2581C2C9004E70A6 /* TeamController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamController.swift; sourceTree = "<group>"; };
+		A22169C0258A611D001C036D /* Gotham-XLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-XLight.otf"; sourceTree = "<group>"; };
+		A22169C1258A611D001C036D /* Gotham-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Thin.otf"; sourceTree = "<group>"; };
+		A22169C2258A611D001C036D /* Gotham-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Black.otf"; sourceTree = "<group>"; };
+		A22169C3258A611D001C036D /* Gotham-XLightItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-XLightItalic.otf"; sourceTree = "<group>"; };
+		A22169C4258A611D001C036D /* GothamLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GothamLight.ttf; sourceTree = "<group>"; };
+		A22169C5258A611D001C036D /* Gotham-UltraItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-UltraItalic.otf"; sourceTree = "<group>"; };
+		A22169C6258A611D001C036D /* Gotham-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Bold.otf"; sourceTree = "<group>"; };
+		A22169C7258A611D001C036D /* GothamMediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GothamMediumItalic.ttf; sourceTree = "<group>"; };
+		A22169C8258A611D001C036D /* GothamBookItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GothamBookItalic.ttf; sourceTree = "<group>"; };
+		A22169C9258A611D001C036D /* Gotham-ThinItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-ThinItalic.otf"; sourceTree = "<group>"; };
+		A22169CA258A611D001C036D /* GothamMedium_1.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GothamMedium_1.ttf; sourceTree = "<group>"; };
+		A22169CB258A611D001C036D /* Gotham-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Light.otf"; sourceTree = "<group>"; };
+		A22169CC258A611D001C036D /* GothamBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GothamBold.ttf; sourceTree = "<group>"; };
+		A22169CD258A611D001C036D /* Gotham-BookItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-BookItalic.otf"; sourceTree = "<group>"; };
+		A22169CE258A611D001C036D /* GothamBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GothamBoldItalic.ttf; sourceTree = "<group>"; };
+		A22169CF258A611D001C036D /* GothamBook.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GothamBook.ttf; sourceTree = "<group>"; };
+		A22169D0258A611D001C036D /* GothamLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GothamLightItalic.ttf; sourceTree = "<group>"; };
+		A22169D1258A611D001C036D /* GothamMedium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GothamMedium.ttf; sourceTree = "<group>"; };
 		A24A232D257DB9900063FE87 /* TeamSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamSerialiser.swift; sourceTree = "<group>"; };
 		A24A2330257DC1AA0063FE87 /* UserSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSerialiser.swift; sourceTree = "<group>"; };
 		A26961F422376F4600812759 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -329,6 +365,31 @@
 			path = Montserrat;
 			sourceTree = "<group>";
 		};
+		A22169BF258A611D001C036D /* Gotham */ = {
+			isa = PBXGroup;
+			children = (
+				A22169C0258A611D001C036D /* Gotham-XLight.otf */,
+				A22169C1258A611D001C036D /* Gotham-Thin.otf */,
+				A22169C2258A611D001C036D /* Gotham-Black.otf */,
+				A22169C3258A611D001C036D /* Gotham-XLightItalic.otf */,
+				A22169C4258A611D001C036D /* GothamLight.ttf */,
+				A22169C5258A611D001C036D /* Gotham-UltraItalic.otf */,
+				A22169C6258A611D001C036D /* Gotham-Bold.otf */,
+				A22169C7258A611D001C036D /* GothamMediumItalic.ttf */,
+				A22169C8258A611D001C036D /* GothamBookItalic.ttf */,
+				A22169C9258A611D001C036D /* Gotham-ThinItalic.otf */,
+				A22169CA258A611D001C036D /* GothamMedium_1.ttf */,
+				A22169CB258A611D001C036D /* Gotham-Light.otf */,
+				A22169CC258A611D001C036D /* GothamBold.ttf */,
+				A22169CD258A611D001C036D /* Gotham-BookItalic.otf */,
+				A22169CE258A611D001C036D /* GothamBoldItalic.ttf */,
+				A22169CF258A611D001C036D /* GothamBook.ttf */,
+				A22169D0258A611D001C036D /* GothamLightItalic.ttf */,
+				A22169D1258A611D001C036D /* GothamMedium.ttf */,
+			);
+			path = Gotham;
+			sourceTree = "<group>";
+		};
 		A23B4E2125781B0800A9750F /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
@@ -380,6 +441,7 @@
 		A2ECF96C24C9DA4400862AF0 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				A22169BF258A611D001C036D /* Gotham */,
 				A207FFD92581B714004E70A6 /* Montserrat */,
 				A2CA2CAC257977550012DB17 /* San Francisco */,
 			);
@@ -455,6 +517,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A207FFFC2581B714004E70A6 /* Montserrat-SemiBoldItalic.ttf in Resources */,
+				A22169D4258A611D001C036D /* Gotham-Black.otf in Resources */,
 				A207FFFA2581B714004E70A6 /* Montserrat-Regular.ttf in Resources */,
 				A207FFEE2581B714004E70A6 /* Montserrat-BoldItalic.ttf in Resources */,
 				A207FFF92581B714004E70A6 /* Montserrat-Black.ttf in Resources */,
@@ -466,29 +529,46 @@
 				A207FFF12581B714004E70A6 /* Montserrat-ExtraLight.ttf in Resources */,
 				68E589211DD6F6040028B703 /* NT (Black).png in Resources */,
 				A207FFF22581B714004E70A6 /* Montserrat-Thin.ttf in Resources */,
+				A22169D5258A611D001C036D /* Gotham-XLightItalic.otf in Resources */,
 				A207FFFD2581B714004E70A6 /* Montserrat-ExtraBoldItalic.ttf in Resources */,
+				A22169E0258A611D001C036D /* GothamBoldItalic.ttf in Resources */,
 				A20700042581C3E9004E70A6 /* Gradient.png in Resources */,
 				A2CA2D16257984BF0012DB17 /* San Francisco (Light).otf in Resources */,
+				A22169DA258A611D001C036D /* GothamBookItalic.ttf in Resources */,
 				A2CA2D10257984BF0012DB17 /* San Francisco (Light Italic).otf in Resources */,
+				A22169D7258A611D001C036D /* Gotham-UltraItalic.otf in Resources */,
 				A207FFF42581B714004E70A6 /* Montserrat-MediumItalic.ttf in Resources */,
+				A22169D8258A611D001C036D /* Gotham-Bold.otf in Resources */,
 				A2CA2D17257984BF0012DB17 /* San Francisco (Bold).otf in Resources */,
 				68D29A111DD79C7D00BFF4D5 /* Chord.mp3 in Resources */,
 				A207FFF02581B714004E70A6 /* Montserrat-ThinItalic.ttf in Resources */,
 				A2CA2D13257984BF0012DB17 /* San Francisco (Heavy Italic).otf in Resources */,
+				A22169E3258A611D001C036D /* GothamMedium.ttf in Resources */,
 				68D29A101DD79C7D00BFF4D5 /* Chime.mp3 in Resources */,
 				A207FFF82581B714004E70A6 /* Montserrat-ExtraBold.ttf in Resources */,
 				A2CA2D0D257984BF0012DB17 /* San Francisco (Bold Italic).otf in Resources */,
+				A22169DB258A611D001C036D /* Gotham-ThinItalic.otf in Resources */,
+				A22169E2258A611D001C036D /* GothamLightItalic.ttf in Resources */,
+				A22169E1258A611D001C036D /* GothamBook.ttf in Resources */,
+				A22169D9258A611D001C036D /* GothamMediumItalic.ttf in Resources */,
+				A22169DF258A611D001C036D /* Gotham-BookItalic.otf in Resources */,
 				A2CA2D15257984BF0012DB17 /* San Francisco (Medium Italic).otf in Resources */,
 				68E589221DD6F6040028B703 /* NT (White).png in Resources */,
 				A207FFEF2581B714004E70A6 /* Montserrat-Light.ttf in Resources */,
 				A2CA2D11257984BF0012DB17 /* San Francisco (Medium).otf in Resources */,
+				A22169DC258A611D001C036D /* GothamMedium_1.ttf in Resources */,
 				6874044E1CB1AB4400BD2632 /* Assets.xcassets in Resources */,
+				A22169D2258A611D001C036D /* Gotham-XLight.otf in Resources */,
+				A22169DD258A611D001C036D /* Gotham-Light.otf in Resources */,
 				A2CA2D0E257984BF0012DB17 /* San Francisco (Regular).otf in Resources */,
 				687404511CB1AC0C00BD2632 /* Launch Screen.storyboard in Resources */,
 				A2CA2D12257984BF0012DB17 /* San Francisco (Regular Italic).otf in Resources */,
 				A207FFF32581B714004E70A6 /* Montserrat-Bold.ttf in Resources */,
+				A22169DE258A611D001C036D /* GothamBold.ttf in Resources */,
+				A22169D3258A611D001C036D /* Gotham-Thin.otf in Resources */,
 				A28E99B7257AA47D00D8A4F7 /* GoogleService-Info.plist in Resources */,
 				A2CA2D0F257984BF0012DB17 /* San Francisco (Semibold Italic).otf in Resources */,
+				A22169D6258A611D001C036D /* GothamLight.ttf in Resources */,
 				A207FFED2581B714004E70A6 /* Montserrat-Medium.ttf in Resources */,
 				A2CA2D0C257984BF0012DB17 /* San Francisco (Heavy).otf in Resources */,
 				A207FFF62581B714004E70A6 /* Montserrat-SemiBold.ttf in Resources */,

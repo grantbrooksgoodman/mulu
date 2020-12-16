@@ -75,7 +75,8 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
         
         if let user = currentUser
         {
-            welcomeLabel.text = "WELCOME BACK \(user.firstName!)!"
+            welcomeLabel.text = "WELCOME BACK \(user.firstName!.uppercased())!"
+            welcomeLabel.font = UIFont(name: "Gotham-Black", size: 32) ?? UIFont.systemFont(ofSize: 12)
             
             if let completedChallenges = user.completedChallenges()
             {

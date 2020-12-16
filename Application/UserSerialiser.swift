@@ -173,6 +173,58 @@ class UserSerialiser
     }
     
     /**
+     Gets and deserialises multiple **User** objects from a given array of identifier strings.
+     
+     - Parameter withIdentifiers: The identifiers to query for.
+     
+     - Parameter completion: Returns an array of deserialised **User** objects if successful. If unsuccessful, an array of strings describing the error(s) encountered. *NOT mutually exclusive.*
+     */
+    func getUsers(withIdentifiers: [String], completion: @escaping(_ returnedUsers: [User]?, _ errorDescriptors: [String]?) -> Void)
+    {
+        var userArray: [User]! = []
+        var errorDescriptorArray: [String]! = []
+        
+        if withIdentifiers.count > 0
+        {
+            let dispatchGroup = DispatchGroup()
+            
+            for individualIdentifier in withIdentifiers
+            {
+                if verboseFunctionExposure { print("entered group") }
+                dispatchGroup.enter()
+                
+                getUser(withIdentifier: individualIdentifier) { (returnedUser, errorDescriptor) in
+                    if let user = returnedUser
+                    {
+                        userArray.append(user)
+                        
+                        if verboseFunctionExposure { print("left group") }
+                        dispatchGroup.leave()
+                    }
+                    else
+                    {
+                        errorDescriptorArray.append(errorDescriptor!)
+                        
+                        if verboseFunctionExposure { print("left group") }
+                        dispatchGroup.leave()
+                    }
+                }
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                if userArray.count + errorDescriptorArray.count == withIdentifiers.count
+                {
+                    completion(userArray.count == 0 ? nil : userArray, errorDescriptorArray.count == 0 ? nil : errorDescriptorArray)
+                }
+            }
+        }
+        else
+        {
+            completion(nil, ["No identifiers passed!"])
+        }
+    }
+    
+    /**
      Gets random **User** identifiers from the server.
      
      - Parameter amountToGet: An optional integer specifying the amount of random **User** identifiers to get. *Defaults to all.*
