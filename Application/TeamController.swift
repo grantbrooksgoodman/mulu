@@ -60,22 +60,22 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
         
         view.setBackground(withImageNamed: "Gradient.png")
         
-        //                GenericTestingSerialiser().trashDatabase()
+        //        GenericTestingSerialiser().trashDatabase()
         //
-        //                GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 10, numberOfChallenges: 10, numberOfTeams: 6) { (errorDescriptor) in
-        //                    if let error = errorDescriptor
-        //                    {
-        //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //                    }
-        //                    else { report("Successfully created database.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
-        //                }
-        
-        //        TeamSerialiser().addTeam("-MOgVb7GotNCpATLyt05", toTournament: "-MOgVbAkCt8BQpqdLM4Y") { (errorDescriptor) in
+        //        GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 5, numberOfChallenges: 8, numberOfTeams: 6) { (errorDescriptor) in
         //            if let error = errorDescriptor
         //            {
         //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
         //            }
+        //            else { report("Successfully created database.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
         //        }
+        
+        //                TeamSerialiser().addTeam("-MOgVb7GotNCpATLyt05", toTournament: "-MOgVbAkCt8BQpqdLM4Y") { (errorDescriptor) in
+        //                    if let error = errorDescriptor
+        //                    {
+        //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        //                    }
+        //                }
         
         guard currentUser != nil else
         { report("No current User!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
@@ -90,29 +90,29 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
         var rankString: String?
         
         if let teams = user.DSAssociatedTeams,
-           let havingAssociatedTournaments = teams.first(where: {$0.associatedTournaments != nil}),
-           let tournaments = havingAssociatedTournaments.associatedTournaments
+           let havingAssociatedTournament = teams.first(where: {$0.associatedTournament != nil}),
+           let tournament = havingAssociatedTournament.associatedTournament
         {
-            currentTournament = tournaments[0]
+            currentTournament = tournament
             
             currentTournament!.setDSTeams()
             
-            havingAssociatedTournaments.getRank(in: tournaments[0]) { (returnedRank, errorDescriptor) in
+            havingAssociatedTournament.getRank() { (returnedRank, errorDescriptor) in
                 if let rank = returnedRank
                 {
-                    rankString = "\(rank.ordinalValue.uppercased()) PLACE in \(tournaments[0].name!.uppercased())"
+                    rankString = "\(rank.ordinalValue.uppercased()) PLACE in \(tournament.name!.uppercased())"
                     
                     let mainStatAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-Bold", size: 18)!]
                     let otherStatAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBold", size: 14)!]
                     
                     let statisticString = NSMutableAttributedString(string: "\(rankString == nil ? "4TH PLACE, 12500 PTS" : rankString!)\n\n", attributes: mainStatAttributes)
                     
-                    havingAssociatedTournaments.deSerialiseParticipants { (returnedUsers, errorDescriptor) in
+                    havingAssociatedTournament.deSerialiseParticipants { (returnedUsers, errorDescriptor) in
                         if let users = returnedUsers
                         {
                             for user in users
                             {
-                                var points = havingAssociatedTournaments.accruedPoints(for: user.associatedIdentifier)
+                                var points = havingAssociatedTournament.accruedPoints(for: user.associatedIdentifier)
                                 
                                 points = points == -1 ? 0 : points
                                 

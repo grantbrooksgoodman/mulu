@@ -41,7 +41,7 @@ class TournamentSerialiser
         dataBundle["name"] = name
         dataBundle["startDate"] = secondaryDateFormatter.string(from: startDate)
         dataBundle["endDate"] = secondaryDateFormatter.string(from: endDate)
-        dataBundle["teamIdentifiers"] = teamIdentifiers
+        dataBundle["teamIdentifiers"] = teamIdentifiers.unique()
         
         //Generate a key for the new Challenge.
         if let generatedKey = Database.database().reference().child("/allTournaments/").childByAutoId().key
@@ -53,7 +53,7 @@ class TournamentSerialiser
                 }
                 else
                 {
-                    TeamSerialiser().addTeams(teamIdentifiers, toTournament: generatedKey) { (errorDescriptor) in
+                    TeamSerialiser().addTeams(teamIdentifiers.unique(), toTournament: generatedKey) { (errorDescriptor) in
                         if let error = errorDescriptor
                         {
                             completion(nil, error)

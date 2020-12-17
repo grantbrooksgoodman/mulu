@@ -109,7 +109,7 @@ class GenericTestingSerialiser
                 
                 var teamIdentifiers: [String]?
                 
-                TeamTestingSerialiser().createRandomTeams(with: userArray2D, completedChallenges: challengeArray2D, amount: numberOfTeams - 1) { (returnedIdentifiers, errorDescriptor) in
+                TeamTestingSerialiser().createRandomTeams(with: userArray2D, completedChallenges: challengeArray2D, amount: numberOfTeams) { (returnedIdentifiers, errorDescriptor) in
                     if let error = errorDescriptor
                     {
                         completion(error)
@@ -126,10 +126,6 @@ class GenericTestingSerialiser
                     }
                 }
                 
-                TeamTestingSerialiser().createRandomTeam(with: randomUsers, completedChallenges: completedChallenges) { (returnedIdentier, errorDescriptor) in
-                    
-                }
-                
                 dispatchGroup.notify(queue: .main) {
                     if verboseFunctionExposure { print("createRandomTeams() completed") }
                     
@@ -138,35 +134,45 @@ class GenericTestingSerialiser
                     
                     let universityNames = ["Princeton", "Harvard", "Columbia", "MIT", "Yale", "Stanford", "UChicago", "UPenn", "Caltech", "Johns Hopkins", "Northwestern", "Duke", "Dartmouth", "Brown", "Vanderbilt", "Rice", "WashU St. Louis", "Cornell", "Notre Dame", "UCLA", "Emory", "UC Berkeley", "Georgetown", "UMich", "USC", "UVA", "UNC Chapel Hill", "Wake Forest", "NYU", "Tufts", "UCSB"]
                     
-                    let randomTournamentCount = Int().random(min: 1, max: numberOfTeams)
-                    
-                    let halfwayTeamsIndex = (teamIdentifiers.count - 1) / 2
-                    
-                    var errors: [String] = []
-                    
-                    for _ in 0...randomTournamentCount
+                    if teamIdentifiers.count == 1
                     {
-                        dispatchGroup.enter()
+                        dispatchGroup.notify(queue: .main) {
+                            completion(nil)
+                        }
+                    }
+                    else
+                    {
+                        let teams = teamIdentifiers.count % 2 == 0 ? teamIdentifiers : teamIdentifiers.dropLast()
+                        let splitSize = (teamIdentifiers.count - (teams.last! == teamIdentifiers.last ? 0 : 1)) / 2
                         
-                        let randomName = "\(universityNames.randomElement()!) Tournament (\(Int().random(min: 100, max: 999)))"
+                        let chunks = self.chunkArray(s: teams, splitSize: splitSize)
                         
-                        let randomStartDate = Date().addingTimeInterval(TimeInterval(Int("-\(Int().random(min: 86400, max: 604800))")!))
-                        let randomEndDate = Date().addingTimeInterval(TimeInterval(Int().random(min: 604800, max: 1209600)))
+                        var errors: [String] = []
                         
-                        TournamentSerialiser().createTournament(name: randomName, startDate: randomStartDate, endDate: randomEndDate, teamIdentifiers: Array(teamIdentifiers.shuffled()[0...halfwayTeamsIndex])) { (returnedIdentifier, errorDescriptor) in
-                            if let identifier = returnedIdentifier
-                            {
-                                report("\(randomName): \(identifier)", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                                
-                                dispatchGroup.leave()
-                            }
-                            else if let error = errorDescriptor
-                            {
-                                if error != "This Team is already participating in that Tournament."
+                        for chunk in chunks
+                        {
+                            dispatchGroup.enter()
+                            
+                            let randomName = "\(universityNames.randomElement()!) Tournament (\(Int().random(min: 100, max: 999)))"
+                            
+                            let randomStartDate = Date().addingTimeInterval(TimeInterval(Int("-\(Int().random(min: 86400, max: 604800))")!))
+                            let randomEndDate = Date().addingTimeInterval(TimeInterval(Int().random(min: 604800, max: 1209600)))
+                            
+                            TournamentSerialiser().createTournament(name: randomName, startDate: randomStartDate, endDate: randomEndDate, teamIdentifiers: chunk) { (returnedIdentifier, tournamentErrorDescriptor) in
+                                if let identifier = returnedIdentifier
                                 {
-                                    errors.append(error)
+                                    report("\(randomName): \(identifier)", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
                                     
                                     dispatchGroup.leave()
+                                }
+                                else if let error = tournamentErrorDescriptor
+                                {
+                                    if error != "This Team is already participating in that Tournament."
+                                    {
+                                        errors.append(error)
+                                        
+                                        dispatchGroup.leave()
+                                    }
                                 }
                             }
                         }
@@ -178,6 +184,15 @@ class GenericTestingSerialiser
                 }
             }
         }
+    }
+    
+    func chunkArray<T>(s: [T], splitSize: Int) -> [[T]]
+    {
+        if s.count <= splitSize
+        {
+            return [s]
+        }
+        else { return [Array<T>(s[0..<splitSize])] + chunkArray(s: Array<T>(s[splitSize..<s.count]), splitSize: splitSize) }
     }
     
     /**

@@ -16,28 +16,30 @@ class Team
     /* Class-Level Variable Declarations */
     
     //Arrays
-    var associatedTournaments:  [Tournament]?
-    var completedChallenges:    [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]?
-    var participantIdentifiers: [String]!
+    private(set) var DSParticipants: [User]?
+    
+    var completedChallenges:         [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]?
+    var participantIdentifiers:      [String]!
     
     //Strings
     var associatedIdentifier: String!
     var name:                 String!
     
-    private(set) var DSParticipants: [User]?
+    //Other Declarations
+    var associatedTournament:  Tournament?
     
     //==================================================//
     
     /* Constructor Function */
     
     init(associatedIdentifier:   String,
-         associatedTournaments:  [Tournament]?,
+         associatedTournament:   Tournament?,
          completedChallenges:    [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]?,
          name:                   String,
          participantIdentifiers: [String])
     {
         self.associatedIdentifier = associatedIdentifier
-        self.associatedTournaments = associatedTournaments
+        self.associatedTournament = associatedTournament
         self.completedChallenges = completedChallenges
         self.name = name
         self.participantIdentifiers = participantIdentifiers
@@ -150,8 +152,11 @@ class Team
         }
     }
     
-    func getRank(in tournament: Tournament, completion: @escaping(_ returnedRank: Int?, _ errorDescriptor: String?) -> Void)
+    func getRank(completion: @escaping(_ returnedRank: Int?, _ errorDescriptor: String?) -> Void)
     {
+        guard let tournament = associatedTournament else
+        { completion(nil, "This Team is not participating in any Tournament."); return }
+        
         TeamSerialiser().getTeams(withIdentifiers: tournament.teamIdentifiers) { (returnedTeams, errorDescriptors) in
             if let teams = returnedTeams
             {
