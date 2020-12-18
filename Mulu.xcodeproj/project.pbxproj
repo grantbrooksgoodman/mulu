@@ -58,6 +58,7 @@
 		A22169E1258A611D001C036D /* GothamBook.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A22169CF258A611D001C036D /* GothamBook.ttf */; };
 		A22169E2258A611D001C036D /* GothamLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A22169D0258A611D001C036D /* GothamLightItalic.ttf */; };
 		A22169E3258A611D001C036D /* GothamMedium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A22169D1258A611D001C036D /* GothamMedium.ttf */; };
+		A235173B258D54500055B8B3 /* SignUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A235173A258D54500055B8B3 /* SignUpController.swift */; };
 		A24A232E257DB9900063FE87 /* TeamSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24A232D257DB9900063FE87 /* TeamSerialiser.swift */; };
 		A24A2331257DC1AA0063FE87 /* UserSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24A2330257DC1AA0063FE87 /* UserSerialiser.swift */; };
 		A26961F522376F4600812759 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A26961F322376F4600812759 /* Main.storyboard */; };
@@ -154,6 +155,7 @@
 		A22169CF258A611D001C036D /* GothamBook.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GothamBook.ttf; sourceTree = "<group>"; };
 		A22169D0258A611D001C036D /* GothamLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GothamLightItalic.ttf; sourceTree = "<group>"; };
 		A22169D1258A611D001C036D /* GothamMedium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GothamMedium.ttf; sourceTree = "<group>"; };
+		A235173A258D54500055B8B3 /* SignUpController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpController.swift; sourceTree = "<group>"; };
 		A24A232D257DB9900063FE87 /* TeamSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamSerialiser.swift; sourceTree = "<group>"; };
 		A24A2330257DC1AA0063FE87 /* UserSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSerialiser.swift; sourceTree = "<group>"; };
 		A26961F422376F4600812759 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 				687404471CB1AB3400BD2632 /* MainController.swift */,
 				68EB1C821DD7B7070074737B /* SampleController.swift */,
 				A2CD9667258D366D00A174D0 /* SignInController.swift */,
+				A235173A258D54500055B8B3 /* SignUpController.swift */,
 				A207FFFF2581C2C9004E70A6 /* TeamController.swift */,
 			);
 			name = "View Controllers";
@@ -658,6 +661,7 @@
 				A24A2331257DC1AA0063FE87 /* UserSerialiser.swift in Sources */,
 				A2A5549D25780BDD006D3B3E /* BuildInfoController.swift in Sources */,
 				A2AEDD50257BE0540074CA11 /* Team.swift in Sources */,
+				A235173B258D54500055B8B3 /* SignUpController.swift in Sources */,
 				A2F32EE8258858830054C55A /* TournamentSerialiser.swift in Sources */,
 				6874044D1CB1AB4400BD2632 /* AppDelegate.swift in Sources */,
 				A288D20025844F55002AFB51 /* ScrollerCell.swift in Sources */,

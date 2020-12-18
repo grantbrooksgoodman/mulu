@@ -1,5 +1,5 @@
 //
-//  SignInController.swift
+//  SignUpController.swift
 //  Mulu Party
 //
 //  Created by Grant Brooks Goodman on 18/12/2020.
@@ -10,20 +10,20 @@
 import MessageUI
 import UIKit
 
-class SignInController: UIViewController, MFMailComposeViewControllerDelegate
+class SignUpController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
     
     /* Interface Builder UI Elements */
     
     //UIButtons
-    @IBOutlet weak var forgotPasswordButton: UIButton!
-    @IBOutlet weak var signInButton:         UIButton!
-    @IBOutlet weak var signUpButton:         UIButton!
+    @IBOutlet weak var backButton:   UIButton!
+    @IBOutlet weak var signUpButton: UIButton!
     
     //UITextFields
+    @IBOutlet weak var emailTextField:    UITextField!
+    @IBOutlet weak var fullNameTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
-    @IBOutlet weak var usernameTextField: UITextField!
     
     //==================================================//
     
@@ -53,22 +53,16 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
         
         view.setBackground(withImageNamed: "Gradient.png")
         
-        usernameTextField.delegate = self
+        fullNameTextField.delegate = self
+        emailTextField.delegate = self
         passwordTextField.delegate = self
         
-        usernameTextField.tag = aTagFor("usernameTextField")
+        fullNameTextField.tag = aTagFor("fullNameTextField")
+        emailTextField.tag = aTagFor("emailTextField")
         passwordTextField.tag = aTagFor("passwordTextField")
-        signInButton.tag = aTagFor("signInButton")
+        signUpButton.tag = aTagFor("signUpButton")
         
-        let bottomButtonAttributes: [NSAttributedString.Key: Any] = [.underlineStyle: NSUnderlineStyle.single.rawValue]
-        
-        let signUpString = NSAttributedString(string: "Sign up", attributes: bottomButtonAttributes)
-        let forgotPasswordString = NSAttributedString(string: "Forgot password?", attributes: bottomButtonAttributes)
-        
-        signUpButton.setAttributedTitle(signUpString, for: .normal)
-        forgotPasswordButton.setAttributedTitle(forgotPasswordString, for: .normal)
-        
-        signInButton.layer.cornerRadius = 5
+        signUpButton.layer.cornerRadius = 5
         
         for view in view.subviews
         {
@@ -88,13 +82,14 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     {
         super.viewDidAppear(animated)
         
-        usernameTextField.addGreyUnderline()
+        fullNameTextField.addGreyUnderline()
+        emailTextField.addGreyUnderline()
         passwordTextField.addGreyUnderline()
         
         UIView.animate(withDuration: 0.15) {
             for view in self.view.subviews
             {
-                view.alpha = view.tag == aTagFor("signInButton") ? 0.6 : 1
+                view.alpha = view.tag == aTagFor("signUpButton") ? 0.6 : 1
             }
         }
     }
@@ -108,9 +103,14 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     
     /* Interface Builder Actions */
     
+    @IBAction func backButton(_ sender: Any)
+    {
+        performSegue(withIdentifier: "signInFromSignUpSegue", sender: self)
+    }
+    
     @IBAction func signUpButton(_ sender: Any)
     {
-        performSegue(withIdentifier: "signUpFromSignInSegue", sender: self)
+        
     }
     
     //==================================================//
@@ -123,11 +123,15 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     }
 }
 
-extension SignInController: UITextFieldDelegate
+extension SignUpController: UITextFieldDelegate
 {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool
     {
-        if textField.tag == aTagFor("usernameTextField")
+        if textField.tag == aTagFor("fullNameTextField")
+        {
+            emailTextField.becomeFirstResponder()
+        }
+        else if textField.tag == aTagFor("emailTextField")
         {
             passwordTextField.becomeFirstResponder()
         }
@@ -137,20 +141,5 @@ extension SignInController: UITextFieldDelegate
         }
         
         return true
-    }
-}
-
-extension UITextField
-{
-    func addGreyUnderline()
-    {
-        let bottomLine = CALayer()
-        
-        bottomLine.frame = CGRect(x: 0, y: frame.size.height - 1, width: frame.size.width, height: 2)
-        bottomLine.backgroundColor = UIColor(hex: 0xB0B0B0).cgColor
-        
-        borderStyle = .none
-        
-        layer.addSublayer(bottomLine)
     }
 }

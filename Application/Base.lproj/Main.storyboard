@@ -669,6 +669,9 @@ Wide squat stance</string>
                                 <state key="normal" title="Sign up">
                                     <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
+                                <connections>
+                                    <action selector="signUpButton:" destination="X61-tu-xQD" eventType="touchUpInside" id="9QN-eI-vBY"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vq3-IC-Yd7">
                                 <rect key="frame" x="250" y="875" width="158" height="30"/>
@@ -748,6 +751,7 @@ Wide squat stance</string>
                         <outlet property="signInButton" destination="ua3-wE-3jD" id="Jmb-Ew-on4"/>
                         <outlet property="signUpButton" destination="k9d-em-CuC" id="xB9-XU-ywB"/>
                         <outlet property="usernameTextField" destination="DMm-Pa-Nhg" id="78V-YD-9J2"/>
+                        <segue destination="YYy-1W-i5a" kind="modal" identifier="signUpFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="Xk2-WI-bjm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PHx-1a-Zlc" sceneMemberID="firstResponder"/>
@@ -759,8 +763,131 @@ Wide squat stance</string>
             </objects>
             <point key="canvasLocation" x="546.72897196261681" y="-151.61987041036718"/>
         </scene>
+        <!--Sign Up Controller-->
+        <scene sceneID="wgs-Xz-VLq">
+            <objects>
+                <viewController storyboardIdentifier="SignUpController" title="Sign Up Controller" id="YYy-1W-i5a" customClass="SignUpController" customModule="Mulu" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="vbg-Fu-wXD"/>
+                        <viewControllerLayoutGuide type="bottom" id="kNU-xH-gWP"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="LrK-c1-xVW">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="FULL NAME" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2XX-cS-7tC">
+                                <rect key="frame" x="39" y="363" width="350" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="Ve0-Eu-YQf"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="next" textContentType="name"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="E-MAIL" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ain-hX-gbi">
+                                <rect key="frame" x="39" y="428" width="350" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="Orf-ps-sWM"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="next" textContentType="email"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="PASSWORD" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="QcG-Nj-MYX">
+                                <rect key="frame" x="39" y="493" width="350" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="nYn-XS-e1D"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="done" secureTextEntry="YES" textContentType="password"/>
+                            </textField>
+                            <button opaque="NO" alpha="0.60000002384185791" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w2b-CA-Dj4">
+                                <rect key="frame" x="99" y="561" width="230" height="50"/>
+                                <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="nPw-fG-XWE"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="18"/>
+                                <state key="normal" title="SIGN UP">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="signUpButton:" destination="YYy-1W-i5a" eventType="touchUpInside" id="9gQ-7J-QzG"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lS0-xt-BHz">
+                                <rect key="frame" x="20" y="824" width="60" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="2Mx-1g-FaP"/>
+                                    <constraint firstAttribute="width" constant="60" id="QVA-GX-Nr5"/>
+                                    <constraint firstAttribute="width" secondItem="lS0-xt-BHz" secondAttribute="height" multiplier="1:1" id="dyK-t8-1oF"/>
+                                </constraints>
+                                <state key="normal" image="Back"/>
+                                <connections>
+                                    <action selector="backButton:" destination="YYy-1W-i5a" eventType="touchUpInside" id="wfc-WK-2ls"/>
+                                </connections>
+                            </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Mulu Logo" translatesAutoresizingMaskIntoConstraints="NO" id="asi-nK-3Cb">
+                                <rect key="frame" x="147" y="179" width="130" height="130"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="asi-nK-3Cb" secondAttribute="height" multiplier="1:1" id="m4r-ei-4C4"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemTealColor"/>
+                        <constraints>
+                            <constraint firstItem="kNU-xH-gWP" firstAttribute="top" secondItem="w2b-CA-Dj4" secondAttribute="bottom" priority="750" constant="281" id="4vV-gX-cib"/>
+                            <constraint firstItem="ain-hX-gbi" firstAttribute="height" secondItem="2XX-cS-7tC" secondAttribute="height" id="8Wd-PX-bhy"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="w2b-CA-Dj4" secondAttribute="trailing" constant="79" id="AIz-vC-QKJ"/>
+                            <constraint firstItem="lS0-xt-BHz" firstAttribute="leading" secondItem="LrK-c1-xVW" secondAttribute="leadingMargin" id="CEm-uv-auu"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="2XX-cS-7tC" secondAttribute="trailing" constant="19" id="DhG-jG-WYH"/>
+                            <constraint firstItem="QcG-Nj-MYX" firstAttribute="leading" secondItem="LrK-c1-xVW" secondAttribute="leadingMargin" constant="19" id="DxI-WJ-qjB"/>
+                            <constraint firstItem="2XX-cS-7tC" firstAttribute="leading" secondItem="LrK-c1-xVW" secondAttribute="leadingMargin" constant="19" id="IWT-BE-u94"/>
+                            <constraint firstItem="w2b-CA-Dj4" firstAttribute="top" secondItem="QcG-Nj-MYX" secondAttribute="bottom" constant="23" id="K0a-2i-Zkg"/>
+                            <constraint firstItem="ain-hX-gbi" firstAttribute="leading" secondItem="LrK-c1-xVW" secondAttribute="leadingMargin" constant="19" id="OFP-Qy-Yqr"/>
+                            <constraint firstItem="ain-hX-gbi" firstAttribute="top" secondItem="2XX-cS-7tC" secondAttribute="bottom" constant="20" id="SbL-aQ-hOM"/>
+                            <constraint firstItem="QcG-Nj-MYX" firstAttribute="height" secondItem="2XX-cS-7tC" secondAttribute="height" id="Sne-fn-7wK"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="QcG-Nj-MYX" secondAttribute="trailing" constant="19" id="YZI-00-hZb"/>
+                            <constraint firstItem="2XX-cS-7tC" firstAttribute="leading" secondItem="LrK-c1-xVW" secondAttribute="leadingMargin" constant="19" id="afI-gc-fdb"/>
+                            <constraint firstItem="w2b-CA-Dj4" firstAttribute="leading" secondItem="LrK-c1-xVW" secondAttribute="leadingMargin" constant="79" id="eMx-Z2-cUR"/>
+                            <constraint firstItem="asi-nK-3Cb" firstAttribute="top" relation="greaterThanOrEqual" secondItem="vbg-Fu-wXD" secondAttribute="bottom" constant="25" id="f1W-YW-mLK"/>
+                            <constraint firstItem="asi-nK-3Cb" firstAttribute="leading" secondItem="LrK-c1-xVW" secondAttribute="leadingMargin" constant="127" id="fat-EP-phX"/>
+                            <constraint firstItem="2XX-cS-7tC" firstAttribute="top" secondItem="asi-nK-3Cb" secondAttribute="bottom" constant="54" id="gcK-IA-k7O"/>
+                            <constraint firstItem="QcG-Nj-MYX" firstAttribute="width" secondItem="2XX-cS-7tC" secondAttribute="width" id="gsr-xu-6lu"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="asi-nK-3Cb" secondAttribute="trailing" constant="131" id="kOy-bp-cEM"/>
+                            <constraint firstItem="QcG-Nj-MYX" firstAttribute="top" secondItem="ain-hX-gbi" secondAttribute="bottom" constant="20" id="mI7-Cr-eKZ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="ain-hX-gbi" secondAttribute="trailing" constant="19" id="pb3-tV-8Pj"/>
+                            <constraint firstItem="kNU-xH-gWP" firstAttribute="top" secondItem="lS0-xt-BHz" secondAttribute="bottom" constant="8" symbolic="YES" id="uZE-nb-YCa"/>
+                            <constraint firstItem="ain-hX-gbi" firstAttribute="width" secondItem="2XX-cS-7tC" secondAttribute="width" id="vgd-yh-95f"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="2XX-cS-7tC" secondAttribute="trailing" constant="19" id="wWg-wi-fid"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Item" id="Fe7-17-68n"/>
+                    <navigationItem key="navigationItem" id="SHW-VE-kGY"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="428" height="926"/>
+                    <connections>
+                        <outlet property="backButton" destination="lS0-xt-BHz" id="jf9-P7-D0k"/>
+                        <outlet property="emailTextField" destination="ain-hX-gbi" id="ssF-63-9dg"/>
+                        <outlet property="fullNameTextField" destination="2XX-cS-7tC" id="j7S-Um-45Q"/>
+                        <outlet property="passwordTextField" destination="QcG-Nj-MYX" id="1II-TV-2eH"/>
+                        <outlet property="signUpButton" destination="w2b-CA-Dj4" id="W57-su-Vqy"/>
+                        <segue destination="X61-tu-xQD" kind="modal" identifier="signInFromSignUpSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="ZlL-p8-kZR"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="E12-D1-lob" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="OtV-59-bSI">
+                    <connections>
+                        <action selector="longPress:" destination="YYy-1W-i5a" id="qig-qi-bNE"/>
+                    </connections>
+                </pongPressGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="1449.5327102803737" y="-152.26781857451405"/>
+        </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="hu9-pD-bfH"/>
+    </inferredMetricsTieBreakers>
     <resources>
+        <image name="Back" width="49" height="47"/>
         <image name="Home" width="53" height="53"/>
         <image name="Mulu" width="25" height="25"/>
         <image name="Mulu Logo" width="123" height="123"/>
