@@ -219,6 +219,7 @@
                     <connections>
                         <outlet property="imageView" destination="zdQ-ue-DoM" id="je3-FM-Vp2"/>
                         <segue destination="vkx-9d-gno" kind="modal" identifier="initialSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="Yvv-RL-5od"/>
+                        <segue destination="X61-tu-xQD" kind="modal" identifier="signInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="hu9-pD-bfH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hzd-b9-Biz" sceneMemberID="firstResponder"/>
@@ -650,14 +651,126 @@ Wide squat stance</string>
             </objects>
             <point key="canvasLocation" x="3312.6168224299063" y="530.66954643628515"/>
         </scene>
+        <!--Sign In Controller-->
+        <scene sceneID="5KN-fI-DEb">
+            <objects>
+                <viewController storyboardIdentifier="SignInController" title="Sign In Controller" id="X61-tu-xQD" customClass="SignInController" customModule="Mulu" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="wrd-Kz-Amc"/>
+                        <viewControllerLayoutGuide type="bottom" id="8Jc-JA-kml"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="7X1-GF-56a">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k9d-em-CuC">
+                                <rect key="frame" x="20" y="873" width="142" height="33"/>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
+                                <state key="normal" title="Sign up">
+                                    <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vq3-IC-Yd7">
+                                <rect key="frame" x="250" y="875" width="158" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="Alz-cX-t1n"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="CGU-NO-RrO"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
+                                <state key="normal" title="Forgot password?">
+                                    <color key="titleColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                            </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Mulu Logo" translatesAutoresizingMaskIntoConstraints="NO" id="aXA-i2-OXi">
+                                <rect key="frame" x="149" y="179" width="130" height="130"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="aXA-i2-OXi" secondAttribute="height" multiplier="1:1" id="t3t-hr-T4Q"/>
+                                </constraints>
+                            </imageView>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="USERNAME" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="DMm-Pa-Nhg">
+                                <rect key="frame" x="39" y="363" width="350" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="Wp6-wl-qkY"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="next" textContentType="username"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="PASSWORD" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9zd-Rh-m1y">
+                                <rect key="frame" x="39" y="444" width="350" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="YVP-oN-rTk"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="done" secureTextEntry="YES" textContentType="password"/>
+                            </textField>
+                            <button opaque="NO" alpha="0.59999999999999998" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ua3-wE-3jD">
+                                <rect key="frame" x="99" y="522" width="230" height="50"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="kfK-IU-mYH"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="18"/>
+                                <state key="normal" title="SIGN IN">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemTealColor"/>
+                        <constraints>
+                            <constraint firstItem="DMm-Pa-Nhg" firstAttribute="top" secondItem="aXA-i2-OXi" secondAttribute="bottom" constant="54" id="3ya-uM-EKd"/>
+                            <constraint firstItem="k9d-em-CuC" firstAttribute="trailing" secondItem="Vq3-IC-Yd7" secondAttribute="leading" constant="-88" id="8Yk-ft-YoF"/>
+                            <constraint firstItem="ua3-wE-3jD" firstAttribute="top" secondItem="9zd-Rh-m1y" secondAttribute="bottom" constant="33" id="AcM-sd-COa"/>
+                            <constraint firstItem="ua3-wE-3jD" firstAttribute="bottom" secondItem="8Jc-JA-kml" secondAttribute="top" priority="750" constant="-320" id="IRK-AP-IFC"/>
+                            <constraint firstAttribute="bottom" secondItem="k9d-em-CuC" secondAttribute="bottom" constant="20" symbolic="YES" id="R8e-HS-bGp"/>
+                            <constraint firstItem="aXA-i2-OXi" firstAttribute="leading" secondItem="7X1-GF-56a" secondAttribute="leadingMargin" constant="129" id="T1v-3Y-bht"/>
+                            <constraint firstItem="9zd-Rh-m1y" firstAttribute="leading" secondItem="7X1-GF-56a" secondAttribute="leadingMargin" constant="19" id="T2N-EZ-Poi"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="9zd-Rh-m1y" secondAttribute="trailing" constant="19" id="TAk-Te-9ti"/>
+                            <constraint firstItem="DMm-Pa-Nhg" firstAttribute="leading" secondItem="7X1-GF-56a" secondAttribute="leadingMargin" constant="19" id="TEw-sZ-ab0"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="ua3-wE-3jD" secondAttribute="trailing" constant="79" id="TMb-Yg-d0t"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="DMm-Pa-Nhg" secondAttribute="trailing" constant="19" id="YYI-Iq-odn"/>
+                            <constraint firstItem="9zd-Rh-m1y" firstAttribute="top" secondItem="DMm-Pa-Nhg" secondAttribute="bottom" constant="36" id="aGN-OC-Rus"/>
+                            <constraint firstItem="9zd-Rh-m1y" firstAttribute="width" secondItem="DMm-Pa-Nhg" secondAttribute="width" id="egi-Bt-gEq"/>
+                            <constraint firstItem="Vq3-IC-Yd7" firstAttribute="trailing" secondItem="7X1-GF-56a" secondAttribute="trailingMargin" id="haL-IK-9kB"/>
+                            <constraint firstAttribute="bottom" secondItem="Vq3-IC-Yd7" secondAttribute="bottom" constant="21" id="joa-WK-e2k"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="aXA-i2-OXi" secondAttribute="trailing" constant="129" id="o7v-VX-RXe"/>
+                            <constraint firstItem="k9d-em-CuC" firstAttribute="leading" secondItem="7X1-GF-56a" secondAttribute="leadingMargin" id="oiQ-bE-THg"/>
+                            <constraint firstItem="9zd-Rh-m1y" firstAttribute="height" secondItem="DMm-Pa-Nhg" secondAttribute="height" id="qC6-hb-han"/>
+                            <constraint firstItem="aXA-i2-OXi" firstAttribute="top" secondItem="wrd-Kz-Amc" secondAttribute="bottom" constant="135" id="t42-F7-fiK"/>
+                            <constraint firstItem="ua3-wE-3jD" firstAttribute="leading" secondItem="7X1-GF-56a" secondAttribute="leadingMargin" constant="79" id="yjn-5Q-DfY"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Item" id="Vz1-IO-IA6"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="428" height="926"/>
+                    <connections>
+                        <outlet property="forgotPasswordButton" destination="Vq3-IC-Yd7" id="yDd-It-qJG"/>
+                        <outlet property="passwordTextField" destination="9zd-Rh-m1y" id="kHG-4j-tfh"/>
+                        <outlet property="signInButton" destination="ua3-wE-3jD" id="Jmb-Ew-on4"/>
+                        <outlet property="signUpButton" destination="k9d-em-CuC" id="xB9-XU-ywB"/>
+                        <outlet property="usernameTextField" destination="DMm-Pa-Nhg" id="78V-YD-9J2"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PHx-1a-Zlc" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="BNy-fB-AUp">
+                    <connections>
+                        <action selector="longPress:" destination="X61-tu-xQD" id="Hwj-mD-TOI"/>
+                    </connections>
+                </pongPressGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="546.72897196261681" y="-151.61987041036718"/>
+        </scene>
     </scenes>
     <resources>
         <image name="Home" width="53" height="53"/>
         <image name="Mulu" width="25" height="25"/>
+        <image name="Mulu Logo" width="123" height="123"/>
         <image name="NT (White).png" width="1000" height="515"/>
         <image name="Trophy" width="51" height="51"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemTealColor">
+            <color red="0.35294117647058826" green="0.78431372549019607" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

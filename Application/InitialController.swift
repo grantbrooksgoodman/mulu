@@ -62,7 +62,7 @@ class InitialController: UIViewController
             {
                 self.applicationDelegate.currentlyAnimating = false
                 
-                self.performSegue(withIdentifier: "initialSegue", sender: self)
+                self.performSegue(withIdentifier: "signInSegue" /*"initialSegue"*/, sender: self)
             }
         })
     }
@@ -73,8 +73,8 @@ class InitialController: UIViewController
     
     @IBAction func skipButton(_ sender: Any)
     {
-        applicationDelegate.currentlyAnimating = false
+        //applicationDelegate.currentlyAnimating = false
         
-        self.performSegue(withIdentifier: "initialSegue", sender: self)
+        //self.performSegue(withIdentifier: "initialSegue", sender: self)
     }
 }
