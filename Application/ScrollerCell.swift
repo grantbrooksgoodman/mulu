@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ScrollerCell: UICollectionViewCell {
+class ScrollerCell: UICollectionViewCell
+{
     
-    @IBOutlet weak var view: UIView!
 }

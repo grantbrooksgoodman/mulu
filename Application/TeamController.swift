@@ -13,7 +13,7 @@ import UIKit
 /* Third-party Frameworks */
 import JTAppleCalendar
 
-class TeamController: UIViewController, MFMailComposeViewControllerDelegate
+class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UICollectionViewDelegateFlowLayout
 {
     //==================================================//
     
@@ -127,11 +127,6 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
                 else { report(errorDescriptor!, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
             }
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool)
-    {
-        super.viewDidAppear(animated)
         
         if let user = currentUser
         {
@@ -153,6 +148,11 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
                 }
             }
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool)
+    {
+        super.viewDidAppear(animated)
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -179,6 +179,14 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
+    {
+        let screenWidth = UIScreen.main.bounds.width
+        let width = screenWidth == 375 ? 365 : (screenWidth == 390 ? 380 : 400)
+        
+        return CGSize(width: width, height: 356)
     }
 }
 

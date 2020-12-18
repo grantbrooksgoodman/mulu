@@ -12,5 +12,4 @@ import JTAppleCalendar
 class DateCell: JTAppleCell
 {
     @IBOutlet weak var titleLabel: UILabel!
-    
 }

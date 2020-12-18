@@ -76,6 +76,27 @@ class User
             }
         }
         
+        return matchingChallenges.count == 0 ? nil : matchingChallenges
+    }
+    
+    /**
+     Returns the **User's** completed **Challenges** on the specified **Team**.
+     */
+    func completedChallenges(on team: Team) -> [(date: Date, challenge: Challenge)]?
+    {
+        var matchingChallenges: [(date: Date, challenge: Challenge)] = []
+        
+        if let challenges = team.completedChallenges
+        {
+            for challenge in challenges
+            {
+                if challenge.metadata.filter({$0.user.associatedIdentifier == associatedIdentifier}).count > 0
+                {
+                    matchingChallenges.append((challenge.metadata.first(where: {$0.user.associatedIdentifier == associatedIdentifier})!.dateCompleted, challenge.challenge))
+                }
+            }
+        }
+        
         return matchingChallenges
     }
     
@@ -143,5 +164,32 @@ class User
         {
             report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
         }
+    }
+    
+    func streak(on team: Team) -> Int
+    {
+        var total = -1
+        
+        if let challenges = completedChallenges(on: team)
+        {
+            let enumeratedDates = challenges.dates().sorted()
+            
+            total = 0
+            
+            for (index, date) in enumeratedDates.enumerated()
+            {
+                let nextIndex = index + 1
+                
+                if nextIndex < enumeratedDates.count
+                {
+                    if date == enumeratedDates[index + 1]
+                    {
+                        total += 1
+                    }
+                }
+            }
+        }
+        
+        return total
     }
 }

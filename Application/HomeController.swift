@@ -83,6 +83,15 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
                 subtitleLabel.text = completedChallenges[0].challenge.title
                 promptTextView.text = completedChallenges[0].challenge.prompt
             }
+            
+            if let associatedTeams = user.DSAssociatedTeams
+            {
+                let teamName = associatedTeams[0].name!
+                let tournamentName = associatedTeams[0].associatedTournament?.name ?? ""
+                let streak = user.streak(on: associatedTeams[0])
+                
+                statisticsTextView.text = "+ \(tournamentName.uppercased())\n+ \(teamName.uppercased())\n+ \(streak) DAY STREAK"
+            }
         }
     }
     

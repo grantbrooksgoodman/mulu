@@ -641,6 +641,8 @@ class TeamSerialiser
                 }
                 else
                 {
+                    group.leave()
+                    
                     completion(nil, "An unknown error occurred.")
                 }
             }
