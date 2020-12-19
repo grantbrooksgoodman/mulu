@@ -42,7 +42,7 @@ class InitialController: UIViewController
         
         imageView.alpha = 0
         
-        UIView.animate(withDuration: 3, delay: 0.3, options: UIView.AnimationOptions(), animations: { () -> Void in
+        UIView.animate(withDuration: 1 /*3*/, delay: 0.3, options: UIView.AnimationOptions(), animations: { () -> Void in
             self.applicationDelegate.currentlyAnimating = true
             
             if !preReleaseApplication
@@ -62,7 +62,7 @@ class InitialController: UIViewController
             {
                 self.applicationDelegate.currentlyAnimating = false
                 
-                self.performSegue(withIdentifier: "signInSegue" /*"initialSegue"*/, sender: self)
+                self.performSegue(withIdentifier: "SignInSegue" /*"initialSegue"*/, sender: self)
             }
         })
     }

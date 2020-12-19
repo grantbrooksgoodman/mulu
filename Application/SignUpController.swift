@@ -10,7 +10,7 @@
 import MessageUI
 import UIKit
 
-class SignUpController: UIViewController, MFMailComposeViewControllerDelegate
+class SignUpController: UIViewController, MFMailComposeViewControllerDelegate, UIGestureRecognizerDelegate
 {
     //==================================================//
     
@@ -69,6 +69,12 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate
         {
             view.alpha = 0
         }
+        
+        let tapRecogniser = UITapGestureRecognizer(target: self, action: #selector(SignUpController.dismissKeyboard))
+        tapRecogniser.delegate = self
+        tapRecogniser.numberOfTapsRequired = 1
+        
+        view.addGestureRecognizer(tapRecogniser)
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -92,7 +98,7 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate
             {
                 view.alpha = view.tag == aTagFor("signUpButton") ? 0.6 : 1
             }
-        }
+        } completion: { (_) in self.fullNameTextField.becomeFirstResponder() }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
@@ -111,11 +117,28 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate
     
     @IBAction func backButton(_ sender: Any)
     {
-        performSegue(withIdentifier: "signInFromSignUpSegue", sender: self)
+        performSegue(withIdentifier: "SignInFromSignUpSegue", sender: self)
     }
     
     @IBAction func signUpButton(_ sender: Any)
     {
+        guard fullNameTextField.text!.lowercasedTrimmingWhitespace != "" && emailTextField.text!.lowercasedTrimmingWhitespace != "" && passwordTextField.text!.lowercasedTrimmingWhitespace != "" else
+        {
+            let message = "You must evaluate all fields before creating an account."
+            
+            AlertKit().errorAlertController(title:                       "Fill Out All Fields",
+                                            message:                     message,
+                                            dismissButtonTitle:          "OK",
+                                            additionalSelectors:         nil,
+                                            preferredAdditionalSelector: nil,
+                                            canFileReport:               false,
+                                            extraInfo:                   nil,
+                                            metadata:                    [#file, #function, #line],
+                                            networkDependent:            false)
+            
+            report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
+        }
+        
         guard fullNameTextField.text!.components(separatedBy: " ").count > 1 else
         {
             let message = "Please be sure to enter both your first and last name."
@@ -135,7 +158,7 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate
         
         guard emailTextField.text!.isValidEmail else
         {
-            let message = "The e-mail address is badly formatted. Please try again."
+            let message = "The e-mail address is improperly formatted. Please try again."
             
             AlertKit().errorAlertController(title:                       "Invalid E-mail",
                                             message:                     message,
@@ -207,6 +230,11 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate
     //==================================================//
     
     /* Other Functions */
+    
+    @objc func dismissKeyboard()
+    {
+        findAndResignFirstResponder()
+    }
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {

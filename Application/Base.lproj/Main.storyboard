@@ -222,7 +222,7 @@
                     <connections>
                         <outlet property="imageView" destination="zdQ-ue-DoM" id="je3-FM-Vp2"/>
                         <segue destination="vkx-9d-gno" kind="modal" identifier="initialSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="Yvv-RL-5od"/>
-                        <segue destination="X61-tu-xQD" kind="modal" identifier="signInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="hu9-pD-bfH"/>
+                        <segue destination="X61-tu-xQD" kind="modal" identifier="SignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="hu9-pD-bfH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hzd-b9-Biz" sceneMemberID="firstResponder"/>
@@ -686,6 +686,9 @@ Wide squat stance</string>
                                 <state key="normal" title="Forgot password?">
                                     <color key="titleColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
+                                <connections>
+                                    <action selector="forgotPasswordButton:" destination="X61-tu-xQD" eventType="touchUpInside" id="kGA-Gj-PhQ"/>
+                                </connections>
                             </button>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Mulu Logo" translatesAutoresizingMaskIntoConstraints="NO" id="aXA-i2-OXi">
                                 <rect key="frame" x="149" y="179" width="130" height="130"/>
@@ -699,7 +702,7 @@ Wide squat stance</string>
                                     <constraint firstAttribute="height" constant="45" id="Wp6-wl-qkY"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
-                                <textInputTraits key="textInputTraits" returnKeyType="next" textContentType="username"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress" returnKeyType="next" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="email"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="PASSWORD" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9zd-Rh-m1y">
                                 <rect key="frame" x="39" y="444" width="350" height="45"/>
@@ -707,7 +710,7 @@ Wide squat stance</string>
                                     <constraint firstAttribute="height" constant="45" id="YVP-oN-rTk"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
-                                <textInputTraits key="textInputTraits" returnKeyType="done" secureTextEntry="YES" textContentType="password"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" secureTextEntry="YES" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="password"/>
                             </textField>
                             <button opaque="NO" alpha="0.59999999999999998" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ua3-wE-3jD">
                                 <rect key="frame" x="99" y="522" width="230" height="50"/>
@@ -757,7 +760,8 @@ Wide squat stance</string>
                         <outlet property="signInButton" destination="ua3-wE-3jD" id="Jmb-Ew-on4"/>
                         <outlet property="signUpButton" destination="k9d-em-CuC" id="xB9-XU-ywB"/>
                         <outlet property="usernameTextField" destination="DMm-Pa-Nhg" id="78V-YD-9J2"/>
-                        <segue destination="YYy-1W-i5a" kind="modal" identifier="signUpFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="Xk2-WI-bjm"/>
+                        <segue destination="YYy-1W-i5a" kind="modal" identifier="SignUpFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="Xk2-WI-bjm"/>
+                        <segue destination="q0W-TP-J7A" kind="modal" identifier="ForgotPasswordFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="ygF-5x-KEF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PHx-1a-Zlc" sceneMemberID="firstResponder"/>
@@ -787,7 +791,7 @@ Wide squat stance</string>
                                     <constraint firstAttribute="height" constant="45" id="Ve0-Eu-YQf"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
-                                <textInputTraits key="textInputTraits" returnKeyType="next" textContentType="name"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="next" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="name"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="E-MAIL" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ain-hX-gbi">
                                 <rect key="frame" x="39" y="428" width="350" height="45"/>
@@ -795,7 +799,7 @@ Wide squat stance</string>
                                     <constraint firstAttribute="height" constant="45" id="Orf-ps-sWM"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
-                                <textInputTraits key="textInputTraits" returnKeyType="next" textContentType="email"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress" returnKeyType="next" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="email"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="PASSWORD" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="QcG-Nj-MYX">
                                 <rect key="frame" x="39" y="493" width="350" height="45"/>
@@ -803,7 +807,7 @@ Wide squat stance</string>
                                     <constraint firstAttribute="height" constant="45" id="nYn-XS-e1D"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
-                                <textInputTraits key="textInputTraits" returnKeyType="done" secureTextEntry="YES" textContentType="password"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" secureTextEntry="YES" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="password"/>
                             </textField>
                             <button opaque="NO" alpha="0.60000002384185791" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w2b-CA-Dj4">
                                 <rect key="frame" x="99" y="561" width="230" height="50"/>
@@ -876,7 +880,7 @@ Wide squat stance</string>
                         <outlet property="fullNameTextField" destination="2XX-cS-7tC" id="j7S-Um-45Q"/>
                         <outlet property="passwordTextField" destination="QcG-Nj-MYX" id="1II-TV-2eH"/>
                         <outlet property="signUpButton" destination="w2b-CA-Dj4" id="W57-su-Vqy"/>
-                        <segue destination="X61-tu-xQD" kind="modal" identifier="signInFromSignUpSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="ZlL-p8-kZR"/>
+                        <segue destination="X61-tu-xQD" kind="modal" identifier="SignInFromSignUpSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="ZlL-p8-kZR"/>
                         <segue destination="6oE-Bt-NfX" kind="modal" identifier="PostSignUpFromSignUpSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="a9P-h7-seW"/>
                     </connections>
                 </viewController>
@@ -919,13 +923,13 @@ Wide squat stance</string>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="TEAM CODE" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8t5-Os-IWf">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="JOIN CODE" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8t5-Os-IWf">
                                 <rect key="frame" x="20" y="292" width="335" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="PJG-yL-JtI"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
-                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="go" textContentType="one-time-code"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" returnKeyType="go" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="one-time-code"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VKq-3b-b1t">
                                 <rect key="frame" x="363" y="292" width="45" height="45"/>
@@ -1069,6 +1073,105 @@ Wide squat stance</string>
                 </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="2395.7943925233644" y="-152.26781857451405"/>
+        </scene>
+        <!--Forgot Password Controller-->
+        <scene sceneID="E5o-eb-jyc">
+            <objects>
+                <viewController storyboardIdentifier="ForgotPasswordController" title="Forgot Password Controller" id="q0W-TP-J7A" customClass="ForgotPasswordController" customModule="Mulu" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Pna-8f-kvn"/>
+                        <viewControllerLayoutGuide type="bottom" id="eJu-il-VTX"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="vcK-YV-k8N">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Mulu Logo" translatesAutoresizingMaskIntoConstraints="NO" id="Dar-ms-5tZ">
+                                <rect key="frame" x="149" y="179" width="130" height="130"/>
+                            </imageView>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="E-MAIL" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RUp-fx-op7">
+                                <rect key="frame" x="39" y="363" width="350" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="3It-mt-OwZ"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress" returnKeyType="done" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="email"/>
+                            </textField>
+                            <button opaque="NO" alpha="0.60000002384185791" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JdW-ar-co8">
+                                <rect key="frame" x="99" y="431" width="230" height="50"/>
+                                <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="24d-Vg-ctm"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="18"/>
+                                <state key="normal" title="RESET PASSWORD">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="resetPasswordButton:" destination="q0W-TP-J7A" eventType="touchUpInside" id="Jjc-ZW-XaW"/>
+                                    <action selector="signInButton:" destination="X61-tu-xQD" eventType="touchUpInside" id="hGa-yV-tH9"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CHECK YOUR E-MAIL FOR A PASSWORD RESET LINK!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dia-FC-9FB">
+                                <rect key="frame" x="39" y="356" width="350" height="59"/>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="20"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gtL-fR-gg0">
+                                <rect key="frame" x="20" y="824" width="60" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="gtL-fR-gg0" secondAttribute="height" multiplier="1:1" id="1eu-Rj-24F"/>
+                                    <constraint firstAttribute="height" constant="60" id="FpD-32-Yym"/>
+                                    <constraint firstAttribute="width" constant="60" id="ZV3-ZL-yQI"/>
+                                </constraints>
+                                <state key="normal" image="Back"/>
+                                <connections>
+                                    <action selector="backButton:" destination="YYy-1W-i5a" eventType="touchUpInside" id="ZEK-04-r4o"/>
+                                    <action selector="backButton:" destination="q0W-TP-J7A" eventType="touchUpInside" id="oBV-qk-aHG"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemTealColor"/>
+                        <constraints>
+                            <constraint firstItem="Dar-ms-5tZ" firstAttribute="width" secondItem="Dar-ms-5tZ" secondAttribute="height" multiplier="1:1" id="0HJ-pY-1AD"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Dia-FC-9FB" secondAttribute="trailing" constant="19" id="1ac-rl-1KK"/>
+                            <constraint firstItem="Dia-FC-9FB" firstAttribute="centerY" secondItem="RUp-fx-op7" secondAttribute="centerY" id="9fx-Tg-WPr"/>
+                            <constraint firstItem="Dar-ms-5tZ" firstAttribute="leading" secondItem="vcK-YV-k8N" secondAttribute="leadingMargin" constant="129" id="Fwe-ox-QdR"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="JdW-ar-co8" secondAttribute="trailing" constant="79" id="JSb-34-RqS"/>
+                            <constraint firstItem="JdW-ar-co8" firstAttribute="leading" secondItem="vcK-YV-k8N" secondAttribute="leadingMargin" constant="79" id="MTF-kq-Jd8"/>
+                            <constraint firstItem="gtL-fR-gg0" firstAttribute="leading" secondItem="vcK-YV-k8N" secondAttribute="leadingMargin" id="Y82-Ij-02o"/>
+                            <constraint firstItem="Dar-ms-5tZ" firstAttribute="top" secondItem="Pna-8f-kvn" secondAttribute="bottom" constant="135" id="YDS-ch-yrK"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Dar-ms-5tZ" secondAttribute="trailing" constant="129" id="Yaa-zE-aOs"/>
+                            <constraint firstItem="eJu-il-VTX" firstAttribute="top" secondItem="JdW-ar-co8" secondAttribute="bottom" priority="750" constant="8" symbolic="YES" id="bKn-Vy-9tv"/>
+                            <constraint firstItem="eJu-il-VTX" firstAttribute="top" secondItem="gtL-fR-gg0" secondAttribute="bottom" constant="8" symbolic="YES" id="erA-K5-296"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="RUp-fx-op7" secondAttribute="trailing" constant="19" id="hIC-le-BW4"/>
+                            <constraint firstItem="JdW-ar-co8" firstAttribute="top" secondItem="Dia-FC-9FB" secondAttribute="bottom" constant="16" id="jFP-ZH-Loi"/>
+                            <constraint firstItem="Dia-FC-9FB" firstAttribute="leading" secondItem="vcK-YV-k8N" secondAttribute="leadingMargin" constant="19" id="mKt-gz-atO"/>
+                            <constraint firstItem="RUp-fx-op7" firstAttribute="leading" secondItem="vcK-YV-k8N" secondAttribute="leadingMargin" constant="19" id="sFg-A8-Jrk"/>
+                            <constraint firstItem="JdW-ar-co8" firstAttribute="top" secondItem="RUp-fx-op7" secondAttribute="bottom" constant="23" id="ytn-Y6-BVy"/>
+                            <constraint firstItem="RUp-fx-op7" firstAttribute="top" secondItem="Dar-ms-5tZ" secondAttribute="bottom" constant="54" id="zJz-0w-vt4"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Item" id="nuw-KE-gr0"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="428" height="926"/>
+                    <connections>
+                        <outlet property="backButton" destination="gtL-fR-gg0" id="oLG-Hs-bob"/>
+                        <outlet property="emailTextField" destination="RUp-fx-op7" id="fIw-wH-bBK"/>
+                        <outlet property="noticeLabel" destination="Dia-FC-9FB" id="8Vz-tV-OqP"/>
+                        <outlet property="resetPasswordButton" destination="JdW-ar-co8" id="JD0-sp-Yh6"/>
+                        <segue destination="X61-tu-xQD" kind="modal" identifier="SignInFromForgotPasswordSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="dcC-Y9-Sm2"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qWo-PB-d2S" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="j2U-ZQ-8RB">
+                    <connections>
+                        <action selector="longPress:" destination="q0W-TP-J7A" id="CsK-H6-XzA"/>
+                    </connections>
+                </pongPressGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="3312.6168224299063" y="-152.26781857451405"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>

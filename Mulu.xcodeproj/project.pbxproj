@@ -69,6 +69,7 @@
 		A28797ED258D663400C48A74 /* PostSignUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28797EC258D663400C48A74 /* PostSignUpController.swift */; };
 		A288D20025844F55002AFB51 /* ScrollerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A288D1FF25844F55002AFB51 /* ScrollerCell.swift */; };
 		A28E99B7257AA47D00D8A4F7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */; };
+		A297BFB2258E9E32006DA5F5 /* ForgotPasswordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A297BFB1258E9E32006DA5F5 /* ForgotPasswordController.swift */; };
 		A2A554962577FFBF006D3B3E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A554952577FFBF006D3B3E /* Extensions.swift */; };
 		A2A5549A25780BCB006D3B3E /* Builder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A5549925780BCB006D3B3E /* Builder.swift */; };
 		A2A5549D25780BDD006D3B3E /* BuildInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A5549C25780BDD006D3B3E /* BuildInfoController.swift */; };
@@ -167,6 +168,7 @@
 		A28797EC258D663400C48A74 /* PostSignUpController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostSignUpController.swift; sourceTree = "<group>"; };
 		A288D1FF25844F55002AFB51 /* ScrollerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollerCell.swift; sourceTree = "<group>"; };
 		A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A297BFB1258E9E32006DA5F5 /* ForgotPasswordController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordController.swift; sourceTree = "<group>"; };
 		A2A554952577FFBF006D3B3E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		A2A5549925780BCB006D3B3E /* Builder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Builder.swift; sourceTree = "<group>"; };
 		A2A5549C25780BDD006D3B3E /* BuildInfoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildInfoController.swift; sourceTree = "<group>"; };
@@ -266,6 +268,7 @@
 		682A9B201C8E64F700014EA5 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				A297BFB1258E9E32006DA5F5 /* ForgotPasswordController.swift */,
 				A2D6DFB22580376900725D5C /* HomeController.swift */,
 				68D29A121DD79C8A00BFF4D5 /* InitialController.swift */,
 				687404471CB1AB3400BD2632 /* MainController.swift */,
@@ -660,6 +663,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A2AEDD4D257BDE6E0074CA11 /* User.swift in Sources */,
+				A297BFB2258E9E32006DA5F5 /* ForgotPasswordController.swift in Sources */,
 				A278D31A25858A52008D22D1 /* UserTestingSerialiser.swift in Sources */,
 				A24A2331257DC1AA0063FE87 /* UserSerialiser.swift in Sources */,
 				A2A5549D25780BDD006D3B3E /* BuildInfoController.swift in Sources */,

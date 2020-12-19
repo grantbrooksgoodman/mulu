@@ -111,16 +111,38 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     
     /* Interface Builder Actions */
     
+    @IBAction func forgotPasswordButton(_ sender: Any)
+    {
+        performSegue(withIdentifier: "ForgotPasswordFromSignInSegue", sender: self)
+    }
+    
     @IBAction func signUpButton(_ sender: Any)
     {
-        performSegue(withIdentifier: "signUpFromSignInSegue", sender: self)
+        performSegue(withIdentifier: "SignUpFromSignInSegue", sender: self)
     }
     
     @IBAction func signInButton(_ sender: Any)
     {
+        guard usernameTextField.text!.lowercasedTrimmingWhitespace != "" && passwordTextField.text!.lowercasedTrimmingWhitespace != "" else
+        {
+            let message = "Please evaluate all fields before signing in."
+            
+            AlertKit().errorAlertController(title:                       "Enter Full Credentials",
+                                            message:                     message,
+                                            dismissButtonTitle:          "OK",
+                                            additionalSelectors:         nil,
+                                            preferredAdditionalSelector: nil,
+                                            canFileReport:               false,
+                                            extraInfo:                   nil,
+                                            metadata:                    [#file, #function, #line],
+                                            networkDependent:            false)
+            
+            report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
+        }
+        
         guard usernameTextField.text!.isValidEmail else
         {
-            let message = "The e-mail address is badly formatted. Please try again."
+            let message = "The e-mail address is improperly formatted. Please try again."
             
             AlertKit().errorAlertController(title:                       "Invalid E-mail",
                                             message:                     message,
