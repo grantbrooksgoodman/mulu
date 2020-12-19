@@ -24,10 +24,10 @@ class Build
     
     enum BuildType
     {
-        case preAlpha
-        case alpha
-        case beta
-        case releaseCandidate
+        case preAlpha         /* Typically builds 0-1500 */
+        case alpha            /* Typically builds 1500-3000 */
+        case beta             /* Typically builds 3000-6000 */
+        case releaseCandidate /* Typically builds 6000 onwards */
         case generalRelease
     }
     

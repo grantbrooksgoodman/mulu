@@ -110,7 +110,7 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate
     
     @IBAction func signUpButton(_ sender: Any)
     {
-        
+        performSegue(withIdentifier: "PostSignUpFromSignUpSegue", sender: self)
     }
     
     //==================================================//

@@ -66,6 +66,7 @@
 		A278D31F2585A036008D22D1 /* ChallengeTestingSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278D31E2585A036008D22D1 /* ChallengeTestingSerialiser.swift */; };
 		A278D3222585A0AC008D22D1 /* TeamTestingSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278D3212585A0AC008D22D1 /* TeamTestingSerialiser.swift */; };
 		A278D3252585A19C008D22D1 /* GenericTestingSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278D3242585A19C008D22D1 /* GenericTestingSerialiser.swift */; };
+		A28797ED258D663400C48A74 /* PostSignUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28797EC258D663400C48A74 /* PostSignUpController.swift */; };
 		A288D20025844F55002AFB51 /* ScrollerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A288D1FF25844F55002AFB51 /* ScrollerCell.swift */; };
 		A28E99B7257AA47D00D8A4F7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */; };
 		A2A554962577FFBF006D3B3E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A554952577FFBF006D3B3E /* Extensions.swift */; };
@@ -163,6 +164,7 @@
 		A278D31E2585A036008D22D1 /* ChallengeTestingSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeTestingSerialiser.swift; sourceTree = "<group>"; };
 		A278D3212585A0AC008D22D1 /* TeamTestingSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamTestingSerialiser.swift; sourceTree = "<group>"; };
 		A278D3242585A19C008D22D1 /* GenericTestingSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTestingSerialiser.swift; sourceTree = "<group>"; };
+		A28797EC258D663400C48A74 /* PostSignUpController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostSignUpController.swift; sourceTree = "<group>"; };
 		A288D1FF25844F55002AFB51 /* ScrollerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollerCell.swift; sourceTree = "<group>"; };
 		A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A2A554952577FFBF006D3B3E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 				A2D6DFB22580376900725D5C /* HomeController.swift */,
 				68D29A121DD79C8A00BFF4D5 /* InitialController.swift */,
 				687404471CB1AB3400BD2632 /* MainController.swift */,
+				A28797EC258D663400C48A74 /* PostSignUpController.swift */,
 				68EB1C821DD7B7070074737B /* SampleController.swift */,
 				A2CD9667258D366D00A174D0 /* SignInController.swift */,
 				A235173A258D54500055B8B3 /* SignUpController.swift */,
@@ -667,6 +670,7 @@
 				A288D20025844F55002AFB51 /* ScrollerCell.swift in Sources */,
 				A2AEDD53257BE61E0074CA11 /* Challenge.swift in Sources */,
 				A278D3222585A0AC008D22D1 /* TeamTestingSerialiser.swift in Sources */,
+				A28797ED258D663400C48A74 /* PostSignUpController.swift in Sources */,
 				A20700002581C2C9004E70A6 /* TeamController.swift in Sources */,
 				A2B1F7612458EC8900CB20AF /* ShadowButton.swift in Sources */,
 				A2A5549A25780BCB006D3B3E /* Builder.swift in Sources */,

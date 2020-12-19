@@ -558,7 +558,7 @@ Wide squat stance</string>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="30" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4PF-Ds-slh">
-                                                                        <rect key="frame" x="24.000000000000004" y="26.333333333333329" width="32.333333333333343" height="27.666666666666671"/>
+                                                                        <rect key="frame" x="24" y="26" width="32" height="28"/>
                                                                         <fontDescription key="fontDescription" name="SFUIText-Heavy" family="SF UI Text" pointSize="23"/>
                                                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
@@ -871,6 +871,7 @@ Wide squat stance</string>
                         <outlet property="passwordTextField" destination="QcG-Nj-MYX" id="1II-TV-2eH"/>
                         <outlet property="signUpButton" destination="w2b-CA-Dj4" id="W57-su-Vqy"/>
                         <segue destination="X61-tu-xQD" kind="modal" identifier="signInFromSignUpSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="ZlL-p8-kZR"/>
+                        <segue destination="6oE-Bt-NfX" kind="modal" identifier="PostSignUpFromSignUpSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="a9P-h7-seW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E12-D1-lob" sceneMemberID="firstResponder"/>
@@ -882,12 +883,187 @@ Wide squat stance</string>
             </objects>
             <point key="canvasLocation" x="1449.5327102803737" y="-152.26781857451405"/>
         </scene>
+        <!--Post Sign Up Controller-->
+        <scene sceneID="cZH-a3-1Ns">
+            <objects>
+                <viewController storyboardIdentifier="PostSignUpController" title="Post Sign Up Controller" id="6oE-Bt-NfX" customClass="PostSignUpController" customModule="Mulu" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ixM-fy-M6N"/>
+                        <viewControllerLayoutGuide type="bottom" id="HMd-gq-V1j"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Wa9-hp-ldd">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WELCOME!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8NQ-Jh-FOe">
+                                <rect key="frame" x="20" y="144" width="388" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="Fzl-vG-XSw"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Gotham-Black" family="Gotham" pointSize="32"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="If you have a team code, enter that here:" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PYV-WW-5vi">
+                                <rect key="frame" x="20" y="214" width="388" height="70"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="70" id="KpD-Kv-b4I"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="TEAM CODE" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8t5-Os-IWf">
+                                <rect key="frame" x="20" y="292" width="335" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="PJG-yL-JtI"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="go" textContentType="one-time-code"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VKq-3b-b1t">
+                                <rect key="frame" x="363" y="292" width="45" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="LNG-rY-nCZ"/>
+                                    <constraint firstAttribute="width" constant="45" id="hSc-r0-M4V"/>
+                                </constraints>
+                                <state key="normal" image="Forward"/>
+                                <connections>
+                                    <action selector="goButton:" destination="6oE-Bt-NfX" eventType="touchUpInside" id="gEQ-Ib-SN3"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Otherwise, sit tight as you're taken off the waitlist and assigned to a team." lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9N3-u3-ctb">
+                                <rect key="frame" x="20" y="355" width="388" height="90"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="90" id="Y7l-ZT-tat"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9l2-6J-tK6">
+                                <rect key="frame" x="109.66666666666669" y="548" width="209" height="50"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="FO4-fU-10c"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="18"/>
+                                <state key="normal" title="CONTACT US">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="contactUsButton:" destination="6oE-Bt-NfX" eventType="touchUpInside" id="81t-eA-Xmj"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZMl-xz-osZ">
+                                <rect key="frame" x="109.66666666666669" y="616" width="209" height="50"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="7EG-eL-RJU"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="18"/>
+                                <state key="normal" title="INVITE YOUR FRIENDS">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="inviteYourFriendsButton:" destination="6oE-Bt-NfX" eventType="touchUpInside" id="vzX-HO-bL9"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="They'll join you in line so you can compete together!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4YL-bf-q1x">
+                                <rect key="frame" x="99" y="674" width="230" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="32" id="pfb-sY-fDf"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="13"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jOd-cv-iVP">
+                                <rect key="frame" x="144.66666666666666" y="824" width="138.99999999999997" height="30"/>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="14"/>
+                                <state key="normal" title="www.getmulu.com">
+                                    <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="linkButton:" destination="6oE-Bt-NfX" eventType="touchUpInside" id="l7o-cy-snp"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iOX-8o-VHw">
+                                <rect key="frame" x="129" y="862" width="170" height="30"/>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="14"/>
+                                <state key="normal" title="@mulufitness">
+                                    <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="linkButton:" destination="6oE-Bt-NfX" eventType="touchUpInside" id="tim-CZ-iVA"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemTealColor"/>
+                        <constraints>
+                            <constraint firstItem="4YL-bf-q1x" firstAttribute="centerX" secondItem="Wa9-hp-ldd" secondAttribute="centerX" id="Axc-L8-8aV"/>
+                            <constraint firstItem="VKq-3b-b1t" firstAttribute="trailing" secondItem="Wa9-hp-ldd" secondAttribute="trailingMargin" id="C7n-tp-ahU"/>
+                            <constraint firstItem="iOX-8o-VHw" firstAttribute="top" secondItem="jOd-cv-iVP" secondAttribute="bottom" constant="8" symbolic="YES" id="CR6-Uv-sTP"/>
+                            <constraint firstItem="8NQ-Jh-FOe" firstAttribute="trailing" secondItem="Wa9-hp-ldd" secondAttribute="trailingMargin" id="EOl-i3-vTP"/>
+                            <constraint firstItem="iOX-8o-VHw" firstAttribute="leading" secondItem="Wa9-hp-ldd" secondAttribute="leadingMargin" constant="109" id="EYu-Ia-Ffk"/>
+                            <constraint firstItem="9N3-u3-ctb" firstAttribute="trailing" secondItem="Wa9-hp-ldd" secondAttribute="trailingMargin" id="Efh-xe-418"/>
+                            <constraint firstItem="9N3-u3-ctb" firstAttribute="leading" secondItem="Wa9-hp-ldd" secondAttribute="leadingMargin" id="GXP-9y-EkF"/>
+                            <constraint firstItem="9l2-6J-tK6" firstAttribute="centerX" secondItem="Wa9-hp-ldd" secondAttribute="centerX" id="JTv-vm-XCM"/>
+                            <constraint firstItem="ZMl-xz-osZ" firstAttribute="top" secondItem="9l2-6J-tK6" secondAttribute="bottom" constant="18" id="McZ-98-7gB"/>
+                            <constraint firstItem="8t5-Os-IWf" firstAttribute="leading" secondItem="Wa9-hp-ldd" secondAttribute="leadingMargin" id="Mpf-Yk-WHI"/>
+                            <constraint firstItem="8t5-Os-IWf" firstAttribute="top" secondItem="PYV-WW-5vi" secondAttribute="bottom" constant="8" symbolic="YES" id="P6k-bg-9KE"/>
+                            <constraint firstItem="8NQ-Jh-FOe" firstAttribute="top" relation="greaterThanOrEqual" secondItem="ixM-fy-M6N" secondAttribute="bottom" constant="20" id="PAm-eD-eeM"/>
+                            <constraint firstItem="iOX-8o-VHw" firstAttribute="top" secondItem="jOd-cv-iVP" secondAttribute="bottom" constant="8" symbolic="YES" id="Tz9-Ai-LlF"/>
+                            <constraint firstItem="ZMl-xz-osZ" firstAttribute="centerX" secondItem="Wa9-hp-ldd" secondAttribute="centerX" id="U4b-QW-4bM"/>
+                            <constraint firstItem="VKq-3b-b1t" firstAttribute="leading" secondItem="8t5-Os-IWf" secondAttribute="trailing" constant="8" symbolic="YES" id="YGM-EZ-5FD"/>
+                            <constraint firstItem="4YL-bf-q1x" firstAttribute="top" secondItem="ZMl-xz-osZ" secondAttribute="bottom" constant="8" symbolic="YES" id="ZWP-hu-w9R"/>
+                            <constraint firstItem="ZMl-xz-osZ" firstAttribute="height" secondItem="9l2-6J-tK6" secondAttribute="height" id="aCs-nk-lQp"/>
+                            <constraint firstItem="VKq-3b-b1t" firstAttribute="centerY" secondItem="8t5-Os-IWf" secondAttribute="centerY" id="aho-2P-5rL"/>
+                            <constraint firstItem="9l2-6J-tK6" firstAttribute="top" relation="greaterThanOrEqual" secondItem="9N3-u3-ctb" secondAttribute="bottom" constant="20" id="bw4-ho-99d"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="iOX-8o-VHw" secondAttribute="trailing" constant="109" id="c40-W7-tNa"/>
+                            <constraint firstItem="PYV-WW-5vi" firstAttribute="leading" secondItem="Wa9-hp-ldd" secondAttribute="leadingMargin" id="eoq-he-2AM"/>
+                            <constraint firstItem="iOX-8o-VHw" firstAttribute="centerX" secondItem="Wa9-hp-ldd" secondAttribute="centerX" id="hG3-Lf-Uge"/>
+                            <constraint firstItem="PYV-WW-5vi" firstAttribute="trailing" secondItem="Wa9-hp-ldd" secondAttribute="trailingMargin" id="i5x-D7-Quy"/>
+                            <constraint firstItem="VKq-3b-b1t" firstAttribute="height" secondItem="8t5-Os-IWf" secondAttribute="height" id="kEx-NA-y0b"/>
+                            <constraint firstItem="8NQ-Jh-FOe" firstAttribute="leading" secondItem="Wa9-hp-ldd" secondAttribute="leadingMargin" id="lbG-Wa-07v"/>
+                            <constraint firstItem="9l2-6J-tK6" firstAttribute="top" secondItem="9N3-u3-ctb" secondAttribute="bottom" priority="250" constant="103" id="llS-wg-GOu"/>
+                            <constraint firstItem="iOX-8o-VHw" firstAttribute="bottom" secondItem="HMd-gq-V1j" secondAttribute="top" id="mCQ-rG-9cr"/>
+                            <constraint firstItem="4YL-bf-q1x" firstAttribute="leading" secondItem="Wa9-hp-ldd" secondAttribute="leadingMargin" constant="79" id="mZE-H3-ilp"/>
+                            <constraint firstItem="ZMl-xz-osZ" firstAttribute="width" secondItem="9l2-6J-tK6" secondAttribute="width" id="mhu-QB-0tg"/>
+                            <constraint firstItem="jOd-cv-iVP" firstAttribute="centerX" secondItem="Wa9-hp-ldd" secondAttribute="centerX" id="pog-Nn-hg7"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="4YL-bf-q1x" secondAttribute="trailing" constant="79" id="pwo-mV-qwd"/>
+                            <constraint firstItem="VKq-3b-b1t" firstAttribute="top" secondItem="PYV-WW-5vi" secondAttribute="bottom" constant="8" symbolic="YES" id="tJQ-z4-rwI"/>
+                            <constraint firstItem="HMd-gq-V1j" firstAttribute="top" secondItem="4YL-bf-q1x" secondAttribute="bottom" priority="750" constant="186" id="vGc-OC-UC2"/>
+                            <constraint firstItem="PYV-WW-5vi" firstAttribute="top" secondItem="8NQ-Jh-FOe" secondAttribute="bottom" constant="20" id="xqT-7r-TPB"/>
+                            <constraint firstItem="9N3-u3-ctb" firstAttribute="top" secondItem="8t5-Os-IWf" secondAttribute="bottom" constant="18" id="yQp-9N-gWA"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Item" id="1WK-FR-7nf"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="428" height="926"/>
+                    <connections>
+                        <outlet property="contactUsButton" destination="9l2-6J-tK6" id="JGH-jp-O3x"/>
+                        <outlet property="goButton" destination="VKq-3b-b1t" id="oPM-tJ-RJA"/>
+                        <outlet property="inviteYourFriendsButton" destination="ZMl-xz-osZ" id="1z0-FQ-xbG"/>
+                        <outlet property="teamCodeTextField" destination="8t5-Os-IWf" id="CVG-fn-ZAL"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8cf-H2-riz" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="lP5-tD-lhK">
+                    <connections>
+                        <action selector="longPress:" destination="6oE-Bt-NfX" id="nDz-Qu-d9H"/>
+                    </connections>
+                </pongPressGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="2395.7943925233644" y="-152.26781857451405"/>
+        </scene>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="hu9-pD-bfH"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="Back" width="49" height="47"/>
+        <image name="Forward" width="28" height="27"/>
         <image name="Home" width="53" height="53"/>
         <image name="Mulu" width="25" height="25"/>
         <image name="Mulu Logo" width="123" height="123"/>
