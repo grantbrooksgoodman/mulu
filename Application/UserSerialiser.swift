@@ -33,7 +33,7 @@ class UserSerialiser
      
      - Parameter completion: Returns with the identifier of the newly created **User** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
      */
-    func createAccount(associatedTeams: [String],
+    func createAccount(associatedTeams: [String]?,
                        emailAddress: String,
                        firstName: String,
                        lastName: String,
@@ -53,7 +53,7 @@ class UserSerialiser
             else if let result = returnedResult
             {
                 UserSerialiser().createUser(associatedIdentifier: result.user.uid,
-                                            associatedTeams:      associatedTeams,
+                                            associatedTeams:      associatedTeams == nil ? ["!"] : associatedTeams,
                                             emailAddress:         emailAddress,
                                             firstName:            firstName,
                                             lastName:             lastName,
@@ -100,7 +100,7 @@ class UserSerialiser
      - Parameter completion: Returns with the identifier of the newly created **User** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
      */
     func createUser(associatedIdentifier: String?,
-                    associatedTeams: [String],
+                    associatedTeams: [String]?,
                     emailAddress: String,
                     firstName: String,
                     lastName: String,
@@ -110,7 +110,7 @@ class UserSerialiser
     {
         var dataBundle: [String:Any] = [:]
         
-        dataBundle["associatedTeams"] = associatedTeams
+        dataBundle["associatedTeams"] = associatedTeams == nil ? ["!"] : associatedTeams
         dataBundle["emailAddress"] = emailAddress
         dataBundle["firstName"] = firstName
         dataBundle["lastName"] = lastName

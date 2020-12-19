@@ -261,7 +261,12 @@ class TeamSerialiser
                 { completion("Improperly formatted metadata."); return }
                 
                 newUserList = (mutableDataBundle["participantIdentifiers"] as! [String])
-                newUserList!.append(withIdentifier)
+                
+                if newUserList! == ["!"]
+                {
+                    newUserList = [withIdentifier]
+                }
+                else { newUserList!.append(withIdentifier) }
                 
                 group.leave()
             }
@@ -284,7 +289,12 @@ class TeamSerialiser
                     guard var associatedTeams = asDataBundle["associatedTeams"] as? [String] else
                     { completion("This user has corrupted «associatedTeams»."); return }
                     
-                    associatedTeams.append(toTeam)
+                    if associatedTeams == ["!"]
+                    {
+                        associatedTeams = [toTeam]
+                    }
+                    else { associatedTeams.append(toTeam) }
+                    
                     newAssociatedTeams = associatedTeams
                     
                     group.leave()
@@ -352,6 +362,7 @@ class TeamSerialiser
         
         dataBundle["associatedTournament"] = "!"
         dataBundle["completedChallenges"] = ["!":["!"]]
+        dataBundle["joinCode"] = Int().random(min: 10000, max: 99999)
         dataBundle["name"] = name
         dataBundle["participantIdentifiers"] = participantIdentifiers
         
@@ -386,6 +397,44 @@ class TeamSerialiser
             }
         }
         else { completion(nil, "Unable to create key in database.") }
+    }
+    
+    /**
+     Finds the **Team** with the specified join code.
+     
+     - Parameter byJoinCode: The join code of the **Team** to get.
+     
+     - Parameter completion: Returns with the identifier of the **Team** with the corresponding join code if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     */
+    func getTeam(byJoinCode: Int, completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
+    {
+        Database.database().reference().child("allTeams").observeSingleEvent(of: .value) { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let asDataBundle = returnedSnapshotAsDictionary as? [String:Any]
+            {
+                for (index, identifier) in Array(asDataBundle.keys).enumerated()
+                {
+                    if let data = asDataBundle[identifier] as? [String:Any],
+                       let joinCode = data["joinCode"] as? Int
+                    {
+                        if joinCode == byJoinCode
+                        {
+                            completion(identifier, nil)
+                            break
+                        }
+                    }
+                    
+                    if index == asDataBundle.keys.count - 1
+                    {
+                        completion(nil, "No Team exists with join code \(byJoinCode).")
+                    }
+                }
+            }
+            else
+            {
+                completion(nil, "Unable to deserialise snapshot.")
+            }
+        }
     }
     
     /**
@@ -613,6 +662,7 @@ class TeamSerialiser
         let associatedIdentifier = dataBundle["associatedIdentifier"] as! String
         let associatedTournament = dataBundle["associatedTournament"] as! String
         let completedChallenges = dataBundle["completedChallenges"] as! [String:[String]]
+        let joinCode = dataBundle["joinCode"] as! Int
         let name = dataBundle["name"] as! String
         let participantIdentifiers = dataBundle["participantIdentifiers"] as! [String]
         
@@ -668,6 +718,7 @@ class TeamSerialiser
                         let deSerialisedTeam = Team(associatedIdentifier:   associatedIdentifier,
                                                     associatedTournament:   tournament,
                                                     completedChallenges:    completedChallenges,
+                                                    joinCode:               joinCode,
                                                     name:                   name,
                                                     participantIdentifiers: participantIdentifiers)
                         
@@ -688,6 +739,7 @@ class TeamSerialiser
                 let deSerialisedTeam = Team(associatedIdentifier:   associatedIdentifier,
                                             associatedTournament:   nil,
                                             completedChallenges:    completedChallenges,
+                                            joinCode:               joinCode,
                                             name:                   name,
                                             participantIdentifiers: participantIdentifiers)
                 
@@ -737,6 +789,9 @@ class TeamSerialiser
         
         guard withDataBundle["completedChallenges"] as? [String:[String]] != nil else
         { report("Malformed «completedChallenges».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
+        
+        guard withDataBundle["joinCode"] as? Int != nil else
+        { report("Malformed «joinCode».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
         
         guard withDataBundle["name"] as? String != nil else
         { report("Malformed «name».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }

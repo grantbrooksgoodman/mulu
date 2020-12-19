@@ -10,6 +10,9 @@
 import MessageUI
 import UIKit
 
+/* Third-party Frameworks */
+import FirebaseAuth
+
 class SignInController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
@@ -111,6 +114,112 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     @IBAction func signUpButton(_ sender: Any)
     {
         performSegue(withIdentifier: "signUpFromSignInSegue", sender: self)
+    }
+    
+    @IBAction func signInButton(_ sender: Any)
+    {
+        guard usernameTextField.text!.isValidEmail else
+        {
+            let message = "The e-mail address is badly formatted. Please try again."
+            
+            AlertKit().errorAlertController(title:                       "Invalid E-mail",
+                                            message:                     message,
+                                            dismissButtonTitle:          "OK",
+                                            additionalSelectors:         nil,
+                                            preferredAdditionalSelector: nil,
+                                            canFileReport:               false,
+                                            extraInfo:                   nil,
+                                            metadata:                    [#file, #function, #line],
+                                            networkDependent:            false)
+            
+            report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
+        }
+        
+        guard passwordTextField.text!.count > 5 else
+        {
+            let message = "Passwords must be 6 or more characters. Please try again."
+            
+            AlertKit().errorAlertController(title:                       "Invalid Password Length",
+                                            message:                     message,
+                                            dismissButtonTitle:          "OK",
+                                            additionalSelectors:         nil,
+                                            preferredAdditionalSelector: nil,
+                                            canFileReport:               false,
+                                            extraInfo:                   nil,
+                                            metadata:                    [#file, #function, #line],
+                                            networkDependent:            false)
+            
+            report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
+        }
+        
+        Auth.auth().signIn(withEmail: usernameTextField.text!, password: passwordTextField.text!) { (returnedResult, returnedError) in
+            if let result = returnedResult
+            {
+                UserSerialiser().getUser(withIdentifier: result.user.uid) { (returnedUser, errorDescriptor) in
+                    if let user = returnedUser
+                    {
+                        currentUser = user
+                        
+                        report("Signed in successfully.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    }
+                    else if let error = errorDescriptor
+                    {
+                        AlertKit().errorAlertController(title:                       nil,
+                                                        message:                     error,
+                                                        dismissButtonTitle:          "OK",
+                                                        additionalSelectors:         nil,
+                                                        preferredAdditionalSelector: nil,
+                                                        canFileReport:               true,
+                                                        extraInfo:                   nil,
+                                                        metadata:                    [#file, #function, #line],
+                                                        networkDependent:            false)
+                        
+                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    }
+                }
+            }
+            else if let error = returnedError
+            {
+                let message = errorInformation(forError: (error as NSError))
+                
+                var alertMessage = errorInformation(forError: (error as NSError))
+                
+                if alertMessage.hasPrefix("There is no user")
+                {
+                    alertMessage = "There doesn't seem to be a user with those credentials. Please verify your entries and try again."
+                }
+                else if alertMessage.hasPrefix("The password is invalid")
+                {
+                    alertMessage = "The password was incorrect. Please try again."
+                }
+                
+                AlertKit().errorAlertController(title:                       "Sign In Failed",
+                                                message:                     alertMessage,
+                                                dismissButtonTitle:          "OK",
+                                                additionalSelectors:         nil,
+                                                preferredAdditionalSelector: nil,
+                                                canFileReport:               true,
+                                                extraInfo:                   message,
+                                                metadata:                    [#file, #function, #line],
+                                                networkDependent:            true)
+                
+                report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+            else
+            {
+                AlertKit().errorAlertController(title:                       nil,
+                                                message:                     nil,
+                                                dismissButtonTitle:          "OK",
+                                                additionalSelectors:         nil,
+                                                preferredAdditionalSelector: nil,
+                                                canFileReport:               false,
+                                                extraInfo:                   nil,
+                                                metadata:                    [#file, #function, #line],
+                                                networkDependent:            false)
+                
+                report("An unknown error occurred.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+        }
     }
     
     //==================================================//

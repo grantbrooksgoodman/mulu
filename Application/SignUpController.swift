@@ -30,6 +30,7 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate
     /* Class-level Variable Declarations */
     
     var buildInstance: Build!
+    var userIdentifier: String!
     
     //==================================================//
     
@@ -96,7 +97,12 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
-        
+        if segue.identifier == "PostSignUpFromSignUpSegue"
+        {
+            let destination = segue.destination as! PostSignUpController
+            
+            destination.userIdentifier = userIdentifier
+        }
     }
     
     //==================================================//
@@ -110,7 +116,92 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate
     
     @IBAction func signUpButton(_ sender: Any)
     {
-        performSegue(withIdentifier: "PostSignUpFromSignUpSegue", sender: self)
+        guard fullNameTextField.text!.components(separatedBy: " ").count > 1 else
+        {
+            let message = "Please be sure to enter both your first and last name."
+            
+            AlertKit().errorAlertController(title:                       "Improper Name Format",
+                                            message:                     message,
+                                            dismissButtonTitle:          "OK",
+                                            additionalSelectors:         nil,
+                                            preferredAdditionalSelector: nil,
+                                            canFileReport:               false,
+                                            extraInfo:                   nil,
+                                            metadata:                    [#file, #function, #line],
+                                            networkDependent:            false)
+            
+            report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
+        }
+        
+        guard emailTextField.text!.isValidEmail else
+        {
+            let message = "The e-mail address is badly formatted. Please try again."
+            
+            AlertKit().errorAlertController(title:                       "Invalid E-mail",
+                                            message:                     message,
+                                            dismissButtonTitle:          "OK",
+                                            additionalSelectors:         nil,
+                                            preferredAdditionalSelector: nil,
+                                            canFileReport:               false,
+                                            extraInfo:                   nil,
+                                            metadata:                    [#file, #function, #line],
+                                            networkDependent:            false)
+            
+            report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
+        }
+        
+        guard passwordTextField.text!.count > 5 else
+        {
+            let message = "Passwords must be 6 or more characters. Please try again."
+            
+            AlertKit().errorAlertController(title:                       "Invalid Password Length",
+                                            message:                     message,
+                                            dismissButtonTitle:          "OK",
+                                            additionalSelectors:         nil,
+                                            preferredAdditionalSelector: nil,
+                                            canFileReport:               false,
+                                            extraInfo:                   nil,
+                                            metadata:                    [#file, #function, #line],
+                                            networkDependent:            false)
+            
+            report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
+        }
+        
+        let nameComponents = fullNameTextField.text!.components(separatedBy: " ")
+        let firstName = String(nameComponents[0])
+        let lastName = String(nameComponents[1...nameComponents.count - 1].joined(separator: " "))
+        
+        UserSerialiser().createAccount(associatedTeams: nil,
+                                       emailAddress: emailTextField.text!,
+                                       firstName: firstName,
+                                       lastName: lastName,
+                                       password: passwordTextField.text!,
+                                       profileImageData: nil,
+                                       pushTokens: nil) { (returnedUser, errorDescriptor) in
+            if let user = returnedUser
+            {
+                report("SUCCESSFULLY CREATED USER \(user.firstName!) \(user.lastName!)!", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                
+                self.userIdentifier = user.associatedIdentifier
+                self.performSegue(withIdentifier: "PostSignUpFromSignUpSegue", sender: self)
+            }
+            else if let error = errorDescriptor
+            {
+                let message = error.components(separatedBy: " (")[0]
+                
+                AlertKit().errorAlertController(title:                       "Couldn't Create Account",
+                                                message:                     message,
+                                                dismissButtonTitle:          "OK",
+                                                additionalSelectors:         nil,
+                                                preferredAdditionalSelector: nil,
+                                                canFileReport:               true,
+                                                extraInfo:                   error,
+                                                metadata:                    [#file, #function, #line],
+                                                networkDependent:            true)
+                
+                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+        }
     }
     
     //==================================================//

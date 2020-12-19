@@ -2,7 +2,7 @@
 //  PostSignUpController.swift
 //  Mulu Party
 //
-//  Created by Grant Brooks Goodman on 04/12/2020.
+//  Created by Grant Brooks Goodman on 18/12/2020.
 //  Copyright © 2013-2020 NEOTechnica Corporation. All rights reserved.
 //
 
@@ -29,6 +29,7 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     /* Class-level Variable Declarations */
     
     var buildInstance: Build!
+    var userIdentifier: String?
     
     //==================================================//
     
@@ -95,6 +96,79 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     @IBAction func goButton(_ sender: Any)
     {
         teamCodeTextField.resignFirstResponder()
+        
+        guard teamCodeTextField.text!.count == 5,
+              let joinCode = Int(teamCodeTextField.text!) else
+        {
+            let message = "Join codes consist of 5 numbers. Please try again."
+            
+            AlertKit().errorAlertController(title:                       "Invalid Code",
+                                            message:                     message,
+                                            dismissButtonTitle:          "OK",
+                                            additionalSelectors:         nil,
+                                            preferredAdditionalSelector: nil,
+                                            canFileReport:               false,
+                                            extraInfo:                   nil,
+                                            metadata:                    [#file, #function, #line],
+                                            networkDependent:            false)
+            
+            report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
+        }
+        
+        guard let userIdentifier = userIdentifier else
+        {
+            AlertKit().errorAlertController(title:                       nil,
+                                            message:                     nil,
+                                            dismissButtonTitle:          "OK",
+                                            additionalSelectors:         nil,
+                                            preferredAdditionalSelector: nil,
+                                            canFileReport:               false,
+                                            extraInfo:                   nil,
+                                            metadata:                    [#file, #function, #line],
+                                            networkDependent:            false)
+            
+            report("No User identifier passed!", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
+        }
+        
+        TeamSerialiser().getTeam(byJoinCode: joinCode) { (returnedIdentifier, errorDescriptor) in
+            if let identifier = returnedIdentifier
+            {
+                TeamSerialiser().addUser(userIdentifier, toTeam: identifier) { (errorDescriptor) in
+                    if let error = errorDescriptor
+                    {
+                        AlertKit().errorAlertController(title:                       "Couldn't Add To Team",
+                                                        message:                     error,
+                                                        dismissButtonTitle:          "OK",
+                                                        additionalSelectors:         nil,
+                                                        preferredAdditionalSelector: nil,
+                                                        canFileReport:               false,
+                                                        extraInfo:                   nil,
+                                                        metadata:                    [#file, #function, #line],
+                                                        networkDependent:            false)
+                        
+                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    }
+                    else
+                    {
+                        report("Great success!", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    }
+                }
+            }
+            else if let error = errorDescriptor
+            {
+                AlertKit().errorAlertController(title:                       "Couldn't Find Team",
+                                                message:                     error,
+                                                dismissButtonTitle:          "OK",
+                                                additionalSelectors:         nil,
+                                                preferredAdditionalSelector: nil,
+                                                canFileReport:               false,
+                                                extraInfo:                   nil,
+                                                metadata:                    [#file, #function, #line],
+                                                networkDependent:            false)
+                
+                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+        }
     }
     
     @IBAction func contactUsButton(_ sender: Any)

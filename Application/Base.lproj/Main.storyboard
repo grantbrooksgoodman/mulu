@@ -11,6 +11,9 @@
         <array key="Gotham-Black.otf">
             <string>Gotham-Black</string>
         </array>
+        <array key="Montserrat-Bold.ttf">
+            <string>Montserrat-Bold</string>
+        </array>
         <array key="Montserrat-ExtraBold.ttf">
             <string>Montserrat-ExtraBold</string>
         </array>
@@ -690,7 +693,7 @@ Wide squat stance</string>
                                     <constraint firstAttribute="width" secondItem="aXA-i2-OXi" secondAttribute="height" multiplier="1:1" id="t3t-hr-T4Q"/>
                                 </constraints>
                             </imageView>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="USERNAME" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="DMm-Pa-Nhg">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="E-MAIL" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="DMm-Pa-Nhg">
                                 <rect key="frame" x="39" y="363" width="350" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="Wp6-wl-qkY"/>
@@ -716,6 +719,9 @@ Wide squat stance</string>
                                 <state key="normal" title="SIGN IN">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
+                                <connections>
+                                    <action selector="signInButton:" destination="X61-tu-xQD" eventType="touchUpInside" id="Fjk-La-mio"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemTealColor"/>
@@ -909,7 +915,7 @@ Wide squat stance</string>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="70" id="KpD-Kv-b4I"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="20"/>
+                                <fontDescription key="fontDescription" name="Montserrat-Bold" family="Montserrat" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -937,17 +943,17 @@ Wide squat stance</string>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="90" id="Y7l-ZT-tat"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="20"/>
+                                <fontDescription key="fontDescription" name="Montserrat-Bold" family="Montserrat" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9l2-6J-tK6">
-                                <rect key="frame" x="109.66666666666669" y="548" width="209" height="50"/>
+                                <rect key="frame" x="108.66666666666669" y="548" width="211" height="50"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="FO4-fU-10c"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="18"/>
+                                <fontDescription key="fontDescription" name="Montserrat-Bold" family="Montserrat" pointSize="18"/>
                                 <state key="normal" title="CONTACT US">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
@@ -956,12 +962,12 @@ Wide squat stance</string>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZMl-xz-osZ">
-                                <rect key="frame" x="109.66666666666669" y="616" width="209" height="50"/>
+                                <rect key="frame" x="108.66666666666669" y="616" width="211" height="50"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="7EG-eL-RJU"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="18"/>
+                                <fontDescription key="fontDescription" name="Montserrat-Bold" family="Montserrat" pointSize="18"/>
                                 <state key="normal" title="INVITE YOUR FRIENDS">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
@@ -979,7 +985,10 @@ Wide squat stance</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jOd-cv-iVP">
-                                <rect key="frame" x="144.66666666666666" y="824" width="138.99999999999997" height="30"/>
+                                <rect key="frame" x="144.66666666666666" y="858" width="138.99999999999997" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="wTF-iW-a7m"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="14"/>
                                 <state key="normal" title="www.getmulu.com">
                                     <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -989,7 +998,10 @@ Wide squat stance</string>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iOX-8o-VHw">
-                                <rect key="frame" x="129" y="862" width="170" height="30"/>
+                                <rect key="frame" x="129" y="886" width="170" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="X24-NF-hsj"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="14"/>
                                 <state key="normal" title="@mulufitness">
                                     <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1003,7 +1015,7 @@ Wide squat stance</string>
                         <constraints>
                             <constraint firstItem="4YL-bf-q1x" firstAttribute="centerX" secondItem="Wa9-hp-ldd" secondAttribute="centerX" id="Axc-L8-8aV"/>
                             <constraint firstItem="VKq-3b-b1t" firstAttribute="trailing" secondItem="Wa9-hp-ldd" secondAttribute="trailingMargin" id="C7n-tp-ahU"/>
-                            <constraint firstItem="iOX-8o-VHw" firstAttribute="top" secondItem="jOd-cv-iVP" secondAttribute="bottom" constant="8" symbolic="YES" id="CR6-Uv-sTP"/>
+                            <constraint firstItem="iOX-8o-VHw" firstAttribute="top" secondItem="jOd-cv-iVP" secondAttribute="bottom" constant="8" symbolic="YES" id="Ddq-8G-rOC"/>
                             <constraint firstItem="8NQ-Jh-FOe" firstAttribute="trailing" secondItem="Wa9-hp-ldd" secondAttribute="trailingMargin" id="EOl-i3-vTP"/>
                             <constraint firstItem="iOX-8o-VHw" firstAttribute="leading" secondItem="Wa9-hp-ldd" secondAttribute="leadingMargin" constant="109" id="EYu-Ia-Ffk"/>
                             <constraint firstItem="9N3-u3-ctb" firstAttribute="trailing" secondItem="Wa9-hp-ldd" secondAttribute="trailingMargin" id="Efh-xe-418"/>
@@ -1011,10 +1023,11 @@ Wide squat stance</string>
                             <constraint firstItem="9l2-6J-tK6" firstAttribute="centerX" secondItem="Wa9-hp-ldd" secondAttribute="centerX" id="JTv-vm-XCM"/>
                             <constraint firstItem="ZMl-xz-osZ" firstAttribute="top" secondItem="9l2-6J-tK6" secondAttribute="bottom" constant="18" id="McZ-98-7gB"/>
                             <constraint firstItem="8t5-Os-IWf" firstAttribute="leading" secondItem="Wa9-hp-ldd" secondAttribute="leadingMargin" id="Mpf-Yk-WHI"/>
+                            <constraint firstItem="iOX-8o-VHw" firstAttribute="top" secondItem="jOd-cv-iVP" secondAttribute="bottom" constant="8" symbolic="YES" id="OJh-ks-RAq"/>
                             <constraint firstItem="8t5-Os-IWf" firstAttribute="top" secondItem="PYV-WW-5vi" secondAttribute="bottom" constant="8" symbolic="YES" id="P6k-bg-9KE"/>
                             <constraint firstItem="8NQ-Jh-FOe" firstAttribute="top" relation="greaterThanOrEqual" secondItem="ixM-fy-M6N" secondAttribute="bottom" constant="20" id="PAm-eD-eeM"/>
-                            <constraint firstItem="iOX-8o-VHw" firstAttribute="top" secondItem="jOd-cv-iVP" secondAttribute="bottom" constant="8" symbolic="YES" id="Tz9-Ai-LlF"/>
                             <constraint firstItem="ZMl-xz-osZ" firstAttribute="centerX" secondItem="Wa9-hp-ldd" secondAttribute="centerX" id="U4b-QW-4bM"/>
+                            <constraint firstItem="iOX-8o-VHw" firstAttribute="top" secondItem="jOd-cv-iVP" secondAttribute="bottom" constant="8" symbolic="YES" id="Vio-At-OE2"/>
                             <constraint firstItem="VKq-3b-b1t" firstAttribute="leading" secondItem="8t5-Os-IWf" secondAttribute="trailing" constant="8" symbolic="YES" id="YGM-EZ-5FD"/>
                             <constraint firstItem="4YL-bf-q1x" firstAttribute="top" secondItem="ZMl-xz-osZ" secondAttribute="bottom" constant="8" symbolic="YES" id="ZWP-hu-w9R"/>
                             <constraint firstItem="ZMl-xz-osZ" firstAttribute="height" secondItem="9l2-6J-tK6" secondAttribute="height" id="aCs-nk-lQp"/>
@@ -1027,12 +1040,12 @@ Wide squat stance</string>
                             <constraint firstItem="VKq-3b-b1t" firstAttribute="height" secondItem="8t5-Os-IWf" secondAttribute="height" id="kEx-NA-y0b"/>
                             <constraint firstItem="8NQ-Jh-FOe" firstAttribute="leading" secondItem="Wa9-hp-ldd" secondAttribute="leadingMargin" id="lbG-Wa-07v"/>
                             <constraint firstItem="9l2-6J-tK6" firstAttribute="top" secondItem="9N3-u3-ctb" secondAttribute="bottom" priority="250" constant="103" id="llS-wg-GOu"/>
-                            <constraint firstItem="iOX-8o-VHw" firstAttribute="bottom" secondItem="HMd-gq-V1j" secondAttribute="top" id="mCQ-rG-9cr"/>
                             <constraint firstItem="4YL-bf-q1x" firstAttribute="leading" secondItem="Wa9-hp-ldd" secondAttribute="leadingMargin" constant="79" id="mZE-H3-ilp"/>
                             <constraint firstItem="ZMl-xz-osZ" firstAttribute="width" secondItem="9l2-6J-tK6" secondAttribute="width" id="mhu-QB-0tg"/>
                             <constraint firstItem="jOd-cv-iVP" firstAttribute="centerX" secondItem="Wa9-hp-ldd" secondAttribute="centerX" id="pog-Nn-hg7"/>
                             <constraint firstAttribute="trailingMargin" secondItem="4YL-bf-q1x" secondAttribute="trailing" constant="79" id="pwo-mV-qwd"/>
                             <constraint firstItem="VKq-3b-b1t" firstAttribute="top" secondItem="PYV-WW-5vi" secondAttribute="bottom" constant="8" symbolic="YES" id="tJQ-z4-rwI"/>
+                            <constraint firstItem="iOX-8o-VHw" firstAttribute="bottom" secondItem="Wa9-hp-ldd" secondAttribute="bottom" constant="-20" id="v0p-wr-D8O"/>
                             <constraint firstItem="HMd-gq-V1j" firstAttribute="top" secondItem="4YL-bf-q1x" secondAttribute="bottom" priority="750" constant="186" id="vGc-OC-UC2"/>
                             <constraint firstItem="PYV-WW-5vi" firstAttribute="top" secondItem="8NQ-Jh-FOe" secondAttribute="bottom" constant="20" id="xqT-7r-TPB"/>
                             <constraint firstItem="9N3-u3-ctb" firstAttribute="top" secondItem="8t5-Os-IWf" secondAttribute="bottom" constant="18" id="yQp-9N-gWA"/>

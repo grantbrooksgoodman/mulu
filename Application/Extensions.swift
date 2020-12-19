@@ -293,7 +293,12 @@ extension String
         guard count == 1 else
         { report("String length is greater than 1.", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return -1 }
         
-        return ((Array("abcdefghijklmnopqrstuvwxyz").firstIndex(of: Character(lowercased())))! + 1)
+        let alphabetArray = Array("abcdefghijklmnopqrstuvwxyz")
+        
+        guard alphabetArray.contains(Character(lowercased())) else
+        { report("The character is non-alphabetical.", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return -1 }
+        
+        return ((alphabetArray.firstIndex(of: Character(lowercased())))! + 1)
     }
     
     var isValidEmail: Bool
