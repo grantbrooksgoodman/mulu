@@ -12,6 +12,7 @@ import UIKit
 
 /* Third-party Frameworks */
 import FirebaseAuth
+import PKHUD
 
 class SignInController: UIViewController, MFMailComposeViewControllerDelegate
 {
@@ -55,6 +56,13 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
         initialiseController()
         
         view.setBackground(withImageNamed: "Gradient.png")
+        
+        if let email = UserDefaults.standard.value(forKey: "email") as? String,
+           let password = UserDefaults.standard.value(forKey: "password") as? String
+        {
+            usernameTextField.text = email
+            passwordTextField.text = password
+        }
         
         usernameTextField.delegate = self
         passwordTextField.delegate = self
@@ -174,15 +182,85 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
             report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
         }
         
+        showProgressHud()
+        
         Auth.auth().signIn(withEmail: usernameTextField.text!, password: passwordTextField.text!) { (returnedResult, returnedError) in
             if let result = returnedResult
             {
-                UserSerialiser().getUser(withIdentifier: result.user.uid) { (returnedUser, errorDescriptor) in
+                UserSerialiser().getUser(withIdentifier: result.user.uid /*"-MOxMp0oexJ8yCIJilf3"*/) { (returnedUser, errorDescriptor) in
                     if let user = returnedUser
                     {
                         currentUser = user
                         
-                        report("Signed in successfully.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                        currentUser!.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
+                            if let teams = returnedTeams
+                            {
+                                hideHud()
+                                
+                                if let deSerialisedTeams = user.DSAssociatedTeams
+                                {
+                                    for team in deSerialisedTeams
+                                    {
+                                        team.setDSParticipants()
+                                        
+                                        if let associatedTournament = team.associatedTournament
+                                        {
+                                            associatedTournament.setDSTeams()
+                                        }
+                                    }
+                                }
+                                
+                                UserDefaults.standard.setValue(self.usernameTextField.text!, forKey: "email")
+                                UserDefaults.standard.setValue(self.passwordTextField.text!, forKey: "password")
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                                    if teams.count > 1
+                                    {
+                                        let actionSheet = UIAlertController(title: "Select Team", message: "Select the team you would like to sign in to.", preferredStyle: .actionSheet)
+                                        
+                                        for team in teams
+                                        {
+                                            let teamAction = UIAlertAction(title: team.name!, style: .default) { (action) in
+                                                
+                                                currentTeam = team
+                                                
+                                                self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
+                                            }
+                                            
+                                            actionSheet.addAction(teamAction)
+                                        }
+                                        
+                                        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+                                            // It will dismiss action sheet
+                                        }
+                                        
+                                        actionSheet.addAction(cancelAction)
+                                        
+                                        self.present(actionSheet, animated: true, completion: nil)
+                                    }
+                                    else
+                                    {
+                                        currentTeam = teams[0]
+                                        
+                                        self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
+                                    }
+                                }
+                            }
+                            else if let error = errorDescriptor
+                            {
+                                AlertKit().errorAlertController(title:                       nil,
+                                                                message:                     error,
+                                                                dismissButtonTitle:          "OK",
+                                                                additionalSelectors:         nil,
+                                                                preferredAdditionalSelector: nil,
+                                                                canFileReport:               true,
+                                                                extraInfo:                   nil,
+                                                                metadata:                    [#file, #function, #line],
+                                                                networkDependent:            false)
+                                
+                                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                            }
+                        }
                     }
                     else if let error = errorDescriptor
                     {

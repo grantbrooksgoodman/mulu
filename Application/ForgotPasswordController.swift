@@ -160,8 +160,6 @@ class ForgotPasswordController: UIViewController, MFMailComposeViewControllerDel
                     self.resetPasswordButton.alpha = 0
                     
                     self.noticeLabel.alpha = 1
-                } completion: { (_) in
-                    print("success")
                 }
             }
         }

@@ -762,6 +762,7 @@ Wide squat stance</string>
                         <outlet property="usernameTextField" destination="DMm-Pa-Nhg" id="78V-YD-9J2"/>
                         <segue destination="YYy-1W-i5a" kind="modal" identifier="SignUpFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="Xk2-WI-bjm"/>
                         <segue destination="q0W-TP-J7A" kind="modal" identifier="ForgotPasswordFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="ygF-5x-KEF"/>
+                        <segue destination="vkx-9d-gno" kind="modal" identifier="TabBarFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="ZkC-f4-a7K"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PHx-1a-Zlc" sceneMemberID="firstResponder"/>
@@ -1176,6 +1177,7 @@ Wide squat stance</string>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="hu9-pD-bfH"/>
+        <segue reference="Yvv-RL-5od"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="Back" width="49" height="47"/>

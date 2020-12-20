@@ -90,8 +90,6 @@ class GenericTestingSerialiser
                 guard let randomUsers = randomUsers else
                 { completion("Couldn't get random Users."); return }
                 
-                let completedChallenges = ChallengeTestingSerialiser().randomCompletedChallenges(fromChallenges: randomChallenges, withUsers: randomUsers)
-                
                 if verboseFunctionExposure { print("entering createRandomTeams() group") }
                 dispatchGroup.enter()
                 
@@ -101,10 +99,17 @@ class GenericTestingSerialiser
                 for _ in 0..<numberOfTeams
                 {
                     let halfwayUsersIndex = (randomUsers.count - 1) / 2
-                    let halfwayChallengesIndex = (completedChallenges.count - 1) / 2
+                    let randomUsers = Array(randomUsers.shuffled()[0...halfwayUsersIndex])
                     
-                    userArray2D.append(Array(randomUsers.shuffled()[0...halfwayUsersIndex]))
-                    challengeArray2D.append(Array(completedChallenges.shuffled()[0...halfwayChallengesIndex]))
+                    let completedChallenges = ChallengeTestingSerialiser().randomCompletedChallenges(fromChallenges: randomChallenges, withUsers: randomUsers)
+                    
+                    let halfwayChallengesIndex = (completedChallenges.count - 1) / 2
+                    let randomChallenges = Array(completedChallenges.shuffled()[0...halfwayChallengesIndex])
+                    
+                    userArray2D.append(randomUsers)
+                    challengeArray2D.append(randomChallenges)
+                    
+                    //challengeArray2D.append(Array(completedChallenges.shuffled()[0...halfwayChallengesIndex]))
                 }
                 
                 var teamIdentifiers: [String]?
@@ -203,7 +208,7 @@ class GenericTestingSerialiser
         GenericSerialiser().setValue(onKey: "/", withData: "NULL") { (returnedError) in
             if let error = returnedError
             {
-                print(error)
+                report(error.localizedDescription, errorCode: (error as NSError).code, isFatal: false, metadata: [#file, #function, #line])
             }
         }
     }

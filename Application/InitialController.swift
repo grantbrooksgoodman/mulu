@@ -62,6 +62,16 @@ class InitialController: UIViewController
             {
                 self.applicationDelegate.currentlyAnimating = false
                 
+                //                GenericTestingSerialiser().trashDatabase()
+                //
+                //                GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 6, numberOfChallenges: 8, numberOfTeams: 5) { (errorDescriptor) in
+                //                    if let error = errorDescriptor
+                //                    {
+                //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                //                    }
+                //                    else { report("Successfully created database.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+                //                }
+                
                 self.performSegue(withIdentifier: "SignInSegue" /*"initialSegue"*/, sender: self)
             }
         })

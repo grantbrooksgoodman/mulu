@@ -94,6 +94,58 @@ class ChallengeSerialiser
         }
     }
     
+    /**
+     Gets and deserialises multiple **Challenge** objects from a given array of identifier strings.
+     
+     - Parameter withIdentifiers: The identifiers to query for.
+     
+     - Parameter completion: Returns an array of deserialised **Challenge** objects if successful. If unsuccessful, an array of strings describing the error(s) encountered. *NOT mutually exclusive.*
+     */
+    func getChallenges(withIdentifiers: [String], completion: @escaping(_ returnedChallenges: [Challenge]?, _ errorDescriptors: [String]?) -> Void)
+    {
+        var challengeArray: [Challenge]! = []
+        var errorDescriptorArray: [String]! = []
+        
+        if withIdentifiers.count > 0
+        {
+            let dispatchGroup = DispatchGroup()
+            
+            for individualIdentifier in withIdentifiers
+            {
+                if verboseFunctionExposure { print("entered group") }
+                dispatchGroup.enter()
+                
+                getChallenge(withIdentifier: individualIdentifier) { (returnedChallenge, errorDescriptor) in
+                    if let challenge = returnedChallenge
+                    {
+                        challengeArray.append(challenge)
+                        
+                        if verboseFunctionExposure { print("left group") }
+                        dispatchGroup.leave()
+                    }
+                    else
+                    {
+                        errorDescriptorArray.append(errorDescriptor!)
+                        
+                        if verboseFunctionExposure { print("left group") }
+                        dispatchGroup.leave()
+                    }
+                }
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                if challengeArray.count + errorDescriptorArray.count == withIdentifiers.count
+                {
+                    completion(challengeArray.count == 0 ? nil : challengeArray, errorDescriptorArray.count == 0 ? nil : errorDescriptorArray)
+                }
+            }
+        }
+        else
+        {
+            completion(nil, ["No identifiers passed!"])
+        }
+    }
+    
     //==================================================//
     
     /* Private Functions */

@@ -113,7 +113,7 @@ class Tournament
                 {
                     self.DSTeams = teams
                     
-                    report("Successfully set «DSTeams».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    if verboseFunctionExposure { report("Successfully set «DSTeams».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
                 }
             }
         }

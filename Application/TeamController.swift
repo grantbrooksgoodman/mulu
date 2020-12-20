@@ -34,10 +34,6 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     var buildInstance: Build!
     var completedChallenges: [(date: Date, challenge: Challenge)]?
     
-    var user: User!
-    
-    var currentTournament: Tournament?
-    
     //==================================================//
     
     /* Initialiser Function */
@@ -60,94 +56,23 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         
         view.setBackground(withImageNamed: "Gradient.png")
         
-        //        GenericTestingSerialiser().trashDatabase()
-        //
-        //        GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 5, numberOfChallenges: 8, numberOfTeams: 6) { (errorDescriptor) in
-        //            if let error = errorDescriptor
-        //            {
-        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //            }
-        //            else { report("Successfully created database.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
-        //        }
+        titleLabel.text = currentTeam.name.uppercased()
         
-        //                TeamSerialiser().addTeam("-MOgVb7GotNCpATLyt05", toTournament: "-MOgVbAkCt8BQpqdLM4Y") { (errorDescriptor) in
-        //                    if let error = errorDescriptor
-        //                    {
-        //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //                    }
-        //                }
-        
-        guard currentUser != nil else
-        { report("No current User!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
-        
-        user = currentUser
-        
-        guard user.DSAssociatedTeams != nil else
-        { user.setDSAssociatedTeams(); return }
-        
-        titleLabel.text = user.DSAssociatedTeams![0].name.uppercased()
-        
-        var rankString: String?
-        
-        if let teams = user.DSAssociatedTeams,
-           let havingAssociatedTournament = teams.first(where: {$0.associatedTournament != nil}),
-           let tournament = havingAssociatedTournament.associatedTournament
-        {
-            currentTournament = tournament
-            
-            currentTournament!.setDSTeams()
-            
-            havingAssociatedTournament.getRank() { (returnedRank, errorDescriptor) in
-                if let rank = returnedRank
-                {
-                    rankString = "\(rank.ordinalValue.uppercased()) PLACE in \(tournament.name!.uppercased())"
-                    
-                    let mainStatAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-Bold", size: 18)!]
-                    let otherStatAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBold", size: 14)!]
-                    
-                    let statisticString = NSMutableAttributedString(string: "\(rankString == nil ? "4TH PLACE, 12500 PTS" : rankString!)\n\n", attributes: mainStatAttributes)
-                    
-                    havingAssociatedTournament.deSerialiseParticipants { (returnedUsers, errorDescriptor) in
-                        if let users = returnedUsers
-                        {
-                            for user in users
-                            {
-                                var points = havingAssociatedTournament.accruedPoints(for: user.associatedIdentifier)
-                                
-                                points = points == -1 ? 0 : points
-                                
-                                statisticString.append(NSMutableAttributedString(string: "+ \(user.firstName!) \(user.lastName!), \(points) pts\n", attributes: otherStatAttributes))
-                            }
-                            
-                            self.statisticsTextView.attributedText = statisticString
-                        }
-                        else { report(errorDescriptor!, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
-                    }
-                }
-                else { report(errorDescriptor!, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+        calculateTeamStatistics { (statisticsString, errorDescriptor) in
+            if let string = statisticsString
+            {
+                self.statisticsTextView.attributedText = string
+            }
+            else if let error = errorDescriptor
+            {
+                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
             }
         }
         
-        if let user = currentUser
-        {
-            user.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
-                if let error = errorDescriptor
-                {
-                    report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                }
-                else
-                {
-                    if let challenges = user.completedChallenges()
-                    {
-                        self.completedChallenges = challenges
-                        
-                        self.collectionView.dataSource = self
-                        self.collectionView.delegate = self
-                    }
-                    else { report("Couldn't get completed Challenges.", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
-                }
-            }
-        }
+        completedChallenges = currentUser.completedChallenges(on: currentTeam)
+        
+        collectionView.dataSource = self
+        collectionView.delegate = self
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -175,6 +100,52 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     //==================================================//
     
     /* Other Functions */
+    
+    func calculateTeamStatistics(completion: @escaping(_ statisticsString: NSAttributedString?, _ errorDescriptor: String?) -> Void)
+    {
+        let mainStatisticsAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-Bold", size: 18)!]
+        let otherStatisticsAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBold", size: 14)!]
+        
+        var rankArray: [(user: User, points: Int)] = []
+        
+        currentTeam.deSerialiseParticipants { (returnedUsers, errorDescriptor) in
+            if let users = returnedUsers
+            {
+                for user in users
+                {
+                    var points = currentTeam.accruedPoints(for: user.associatedIdentifier)
+                    
+                    points = points == -1 ? 0 : points
+                    
+                    rankArray.append((user, points))
+                }
+                
+                rankArray = rankArray.sorted(by: {$0.points > $1.points})
+                
+                if let currentUserRank = rankArray.firstIndex(where: {$0.user.associatedIdentifier == currentUser.associatedIdentifier})
+                {
+                    let currentUserPoints = rankArray[currentUserRank].points
+                    
+                    let rankString = "\((currentUserRank + 1).ordinalValue.uppercased()) PLACE, \(currentUserPoints) PTS"
+                    
+                    let statisticsString = NSMutableAttributedString(string: "\(rankString)\n\n", attributes: mainStatisticsAttributes)
+                    
+                    //rankArray.remove(at: currentUserRank)
+                    
+                    for tuple in rankArray
+                    {
+                        let name = tuple.user.associatedIdentifier == currentUser.associatedIdentifier ? "YOU" : "\(tuple.user.firstName!) \(tuple.user.lastName!)"
+                        
+                        statisticsString.append(NSMutableAttributedString(string: "+ \(name), \(tuple.points) pts\n", attributes: otherStatisticsAttributes))
+                    }
+                    
+                    completion(statisticsString, nil)
+                }
+                else { completion(nil, "Couldn't find User in rank array.") }
+            }
+            else { completion(nil, errorDescriptor!) }
+        }
+    }
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
@@ -251,7 +222,7 @@ extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        return 2
+        return currentTeam.associatedTournament != nil ? 2 : 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
@@ -288,7 +259,7 @@ extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
             scoreLabel.textAlignment = .center
             scoreLabel.textColor = .white
             
-            if let tournament = currentTournament,
+            if let tournament = currentTeam.associatedTournament,
                let leaderboard = tournament.leaderboard()
             {
                 var leaderboardString = ""
@@ -300,10 +271,6 @@ extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
                 
                 scoreLabel.text = leaderboardString
             }
-            else
-            {
-                scoreLabel.text = "1. TEAM PIERCE                               15500 PTS\n2. TEAM TILE                                     13400 PTS"
-            }
             
             encapsulatingView.addSubview(scoreLabel)
             scoreLabel.center.x = encapsulatingView.center.x
@@ -314,14 +281,10 @@ extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
         else
         {
             roundCorners(forViews: [scrollerCell], withCornerType: 0)
-            
-            //            scrollerCell.subviews[0].backgroundColor = UIColor(hex: 0x353635)
-            //            scrollerCell.subviews[0].alpha = 0.79
             roundCorners(forViews: [scrollerCell.subviews[0]], withCornerType: 4)
             
             if let streakLabel = scrollerCell.subviews[0].subview(aTagFor("streakLabel"))
             {
-                //streakLabel.backgroundColor = UIColor(hex: 0x353635)
                 roundCorners(forViews: [streakLabel], withCornerType: 3)
             }
         }

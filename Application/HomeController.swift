@@ -68,32 +68,42 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
         doneButton.layer.cornerRadius = 5
         skippedButton.layer.cornerRadius = 5
         
-        Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
-            AnalyticsParameterItemID: "id-\(title!)",
-            AnalyticsParameterItemName: title!,
-            AnalyticsParameterContentType: "cont"
-        ])
+        welcomeLabel.text = "WELCOME BACK \(currentUser.firstName!.uppercased())!"
+        welcomeLabel.font = UIFont(name: "Gotham-Black", size: 32)!
         
-        if let user = currentUser
+        currentUser.challengesToComplete(on: currentTeam, completion: { (returnedIdentifiers, errorDescriptor) in
+            if let identifiers = returnedIdentifiers
+            {
+                ChallengeSerialiser().getChallenge(withIdentifier: identifiers[0]) { (returnedChallenge, errorDescriptor) in
+                    if let challenge = returnedChallenge
+                    {
+                        self.subtitleLabel.text = challenge.title
+                        self.promptTextView.text = challenge.prompt
+                    }
+                    else if let error = errorDescriptor
+                    {
+                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    }
+                }
+            }
+            else if let error = errorDescriptor
+            {
+                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+        })
+        
+        var statisticsString = "+ \(currentTeam.name!.uppercased())\n"
+        
+        if let tournament = currentTeam.associatedTournament
         {
-            welcomeLabel.text = "WELCOME BACK \(user.firstName!.uppercased())!"
-            welcomeLabel.font = UIFont(name: "Gotham-Black", size: 32) ?? UIFont.systemFont(ofSize: 12)
-            
-            if let completedChallenges = user.completedChallenges()
-            {
-                subtitleLabel.text = completedChallenges[0].challenge.title
-                promptTextView.text = completedChallenges[0].challenge.prompt
-            }
-            
-            if let associatedTeams = user.DSAssociatedTeams
-            {
-                let teamName = associatedTeams[0].name!
-                let tournamentName = associatedTeams[0].associatedTournament?.name ?? ""
-                let streak = user.streak(on: associatedTeams[0])
-                
-                statisticsTextView.text = "+ \(tournamentName.uppercased())\n+ \(teamName.uppercased())\n+ \(streak) DAY STREAK"
-            }
+            statisticsString = "+ \(tournament.name!.uppercased())\n" + statisticsString
         }
+        
+        let streak = currentUser.streak(on: currentTeam)
+        
+        statisticsString += "+ \(streak == 0 ? "NO" : "\(streak) DAY") STREAK"
+        
+        statisticsTextView.text = statisticsString
     }
     
     func setUpButton(with button: UIButton)

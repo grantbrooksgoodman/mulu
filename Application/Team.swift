@@ -141,7 +141,7 @@ class Team
                 {
                     self.DSParticipants = users
                     
-                    report("Successfully set «DSParticipants».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    if verboseFunctionExposure { report("Successfully set «DSParticipants».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
                 }
                 else
                 {

@@ -335,7 +335,7 @@ class TeamSerialiser
                             }
                             else
                             {
-                                report("Successfully added User to Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                                if verboseFunctionExposure { report("Successfully added User to Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
                                 
                                 group.leave()
                                 
@@ -604,7 +604,7 @@ class TeamSerialiser
                 {
                     var deSerialisedMetadata: [(User, Date)] = []
                     
-                    for (index, string) in metadata.enumerated()
+                    for string in metadata
                     {
                         let components = string.components(separatedBy: " – ")
                         
@@ -625,7 +625,8 @@ class TeamSerialiser
                             {
                                 deSerialisedMetadata.append((user, completionDate))
                                 
-                                if index == metadata.count - 1
+                                //This used to be "index == metadata.count - 1" and the metadata array was enumerated.
+                                if deSerialisedMetadata.count == metadata.count
                                 {
                                     deSerialisedCompletedChallenges.append((challenge, deSerialisedMetadata))
                                     

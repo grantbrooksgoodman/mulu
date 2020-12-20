@@ -42,10 +42,10 @@ var lastInitialisedController: UIViewController! = MainController()
 //Other Declarations
 var appStoreReleaseVersion = 0
 var buildType: Build.BuildType = .preAlpha
+var currentTeam: Team!
+var currentUser: User!
 var informationDictionary: [String:String]!
 var touchTimer: Timer?
-
-var currentUser: User?
 
 //==================================================//
 
@@ -87,29 +87,29 @@ var currentUser: User?
         FirebaseConfiguration.shared.setLoggerLevel(.min)
         FirebaseApp.configure()
         
-        UserSerialiser().getRandomUsers(amountToGet: 1) { (returnedUsers, errorDescriptor) in
-            if let error = errorDescriptor
-            {
-                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-            }
-            else if let user = returnedUsers
-            {
-                UserSerialiser().getUser(withIdentifier: user[0]) { (returnedUser, errorDescriptor) in
-                    if let error = errorDescriptor
-                    {
-                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                    }
-                    else if let user = returnedUser
-                    {
-                        print("Signed in as \(user.firstName!).")
-                        
-                        currentUser = user
-                        
-                        user.setDSAssociatedTeams()
-                    }
-                }
-            }
-        }
+        //        UserSerialiser().getRandomUsers(amountToGet: 1) { (returnedUsers, errorDescriptor) in
+        //            if let error = errorDescriptor
+        //            {
+        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        //            }
+        //            else if let user = returnedUsers
+        //            {
+        //                UserSerialiser().getUser(withIdentifier: user[0]) { (returnedUser, errorDescriptor) in
+        //                    if let error = errorDescriptor
+        //                    {
+        //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        //                    }
+        //                    else if let user = returnedUser
+        //                    {
+        //                        print("Signed in as \(user.firstName!).")
+        //
+        //                        currentUser = user
+        //
+        //                        user.setDSAssociatedTeams()
+        //                    }
+        //                }
+        //            }
+        //        }
         
         return true
     }

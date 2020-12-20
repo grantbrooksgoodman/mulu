@@ -9,6 +9,9 @@
 /* First-party Frameworks */
 import UIKit
 
+/* Third-party Frameworks */
+import Firebase
+
 class User
 {
     //==================================================//
@@ -56,7 +59,7 @@ class User
     /**
      If *DSAssociatedTeams* has been set, returns the **User's** completed **Challenges**.
      */
-    func completedChallenges() -> [(date: Date, challenge: Challenge)]?
+    func allCompletedChallenges() -> [(date: Date, challenge: Challenge)]?
     {
         guard let DSAssociatedTeams = DSAssociatedTeams else { report("Teams haven't been deserialised.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
         
@@ -79,6 +82,56 @@ class User
         return matchingChallenges.count == 0 ? nil : matchingChallenges
     }
     
+    func challengesToComplete(on team: Team, completion: @escaping(_ returnedIdentifiers: [String]?, _ errorDescriptor: String?) -> Void)
+    {
+        let previouslyCompleted = completedChallenges(on: team) ?? []
+        var incompleteChallenges: [(identifier: String, datePosted: Date)] = []
+        
+        Database.database().reference().child("allChallenges").observeSingleEvent(of: .value) { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let asDataBundle = returnedSnapshotAsDictionary as? [String:Any]
+            {
+                for (index, identifier) in Array(asDataBundle.keys).enumerated()
+                {
+                    if !previouslyCompleted.contains(where: {$0.challenge.associatedIdentifier == identifier})
+                    {
+                        if let data = asDataBundle[identifier] as? [String:Any],
+                           let datePostedString = data["datePosted"] as? String,
+                           let datePosted = secondaryDateFormatter.date(from: datePostedString)
+                        {
+                            incompleteChallenges.append((identifier, datePosted))
+                        }
+                    }
+                    
+                    if index == asDataBundle.keys.count - 1
+                    {
+                        if incompleteChallenges.count == 0
+                        {
+                            completion(nil, "User has completed all Challenges.")
+                        }
+                        else
+                        {
+                            incompleteChallenges.sort(by: {$0.datePosted < $1.datePosted})
+                            
+                            var identifiers: [String] = []
+                            
+                            for challenge in incompleteChallenges
+                            {
+                                identifiers.append(challenge.identifier)
+                            }
+                            
+                            completion(identifiers, nil)
+                        }
+                    }
+                }
+            }
+            else
+            {
+                completion(nil, "Unable to deserialise snapshot.")
+            }
+        }
+    }
+    
     /**
      Returns the **User's** completed **Challenges** on the specified **Team**.
      */
@@ -92,12 +145,14 @@ class User
             {
                 if challenge.metadata.filter({$0.user.associatedIdentifier == associatedIdentifier}).count > 0
                 {
+                    if verboseFunctionExposure { print("\(firstName!) completed '\(challenge.challenge.title!)' for \(challenge.challenge.pointValue!)pts.") }
+                    
                     matchingChallenges.append((challenge.metadata.first(where: {$0.user.associatedIdentifier == associatedIdentifier})!.dateCompleted, challenge.challenge))
                 }
             }
         }
         
-        return matchingChallenges
+        return matchingChallenges.count == 0 ? nil : matchingChallenges
     }
     
     /**
@@ -156,7 +211,7 @@ class User
                 {
                     self.DSAssociatedTeams = teams
                     
-                    report("Successfully set «DSAssociatedTeams».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    if verboseFunctionExposure { report("Successfully set «DSAssociatedTeams».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
                 }
             }
         }
@@ -190,6 +245,7 @@ class User
             }
         }
         
-        return total
+        #warning("Should it really be + 1? Check this logic.")
+        return total + 1
     }
 }
