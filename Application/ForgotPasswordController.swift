@@ -155,6 +155,8 @@ class ForgotPasswordController: UIViewController, MFMailComposeViewControllerDel
             }
             else
             {
+                self.emailTextField.resignFirstResponder()
+                
                 UIView.animate(withDuration: 0.3, delay: 1, options: []) {
                     self.emailTextField.alpha = 0
                     self.resetPasswordButton.alpha = 0

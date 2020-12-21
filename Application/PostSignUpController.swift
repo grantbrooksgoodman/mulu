@@ -177,7 +177,7 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     
     @IBAction func contactUsButton(_ sender: Any)
     {
-        let url = URL(string: "mailto://hello@getmulu.com")!
+        let url = URL(string: "mailto:hello@getmulu.com")!
         
         UIApplication.shared.open(url, options: [:]) { _ in }
     }

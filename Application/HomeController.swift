@@ -179,6 +179,19 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
         if let challenge = currentChallenge
         {
             UserDefaults.standard.setValue(challenge.associatedIdentifier, forKey: "skippedChallenge")
+            
+            HUD.flash(.success, delay: 1.0) { finished in
+                for subview in self.challengeView.subviews
+                {
+                    subview.alpha = 0
+                }
+                
+                self.noChallengeLabel.text = "You skipped today's challenge.\n\nCheck back later for more!"
+                
+                UIView.animate(withDuration: 0.2) {
+                    self.noChallengeLabel.alpha = 1
+                }
+            }
         }
     }
     
@@ -212,7 +225,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
                                         {
                                             if challenge.associatedIdentifier == skippedIdentifier
                                             {
-                                                print("User skipped this one!")
+                                                self.noChallengeLabel.text = "You skipped today's challenge.\n\nCheck back later for more!"
                                             }
                                             else
                                             {
@@ -228,7 +241,31 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
                                 
                                 completion(filteredChallenges, nil)
                             }
-                            else { completion(challenges, nil) }
+                            else
+                            {
+                                var filteredChallenges: [Challenge] = []
+                                
+                                for challenge in challenges
+                                {
+                                    if let skippedIdentifier = UserDefaults.standard.value(forKey: "skippedChallenge") as? String
+                                    {
+                                        if challenge.associatedIdentifier == skippedIdentifier
+                                        {
+                                            self.noChallengeLabel.text = "You skipped today's challenge.\n\nCheck back later for more!"
+                                        }
+                                        else
+                                        {
+                                            filteredChallenges.append(challenge)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        filteredChallenges.append(challenge)
+                                    }
+                                }
+                                
+                                completion(filteredChallenges, nil)
+                            }
                         }
                         else if let errors = errorDescriptors
                         {

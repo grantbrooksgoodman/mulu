@@ -182,159 +182,159 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
             report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
         }
         
-        signInRandomUser()
+        //signInRandomUser()
         
-        //        showProgressHud()
-        //
-        //        Auth.auth().signIn(withEmail: usernameTextField.text!, password: passwordTextField.text!) { (returnedResult, returnedError) in
-        //            if let result = returnedResult
-        //            {
-        //                UserSerialiser().getUser(withIdentifier: result.user.uid) { (returnedUser, errorDescriptor) in
-        //                    if let user = returnedUser
-        //                    {
-        //                        currentUser = user
-        //
-        //                        currentUser!.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
-        //                            if let teams = returnedTeams
-        //                            {
-        //                                hideHud()
-        //
-        //                                if let deSerialisedTeams = user.DSAssociatedTeams
-        //                                {
-        //                                    for team in deSerialisedTeams
-        //                                    {
-        //                                        team.setDSParticipants()
-        //
-        //                                        if let associatedTournament = team.associatedTournament
-        //                                        {
-        //                                            associatedTournament.setDSTeams()
-        //                                        }
-        //                                    }
-        //                                }
-        //
-        //                                if let email = UserDefaults.standard.value(forKey: "email") as? String,
-        //                                   email != self.usernameTextField.text!
-        //                                {
-        //                                    UserDefaults.standard.removeObject(forKey: "skippedChallenge")
-        //                                }
-        //
-        //                                UserDefaults.standard.setValue(self.usernameTextField.text!, forKey: "email")
-        //                                UserDefaults.standard.setValue(self.passwordTextField.text!, forKey: "password")
-        //
-        //                                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-        //                                    if teams.count > 1
-        //                                    {
-        //                                        let actionSheet = UIAlertController(title: "Select Team", message: "Select the team you would like to sign in to.", preferredStyle: .actionSheet)
-        //
-        //                                        for team in teams.sorted(by: {$0.name < $1.name})
-        //                                        {
-        //                                            let teamAction = UIAlertAction(title: team.name!, style: .default) { (action) in
-        //
-        //                                                currentTeam = team
-        //
-        //                                                self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
-        //                                            }
-        //
-        //                                            actionSheet.addAction(teamAction)
-        //                                        }
-        //
-        //                                        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
-        //                                            // It will dismiss action sheet
-        //                                        }
-        //
-        //                                        actionSheet.addAction(cancelAction)
-        //
-        //                                        self.present(actionSheet, animated: true, completion: nil)
-        //                                    }
-        //                                    else
-        //                                    {
-        //                                        currentTeam = teams[0]
-        //
-        //                                        self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
-        //                                    }
-        //                                }
-        //                            }
-        //                            else if let error = errorDescriptor
-        //                            {
-        //                                if error == "This User is not a member of any Team."
-        //                                {
-        //                                    self.presentWaitlistAlert()
-        //                                }
-        //                                else
-        //                                {
-        //                                    AlertKit().errorAlertController(title:                       nil,
-        //                                                                    message:                     error,
-        //                                                                    dismissButtonTitle:          "OK",
-        //                                                                    additionalSelectors:         nil,
-        //                                                                    preferredAdditionalSelector: nil,
-        //                                                                    canFileReport:               true,
-        //                                                                    extraInfo:                   nil,
-        //                                                                    metadata:                    [#file, #function, #line],
-        //                                                                    networkDependent:            false)
-        //
-        //                                    report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //                                }
-        //                            }
-        //                        }
-        //                    }
-        //                    else if let error = errorDescriptor
-        //                    {
-        //                        AlertKit().errorAlertController(title:                       nil,
-        //                                                        message:                     error,
-        //                                                        dismissButtonTitle:          "OK",
-        //                                                        additionalSelectors:         nil,
-        //                                                        preferredAdditionalSelector: nil,
-        //                                                        canFileReport:               true,
-        //                                                        extraInfo:                   nil,
-        //                                                        metadata:                    [#file, #function, #line],
-        //                                                        networkDependent:            false)
-        //
-        //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //                    }
-        //                }
-        //            }
-        //            else if let error = returnedError
-        //            {
-        //                let message = errorInformation(forError: (error as NSError))
-        //
-        //                var alertMessage = errorInformation(forError: (error as NSError))
-        //
-        //                if alertMessage.hasPrefix("There is no user")
-        //                {
-        //                    alertMessage = "There doesn't seem to be a user with those credentials. Please verify your entries and try again."
-        //                }
-        //                else if alertMessage.hasPrefix("The password is invalid")
-        //                {
-        //                    alertMessage = "The password was incorrect. Please try again."
-        //                }
-        //
-        //                AlertKit().errorAlertController(title:                       "Sign In Failed",
-        //                                                message:                     alertMessage,
-        //                                                dismissButtonTitle:          "OK",
-        //                                                additionalSelectors:         nil,
-        //                                                preferredAdditionalSelector: nil,
-        //                                                canFileReport:               true,
-        //                                                extraInfo:                   message,
-        //                                                metadata:                    [#file, #function, #line],
-        //                                                networkDependent:            true)
-        //
-        //                report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //            }
-        //            else
-        //            {
-        //                AlertKit().errorAlertController(title:                       nil,
-        //                                                message:                     nil,
-        //                                                dismissButtonTitle:          "OK",
-        //                                                additionalSelectors:         nil,
-        //                                                preferredAdditionalSelector: nil,
-        //                                                canFileReport:               false,
-        //                                                extraInfo:                   nil,
-        //                                                metadata:                    [#file, #function, #line],
-        //                                                networkDependent:            false)
-        //
-        //                report("An unknown error occurred.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //            }
-        //        }
+        showProgressHud()
+        
+        Auth.auth().signIn(withEmail: usernameTextField.text!, password: passwordTextField.text!) { (returnedResult, returnedError) in
+            if let result = returnedResult
+            {
+                UserSerialiser().getUser(withIdentifier: result.user.uid) { (returnedUser, errorDescriptor) in
+                    if let user = returnedUser
+                    {
+                        currentUser = user
+                        
+                        currentUser!.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
+                            if let teams = returnedTeams
+                            {
+                                hideHud()
+                                
+                                if let deSerialisedTeams = user.DSAssociatedTeams
+                                {
+                                    for team in deSerialisedTeams
+                                    {
+                                        team.setDSParticipants()
+                                        
+                                        if let associatedTournament = team.associatedTournament
+                                        {
+                                            associatedTournament.setDSTeams()
+                                        }
+                                    }
+                                }
+                                
+                                if let email = UserDefaults.standard.value(forKey: "email") as? String,
+                                   email != self.usernameTextField.text!
+                                {
+                                    UserDefaults.standard.removeObject(forKey: "skippedChallenge")
+                                }
+                                
+                                UserDefaults.standard.setValue(self.usernameTextField.text!, forKey: "email")
+                                UserDefaults.standard.setValue(self.passwordTextField.text!, forKey: "password")
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                                    if teams.count > 1
+                                    {
+                                        let actionSheet = UIAlertController(title: "Select Team", message: "Select the team you would like to sign in to.", preferredStyle: .actionSheet)
+                                        
+                                        for team in teams.sorted(by: {$0.name < $1.name})
+                                        {
+                                            let teamAction = UIAlertAction(title: team.name!, style: .default) { (action) in
+                                                
+                                                currentTeam = team
+                                                
+                                                self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
+                                            }
+                                            
+                                            actionSheet.addAction(teamAction)
+                                        }
+                                        
+                                        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+                                            // It will dismiss action sheet
+                                        }
+                                        
+                                        actionSheet.addAction(cancelAction)
+                                        
+                                        self.present(actionSheet, animated: true, completion: nil)
+                                    }
+                                    else
+                                    {
+                                        currentTeam = teams[0]
+                                        
+                                        self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
+                                    }
+                                }
+                            }
+                            else if let error = errorDescriptor
+                            {
+                                if error == "This User is not a member of any Team."
+                                {
+                                    self.presentWaitlistAlert()
+                                }
+                                else
+                                {
+                                    AlertKit().errorAlertController(title:                       nil,
+                                                                    message:                     error,
+                                                                    dismissButtonTitle:          "OK",
+                                                                    additionalSelectors:         nil,
+                                                                    preferredAdditionalSelector: nil,
+                                                                    canFileReport:               true,
+                                                                    extraInfo:                   nil,
+                                                                    metadata:                    [#file, #function, #line],
+                                                                    networkDependent:            false)
+                                    
+                                    report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                                }
+                            }
+                        }
+                    }
+                    else if let error = errorDescriptor
+                    {
+                        AlertKit().errorAlertController(title:                       nil,
+                                                        message:                     error,
+                                                        dismissButtonTitle:          "OK",
+                                                        additionalSelectors:         nil,
+                                                        preferredAdditionalSelector: nil,
+                                                        canFileReport:               true,
+                                                        extraInfo:                   nil,
+                                                        metadata:                    [#file, #function, #line],
+                                                        networkDependent:            false)
+                        
+                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    }
+                }
+            }
+            else if let error = returnedError
+            {
+                let message = errorInformation(forError: (error as NSError))
+                
+                var alertMessage = errorInformation(forError: (error as NSError))
+                
+                if alertMessage.hasPrefix("There is no user")
+                {
+                    alertMessage = "There doesn't seem to be a user with those credentials. Please verify your entries and try again."
+                }
+                else if alertMessage.hasPrefix("The password is invalid")
+                {
+                    alertMessage = "The password was incorrect. Please try again."
+                }
+                
+                AlertKit().errorAlertController(title:                       "Sign In Failed",
+                                                message:                     alertMessage,
+                                                dismissButtonTitle:          "OK",
+                                                additionalSelectors:         nil,
+                                                preferredAdditionalSelector: nil,
+                                                canFileReport:               true,
+                                                extraInfo:                   message,
+                                                metadata:                    [#file, #function, #line],
+                                                networkDependent:            true)
+                
+                report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+            else
+            {
+                AlertKit().errorAlertController(title:                       nil,
+                                                message:                     nil,
+                                                dismissButtonTitle:          "OK",
+                                                additionalSelectors:         nil,
+                                                preferredAdditionalSelector: nil,
+                                                canFileReport:               false,
+                                                extraInfo:                   nil,
+                                                metadata:                    [#file, #function, #line],
+                                                networkDependent:            false)
+                
+                report("An unknown error occurred.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+        }
     }
     
     //==================================================//

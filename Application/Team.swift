@@ -121,40 +121,6 @@ class Team
         }
     }
     
-    /**
-     Sets the *DSParticipants* value on the **Team** without closures. *Dumps errors to console.*
-     */
-    func setDSParticipants()
-    {
-        if DSParticipants != nil
-        {
-            report("«DSParticipants» already set.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        }
-        else if let participantIdentifiers = participantIdentifiers
-        {
-            UserSerialiser().getUsers(withIdentifiers: participantIdentifiers) { (returnedUsers, errorDescriptors) in
-                if let errors = errorDescriptors
-                {
-                    report(errors.joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                }
-                else if let users = returnedUsers
-                {
-                    self.DSParticipants = users
-                    
-                    if verboseFunctionExposure { report("Successfully set «DSParticipants».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
-                }
-                else
-                {
-                    report("No returned Users, but no error either.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                }
-            }
-        }
-        else
-        {
-            report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        }
-    }
-    
     func getRank(completion: @escaping(_ returnedRank: Int?, _ errorDescriptor: String?) -> Void)
     {
         guard let tournament = associatedTournament else
@@ -213,5 +179,39 @@ class Team
         }
         
         return dataBundle
+    }
+    
+    /**
+     Sets the *DSParticipants* value on the **Team** without closures. *Dumps errors to console.*
+     */
+    func setDSParticipants()
+    {
+        if DSParticipants != nil
+        {
+            report("«DSParticipants» already set.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        }
+        else if let participantIdentifiers = participantIdentifiers
+        {
+            UserSerialiser().getUsers(withIdentifiers: participantIdentifiers) { (returnedUsers, errorDescriptors) in
+                if let errors = errorDescriptors
+                {
+                    report(errors.joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                }
+                else if let users = returnedUsers
+                {
+                    self.DSParticipants = users
+                    
+                    if verboseFunctionExposure { report("Successfully set «DSParticipants».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+                }
+                else
+                {
+                    report("No returned Users, but no error either.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                }
+            }
+        }
+        else
+        {
+            report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        }
     }
 }

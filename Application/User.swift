@@ -247,7 +247,7 @@ class User
     
     func streak(on team: Team) -> Int
     {
-        var total = -1
+        var total = 0
         
         if let challenges = completedChallenges(on: team)
         {
@@ -255,8 +255,6 @@ class User
             
             guard enumeratedDates.last!.comparator >= Calendar.current.date(byAdding: .day, value: -1, to: Date())!.comparator else
             { return 0 }
-            
-            total = 0
             
             for (index, date) in enumeratedDates.enumerated()
             {
