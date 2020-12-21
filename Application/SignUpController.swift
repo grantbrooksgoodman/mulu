@@ -205,6 +205,9 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate, U
             {
                 report("SUCCESSFULLY CREATED USER \(user.firstName!) \(user.lastName!)!", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
                 
+                UserDefaults.standard.setValue(self.emailTextField.text!, forKey: "email")
+                UserDefaults.standard.setValue(self.passwordTextField.text!, forKey: "password")
+                
                 self.userIdentifier = user.associatedIdentifier
                 self.performSegue(withIdentifier: "PostSignUpFromSignUpSegue", sender: self)
             }

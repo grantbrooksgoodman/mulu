@@ -120,7 +120,7 @@ class ChallengeSerialiser
                        let datePostedString = data["datePosted"] as? String,
                        let datePosted = secondaryDateFormatter.date(from: datePostedString)
                     {
-                        if Calendar.current.startOfDay(for: datePosted) == Calendar.current.startOfDay(for: forDate)
+                        if datePosted.comparator == forDate.comparator
                         {
                             identifiers.append(identifier)
                         }

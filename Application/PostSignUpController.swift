@@ -10,6 +10,8 @@
 import MessageUI
 import UIKit
 
+import PKHUD
+
 class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
@@ -150,7 +152,9 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
                     }
                     else
                     {
-                        report("Great success!", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                        HUD.flash(.success, delay: 1) { (_) in
+                            self.performSegue(withIdentifier: "SignInFromPostSignUpSegue", sender: self)
+                        }
                     }
                 }
             }
@@ -173,6 +177,9 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     
     @IBAction func contactUsButton(_ sender: Any)
     {
+        let url = URL(string: "mailto://hello@getmulu.com")!
+        
+        UIApplication.shared.open(url, options: [:]) { _ in }
     }
     
     @IBAction func inviteYourFriendsButton(_ sender: Any)

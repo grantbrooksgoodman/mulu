@@ -26,6 +26,22 @@ class AlertKit
     
     //==================================================//
     
+    /* Enumerated Type Declarations */
+    
+    enum AlertControllerTextFieldAttribute
+    {
+        case capitalisationType
+        case correctionType
+        case editingMode
+        case keyboardAppearance
+        case keyboardType
+        case placeholderText
+        case sampleText
+        case textAlignment
+    }
+    
+    //==================================================//
+    
     /* Public Functions */
     
     ///Advances a string a given amount of characters.
@@ -373,12 +389,6 @@ class AlertKit
         self.fileReport(type: .feedback, body: "Appended below are various data points useful in analysing any potential problems within the application. Please do not edit the information contained in the lines below, with the exception of the last field, in which any general feedback is appreciated.", prompt: "General Feedback", extraInfo: nil, metadata: [withFileName, #function, #line])
     }
     
-    enum ButtonAttribute
-    {
-        case preferred
-        case destructive
-    }
-    
     /**
      Presents a `UIAlertController` allowing the user to **choose from provided options.**
      
@@ -566,69 +576,154 @@ class AlertKit
         politelyPresent(viewController: successAlertController)
     }
     
-    ///Displays a customisable text alert controller.
-    func textAlertController(withTitle: String?, withMessage: String?, withCancelButtonTitle: String?, withActions: [String]!, preferredActionIndex: Int?, destructiveActionIndex: Int?, networkDependent: Bool!, capitalisationType: UITextAutocapitalizationType?, correctionType: UITextAutocorrectionType?, keyboardAppearance: UIKeyboardAppearance?, keyboardType: UIKeyboardType?, editingMode: UITextField.ViewMode?, sampleText: String?, placeHolder: String?, textAlignment: NSTextAlignment?, completionHandler: @escaping (String?, Int?) -> Void)
+    /**
+     Presents a `UIAlertController` allowing the user to **input text.**
+     
+     - Parameter title: The alert controller's `title`. *Default value provided.*
+     - Parameter message: The alert controller's `message`. *Default value provided.*
+     - Parameter cancelButtonTitle: The `title` of the alert controller's cancel button. *Default value provided.*
+     
+     - Parameter additionalButtons: A tuple array where `title` represents the title of the **additional button** and where `destructive` represents whether the specified button has a `.destructive` style or not.
+     - Parameter preferredActionIndex: The index of the **additional button** to become the alert controller's `.preferredAction`.  Defaults to the **cancel button** when unspecified or the index is **out of range** of the specified additional buttons.
+     
+     - Parameter textFieldAttributes: A dictionary specifying the attributes of the alert controller's **text field** according to the `AlertControllerTextFieldAttribute` cases. *Default value provided.*
+     
+     - Parameter networkDependent: Set to `true` when having an internet connection is a **prequesite** for this alert controller's presentation.
+     - Parameter completion: Returns with any **text** entered and the **index** of the button selected. Returns **no text** and `-1` when the user **cancels,** and `nil` for both values when *networkDependent* is set to `true` and there is no internet connection.
+     
+     Here is a sample `AlertControllerTextFieldAttribute` dictionary:
+     ~~~
+     let textFieldAttributes: [AlertKit.AlertControllerTextFieldAttribute:Any] =
+     [.capitalisationType: UITextAutocapitalizationType.sentences,
+     .correctionType:      UITextAutocorrectionType.default,
+     .editingMode:         UITextField.ViewMode.never,
+     .keyboardAppearance:  UIKeyboardAppearance.default,
+     .keyboardType:        UIKeyboardType.default,
+     .placeholderText:     "Here's to the crazy ones.",
+     .sampleText:          "",
+     .textAlignment:       NSTextAlignment.left]
+     ~~~
+     */
+    func textAlertController(title: String?,
+                             message: String?,
+                             cancelButtonTitle: String?,
+                             additionalButtons: [(title: String, destructive: Bool)]?,
+                             preferredActionIndex: Int?,
+                             textFieldAttributes: [AlertControllerTextFieldAttribute:Any]?,
+                             networkDependent: Bool,
+                             completion: @escaping (_ returnedString: String?, _ selectedIndex: Int?) -> Void)
     {
         if networkDependent && !hasConnectivity()
         {
             connectionAlertController()
-            completionHandler(nil, nil)
+            completion(nil, nil)
         }
         else
         {
-            let controllerCancelButtonTitle = withCancelButtonTitle ?? "Cancel"
-            let controllerMessage = withMessage ?? "Please enter some text."
-            let controllerPlaceHolder = placeHolder ?? "Here's to the crazy ones."
-            let controllerSampleText = sampleText ?? ""
-            let controllerTitle = withTitle ?? "Enter Text"
+            let controllerTitle = title ?? "Enter Text"
+            let controllerMessage = message ?? "Please enter some text."
+            let cancelButtonTitle = cancelButtonTitle ?? "Cancel"
             
             let textAlertController = UIAlertController(title: controllerTitle, message: controllerMessage, preferredStyle: .alert)
             
-            let controllerCapitalisationType = capitalisationType ?? .sentences
-            let controllerCorrectionType = correctionType ?? .default
-            let controllerEditingMode = editingMode ?? .never
-            let controllerKeyboardAppearance = keyboardAppearance ?? .light
-            let controllerKeyboardType = keyboardType ?? .default
-            let controllerTextAlignment = textAlignment ?? .left
+            var capitalisationType: UITextAutocapitalizationType = .sentences
+            var correctionType:     UITextAutocorrectionType     = .default
+            var editingMode:        UITextField.ViewMode         = .never
+            var keyboardAppearance: UIKeyboardAppearance         = .default
+            var keyboardType:       UIKeyboardType               = .default
+            var placeholderText                                  = "Here's to the crazy ones."
+            var sampleText                                       = ""
+            var textAlignment:      NSTextAlignment              = .left
+            
+            if let attributes = textFieldAttributes
+            {
+                for attribute in Array(attributes.keys)
+                {
+                    if attribute == .capitalisationType,
+                       let specifiedCapitalisationType = attributes[attribute] as? UITextAutocapitalizationType
+                    {
+                        capitalisationType = specifiedCapitalisationType
+                    }
+                    else if attribute == .correctionType,
+                            let specifiedCorrectionType = attributes[attribute] as? UITextAutocorrectionType
+                    {
+                        correctionType = specifiedCorrectionType
+                    }
+                    else if attribute == .editingMode,
+                            let specifiedEditingMode = attributes[attribute] as? UITextField.ViewMode
+                    {
+                        editingMode = specifiedEditingMode
+                    }
+                    else if attribute == .keyboardAppearance,
+                            let specifiedKeyboardAppearance = attributes[attribute] as? UIKeyboardAppearance
+                    {
+                        keyboardAppearance = specifiedKeyboardAppearance
+                    }
+                    else if attribute == .keyboardType,
+                            let specifiedKeyboardType = attributes[attribute] as? UIKeyboardType
+                    {
+                        keyboardType = specifiedKeyboardType
+                    }
+                    else if attribute == .placeholderText,
+                            let specifiedPlaceholderText = attributes[attribute] as? String
+                    {
+                        placeholderText = specifiedPlaceholderText
+                    }
+                    else if attribute == .sampleText,
+                            let specifiedSampleText = attributes[attribute] as? String
+                    {
+                        sampleText = specifiedSampleText
+                    }
+                    else if attribute == .textAlignment,
+                            let specifiedTextAlignment = attributes[attribute] as? NSTextAlignment
+                    {
+                        textAlignment = specifiedTextAlignment
+                    }
+                }
+            }
             
             textAlertController.addTextField { (textField) in
-                textField.autocapitalizationType = controllerCapitalisationType
-                textField.autocorrectionType = controllerCorrectionType
-                textField.clearButtonMode = controllerEditingMode
+                textField.autocapitalizationType = capitalisationType
+                textField.autocorrectionType = correctionType
+                textField.clearButtonMode = editingMode
                 textField.isSecureTextEntry = false
-                textField.keyboardAppearance = controllerKeyboardAppearance
-                textField.keyboardType = controllerKeyboardType
-                textField.placeholder = controllerPlaceHolder
-                textField.text = controllerSampleText
-                textField.textAlignment = controllerTextAlignment
+                textField.keyboardAppearance = keyboardAppearance
+                textField.keyboardType = keyboardType
+                textField.placeholder = placeholderText
+                textField.text = sampleText
+                textField.textAlignment = textAlignment
             }
             
-            textAlertController.addAction(UIAlertAction(title: controllerCancelButtonTitle, style: .cancel, handler: { (action: UIAlertAction!) in
-                completionHandler(nil, nil)
+            textAlertController.addAction(UIAlertAction(title: cancelButtonTitle, style: .cancel, handler: { (action: UIAlertAction!) in
+                completion(nil, -1)
             }))
             
-            for individualAction in withActions
-            {
-                if let unwrappedDestructiveActionIndex = destructiveActionIndex
-                {
-                    if unwrappedDestructiveActionIndex == withActions.firstIndex(of: individualAction)
-                    {
-                        textAlertController.addAction(UIAlertAction(title: individualAction, style: .destructive, handler: { (action: UIAlertAction!) in
-                            completionHandler((textAlertController.textFields![0]).text!, withActions.firstIndex(of: individualAction)!)
-                        }))
-                    }
-                    else { textAlertController.addAction(UIAlertAction(title: individualAction, style: .default, handler: { (action: UIAlertAction!) in
-                        completionHandler((textAlertController.textFields![0]).text!, withActions.firstIndex(of: individualAction)!)
-                    })) }
-                }
-                else { textAlertController.addAction(UIAlertAction(title: individualAction, style: .default, handler: { (action: UIAlertAction!) in
-                    completionHandler((textAlertController.textFields![0]).text!, withActions.firstIndex(of: individualAction)!)
-                })) }
-            }
+            var preferredIndex = -1
             
-            if let unwrappedPreferredActionIndex = preferredActionIndex
+            if let additionalButtons = additionalButtons
             {
-                textAlertController.preferredAction = textAlertController.actions[unwrappedPreferredActionIndex + 1]
+                if let preferredActionIndex = preferredActionIndex
+                {
+                    if preferredActionIndex >= additionalButtons.count
+                    {
+                        report("Preferred action index was out of range of the provided options. Defaulting to cancel button.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    }
+                    else { preferredIndex = preferredActionIndex }
+                }
+                
+                for (index, button) in additionalButtons.enumerated()
+                {
+                    let buttonStyle: UIAlertAction.Style = button.destructive == true ? .destructive : .default
+                    
+                    textAlertController.addAction(UIAlertAction(title: button.title, style: buttonStyle, handler: { (action: UIAlertAction!) in
+                        completion((textAlertController.textFields![0]).text!, index)
+                    }))
+                    
+                    if preferredIndex == index
+                    {
+                        textAlertController.preferredAction = textAlertController.actions.last!
+                    }
+                }
             }
             
             politelyPresent(viewController: textAlertController)

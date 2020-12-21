@@ -105,8 +105,8 @@ class ChallengeTestingSerialiser
             {
                 let randomUser = users.randomElement()!
                 
-                let todayStartTime = Calendar.current.startOfDay(for: Date())
-                let datePostedStartTime = Calendar.current.startOfDay(for: challenge.datePosted)
+                let todayStartTime = Date().comparator
+                let datePostedStartTime = challenge.datePosted.comparator
                 
                 let differenceBetweenDates = todayStartTime.distance(to: datePostedStartTime)
                 

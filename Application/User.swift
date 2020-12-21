@@ -211,7 +211,7 @@ class User
         }
         else
         {
-            report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            completion(nil, "This User is not a member of any Team.")
         }
     }
     
@@ -253,6 +253,9 @@ class User
         {
             let enumeratedDates = challenges.dates().sorted()
             
+            guard enumeratedDates.last!.comparator >= Calendar.current.date(byAdding: .day, value: -1, to: Date())!.comparator else
+            { return 0 }
+            
             total = 0
             
             for (index, date) in enumeratedDates.enumerated()
@@ -269,7 +272,6 @@ class User
             }
         }
         
-        #warning("Should it really be + 1? Check this logic.")
-        return total + 1
+        return total
     }
 }

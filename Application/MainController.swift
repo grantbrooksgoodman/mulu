@@ -77,16 +77,6 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
         setNeedsStatusBarAppearanceUpdate()
         
         view.setBackground(withImageNamed: "Background Image")
-        
-        //        GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 3, numberOfChallenges: 5) { (exitCode, status) in
-        //            if exitCode == 0
-        //            {
-        //                print("Created Database. First team:\n\(status)")
-        //            }
-        //            else { report(status, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
-        //        }
-        
-        //trashDatabase()
     }
     
     override func viewWillAppear(_ animated: Bool)

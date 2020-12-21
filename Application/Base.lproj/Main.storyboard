@@ -327,6 +327,9 @@ Wide squat stance</string>
                                         <state key="normal" title="I skipped it (+0)">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <connections>
+                                            <action selector="skippedButton:" destination="OT8-Dr-tzH" eventType="touchUpInside" id="2ch-fn-jps"/>
+                                        </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" text="DAY 21 FITNESS CHALLENGE" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999403953552" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Myt-LV-Drb">
                                         <rect key="frame" x="8" y="8" width="372" height="50"/>
@@ -482,6 +485,7 @@ Check back later!</string>
                         <segue destination="uRl-I6-vGh" kind="relationship" relationship="viewControllers" id="dHr-2n-XCs"/>
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="9Ub-cz-zAN"/>
                         <segue destination="OT8-Dr-tzH" kind="relationship" relationship="viewControllers" id="rZn-LW-QPf"/>
+                        <segue destination="atF-ga-vcg" kind="relationship" relationship="viewControllers" id="H1d-zV-3Da"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lga-h2-VgM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -512,7 +516,7 @@ Check back later!</string>
                     </connections>
                 </pongPressGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="4232" y="529"/>
+            <point key="canvasLocation" x="4991" y="529"/>
         </scene>
         <!--Team Controller-->
         <scene sceneID="mIS-yT-guG">
@@ -543,12 +547,9 @@ Check back later!</string>
                                     <constraint firstAttribute="height" constant="69" id="nLT-gR-0mA"/>
                                 </constraints>
                             </view>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CGK-tc-xyC">
-                                <rect key="frame" x="20" y="121" width="388" height="150"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" scrollEnabled="NO" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CGK-tc-xyC">
+                                <rect key="frame" x="20" y="121" width="388" height="145"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="150" id="pgL-Il-lAX"/>
-                                </constraints>
                                 <string key="text">4TH PLACE, 12500 PTS
 
 + STEPH MUI, 3000 pts
@@ -567,7 +568,7 @@ Check back later!</string>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalCompressionResistancePriority="249" preservesSuperviewLayoutMargins="YES" contentInsetAdjustmentBehavior="scrollableAxes" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="fvu-bp-dCn">
-                                <rect key="frame" x="0.0" y="279" width="428" height="564"/>
+                                <rect key="frame" x="0.0" y="274" width="428" height="569"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="428" id="4FQ-Sn-qbN"/>
@@ -1110,6 +1111,7 @@ Check back later!</string>
                         <outlet property="goButton" destination="VKq-3b-b1t" id="oPM-tJ-RJA"/>
                         <outlet property="inviteYourFriendsButton" destination="ZMl-xz-osZ" id="1z0-FQ-xbG"/>
                         <outlet property="teamCodeTextField" destination="8t5-Os-IWf" id="CVG-fn-ZAL"/>
+                        <segue destination="X61-tu-xQD" kind="modal" identifier="SignInFromPostSignUpSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="Mir-SK-sze"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8cf-H2-riz" sceneMemberID="firstResponder"/>
@@ -1220,12 +1222,90 @@ Check back later!</string>
             </objects>
             <point key="canvasLocation" x="3312.6168224299063" y="-152.26781857451405"/>
         </scene>
+        <!--Announcements Controller-->
+        <scene sceneID="pOl-hL-aSM">
+            <objects>
+                <viewController storyboardIdentifier="AnnouncementsController" title="Announcements Controller" id="atF-ga-vcg" customClass="AnnouncementsController" customModule="Mulu" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="cPo-Wp-rIg"/>
+                        <viewControllerLayoutGuide type="bottom" id="Si9-d0-WlP"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="G2X-31-4bc">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="843"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="INFORMATION" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999403953552" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RNB-4c-uMq">
+                                <rect key="frame" x="20" y="44" width="388" height="69"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="69" id="CVG-wo-iym"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Gotham-Black" family="Gotham" pointSize="32"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view tag="14545453" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pcb-Ov-rL6">
+                                <rect key="frame" x="408" y="44" width="20" height="69"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                            <view tag="14545453" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WFp-as-cPh">
+                                <rect key="frame" x="0.0" y="44" width="20" height="69"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3eL-Ye-cbb">
+                                <rect key="frame" x="20" y="146" width="388" height="677"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="18"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Si9-d0-WlP" firstAttribute="top" secondItem="3eL-Ye-cbb" secondAttribute="bottom" constant="20" id="0iv-q9-zqG"/>
+                            <constraint firstItem="Pcb-Ov-rL6" firstAttribute="leading" secondItem="RNB-4c-uMq" secondAttribute="trailing" id="7ZY-pr-7M6"/>
+                            <constraint firstItem="RNB-4c-uMq" firstAttribute="trailing" secondItem="G2X-31-4bc" secondAttribute="trailingMargin" id="A7v-cK-MH4"/>
+                            <constraint firstItem="RNB-4c-uMq" firstAttribute="height" secondItem="WFp-as-cPh" secondAttribute="height" id="EmC-uN-q23"/>
+                            <constraint firstItem="Pcb-Ov-rL6" firstAttribute="top" secondItem="RNB-4c-uMq" secondAttribute="top" id="KEz-a1-l3y"/>
+                            <constraint firstItem="3eL-Ye-cbb" firstAttribute="leading" secondItem="G2X-31-4bc" secondAttribute="leadingMargin" id="N5P-8z-P4s"/>
+                            <constraint firstItem="RNB-4c-uMq" firstAttribute="bottom" secondItem="WFp-as-cPh" secondAttribute="bottom" id="PYH-Nc-jtV"/>
+                            <constraint firstItem="RNB-4c-uMq" firstAttribute="leading" secondItem="G2X-31-4bc" secondAttribute="leadingMargin" id="RCO-qd-eWV"/>
+                            <constraint firstItem="RNB-4c-uMq" firstAttribute="leading" secondItem="WFp-as-cPh" secondAttribute="trailing" id="VZh-VL-Y2Z"/>
+                            <constraint firstItem="RNB-4c-uMq" firstAttribute="leading" secondItem="WFp-as-cPh" secondAttribute="trailing" id="bLO-kB-ZFV"/>
+                            <constraint firstAttribute="trailing" secondItem="Pcb-Ov-rL6" secondAttribute="trailing" id="dVr-0d-yGX"/>
+                            <constraint firstItem="3eL-Ye-cbb" firstAttribute="top" secondItem="RNB-4c-uMq" secondAttribute="bottom" constant="33" id="dpe-L9-a1X"/>
+                            <constraint firstItem="RNB-4c-uMq" firstAttribute="bottom" secondItem="Pcb-Ov-rL6" secondAttribute="bottom" id="ipo-oQ-vX1"/>
+                            <constraint firstItem="WFp-as-cPh" firstAttribute="leading" secondItem="G2X-31-4bc" secondAttribute="leading" id="nyz-QR-Iqk"/>
+                            <constraint firstItem="WFp-as-cPh" firstAttribute="top" secondItem="RNB-4c-uMq" secondAttribute="top" id="sZX-1W-VBk"/>
+                            <constraint firstItem="RNB-4c-uMq" firstAttribute="top" secondItem="cPo-Wp-rIg" secondAttribute="bottom" id="tU5-NZ-zBX"/>
+                            <constraint firstItem="Pcb-Ov-rL6" firstAttribute="leading" secondItem="RNB-4c-uMq" secondAttribute="trailing" id="v53-eb-eeV"/>
+                            <constraint firstItem="3eL-Ye-cbb" firstAttribute="trailing" secondItem="G2X-31-4bc" secondAttribute="trailingMargin" id="xbj-rH-r9J"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="" image="Announcements" id="ybs-Ks-hRO"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="428" height="926"/>
+                    <connections>
+                        <outlet property="textView" destination="3eL-Ye-cbb" id="0Sn-Os-UX1"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="J9B-rw-6VF" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="zCq-rv-PXW">
+                    <connections>
+                        <action selector="longPress:" destination="atF-ga-vcg" id="mNQ-3o-wQS"/>
+                    </connections>
+                </pongPressGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="4142.5233644859809" y="528.72570194384457"/>
+        </scene>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="hu9-pD-bfH"/>
         <segue reference="Yvv-RL-5od"/>
     </inferredMetricsTieBreakers>
     <resources>
+        <image name="Announcements" width="28" height="51"/>
         <image name="Back" width="49" height="47"/>
         <image name="Forward" width="28" height="27"/>
         <image name="Home" width="53" height="53"/>

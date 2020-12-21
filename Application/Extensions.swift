@@ -55,6 +55,8 @@ extension Array where Element == String
 
 extension Date
 {
+    /* Functions */
+    
     func elapsedInterval() -> String
     {
         let interval = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: self, to: Date())
@@ -117,6 +119,15 @@ extension Date
         }
         
         return stylisedDateFormatter.string(from: self)
+    }
+    
+    //--------------------------------------------------//
+    
+    /* Variables */
+    
+    var comparator: Date
+    {
+        return Calendar.current.date(bySettingHour: 12, minute: 00, second: 00, of: Calendar.current.startOfDay(for: self))!
     }
 }
 

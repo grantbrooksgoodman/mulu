@@ -174,6 +174,14 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
         else { report("Couldn't get current Challenge!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
     }
     
+    @IBAction func skippedButton(_ sender: Any)
+    {
+        if let challenge = currentChallenge
+        {
+            UserDefaults.standard.setValue(challenge.associatedIdentifier, forKey: "skippedChallenge")
+        }
+    }
+    
     //==================================================//
     
     /* Other Functions */
@@ -200,7 +208,21 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
                                 {
                                     if !completedChallenges.contains(where: {$0.challenge.associatedIdentifier == challenge.associatedIdentifier})
                                     {
-                                        filteredChallenges.append(challenge)
+                                        if let skippedIdentifier = UserDefaults.standard.value(forKey: "skippedChallenge") as? String
+                                        {
+                                            if challenge.associatedIdentifier == skippedIdentifier
+                                            {
+                                                print("User skipped this one!")
+                                            }
+                                            else
+                                            {
+                                                filteredChallenges.append(challenge)
+                                            }
+                                        }
+                                        else
+                                        {
+                                            filteredChallenges.append(challenge)
+                                        }
                                     }
                                 }
                                 
@@ -233,9 +255,9 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
         
         if let tournament = currentTeam.associatedTournament
         {
-            let start = Calendar.current.date(bySettingHour: 12, minute: 00, second: 00, of: Calendar.current.startOfDay(for: tournament.startDate))!
-            let end = Calendar.current.date(bySettingHour: 12, minute: 00, second: 00, of: Calendar.current.startOfDay(for: tournament.endDate))!
-            let today = Calendar.current.date(bySettingHour: 12, minute: 00, second: 00, of: Calendar.current.startOfDay(for: Date()))!
+            let start = tournament.startDate.comparator
+            let end = tournament.endDate.comparator
+            let today = Date().comparator
             
             if end > today
             {

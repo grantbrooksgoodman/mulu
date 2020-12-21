@@ -74,6 +74,8 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
                     statisticsString.append(string)
                     
                     self.statisticsTextView.attributedText = statisticsString
+                    //                    self.statisticsTextView.sizeToFit()
+                    //                    self.statisticsTextView.layoutIfNeeded()
                 }
                 else { self.statisticsTextView.attributedText = string }
             }

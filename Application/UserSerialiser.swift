@@ -297,12 +297,12 @@ class UserSerialiser
         { return (nil, "Unable to deserialise «pushTokens».") }
         
         let deSerialisedUser = User(associatedIdentifier: associatedIdentifier,
-                                    associatedTeams:      associatedTeams,
+                                    associatedTeams:      associatedTeams == ["!"] ? nil : associatedTeams,
                                     emailAddress:         emailAddress,
                                     firstName:            firstName,
                                     lastName:             lastName,
-                                    profileImageData:     profileImageData,
-                                    pushTokens:           pushTokens)
+                                    profileImageData:     profileImageData == "!" ? nil : profileImageData,
+                                    pushTokens:           pushTokens == ["!"] ? nil : pushTokens)
         
         return (deSerialisedUser, nil)
     }

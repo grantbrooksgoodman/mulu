@@ -79,6 +79,7 @@
 		A2AEDD53257BE61E0074CA11 /* Challenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AEDD52257BE61E0074CA11 /* Challenge.swift */; };
 		A2AEDD57257BE77D0074CA11 /* ChallengeSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AEDD56257BE77D0074CA11 /* ChallengeSerialiser.swift */; };
 		A2B1F7612458EC8900CB20AF /* ShadowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B1F7602458EC8900CB20AF /* ShadowButton.swift */; };
+		A2C3F39825910A130020A6B2 /* AnnouncementsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C3F39725910A130020A6B2 /* AnnouncementsController.swift */; };
 		A2CA2D0C257984BF0012DB17 /* San Francisco (Heavy).otf in Resources */ = {isa = PBXBuildFile; fileRef = A2CA2D00257984BE0012DB17 /* San Francisco (Heavy).otf */; };
 		A2CA2D0D257984BF0012DB17 /* San Francisco (Bold Italic).otf in Resources */ = {isa = PBXBuildFile; fileRef = A2CA2D01257984BE0012DB17 /* San Francisco (Bold Italic).otf */; };
 		A2CA2D0E257984BF0012DB17 /* San Francisco (Regular).otf in Resources */ = {isa = PBXBuildFile; fileRef = A2CA2D02257984BE0012DB17 /* San Francisco (Regular).otf */; };
@@ -178,6 +179,7 @@
 		A2AEDD52257BE61E0074CA11 /* Challenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Challenge.swift; sourceTree = "<group>"; };
 		A2AEDD56257BE77D0074CA11 /* ChallengeSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeSerialiser.swift; sourceTree = "<group>"; };
 		A2B1F7602458EC8900CB20AF /* ShadowButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShadowButton.swift; sourceTree = "<group>"; };
+		A2C3F39725910A130020A6B2 /* AnnouncementsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnouncementsController.swift; sourceTree = "<group>"; };
 		A2CA2D00257984BE0012DB17 /* San Francisco (Heavy).otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "San Francisco (Heavy).otf"; sourceTree = "<group>"; };
 		A2CA2D01257984BE0012DB17 /* San Francisco (Bold Italic).otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "San Francisco (Bold Italic).otf"; sourceTree = "<group>"; };
 		A2CA2D02257984BE0012DB17 /* San Francisco (Regular).otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "San Francisco (Regular).otf"; sourceTree = "<group>"; };
@@ -268,6 +270,7 @@
 		682A9B201C8E64F700014EA5 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				A2C3F39725910A130020A6B2 /* AnnouncementsController.swift */,
 				A297BFB1258E9E32006DA5F5 /* ForgotPasswordController.swift */,
 				A2D6DFB22580376900725D5C /* HomeController.swift */,
 				68D29A121DD79C8A00BFF4D5 /* InitialController.swift */,
@@ -693,6 +696,7 @@
 				68D29A131DD79C8A00BFF4D5 /* InitialController.swift in Sources */,
 				A2AEDD4A257BDE220074CA11 /* GenericSerialiser.swift in Sources */,
 				A2D6DFB32580376900725D5C /* HomeController.swift in Sources */,
+				A2C3F39825910A130020A6B2 /* AnnouncementsController.swift in Sources */,
 				A278D31F2585A036008D22D1 /* ChallengeTestingSerialiser.swift in Sources */,
 				A2CD9668258D366D00A174D0 /* SignInController.swift in Sources */,
 				68EB1C831DD7B7070074737B /* SampleController.swift in Sources */,
