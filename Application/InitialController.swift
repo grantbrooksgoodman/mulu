@@ -64,7 +64,7 @@ class InitialController: UIViewController
                 
                 //                GenericTestingSerialiser().trashDatabase()
                 //
-                //                GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 6, numberOfChallenges: 8, numberOfTeams: 5) { (errorDescriptor) in
+                //                GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 11, numberOfChallenges: 8, numberOfTeams: 5) { (errorDescriptor) in
                 //                    if let error = errorDescriptor
                 //                    {
                 //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])

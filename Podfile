@@ -12,4 +12,5 @@ target 'Mulu' do
     pod 'JTAppleCalendar', '~> 7.1'
     pod 'PKHUD', '~> 5.0'
     pod 'ReachabilitySwift'
+    pod 'SwiftyGif'
 end

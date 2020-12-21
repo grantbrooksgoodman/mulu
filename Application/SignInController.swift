@@ -187,7 +187,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
         Auth.auth().signIn(withEmail: usernameTextField.text!, password: passwordTextField.text!) { (returnedResult, returnedError) in
             if let result = returnedResult
             {
-                UserSerialiser().getUser(withIdentifier: result.user.uid /*"-MOxMp0oexJ8yCIJilf3"*/) { (returnedUser, errorDescriptor) in
+                UserSerialiser().getUser(withIdentifier: "-MP1NOR6agMoyHZYUpvx" /*result.user.uid*/) { (returnedUser, errorDescriptor) in
                     if let user = returnedUser
                     {
                         currentUser = user

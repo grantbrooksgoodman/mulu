@@ -28,6 +28,9 @@ class GenericTestingSerialiser
         //at least 2 people per team
         //so can't be an odd number < 5, can't be 2 Teams 1 User, 3 Users. Must be ≥4.
         
+        guard numberOfUsers >= numberOfTeams * 2 else
+        { completion("Number of Users must be at least double the number of Teams."); return }
+        
         if numberOfTeams > 1 && numberOfUsers < 4
         {
             completion("Can't make Teams from \(numberOfUsers) user\(numberOfUsers == 1 ? "." : "s.")")
@@ -87,7 +90,7 @@ class GenericTestingSerialiser
             dispatchGroup.notify(queue: .main) {
                 if verboseFunctionExposure { print("createRandomUsers() completed") }
                 
-                guard let randomUsers = randomUsers else
+                guard var generatedRandomUsers = randomUsers else
                 { completion("Couldn't get random Users."); return }
                 
                 if verboseFunctionExposure { print("entering createRandomTeams() group") }
@@ -96,10 +99,20 @@ class GenericTestingSerialiser
                 var userArray2D: [[User]] = []
                 var challengeArray2D: [[(Challenge, [(User, Date)])]] = []
                 
-                for _ in 0..<numberOfTeams
+                let usersPerTeam = Int(numberOfUsers / numberOfTeams)
+                
+                for currentTeam in 1...numberOfTeams
                 {
-                    let halfwayUsersIndex = (randomUsers.count - 1) / 2
-                    let randomUsers = Array(randomUsers.shuffled()[0...halfwayUsersIndex])
+                    generatedRandomUsers = generatedRandomUsers.shuffled()
+                    
+                    var randomUsers = Array(generatedRandomUsers[0..<usersPerTeam])
+                    
+                    if currentTeam == numberOfTeams
+                    {
+                        randomUsers = generatedRandomUsers
+                    }
+                    
+                    generatedRandomUsers.removeSubrange(0..<usersPerTeam)
                     
                     let completedChallenges = ChallengeTestingSerialiser().randomCompletedChallenges(fromChallenges: randomChallenges, withUsers: randomUsers)
                     
@@ -108,8 +121,6 @@ class GenericTestingSerialiser
                     
                     userArray2D.append(randomUsers)
                     challengeArray2D.append(randomChallenges)
-                    
-                    //challengeArray2D.append(Array(completedChallenges.shuffled()[0...halfwayChallengesIndex]))
                 }
                 
                 var teamIdentifiers: [String]?

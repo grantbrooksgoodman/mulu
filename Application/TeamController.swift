@@ -58,10 +58,24 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         
         titleLabel.text = currentTeam.name.uppercased()
         
-        calculateTeamStatistics { (statisticsString, errorDescriptor) in
+        calculateTeamStatistics(withRankString: currentTeam.associatedTournament == nil) { (statisticsString, errorDescriptor) in
             if let string = statisticsString
             {
-                self.statisticsTextView.attributedText = string
+                if let tournament = currentTeam.associatedTournament,
+                   let leaderboard = tournament.leaderboard(),
+                   let index = leaderboard.firstIndex(where: {$0.team.associatedIdentifier == currentTeam.associatedIdentifier})
+                {
+                    let mainStatisticsAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-Bold", size: 18)!]
+                    
+                    let rankString = "\((index + 1).ordinalValue.uppercased()) PLACE, \(leaderboard[index].points) PTS\n\n"
+                    
+                    let statisticsString = NSMutableAttributedString(string: rankString, attributes: mainStatisticsAttributes)
+                    
+                    statisticsString.append(string)
+                    
+                    self.statisticsTextView.attributedText = statisticsString
+                }
+                else { self.statisticsTextView.attributedText = string }
             }
             else if let error = errorDescriptor
             {
@@ -101,7 +115,7 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     /* Other Functions */
     
-    func calculateTeamStatistics(completion: @escaping(_ statisticsString: NSAttributedString?, _ errorDescriptor: String?) -> Void)
+    func calculateTeamStatistics(withRankString: Bool, completion: @escaping(_ statisticsString: NSAttributedString?, _ errorDescriptor: String?) -> Void)
     {
         let mainStatisticsAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-Bold", size: 18)!]
         let otherStatisticsAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBold", size: 14)!]
@@ -128,7 +142,14 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
                     
                     let rankString = "\((currentUserRank + 1).ordinalValue.uppercased()) PLACE, \(currentUserPoints) PTS"
                     
-                    let statisticsString = NSMutableAttributedString(string: "\(rankString)\n\n", attributes: mainStatisticsAttributes)
+                    var initialStatisticsString = "\(rankString)\n\n"
+                    
+                    if !withRankString
+                    {
+                        initialStatisticsString = ""
+                    }
+                    
+                    let statisticsString = NSMutableAttributedString(string: initialStatisticsString, attributes: mainStatisticsAttributes)
                     
                     //rankArray.remove(at: currentUserRank)
                     

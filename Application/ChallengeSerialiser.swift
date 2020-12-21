@@ -25,7 +25,7 @@ class ChallengeSerialiser
      - Parameter prompt: The **Challenge's** prompt.
      
      - Parameter pointValue: An integer representing the point value for this **Challenge.**
-     - Parameter videoLink: An optional URL for the video associated with this **Challenge.**
+     - Parameter media: An optional tuple providing a URL and a **MediaType** for any media associated with this **Challenge.**
      
      - Parameter completion: Returns with the identifier of the newly created **Challenge** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
      */
@@ -33,7 +33,7 @@ class ChallengeSerialiser
                          prompt: String,
                          datePosted: Date?,
                          pointValue: Int,
-                         videoLink: URL?,
+                         media: (URL, Challenge.MediaType)?,
                          completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
     {
         var dataBundle: [String:Any] = [:]
@@ -43,11 +43,23 @@ class ChallengeSerialiser
         dataBundle["datePosted"] = secondaryDateFormatter.string(from: datePosted == nil ? Date() : datePosted!)
         dataBundle["pointValue"] = pointValue
         
-        if let videoLink = videoLink
+        if let media = media
         {
-            dataBundle["videoLink"] = videoLink.absoluteString
+            var type: String!
+            
+            switch media.1
+            {
+            case .gif:
+                type = "gif"
+            case .staticImage:
+                type = "staticImage"
+            case .video:
+                type = "video"
+            }
+            
+            dataBundle["media"] = "\(type!) – \(media.0.absoluteString)"
         }
-        else { dataBundle["videoLink"] = "!" }
+        else { dataBundle["media"] = "!" }
         
         //Generate a key for the new Challenge.
         if let generatedKey = Database.database().reference().child("/allChallenges/").childByAutoId().key
@@ -91,6 +103,39 @@ class ChallengeSerialiser
         { (returnedError) in
             
             completion(nil, "Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
+        }
+    }
+    
+    func getChallenges(forDate: Date, completion: @escaping(_ returnedIdentifiers: [String]?, _ errorDescriptor: String?) -> Void)
+    {
+        var identifiers: [String] = []
+        
+        Database.database().reference().child("allChallenges").observeSingleEvent(of: .value) { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let asDataBundle = returnedSnapshotAsDictionary as? [String:Any]
+            {
+                for (index, identifier) in Array(asDataBundle.keys).enumerated()
+                {
+                    if let data = asDataBundle[identifier] as? [String:Any],
+                       let datePostedString = data["datePosted"] as? String,
+                       let datePosted = secondaryDateFormatter.date(from: datePostedString)
+                    {
+                        if Calendar.current.startOfDay(for: datePosted) == Calendar.current.startOfDay(for: forDate)
+                        {
+                            identifiers.append(identifier)
+                        }
+                    }
+                    
+                    if index == asDataBundle.keys.count - 1
+                    {
+                        completion(identifiers, nil)
+                    }
+                }
+            }
+            else
+            {
+                completion(nil, "Unable to deserialise snapshot.")
+            }
         }
     }
     
@@ -173,14 +218,40 @@ class ChallengeSerialiser
         guard let pointValue = dataBundle["pointValue"] as? Int else
         { return (nil, "Unable to deserialise «pointValue».") }
         
-        guard let videoLink = dataBundle["videoLink"] as? String else
-        { return (nil, "Unable to deserialise «videoLink».") }
+        guard let mediaString = dataBundle["media"] as? String else
+        { return (nil, "Unable to deserialise «media».") }
         
-        var videoUrl: URL?
+        var media: (URL, Challenge.MediaType)?
         
-        if videoLink != "!"
+        if mediaString != "!"
         {
-            videoUrl = URL(string: videoLink)
+            let components = mediaString.components(separatedBy: " – ")
+            
+            guard components.count == 2 else
+            { return(nil, "The media string was improperly formatted.") }
+            
+            let mediaTypeString = components[0]
+            let linkString = components[1]
+            
+            var mediaType: Challenge.MediaType!
+            
+            if let url = URL(string: linkString)
+            {
+                switch mediaTypeString
+                {
+                case "gif":
+                    mediaType = .gif
+                case "staticImage":
+                    mediaType = .staticImage
+                case "video":
+                    mediaType = .video
+                default:
+                    return(nil, "Couldn't convert media type into «MediaType».")
+                }
+                
+                media = (url, mediaType)
+            }
+            else { return(nil, "Could not convert media link to URL.") }
         }
         
         let deSerialisedChallenge = Challenge(associatedIdentifier: associatedIdentifier,
@@ -188,7 +259,7 @@ class ChallengeSerialiser
                                               prompt:               prompt,
                                               datePosted:           datePosted,
                                               pointValue:           pointValue,
-                                              videoLink:            videoUrl)
+                                              media:                media)
         
         return (deSerialisedChallenge, nil)
     }

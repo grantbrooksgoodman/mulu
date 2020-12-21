@@ -22,8 +22,19 @@ class Challenge
     
     //Other Declarations
     var datePosted: Date!
+    var media: (link: URL, type: MediaType)?
     var pointValue: Int!
-    var videoLink: URL?
+    
+    //==================================================//
+    
+    /* Enumerated Type Declarations */
+    
+    enum MediaType
+    {
+        case gif
+        case staticImage
+        case video
+    }
     
     //==================================================//
     
@@ -34,13 +45,13 @@ class Challenge
          prompt:               String,
          datePosted:           Date,
          pointValue:           Int,
-         videoLink:            URL?)
+         media:                (URL, MediaType)?)
     {
         self.associatedIdentifier = associatedIdentifier
         self.title = title
         self.prompt = prompt
         self.datePosted = datePosted
         self.pointValue = pointValue
-        self.videoLink = videoLink
+        self.media = media
     }
 }

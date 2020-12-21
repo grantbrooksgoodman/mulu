@@ -516,6 +516,7 @@ class TeamSerialiser
                     {
                         errorDescriptorArray.append(errorDescriptor!)
                         
+                        #warning("This seems to cause crashes sometimes...")
                         if verboseFunctionExposure { print("left group") }
                         dispatchGroup.leave()
                     }

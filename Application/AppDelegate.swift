@@ -41,7 +41,7 @@ var lastInitialisedController: UIViewController! = MainController()
 
 //Other Declarations
 var appStoreReleaseVersion = 0
-var buildType: Build.BuildType = .preAlpha
+var buildType: Build.BuildType = .alpha
 var currentTeam: Team!
 var currentUser: User!
 var informationDictionary: [String:String]!
@@ -63,6 +63,7 @@ var touchTimer: Timer?
     let screenSize = UIScreen.main.bounds
     
     var informationDictionary: [String:String] = [:]
+    var restrictRotation: UIInterfaceOrientationMask = .portrait
     var window: UIWindow?
     
     //==================================================//
@@ -87,31 +88,12 @@ var touchTimer: Timer?
         FirebaseConfiguration.shared.setLoggerLevel(.min)
         FirebaseApp.configure()
         
-        //        UserSerialiser().getRandomUsers(amountToGet: 1) { (returnedUsers, errorDescriptor) in
-        //            if let error = errorDescriptor
-        //            {
-        //                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //            }
-        //            else if let user = returnedUsers
-        //            {
-        //                UserSerialiser().getUser(withIdentifier: user[0]) { (returnedUser, errorDescriptor) in
-        //                    if let error = errorDescriptor
-        //                    {
-        //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        //                    }
-        //                    else if let user = returnedUser
-        //                    {
-        //                        print("Signed in as \(user.firstName!).")
-        //
-        //                        currentUser = user
-        //
-        //                        user.setDSAssociatedTeams()
-        //                    }
-        //                }
-        //            }
-        //        }
-        
         return true
+    }
+    
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask
+    {
+        return self.restrictRotation
     }
     
     func applicationDidBecomeActive(_ application: UIApplication)

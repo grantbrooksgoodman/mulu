@@ -169,7 +169,7 @@ class ChallengeTestingSerialiser
                                               prompt: randomChallengePrompt,
                                               datePosted: randomDate,
                                               pointValue: Int().random(min: 10, max: 500),
-                                              videoLink: nil) { (returnedIdentifier, errorDescriptor) in
+                                              media: nil) { (returnedIdentifier, errorDescriptor) in
             if let error = errorDescriptor
             {
                 completion(nil, error)

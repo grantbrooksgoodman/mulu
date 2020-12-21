@@ -184,10 +184,34 @@ class Team
         {
             for challenge in challenges
             {
-                total += challenge.challenge.pointValue
+                total += (challenge.challenge.pointValue * challenge.metadata.count)
             }
         }
         
         return total
+    }
+    
+    func serialiseCompletedChallenges() -> [String:[String]]
+    {
+        guard let challenges = completedChallenges else
+        { return [:] }
+        
+        var dataBundle: [String:[String]] = [:]
+        
+        for bundle in challenges
+        {
+            //["challengeId":["userId – dateString"]]
+            var serialisedMetadata: [String] = []
+            
+            for datum in bundle.metadata
+            {
+                let metadataString = "\(datum.user.associatedIdentifier!) – \(secondaryDateFormatter.string(from: datum.dateCompleted))"
+                serialisedMetadata.append(metadataString)
+            }
+            
+            dataBundle["\(bundle.challenge.associatedIdentifier!)"] = serialisedMetadata
+        }
+        
+        return dataBundle
     }
 }

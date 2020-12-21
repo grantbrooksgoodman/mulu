@@ -132,6 +132,30 @@ class User
         }
     }
     
+    func completeChallenge(withIdentifier: String, on team: Team, completion: @escaping(_ returnedError: Error?) -> Void)
+    {
+        let serialisedData = "\(associatedIdentifier!) – \(secondaryDateFormatter.string(from: Date()))"
+        
+        var newCompletedChallenges = team.serialiseCompletedChallenges()
+        
+        if newCompletedChallenges[withIdentifier] != nil
+        {
+            newCompletedChallenges[withIdentifier]!.append(serialisedData)
+        }
+        else
+        {
+            newCompletedChallenges[withIdentifier] = [serialisedData]
+        }
+        
+        GenericSerialiser().updateValue(onKey: "/allTeams/\(team.associatedIdentifier!)/", withData: ["completedChallenges": newCompletedChallenges]) { (returnedError) in
+            if let error = returnedError
+            {
+                completion(error)
+            }
+            else { completion(nil) }
+        }
+    }
+    
     /**
      Returns the **User's** completed **Challenges** on the specified **Team**.
      */

@@ -43,31 +43,8 @@ class Build
         
         informationDictionary = currentInformationDictionary
         
-        let screenHeight = UIScreen.main.bounds.height
-        
         if let viewController = viewController
         {
-            //If the application is pre-release and the screen height matches that of an iPhone X or Xs.
-            if buildType != .generalRelease && (screenHeight == 812 || screenHeight == 896)
-            {
-                //Set appropriate location values for an iPhone X or Xs.
-                let topYOrigin = (screenHeight == 812 ? 32 : 35)
-                let bottomYOrigin = (screenHeight == 812 ? 792 : 873)
-                let widthValue = (screenHeight == 812 ? 375 : 414)
-                
-                //Set up the topmost safe area indicator.
-                let topSafeAreaIndicator = UIView(frame: CGRect(x: 0, y: topYOrigin, width: widthValue, height: 1))
-                topSafeAreaIndicator.backgroundColor = .white
-                viewController.view.addSubview(topSafeAreaIndicator)
-                viewController.view.bringSubviewToFront(topSafeAreaIndicator)
-                
-                //Set up the bottom-most safe area indicator.
-                let bottomSafeAreaIndicator = UIView(frame: CGRect(x: 0, y: bottomYOrigin, width: widthValue, height: 1))
-                bottomSafeAreaIndicator.backgroundColor = .white
-                viewController.view.addSubview(bottomSafeAreaIndicator)
-                viewController.view.bringSubviewToFront(bottomSafeAreaIndicator)
-            }
-            
             if let mainController = viewController as? MainController
             {
                 buildMain(mainController)
