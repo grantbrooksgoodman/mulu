@@ -12,6 +12,7 @@ import UIKit
 
 /* Third-party Frameworks */
 import Firebase
+import OneSignal
 import PKHUD
 import Reachability
 
@@ -87,6 +88,19 @@ var touchTimer: Timer?
         
         FirebaseConfiguration.shared.setLoggerLevel(.min)
         FirebaseApp.configure()
+        
+        // Remove this method to stop OneSignal Debugging
+        OneSignal.setLogLevel(.LL_ERROR, visualLevel: .LL_NONE)
+        
+        // OneSignal initialization
+        OneSignal.initWithLaunchOptions(launchOptions)
+        OneSignal.setAppId("887d799b-9980-48e7-a36f-e27fe211c023")
+        
+        // promptForPushNotifications will show the native iOS notification permission prompt.
+        // We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step 8)
+        OneSignal.promptForPushNotifications(userResponse: { accepted in
+            print("User accepted notifications: \(accepted)")
+        })
         
         return true
     }

@@ -86,6 +86,7 @@ PODS:
     - nanopb/encode (= 0.3.9011)
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
+  - OneSignal (3.0.1)
   - PKHUD (5.3.0)
   - PromisesObjC (1.2.8)
   - ReachabilitySwift (5.0.0)
@@ -96,6 +97,7 @@ DEPENDENCIES:
   - Firebase/Auth
   - Firebase/Database
   - JTAppleCalendar (~> 7.1)
+  - OneSignal (< 4.0, >= 3.0.0)
   - PKHUD (~> 5.0)
   - ReachabilitySwift
   - SwiftyGif
@@ -119,6 +121,7 @@ SPEC REPOS:
     - JTAppleCalendar
     - leveldb-library
     - nanopb
+    - OneSignal
     - PKHUD
     - PromisesObjC
     - ReachabilitySwift
@@ -142,11 +145,12 @@ SPEC CHECKSUMS:
   JTAppleCalendar: b7fb40852f5f319fe55c8ec3861f1de0edc99cc8
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
+  OneSignal: 29b4046637f63c7212785f47f0eb1f2472649285
   PKHUD: 98f3e4bc904b9c916f1c5bb6d765365b5357291b
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
 
-PODFILE CHECKSUM: 610fc67fbc85002c9527629b54c8e24ef0d926c0
+PODFILE CHECKSUM: ea4265d1153a41696dba2cc71e965f571515d7ba
 
 COCOAPODS: 1.9.1
