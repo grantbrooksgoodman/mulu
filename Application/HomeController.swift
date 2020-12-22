@@ -16,32 +16,20 @@ import Firebase
 import PKHUD
 import SwiftyGif
 
-class HomeController: UIViewController, MFMailComposeViewControllerDelegate
+class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UICollectionViewDelegateFlowLayout
 {
     //==================================================//
     
     /* Interface Builder UI Elements */
     
-    //UIButtons
-    @IBOutlet weak var doneButton:    UIButton!
-    @IBOutlet weak var skippedButton: UIButton!
-    
     //UILabels
-    @IBOutlet weak var noChallengeLabel: UILabel!
-    @IBOutlet weak var noMediaLabel: UILabel!
-    @IBOutlet weak var pointValueLabel:  UILabel!
-    @IBOutlet weak var subtitleLabel:    UILabel!
-    @IBOutlet weak var titleLabel:       UILabel!
     @IBOutlet weak var welcomeLabel:     UILabel!
     
     //UITextViews
-    @IBOutlet weak var promptTextView:     UITextView!
     @IBOutlet weak var statisticsTextView: UITextView!
     
     //Other Elements
-    @IBOutlet weak var challengeView: UIView!
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var webView: WKWebView!
+    @IBOutlet weak var collectionView: UICollectionView!
     
     //==================================================//
     
@@ -49,6 +37,10 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
     
     var buildInstance: Build!
     var currentChallenge: Challenge?
+    
+    var incompleteChallenges: [Challenge] = []
+    
+    var noChallengeString = "No new challenges have been posted for today.\n\nCheck back later!"
     
     //==================================================//
     
@@ -80,39 +72,10 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
             (UIApplication.shared.delegate as! AppDelegate).restrictRotation = .portrait
         }
         
-        doneButton.layer.cornerRadius = 5
-        skippedButton.layer.cornerRadius = 5
-        
         welcomeLabel.text = "WELCOME BACK \(currentUser.firstName!.uppercased())!"
         welcomeLabel.font = UIFont(name: "Gotham-Black", size: 32)!
         
-        challengeView.alpha = 0
-        
-        incompleteChallengesForToday { (returnedChallenges, errorDescriptor) in
-            if let challenges = returnedChallenges
-            {
-                if challenges.count > 0
-                {
-                    self.setUpChallengeView(for: challenges[0])
-                }
-                else
-                {
-                    for subview in self.challengeView.subviews
-                    {
-                        subview.alpha = 0
-                    }
-                    
-                    UIView.animate(withDuration: 0.2) {
-                        self.challengeView.alpha = 1
-                        self.noChallengeLabel.alpha = 1
-                    }
-                }
-            }
-            else if let error = errorDescriptor
-            {
-                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-            }
-        }
+        reloadData()
         
         var statisticsString = "+ \(currentTeam.name!.uppercased())\n"
         
@@ -132,8 +95,6 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
         
         currentFile = #file
         buildInfoController?.view.isHidden = false
-        
-        challengeView.layer.cornerRadius = 10
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
@@ -145,59 +106,57 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
     
     /* Interface Builder Actions */
     
-    @IBAction func doneButton(_ sender: Any)
-    {
-        if let challenge = currentChallenge
-        {
-            currentUser.completeChallenge(withIdentifier: challenge.associatedIdentifier, on: currentTeam) { (returnedError) in
-                if let error = returnedError
-                {
-                    report(error.localizedDescription, errorCode: (error as NSError).code, isFatal: false, metadata: [#file, #function, #line])
-                }
-                else
-                {
-                    HUD.flash(.success, delay: 1.0) { finished in
-                        for subview in self.challengeView.subviews
-                        {
-                            subview.alpha = 0
-                        }
-                        
-                        self.noChallengeLabel.text = "You've completed today's challenge already.\n\nCheck back later!"
-                        
-                        UIView.animate(withDuration: 0.2) {
-                            self.noChallengeLabel.alpha = 1
-                        }
-                    }
-                }
-            }
-        }
-        else { report("Couldn't get current Challenge!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
-    }
-    
     @IBAction func skippedButton(_ sender: Any)
     {
-        if let challenge = currentChallenge
-        {
-            UserDefaults.standard.setValue(challenge.associatedIdentifier, forKey: "skippedChallenge")
-            
-            HUD.flash(.success, delay: 1.0) { finished in
-                for subview in self.challengeView.subviews
-                {
-                    subview.alpha = 0
-                }
-                
-                self.noChallengeLabel.text = "You skipped today's challenge.\n\nCheck back later for more!"
-                
-                UIView.animate(withDuration: 0.2) {
-                    self.noChallengeLabel.alpha = 1
-                }
-            }
-        }
+        //        if let challenge = currentChallenge
+        //        {
+        //            UserDefaults.standard.setValue(challenge.associatedIdentifier, forKey: "skippedChallenge")
+        //
+        //            HUD.flash(.success, delay: 1.0) { finished in
+        //                for subview in self.challengeView.subviews
+        //                {
+        //                    subview.alpha = 0
+        //                }
+        //
+        //                self.noChallengeLabel.text = "You skipped today's challenge.\n\nCheck back later for more!"
+        //
+        //                UIView.animate(withDuration: 0.2) {
+        //                    self.noChallengeLabel.alpha = 1
+        //                }
+        //            }
+        //        }
     }
     
     //==================================================//
     
     /* Other Functions */
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
+    {
+        let screenWidth = UIScreen.main.bounds.width
+        let width = screenWidth == 375 ? 365 : 388
+        
+        return CGSize(width: width, height: 506)
+    }
+    
+    func reloadData()
+    {
+        incompleteChallengesForToday { (returnedChallenges, errorDescriptor) in
+            if let challenges = returnedChallenges
+            {
+                self.incompleteChallenges = challenges
+                
+                self.collectionView.dataSource = self
+                self.collectionView.delegate = self
+                
+                self.collectionView.reloadData()
+            }
+            else if let error = errorDescriptor
+            {
+                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+        }
+    }
     
     func incompleteChallengesForToday(completion: @escaping(_ returnedChallenge: [Challenge]?, _ errorDescriptor: String?) -> Void)
     {
@@ -225,7 +184,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
                                         {
                                             if challenge.associatedIdentifier == skippedIdentifier
                                             {
-                                                self.noChallengeLabel.text = "You skipped today's challenge.\n\nCheck back later for more!"
+                                                self.noChallengeString = "You skipped today's challenge.\n\nCheck back later for more!"
                                             }
                                             else
                                             {
@@ -251,7 +210,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
                                     {
                                         if challenge.associatedIdentifier == skippedIdentifier
                                         {
-                                            self.noChallengeLabel.text = "You skipped today's challenge.\n\nCheck back later for more!"
+                                            self.noChallengeString = "You skipped today's challenge.\n\nCheck back later for more!"
                                         }
                                         else
                                         {
@@ -285,64 +244,114 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate
     {
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
     }
-    
-    func setUpChallengeView(for challenge: Challenge)
+}
+
+extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
+{
+    func numberOfSections(in collectionView: UICollectionView) -> Int
     {
-        currentChallenge = challenge
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    {
+        return incompleteChallenges.count == 0 ? 1 : incompleteChallenges.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
+    {
+        let challengeCell = collectionView.dequeueReusableCell(withReuseIdentifier: "challengeCell", for: indexPath) as! ChallengeCell
         
-        if let tournament = currentTeam.associatedTournament
+        roundCorners(forViews: [challengeCell], withCornerType: 0)
+        
+        challengeCell.doneButton.layer.cornerRadius = 5
+        challengeCell.skippedButton.layer.cornerRadius = 5
+        
+        challengeCell.noChallengeLabel.text = noChallengeString
+        
+        if incompleteChallenges.count > 0
         {
-            let start = tournament.startDate.comparator
-            let end = tournament.endDate.comparator
-            let today = Date().comparator
+            challengeCell.challengeIdentifier = incompleteChallenges[indexPath.row].associatedIdentifier
             
-            if end > today
+            if let tournament = currentTeam.associatedTournament
             {
-                let components = Calendar.current.dateComponents([.day], from: start, to: today)
-                let day = components.day!
+                let start = tournament.startDate.comparator
+                let end = tournament.endDate.comparator
+                let today = Date().comparator
                 
-                titleLabel.text = "DAY \(day)"
+                if end > today
+                {
+                    let components = Calendar.current.dateComponents([.day], from: start, to: today)
+                    let day = components.day!
+                    
+                    challengeCell.titleLabel.text = "DAY \(day)"
+                }
+                else { report("Tournament has ended!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
             }
-            else { report("Tournament has ended!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
-        }
-        
-        promptTextView.text = challenge.prompt!
-        pointValueLabel.text = "+\(challenge.pointValue!) POINTS"
-        subtitleLabel.text = "⚡️ \(challenge.title!) ⚡️"
-        
-        doneButton.setTitle("I did it! (+\(challenge.pointValue!))", for: .normal)
-        
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.layer.cornerRadius = 5
-        imageView.clipsToBounds = true
-        
-        webView.layer.borderWidth = 1
-        webView.layer.borderColor = UIColor.white.cgColor
-        webView.layer.cornerRadius = 5
-        webView.clipsToBounds = true
-        
-        if let media = challenge.media
-        {
-            switch media.type
+            
+            challengeCell.promptTextView.text = incompleteChallenges[indexPath.row].prompt!
+            challengeCell.pointValueLabel.text = "+\(incompleteChallenges[indexPath.row].pointValue!) POINTS"
+            challengeCell.subtitleLabel.text = "⚡️ \(incompleteChallenges[indexPath.row].title!) ⚡️"
+            
+            challengeCell.doneButton.setTitle("I did it! (+\(incompleteChallenges[indexPath.row].pointValue!))", for: .normal)
+            
+            challengeCell.imageView.layer.borderWidth = 1
+            challengeCell.imageView.layer.borderColor = UIColor.white.cgColor
+            challengeCell.imageView.layer.cornerRadius = 5
+            challengeCell.imageView.clipsToBounds = true
+            
+            challengeCell.webView.layer.borderWidth = 1
+            challengeCell.webView.layer.borderColor = UIColor.white.cgColor
+            challengeCell.webView.layer.cornerRadius = 5
+            challengeCell.webView.clipsToBounds = true
+            
+            if let media = incompleteChallenges[indexPath.row].media
             {
-            case .gif:
-                webView.alpha = 0
-                imageView.setGifFromURL(media.link)
-            case .staticImage:
-                webView.alpha = 0
-                imageView.downloadedFrom(url: media.link)
-            case .video:
-                imageView.alpha = 0
-                webView.load(URLRequest(url: media.link))
+                switch media.type
+                {
+                case .gif:
+                    challengeCell.webView.alpha = 0
+                    challengeCell.imageView.setGifFromURL(media.link)
+                case .staticImage:
+                    challengeCell.webView.alpha = 0
+                    challengeCell.imageView.downloadedFrom(url: media.link)
+                case .video:
+                    challengeCell.imageView.alpha = 0
+                    challengeCell.webView.load(URLRequest(url: media.link))
+                }
+            }
+            else
+            {
+                challengeCell.webView.alpha = 0
+                challengeCell.noMediaLabel.alpha = 1
             }
         }
         else
         {
-            webView.alpha = 0
-            noMediaLabel.alpha = 1
+            for subview in challengeCell.encapsulatingView.subviews
+            {
+                subview.alpha = 0
+            }
+            
+            UIView.animate(withDuration: 0.2) {
+                challengeCell.noChallengeLabel.alpha = 1
+                challengeCell.contentView.alpha = 1
+            }
         }
         
-        UIView.animate(withDuration: 0.2) { self.challengeView.alpha = 1 }
+        let screenWidth = UIScreen.main.bounds.width
+        
+        if screenWidth == 375
+        {
+            challengeCell.encapsulatingView.center.x = challengeCell.center.x - 5
+        }
+        else if screenWidth == 390
+        {
+            challengeCell.encapsulatingView.center.x = challengeCell.center.x
+        }
+        
+        challengeCell.layoutIfNeeded()
+        
+        return challengeCell
     }
 }

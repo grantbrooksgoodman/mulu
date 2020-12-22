@@ -73,6 +73,7 @@
 		A2A554962577FFBF006D3B3E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A554952577FFBF006D3B3E /* Extensions.swift */; };
 		A2A5549A25780BCB006D3B3E /* Builder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A5549925780BCB006D3B3E /* Builder.swift */; };
 		A2A5549D25780BDD006D3B3E /* BuildInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A5549C25780BDD006D3B3E /* BuildInfoController.swift */; };
+		A2A58FCA259156BF004DAFE0 /* ChallengeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A58FC9259156BF004DAFE0 /* ChallengeCell.swift */; };
 		A2AEDD4A257BDE220074CA11 /* GenericSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AEDD49257BDE220074CA11 /* GenericSerialiser.swift */; };
 		A2AEDD4D257BDE6E0074CA11 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AEDD4C257BDE6E0074CA11 /* User.swift */; };
 		A2AEDD50257BE0540074CA11 /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AEDD4F257BE0540074CA11 /* Team.swift */; };
@@ -173,6 +174,7 @@
 		A2A554952577FFBF006D3B3E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		A2A5549925780BCB006D3B3E /* Builder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Builder.swift; sourceTree = "<group>"; };
 		A2A5549C25780BDD006D3B3E /* BuildInfoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildInfoController.swift; sourceTree = "<group>"; };
+		A2A58FC9259156BF004DAFE0 /* ChallengeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeCell.swift; sourceTree = "<group>"; };
 		A2AEDD49257BDE220074CA11 /* GenericSerialiser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericSerialiser.swift; sourceTree = "<group>"; };
 		A2AEDD4C257BDE6E0074CA11 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		A2AEDD4F257BE0540074CA11 /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
@@ -309,6 +311,7 @@
 			isa = PBXGroup;
 			children = (
 				6874044B1CB1AB4400BD2632 /* Assets.xcassets */,
+				A2A58FC9259156BF004DAFE0 /* ChallengeCell.swift */,
 				A2EFF34225835A590070B320 /* DateCell.swift */,
 				A288D1FF25844F55002AFB51 /* ScrollerCell.swift */,
 				687404491CB1AB4400BD2632 /* Info.plist */,
@@ -696,6 +699,7 @@
 				68D29A131DD79C8A00BFF4D5 /* InitialController.swift in Sources */,
 				A2AEDD4A257BDE220074CA11 /* GenericSerialiser.swift in Sources */,
 				A2D6DFB32580376900725D5C /* HomeController.swift in Sources */,
+				A2A58FCA259156BF004DAFE0 /* ChallengeCell.swift in Sources */,
 				A2C3F39825910A130020A6B2 /* AnnouncementsController.swift in Sources */,
 				A278D31F2585A036008D22D1 /* ChallengeTestingSerialiser.swift in Sources */,
 				A2CD9668258D366D00A174D0 /* SignInController.swift in Sources */,

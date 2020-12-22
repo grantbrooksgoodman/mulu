@@ -56,6 +56,23 @@ class User
     
     /* Public Functions */
     
+    #warning("Tagged for deletion pending investigation of future use cases.")
+    func reloadData()
+    {
+        UserSerialiser().getUser(withIdentifier: associatedIdentifier) { (returnedUser, errorDescriptor) in
+            if let user = returnedUser
+            {
+                self.associatedTeams = user.associatedTeams
+                self.emailAddress = user.emailAddress
+                self.firstName = user.firstName
+                self.lastName = user.lastName
+                self.profileImageData = user.profileImageData
+                self.pushTokens = user.pushTokens
+            }
+            else { report(errorDescriptor!, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+        }
+    }
+    
     /**
      If *DSAssociatedTeams* has been set, returns the **User's** completed **Challenges**.
      */
@@ -132,27 +149,46 @@ class User
         }
     }
     
-    func completeChallenge(withIdentifier: String, on team: Team, completion: @escaping(_ returnedError: Error?) -> Void)
+    func completeChallenge(withIdentifier: String, on team: Team, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
         let serialisedData = "\(associatedIdentifier!) – \(secondaryDateFormatter.string(from: Date()))"
         
-        var newCompletedChallenges = team.serialiseCompletedChallenges()
-        
-        if newCompletedChallenges[withIdentifier] != nil
-        {
-            newCompletedChallenges[withIdentifier]!.append(serialisedData)
-        }
-        else
-        {
-            newCompletedChallenges[withIdentifier] = [serialisedData]
-        }
-        
-        GenericSerialiser().updateValue(onKey: "/allTeams/\(team.associatedIdentifier!)/", withData: ["completedChallenges": newCompletedChallenges]) { (returnedError) in
-            if let error = returnedError
+        ChallengeSerialiser().getChallenge(withIdentifier: withIdentifier) { (returnedChallenge, errorDescriptor) in
+            if let challenge = returnedChallenge
             {
-                completion(error)
+                var newCompletedChallenges = team.serialiseCompletedChallenges()
+                
+                if let completedChallenges = team.completedChallenges
+                {
+                    if let index = completedChallenges.challenges().firstIndex(where: {$0.associatedIdentifier == withIdentifier})
+                    {
+                        team.completedChallenges![index].metadata.append((self, Date()))
+                    }
+                    else
+                    {
+                        team.completedChallenges!.append((challenge, [(self, Date())]))
+                    }
+                }
+                else { team.completedChallenges = [(challenge, [(self, Date())])] }
+                
+                if newCompletedChallenges[withIdentifier] != nil
+                {
+                    newCompletedChallenges[withIdentifier]!.append(serialisedData)
+                }
+                else
+                {
+                    newCompletedChallenges[withIdentifier] = [serialisedData]
+                }
+                
+                GenericSerialiser().updateValue(onKey: "/allTeams/\(team.associatedIdentifier!)/", withData: ["completedChallenges": newCompletedChallenges]) { (returnedError) in
+                    if let error = returnedError
+                    {
+                        completion(errorInformation(forError: (error as NSError)))
+                    }
+                    else { completion(nil) }
+                }
             }
-            else { completion(nil) }
+            else { completion("Couldn't get Challenge.") }
         }
     }
     
@@ -271,5 +307,20 @@ class User
         }
         
         return total
+    }
+}
+
+extension Array where Element == (challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])
+{
+    func challenges() -> [Challenge]
+    {
+        var challenges: [Challenge] = []
+        
+        for challengeTuple in self
+        {
+            challenges.append(challengeTuple.challenge)
+        }
+        
+        return challenges
     }
 }
