@@ -297,10 +297,13 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
                 
                 if end > today
                 {
-                    let components = Calendar.current.dateComponents([.day], from: start, to: today)
-                    let day = components.day!
+                    let dayComponents = Calendar.current.dateComponents([.day], from: start, to: today)
+                    let day = dayComponents.day!
                     
-                    challengeCell.titleLabel.text = "DAY \(day)"
+                    let durationComponents = Calendar.current.dateComponents([.day], from: start, to: end)
+                    let duration = durationComponents.day!
+                    
+                    challengeCell.titleLabel.text = "DAY \(day) OF \(duration)"
                 }
                 else { report("Tournament has ended!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
             }

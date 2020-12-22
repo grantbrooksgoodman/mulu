@@ -3,6 +3,7 @@
     <device id="retina6_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -41,19 +42,22 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0mT-z4-wbS">
-                                <rect key="frame" x="195" y="786" width="218" height="57"/>
+                                <rect key="frame" x="195" y="773" width="218" height="70"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="dZv-RK-Sm6">
-                                        <rect key="frame" x="183" y="0.0" width="35" height="19"/>
+                                        <rect key="frame" x="193" y="6" width="25" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <gestureRecognizers/>
-                                        <state key="normal" image="NT (White).png"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal">
+                                            <imageReference key="image" image="info.circle" catalog="system" symbolScale="large"/>
+                                        </state>
                                         <connections>
                                             <action selector="informationButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fPa-TQ-HOd"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ox9-8m-fMJ">
-                                        <rect key="frame" x="57" y="34" width="161" height="26"/>
+                                        <rect key="frame" x="57" y="44" width="161" height="26"/>
                                         <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="12"/>
                                         <state key="normal" title="All features subject to change.">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -63,7 +67,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="bottom" buttonType="system" lineBreakMode="middleTruncation" id="Xus-Sr-Vcc">
-                                        <rect key="frame" x="0.0" y="23" width="218" height="15"/>
+                                        <rect key="frame" x="0.0" y="33" width="218" height="15"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="Arial-BoldMT" family="Arial" pointSize="13"/>
                                         <state key="normal" title="Project Code Name: Application">
@@ -79,7 +83,7 @@
                                     <constraint firstItem="Ox9-8m-fMJ" firstAttribute="trailing" secondItem="Xus-Sr-Vcc" secondAttribute="trailing" id="3PV-hC-eGJ"/>
                                     <constraint firstItem="Ox9-8m-fMJ" firstAttribute="top" secondItem="Xus-Sr-Vcc" secondAttribute="bottom" constant="-4" id="9X4-Ni-SEN"/>
                                     <constraint firstAttribute="width" constant="218" id="LhU-mk-YOP"/>
-                                    <constraint firstAttribute="height" constant="57" id="MzV-sZ-W29"/>
+                                    <constraint firstAttribute="height" constant="70" id="MzV-sZ-W29"/>
                                     <constraint firstItem="Ox9-8m-fMJ" firstAttribute="leading" secondItem="0mT-z4-wbS" secondAttribute="leading" constant="57" id="uhK-Zd-7Er"/>
                                 </constraints>
                             </view>
@@ -141,11 +145,6 @@
                                     <action selector="sendFeedbackButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Y28-nm-6jo"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E9e-Ra-1LP">
-                                <rect key="frame" x="114" y="425" width="200" height="60"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -153,7 +152,7 @@
                             <constraint firstItem="QYo-Qp-grY" firstAttribute="leading" secondItem="FKv-om-j3j" secondAttribute="leading" id="79L-o2-bzo"/>
                             <constraint firstAttribute="trailing" secondItem="0mT-z4-wbS" secondAttribute="trailing" constant="15" id="R8U-KA-205"/>
                             <constraint firstItem="0mT-z4-wbS" firstAttribute="leading" secondItem="FKv-om-j3j" secondAttribute="trailing" constant="21" id="VUh-MT-KBa"/>
-                            <constraint firstItem="FKv-om-j3j" firstAttribute="top" secondItem="0mT-z4-wbS" secondAttribute="top" constant="8" id="Wkr-to-woi"/>
+                            <constraint firstItem="FKv-om-j3j" firstAttribute="top" secondItem="0mT-z4-wbS" secondAttribute="top" constant="21" id="Wkr-to-woi"/>
                             <constraint firstItem="FKv-om-j3j" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="15" id="bJ4-4X-ue5"/>
                             <constraint firstItem="QYo-Qp-grY" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="0mT-z4-wbS" secondAttribute="leading" constant="-80" id="c5D-MP-kP8"/>
                             <constraint firstItem="0mT-z4-wbS" firstAttribute="bottom" secondItem="Y1n-3y-1ZE" secondAttribute="top" id="hcB-IO-Jv8"/>
@@ -177,7 +176,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1450" y="531"/>
+            <point key="canvasLocation" x="1449.5327102803737" y="530.66954643628515"/>
         </scene>
         <!--Initial Controller-->
         <scene sceneID="LTz-aT-yvT">
@@ -201,15 +200,16 @@
                                     <action selector="skipButton:" destination="mNG-DS-geN" eventType="touchUpInside" id="FOg-8a-Xpx"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="NT (White).png" translatesAutoresizingMaskIntoConstraints="NO" id="zdQ-ue-DoM">
-                                <rect key="frame" x="77" y="387.66666666666669" width="274" height="151.00000000000006"/>
+                            <imageView userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Mulu Logo" translatesAutoresizingMaskIntoConstraints="NO" id="zdQ-ue-DoM">
+                                <rect key="frame" x="79" y="328" width="270" height="270"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="151" id="jQG-qm-RxB"/>
-                                    <constraint firstAttribute="width" constant="274" id="sve-U9-ong"/>
+                                    <constraint firstAttribute="height" constant="270" id="jQG-qm-RxB"/>
+                                    <constraint firstAttribute="width" constant="270" id="sve-U9-ong"/>
                                 </constraints>
+                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large"/>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="0.21176470589999999" green="0.21176470589999999" blue="0.21176470589999999" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="zdQ-ue-DoM" firstAttribute="centerX" secondItem="e95-Fs-Ezf" secondAttribute="centerX" id="5xy-pI-K3Q"/>
                             <constraint firstItem="zdQ-ue-DoM" firstAttribute="centerY" secondItem="e95-Fs-Ezf" secondAttribute="centerY" id="8Ln-bv-aNi"/>
@@ -1341,8 +1341,8 @@ Pull to refresh or check back later!</string>
         <image name="Home" width="53" height="53"/>
         <image name="Mulu" width="25" height="25"/>
         <image name="Mulu Logo" width="123" height="123"/>
-        <image name="NT (White).png" width="1000" height="515"/>
         <image name="Trophy" width="51" height="51"/>
+        <image name="info.circle" catalog="system" width="128" height="121"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

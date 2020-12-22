@@ -42,20 +42,8 @@ class InitialController: UIViewController
         
         imageView.alpha = 0
         
-        UIView.animate(withDuration: 1 /*3*/, delay: 0.3, options: UIView.AnimationOptions(), animations: { () -> Void in
+        UIView.animate(withDuration: 2, delay: 0.3, options: UIView.AnimationOptions(), animations: { () -> Void in
             self.applicationDelegate.currentlyAnimating = true
-            
-            if !preReleaseApplication
-            {
-                if let soundURL = Bundle.main.url(forResource: "Chime", withExtension: "mp3")
-                {
-                    var playableSound: SystemSoundID = 0
-                    
-                    AudioServicesCreateSystemSoundID(soundURL as CFURL, &playableSound)
-                    AudioServicesPlaySystemSound(playableSound)
-                }
-            }
-            
             self.imageView.alpha = 1
         }, completion: { (finishedAnimating: Bool) -> Void in
             if finishedAnimating

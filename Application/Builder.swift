@@ -142,11 +142,11 @@ class Build
     {
         let buildTypeString = buildTypeAsString(short: false)
         
-        var messageToDisplay = "This is a\(buildTypeString == "alpha" ? "n" : "") \(buildTypeString) version of project code name \(codeName).\n\n\(informationDictionary["expiryInformationString"]!)\n\nAll features presented here are subject to change, and any new or previously undisclosed information presented within this software is to remain strictly confidential.\n\nRedistribution of this software by unauthorised parties in any way, shape, or form is strictly prohibited.\n\nBy continuing your use of this software, you acknowledge your agreement to the above terms.\n\nAll content herein, unless otherwise stated, is copyright © \(Calendar.current.dateComponents([.year], from: Date()).year!) NEOTechnica Corporation. All rights reserved."
+        var messageToDisplay = "This is a\(buildTypeString == "alpha" ? "n" : "") \(buildTypeString) version of project code name \(codeName).\n\n\(informationDictionary["expiryInformationString"]!)\n\nAll features presented here are subject to change, and any new or previously undisclosed information presented within this software is to remain strictly confidential.\n\nRedistribution of this software by unauthorised parties in any way, shape, or form is strictly prohibited.\n\nBy continuing your use of this software, you acknowledge your agreement to the above terms."
         
         if buildTypeString == "general"
         {
-            messageToDisplay = "This is a pre-release update to \(finalName).\n\n\(informationDictionary["expiryInformationString"]!)\n\nAll features presented here are subject to change, and any new or previously undisclosed information presented within this software is to remain strictly confidential.\n\nRedistribution of this software by unauthorised parties in any way, shape, or form is strictly prohibited.\n\nBy continuing your use of this software, you acknowledge your agreement to the above terms.\n\nAll content herein, unless otherwise stated, is copyright © \(Calendar.current.dateComponents([.year], from: Date()).year!) NEOTechnica Corporation. All rights reserved."
+            messageToDisplay = "This is a pre-release update to \(finalName).\n\n\(informationDictionary["expiryInformationString"]!)\n\nAll features presented here are subject to change, and any new or previously undisclosed information presented within this software is to remain strictly confidential.\n\nRedistribution of this software by unauthorised parties in any way, shape, or form is strictly prohibited.\n\nBy continuing your use of this software, you acknowledge your agreement to the above terms."
         }
         
         //Display a successAlertController with information about the build.
@@ -210,8 +210,7 @@ class Build
     ///Toggles dark mode on the current controller.
     func toggleDarkMode(_ viewController: MainController)
     {
-        //Ternary conditionals describing the image and text colour for dark or light mode.
-        let imageToUse = UIImage(named: "NT (\(darkMode ? "Black" : "White")).png")
+        //Ternary conditional describing the text colour for dark or light mode.
         let textColour = (darkMode ? UIColor(hex: 0x282828) : .white)
         
         let sendFeedbackAttributes: [NSAttributedString.Key: Any] = [.foregroundColor: textColour,
@@ -230,8 +229,8 @@ class Build
         viewController.codeNameButton.setTitleColor(textColour, for: .normal)
         viewController.subtitleButton.setTitleColor(textColour, for: .normal)
         
-        //Set the image appropriately.
-        viewController.informationButton.setImage(imageToUse, for: .normal)
+        //Set the informationButton's tint colour appropriately.
+        viewController.informationButton.tintColor = darkMode ? UIColor(hex: 0x282828) : .white
         
         //For each subview that is a label on unwrappedExtraneousInformationView, set the text colour appropriately.
         for individualSubview in viewController.extraneousInformationView.subviews

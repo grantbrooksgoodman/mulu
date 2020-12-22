@@ -712,17 +712,12 @@ extension UIView
     {
         var matchingSubviews: [UIView] = []
         
-        for (index, individualSubview) in subviews.enumerated()
+        for individualSubview in subviews
         {
             if individualSubview.tag == forTag
             {
                 matchingSubviews.append(individualSubview)
             }
-            
-            //            if index == subviews.count - 1
-            //            {
-            //                return matchingSubviews
-            //            }
         }
         
         return matchingSubviews.count > 0 ? matchingSubviews : nil

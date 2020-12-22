@@ -76,7 +76,7 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
         
         setNeedsStatusBarAppearanceUpdate()
         
-        view.setBackground(withImageNamed: "Background Image")
+        //view.setBackground(withImageNamed: "Gradient.png")
     }
     
     override func viewWillAppear(_ animated: Bool)

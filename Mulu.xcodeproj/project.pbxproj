@@ -12,11 +12,7 @@
 		6874044E1CB1AB4400BD2632 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6874044B1CB1AB4400BD2632 /* Assets.xcassets */; };
 		687404511CB1AC0C00BD2632 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6874044F1CB1AC0C00BD2632 /* Launch Screen.storyboard */; };
 		6881EA4C1E29CD360007D873 /* SystemInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6881EA4B1E29CD360007D873 /* SystemInformation.swift */; };
-		68D29A101DD79C7D00BFF4D5 /* Chime.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 68D29A0E1DD79C7D00BFF4D5 /* Chime.mp3 */; };
-		68D29A111DD79C7D00BFF4D5 /* Chord.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 68D29A0F1DD79C7D00BFF4D5 /* Chord.mp3 */; };
 		68D29A131DD79C8A00BFF4D5 /* InitialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D29A121DD79C8A00BFF4D5 /* InitialController.swift */; };
-		68E589211DD6F6040028B703 /* NT (Black).png in Resources */ = {isa = PBXBuildFile; fileRef = 68E5891F1DD6F6040028B703 /* NT (Black).png */; };
-		68E589221DD6F6040028B703 /* NT (White).png in Resources */ = {isa = PBXBuildFile; fileRef = 68E589201DD6F6040028B703 /* NT (White).png */; };
 		68E73D321DEFB296008CD686 /* RoundedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E73D311DEFB296008CD686 /* RoundedButton.swift */; };
 		68EB1C831DD7B7070074737B /* SampleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EB1C821DD7B7070074737B /* SampleController.swift */; };
 		97B9D4C94E9E4901E93B5772 /* Pods_Mulu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED1FA810D6B3836DDD55726D /* Pods_Mulu.framework */; };
@@ -139,11 +135,7 @@
 		6874044B1CB1AB4400BD2632 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		687404501CB1AC0C00BD2632 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/Launch Screen.storyboard"; sourceTree = "<group>"; };
 		6881EA4B1E29CD360007D873 /* SystemInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemInformation.swift; sourceTree = "<group>"; };
-		68D29A0E1DD79C7D00BFF4D5 /* Chime.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Chime.mp3; sourceTree = "<group>"; };
-		68D29A0F1DD79C7D00BFF4D5 /* Chord.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Chord.mp3; sourceTree = "<group>"; };
 		68D29A121DD79C8A00BFF4D5 /* InitialController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialController.swift; sourceTree = "<group>"; };
-		68E5891F1DD6F6040028B703 /* NT (Black).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NT (Black).png"; sourceTree = "<group>"; };
-		68E589201DD6F6040028B703 /* NT (White).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NT (White).png"; sourceTree = "<group>"; };
 		68E73D311DEFB296008CD686 /* RoundedButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedButton.swift; sourceTree = "<group>"; };
 		68EB1C821DD7B7070074737B /* SampleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleController.swift; sourceTree = "<group>"; };
 		70D576B6A083BD10D8E50876 /* Pods-Montblanc.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Montblanc.release.xcconfig"; path = "Pods/Target Support Files/Pods-Montblanc/Pods-Montblanc.release.xcconfig"; sourceTree = "<group>"; };
@@ -335,7 +327,6 @@
 		682A9B211C8E64FC00014EA5 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				68D29A0D1DD79C6F00BFF4D5 /* Audio Files */,
 				68E3CD811EE3292100C688C5 /* Auxiliary Classes */,
 				A2ECF96C24C9DA4400862AF0 /* Fonts */,
 				682A9B241C8E749D00014EA5 /* Image Files */,
@@ -347,8 +338,6 @@
 			isa = PBXGroup;
 			children = (
 				A20700032581C3E9004E70A6 /* Gradient.png */,
-				68E5891F1DD6F6040028B703 /* NT (Black).png */,
-				68E589201DD6F6040028B703 /* NT (White).png */,
 			);
 			name = "Image Files";
 			sourceTree = "<group>";
@@ -364,15 +353,6 @@
 				A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */,
 			);
 			name = "Other Files";
-			sourceTree = "<group>";
-		};
-		68D29A0D1DD79C6F00BFF4D5 /* Audio Files */ = {
-			isa = PBXGroup;
-			children = (
-				68D29A0E1DD79C7D00BFF4D5 /* Chime.mp3 */,
-				68D29A0F1DD79C7D00BFF4D5 /* Chord.mp3 */,
-			);
-			name = "Audio Files";
 			sourceTree = "<group>";
 		};
 		68E3CD811EE3292100C688C5 /* Auxiliary Classes */ = {
@@ -628,7 +608,6 @@
 				A26961F522376F4600812759 /* Main.storyboard in Resources */,
 				A2CA2D14257984BF0012DB17 /* San Francisco (Semibold).otf in Resources */,
 				A207FFF12581B714004E70A6 /* Montserrat-ExtraLight.ttf in Resources */,
-				68E589211DD6F6040028B703 /* NT (Black).png in Resources */,
 				A207FFF22581B714004E70A6 /* Montserrat-Thin.ttf in Resources */,
 				A22169D5258A611D001C036D /* Gotham-XLightItalic.otf in Resources */,
 				A207FFFD2581B714004E70A6 /* Montserrat-ExtraBoldItalic.ttf in Resources */,
@@ -641,11 +620,9 @@
 				A207FFF42581B714004E70A6 /* Montserrat-MediumItalic.ttf in Resources */,
 				A22169D8258A611D001C036D /* Gotham-Bold.otf in Resources */,
 				A2CA2D17257984BF0012DB17 /* San Francisco (Bold).otf in Resources */,
-				68D29A111DD79C7D00BFF4D5 /* Chord.mp3 in Resources */,
 				A207FFF02581B714004E70A6 /* Montserrat-ThinItalic.ttf in Resources */,
 				A2CA2D13257984BF0012DB17 /* San Francisco (Heavy Italic).otf in Resources */,
 				A22169E3258A611D001C036D /* GothamMedium.ttf in Resources */,
-				68D29A101DD79C7D00BFF4D5 /* Chime.mp3 in Resources */,
 				A207FFF82581B714004E70A6 /* Montserrat-ExtraBold.ttf in Resources */,
 				A2CA2D0D257984BF0012DB17 /* San Francisco (Bold Italic).otf in Resources */,
 				A22169DB258A611D001C036D /* Gotham-ThinItalic.otf in Resources */,
@@ -654,7 +631,6 @@
 				A22169D9258A611D001C036D /* GothamMediumItalic.ttf in Resources */,
 				A22169DF258A611D001C036D /* Gotham-BookItalic.otf in Resources */,
 				A2CA2D15257984BF0012DB17 /* San Francisco (Medium Italic).otf in Resources */,
-				68E589221DD6F6040028B703 /* NT (White).png in Resources */,
 				A207FFEF2581B714004E70A6 /* Montserrat-Light.ttf in Resources */,
 				A2CA2D11257984BF0012DB17 /* San Francisco (Medium).otf in Resources */,
 				A22169DC258A611D001C036D /* GothamMedium_1.ttf in Resources */,
