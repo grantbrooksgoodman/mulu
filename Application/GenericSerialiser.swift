@@ -22,8 +22,7 @@ class GenericSerialiser
      Gets values on the server for a given path.
      
      - Parameter atPath: The server path at which to retrieve values.
-     
-     - Parameter completionHandler: Returns the Firebase snapshot value.
+     - Parameter completion: Returns the Firebase snapshot value.
      */
     func getValues(atPath: String, completion: @escaping (Any?) -> Void)
     {
@@ -46,10 +45,10 @@ class GenericSerialiser
     /**
      Updates a value on the server for a given key and data bundle.
      
-     - Parameter onKey: The server path at which to retrieve values.
+     - Parameter onKey: The server path at which to update values.
      - Parameter withData: The data bundle to update the server with.
      
-     - Parameter completion: Returns an Error if unable to update values.
+     - Parameter completion: Returns an `Error` if unable to update values.
      */
     func updateValue(onKey: String, withData: [String:Any], completion: @escaping (Error?) -> Void)
     {

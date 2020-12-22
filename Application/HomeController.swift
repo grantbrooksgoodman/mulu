@@ -40,7 +40,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     var incompleteChallenges: [Challenge] = []
     
-    var noChallengeString = "No new challenges have been posted for today.\n\nCheck back later!"
+    var refreshControl: UIRefreshControl?
     
     //==================================================//
     
@@ -64,6 +64,14 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         
         view.setBackground(withImageNamed: "Gradient.png")
         
+        collectionView.alwaysBounceVertical = true
+        
+        let refresher = UIRefreshControl()
+        refresher.addTarget(self, action: #selector(HomeController.refreshStream), for: .valueChanged)
+        
+        refreshControl = refresher
+        collectionView.addSubview(refreshControl!)
+        
         NotificationCenter.default.addObserver(forName: UIWindow.didResignKeyNotification, object: view.window, queue: nil) { (notification) in
             (UIApplication.shared.delegate as! AppDelegate).restrictRotation = .all
         }
@@ -75,6 +83,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         welcomeLabel.text = "WELCOME BACK \(currentUser.firstName!.uppercased())!"
         welcomeLabel.font = UIFont(name: "Gotham-Black", size: 32)!
         
+        collectionView.alpha = 0
         reloadData()
         
         var statisticsString = "+ \(currentTeam.name!.uppercased())\n"
@@ -87,6 +96,14 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         let streak = currentUser.streak(on: currentTeam)
         statisticsString += "+ \(streak == 0 ? "NO" : "\(streak) DAY") STREAK"
         statisticsTextView.text = statisticsString
+    }
+    
+    @objc func refreshStream()
+    {
+        print("refresh")
+        reloadData()
+        
+        refreshControl?.endRefreshing()
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -106,27 +123,6 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     /* Interface Builder Actions */
     
-    @IBAction func skippedButton(_ sender: Any)
-    {
-        //        if let challenge = currentChallenge
-        //        {
-        //            UserDefaults.standard.setValue(challenge.associatedIdentifier, forKey: "skippedChallenge")
-        //
-        //            HUD.flash(.success, delay: 1.0) { finished in
-        //                for subview in self.challengeView.subviews
-        //                {
-        //                    subview.alpha = 0
-        //                }
-        //
-        //                self.noChallengeLabel.text = "You skipped today's challenge.\n\nCheck back later for more!"
-        //
-        //                UIView.animate(withDuration: 0.2) {
-        //                    self.noChallengeLabel.alpha = 1
-        //                }
-        //            }
-        //        }
-    }
-    
     //==================================================//
     
     /* Other Functions */
@@ -141,19 +137,28 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     func reloadData()
     {
-        incompleteChallengesForToday { (returnedChallenges, errorDescriptor) in
-            if let challenges = returnedChallenges
-            {
-                self.incompleteChallenges = challenges
-                
-                self.collectionView.dataSource = self
-                self.collectionView.delegate = self
-                
-                self.collectionView.reloadData()
-            }
-            else if let error = errorDescriptor
+        currentTeam.reloadData { (errorDescriptor) in
+            if let error = errorDescriptor
             {
                 report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+            else
+            {
+                self.incompleteChallengesForToday { (returnedChallenges, errorDescriptor) in
+                    if let challenges = returnedChallenges
+                    {
+                        self.incompleteChallenges = challenges.sorted(by: {$0.title < $1.title}).sorted(by: {$0.datePosted < $1.datePosted})
+                        
+                        self.collectionView.dataSource = self
+                        self.collectionView.delegate = self
+                        
+                        self.collectionView.reloadData()
+                    }
+                    else if let error = errorDescriptor
+                    {
+                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    }
+                }
             }
         }
     }
@@ -172,59 +177,17 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
                     ChallengeSerialiser().getChallenges(withIdentifiers: identifiers) { (returnedChallenges, errorDescriptors) in
                         if let challenges = returnedChallenges
                         {
-                            if let completedChallenges = currentUser.completedChallenges(on: currentTeam)
+                            var filteredChallenges: [Challenge] = []
+                            
+                            for challenge in challenges
                             {
-                                var filteredChallenges: [Challenge] = []
-                                
-                                for challenge in challenges
+                                if !self.didCompleteChallenge(withIdentifier: challenge.associatedIdentifier) && !self.didSkipChallenge(withIdentifier: challenge.associatedIdentifier)
                                 {
-                                    if !completedChallenges.contains(where: {$0.challenge.associatedIdentifier == challenge.associatedIdentifier})
-                                    {
-                                        if let skippedIdentifier = UserDefaults.standard.value(forKey: "skippedChallenge") as? String
-                                        {
-                                            if challenge.associatedIdentifier == skippedIdentifier
-                                            {
-                                                self.noChallengeString = "You skipped today's challenge.\n\nCheck back later for more!"
-                                            }
-                                            else
-                                            {
-                                                filteredChallenges.append(challenge)
-                                            }
-                                        }
-                                        else
-                                        {
-                                            filteredChallenges.append(challenge)
-                                        }
-                                    }
+                                    filteredChallenges.append(challenge)
                                 }
-                                
-                                completion(filteredChallenges, nil)
                             }
-                            else
-                            {
-                                var filteredChallenges: [Challenge] = []
-                                
-                                for challenge in challenges
-                                {
-                                    if let skippedIdentifier = UserDefaults.standard.value(forKey: "skippedChallenge") as? String
-                                    {
-                                        if challenge.associatedIdentifier == skippedIdentifier
-                                        {
-                                            self.noChallengeString = "You skipped today's challenge.\n\nCheck back later for more!"
-                                        }
-                                        else
-                                        {
-                                            filteredChallenges.append(challenge)
-                                        }
-                                    }
-                                    else
-                                    {
-                                        filteredChallenges.append(challenge)
-                                    }
-                                }
-                                
-                                completion(filteredChallenges, nil)
-                            }
+                            
+                            completion(filteredChallenges, nil)
                         }
                         else if let errors = errorDescriptors
                         {
@@ -240,9 +203,64 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         }
     }
     
+    func didCompleteChallenge(withIdentifier: String) -> Bool
+    {
+        if let completedChallenges = currentUser.completedChallenges(on: currentTeam),
+           completedChallenges.contains(where: {$0.challenge.associatedIdentifier == withIdentifier})
+        {
+            return true
+        }
+        
+        return false
+    }
+    
+    func didSkipChallenge(withIdentifier: String) -> Bool
+    {
+        if let skippedIdentifiers = UserDefaults.standard.value(forKey: "skippedChallenges") as? [String],
+           skippedIdentifiers.contains(withIdentifier)
+        {
+            return true
+        }
+        
+        return false
+    }
+    
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
+    }
+    
+    func toggleChallengeElements(hidden: Bool, onView: UIView)
+    {
+        UIView.animate(withDuration: 0.2) {
+            for subview in onView.subviews
+            {
+                if hidden
+                {
+                    switch subview.tag
+                    {
+                    case aTagFor("noChallengeLabel"):
+                        subview.alpha = 1
+                    default:
+                        subview.alpha = 0
+                    }
+                }
+                else
+                {
+                    switch subview.tag
+                    {
+                    case aTagFor("noMediaLabel"):
+                        subview.alpha = 0
+                    case aTagFor("noChallengeLabel"):
+                        subview.alpha = 0
+                    default:
+                        subview.alpha = 1
+                    }
+                }
+            }
+        } completion: { (_) in
+            UIView.animate(withDuration: 0.2) { self.collectionView.alpha = 1 }
+        }
     }
 }
 
@@ -266,8 +284,6 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
         
         challengeCell.doneButton.layer.cornerRadius = 5
         challengeCell.skippedButton.layer.cornerRadius = 5
-        
-        challengeCell.noChallengeLabel.text = noChallengeString
         
         if incompleteChallenges.count > 0
         {
@@ -305,6 +321,8 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
             challengeCell.webView.layer.cornerRadius = 5
             challengeCell.webView.clipsToBounds = true
             
+            toggleChallengeElements(hidden: false, onView: challengeCell.encapsulatingView)
+            
             if let media = incompleteChallenges[indexPath.row].media
             {
                 switch media.type
@@ -327,17 +345,7 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
             }
         }
         else
-        {
-            for subview in challengeCell.encapsulatingView.subviews
-            {
-                subview.alpha = 0
-            }
-            
-            UIView.animate(withDuration: 0.2) {
-                challengeCell.noChallengeLabel.alpha = 1
-                challengeCell.contentView.alpha = 1
-            }
-        }
+        { toggleChallengeElements(hidden: true, onView: challengeCell.encapsulatingView) }
         
         let screenWidth = UIScreen.main.bounds.width
         
@@ -353,5 +361,35 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
         challengeCell.layoutIfNeeded()
         
         return challengeCell
+    }
+}
+
+extension Array where Element == (challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])
+{
+    func users() -> [User]
+    {
+        var users: [User] = []
+        
+        for challengeTuple in self
+        {
+            users.append(contentsOf: challengeTuple.metadata.users())
+        }
+        
+        return users
+    }
+}
+
+extension Array where Element == (user: User, dateCompleted: Date)
+{
+    func users() -> [User]
+    {
+        var users: [User] = []
+        
+        for tuple in self
+        {
+            users.append(tuple.user)
+        }
+        
+        return users
     }
 }

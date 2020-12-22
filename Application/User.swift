@@ -56,25 +56,11 @@ class User
     
     /* Public Functions */
     
-    #warning("Tagged for deletion pending investigation of future use cases.")
-    func reloadData()
-    {
-        UserSerialiser().getUser(withIdentifier: associatedIdentifier) { (returnedUser, errorDescriptor) in
-            if let user = returnedUser
-            {
-                self.associatedTeams = user.associatedTeams
-                self.emailAddress = user.emailAddress
-                self.firstName = user.firstName
-                self.lastName = user.lastName
-                self.profileImageData = user.profileImageData
-                self.pushTokens = user.pushTokens
-            }
-            else { report(errorDescriptor!, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
-        }
-    }
-    
     /**
-     If *DSAssociatedTeams* has been set, returns the **User's** completed **Challenges**.
+     Gets all of the **User's** completed **Challenges**.
+     
+     - Requires: *DSAssociatedTeams* to have been set.
+     - Returns: An array of `(Date, Challenge)` tuples.
      */
     func allCompletedChallenges() -> [(date: Date, challenge: Challenge)]?
     {
@@ -99,6 +85,18 @@ class User
         return matchingChallenges.count == 0 ? nil : matchingChallenges
     }
     
+    /**
+     Gets any **Challenges** the **User** has yet to complete on the specified **Team.**
+     
+     - Parameter team: The **Team** on which to find incomplete **Challenges** for this **User.**
+     - Parameter completion: Upon success, returns with an array of **Challenge** identifiers. Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedIdentifiers, errorDescriptor)
+     ~~~
+     */
     func challengesToComplete(on team: Team, completion: @escaping(_ returnedIdentifiers: [String]?, _ errorDescriptor: String?) -> Void)
     {
         let previouslyCompleted = completedChallenges(on: team) ?? []
@@ -149,6 +147,18 @@ class User
         }
     }
     
+    /**
+     Marks a **Challenge** as completed both locally and on the server.
+     
+     - Parameter withIdentifier: The identifier of the **Challenge** to be marked complete.
+     - Parameter team: The **Team** on which to mark this **Challenge** complete.
+     
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
     func completeChallenge(withIdentifier: String, on team: Team, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
         let serialisedData = "\(associatedIdentifier!) – \(secondaryDateFormatter.string(from: Date()))"
@@ -194,6 +204,10 @@ class User
     
     /**
      Returns the **User's** completed **Challenges** on the specified **Team**.
+     
+     - Parameter team: The **Team** on which to query for completed **Challenges.**
+     
+     - Returns: An array of `(Date, Challenge)` tuples.
      */
     func completedChallenges(on team: Team) -> [(date: Date, challenge: Challenge)]?
     {
@@ -218,7 +232,9 @@ class User
     /**
      Gets and deserialises all of the **Teams** the **User** is a member of using the *associatedTeams* array.
      
-     - Parameter completion: Returns an array of deserialised **Team** objects if successful. If unsuccessful, a string describing the error(s) encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns an array of deserialised **Team** objects. Upon failure, a string describing the error(s) encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
      */
     func deSerialiseAssociatedTeams(completion: @escaping(_ returnedTeams: [Team]?, _ errorDescriptor: String?) -> Void)
     {
@@ -251,8 +267,46 @@ class User
         }
     }
     
+    #warning("Tagged for deletion pending investigation of future use cases.")
     /**
-     Sets the *DSAssociatedTeams* value on the **User** without closures. *Dumps errors to console.*
+     Updates the **User's** metadata from the server.
+     
+     - Parameter completion: Upon failure, returns a string describing the error(s) encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
+    func reloadData(completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        UserSerialiser().getUser(withIdentifier: associatedIdentifier) { (returnedUser, errorDescriptor) in
+            if let user = returnedUser
+            {
+                self.associatedTeams = user.associatedTeams
+                self.emailAddress = user.emailAddress
+                self.firstName = user.firstName
+                self.lastName = user.lastName
+                self.profileImageData = user.profileImageData
+                self.pushTokens = user.pushTokens
+                
+                self.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
+                    if let teams = returnedTeams
+                    {
+                        self.DSAssociatedTeams = teams
+                        
+                        completion(nil)
+                    }
+                    else { completion(errorDescriptor!) }
+                }
+            }
+            else { completion(errorDescriptor!) }
+        }
+    }
+    
+    /**
+     Sets the *DSAssociatedTeams* value on the **User.**
+     
+     - Warning: Dumps errors to console.
      */
     func setDSAssociatedTeams()
     {
@@ -281,6 +335,13 @@ class User
         }
     }
     
+    /**
+     Gets the **User's** streak on the specified **Team.**
+     
+     - Parameter team: The **Team** on which calculate a streak.
+     
+     - Returns: An integer describing the amount of consecutive days the **User** has completed a **Challenge.**
+     */
     func streak(on team: Team) -> Int
     {
         var total = 0

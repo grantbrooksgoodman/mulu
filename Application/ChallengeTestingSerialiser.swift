@@ -43,9 +43,15 @@ class ChallengeTestingSerialiser
     /**
      Creates a specified number of random **Challenges** on the server.
      
-     - Parameter amountToCreate: The amount of **Challenges** to create.
+     - Parameter amountToCreate: The amount of **Challenges** to create. *Defaults to 1.*
+     - Parameter completion: Upon success, returns with an array **Challenge** objects. Upon failure, a string describing the error(s) encountered.
      
-     - Parameter completion: Returns with an array **Challenge** objects if successful. If unsuccessful, a string describing the error(s) encountered. *NOT mutually exclusive.*
+     - Note: Completion variables are **NOT** *mutually exclusive.*
+     - Requires: `amountToCreate` to be more than 0, and less than or equal to the count of `sampleChallenges`.
+     
+     ~~~
+     completion(returnedChallenges, errorDescriptor)
+     ~~~
      */
     func createRandomChallenges(amountToCreate: Int?, completion: @escaping(_ returnedChallenges: [Challenge]?, _ errorDescriptor: String?) -> Void)
     {
@@ -90,6 +96,8 @@ class ChallengeTestingSerialiser
      
      - Parameter fromChallenges: The **Challenge** objects from which to create the array.
      - Parameter withUsers: The **Users** objects from which to generate random metadata.
+     
+     - Returns: An array of completed **Challenges.**
      */
     func randomCompletedChallenges(fromChallenges challenges: [Challenge], withUsers users: [User]) -> [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]
     {
@@ -135,6 +143,8 @@ class ChallengeTestingSerialiser
      Returns an array of unique metadata from an array of provided completed **Challenge** metadata.
      
      - Parameter metadata: The metadata tuples to clean.
+     
+     - Returns: An array of `(User, Date)` tuples.
      */
     private func cleanMetadata(_ metadata: [(user: User, dateCompleted: Date)]) -> [(user: User, dateCompleted: Date)]
     {
@@ -155,8 +165,13 @@ class ChallengeTestingSerialiser
      Creates a random **Challenge** on the server.
      
      - Parameter excludingTitles: An optional array providing title strings to exclude when generating a random title.
+     - Parameter completion: Upon success, returns with a **Challenge** object. Upon failure, a string describing the error encountered.
      
-     - Parameter completion: Returns with a **Challenge** object if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedChallenge, errorDescriptor)
+     ~~~
      */
     private func createRandomChallenge(excludingTitles: [String]?, completion: @escaping(_ returnedChallenge: Challenge?, _ errorDescriptor: String?) -> Void)
     {

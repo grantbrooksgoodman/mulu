@@ -65,6 +65,16 @@ class ChallengeCell: UICollectionViewCell
     
     @IBAction func skippedButton(_ sender: Any)
     {
+        if var skippedChallenges = UserDefaults.standard.value(forKey: "skippedChallenges") as? [String]
+        {
+            skippedChallenges.append(challengeIdentifier)
+            UserDefaults.standard.setValue(skippedChallenges, forKey: "skippedChallenges")
+        }
+        else { UserDefaults.standard.setValue([challengeIdentifier], forKey: "skippedChallenges") }
         
+        HUD.flash(.success, delay: 1.0) { finished in
+            let parent = self.parentViewController as! HomeController
+            parent.reloadData()
+        }
     }
 }

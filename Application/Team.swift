@@ -52,6 +52,13 @@ class Team
     
     /* Public Functions */
     
+    /**
+     Gets the total accrued points of a specific **User** on the **Team.**
+     
+     - Parameter userIdentifier: The identifier of the **User** to get accrued points for.
+     
+     - Returns: An integer describing the specified **User's** total accrued points on the **Team.**
+     */
     func accruedPoints(for userIdentifier: String) -> Int
     {
         guard participantIdentifiers.contains(userIdentifier) else
@@ -66,6 +73,7 @@ class Team
         {
             if verboseFunctionExposure { report("This User hasn't completed any Challenges for this Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
             
+            #warning("Or maybe return 0?")
             return -1
         }
         
@@ -73,9 +81,9 @@ class Team
         
         for challenge in challenges
         {
-            for datum in challenge.metadata
+            for user in challenge.metadata.users()
             {
-                if datum.user.associatedIdentifier == userIdentifier
+                if user.associatedIdentifier == userIdentifier
                 {
                     totalValue += challenge.challenge.pointValue
                 }
@@ -86,9 +94,15 @@ class Team
     }
     
     /**
-     Gets and deserialises all of the **Users** on the **Team** *participantIdentifiers* array.
+     Gets and deserialises all of the **Users** in the **Team's** *participantIdentifiers* array.
      
-     - Parameter completion: Returns an array of deserialised **User** objects if successful. If unsuccessful, a string describing the error(s) encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns an an array of deserialised **User** objects. Upon failure, returns a string describing the error(s) encountered.
+     
+     - Note: Completion is *mutually exclusive.*
+     
+     ~~~
+     completion(returnedUsers, errorDescriptor)
+     ~~~
      */
     func deSerialiseParticipants(completion: @escaping(_ returnedUsers: [User]?, _ errorDescriptor: String?) -> Void)
     {
@@ -121,6 +135,18 @@ class Team
         }
     }
     
+    /**
+     Gets the **Team's** rank in its associated **Tournament.**
+     
+     - Parameter completion: Upon success, returns an integer describing **Team's** rank. Upon failure, returns a string describing the error(s) encountered.
+     
+     - Note: Completion is *mutually exclusive.*
+     - Requires: The **Team** to be participating in a **Tournament.**
+     
+     ~~~
+     completion(returnedRank, errorDescriptor)
+     ~~~
+     */
     func getRank(completion: @escaping(_ returnedRank: Int?, _ errorDescriptor: String?) -> Void)
     {
         guard let tournament = associatedTournament else
@@ -142,6 +168,11 @@ class Team
         }
     }
     
+    /**
+     Gets the **Team's** total accrued points.
+     
+     - Returns: An integer describing the **Team's** total accrued points.
+     */
     func getTotalPoints() -> Int
     {
         var total = 0
@@ -157,6 +188,46 @@ class Team
         return total
     }
     
+    /**
+     Updates the **Team's** metadata from the server.
+     
+     - Parameter completion: Upon failure, returns a string describing the error(s) encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
+    func reloadData(completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        TeamSerialiser().getTeam(withIdentifier: associatedIdentifier) { (returnedTeam, errorDescriptor) in
+            if let team = returnedTeam
+            {
+                self.associatedIdentifier = team.associatedIdentifier
+                self.associatedTournament = team.associatedTournament
+                self.completedChallenges = team.completedChallenges
+                self.joinCode = team.joinCode
+                self.name = team.name
+                self.participantIdentifiers = team.participantIdentifiers
+                
+                team.deSerialiseParticipants { (returnedUsers, errorDescriptor) in
+                    if let users = returnedUsers
+                    {
+                        self.DSParticipants = users
+                        
+                        completion(nil)
+                    }
+                    else { completion(errorDescriptor!) }
+                }
+            }
+            else { completion(errorDescriptor!) }
+        }
+    }
+    
+    /**
+     Serialises the **Team's** completed **Challenges.**
+     
+     - Returns: A dictionary describing the **Team's** completed **Challenges.**
+     */
     func serialiseCompletedChallenges() -> [String:[String]]
     {
         guard let challenges = completedChallenges else
@@ -182,7 +253,9 @@ class Team
     }
     
     /**
-     Sets the *DSParticipants* value on the **Team** without closures. *Dumps errors to console.*
+     Sets the *DSParticipants* value on the **Team.**
+     
+     - Warning: Dumps errors to console.
      */
     func setDSParticipants()
     {

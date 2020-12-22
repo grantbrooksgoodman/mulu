@@ -18,9 +18,14 @@ class UserTestingSerialiser
     /**
      Creates a specified number of random **Users** on the server.
      
-     - Parameter amountToCreate: The amount of **Users** to create.
+     - Parameter amountToCreate: The amount of **Users** to create. *Defaults to 1.*
+     - Parameter completion: Upon success, returns with an array **User** objects. Upon failure, a string describing the error(s) encountered.
      
-     - Parameter completion: Returns with an array **User** objects if successful. If unsuccessful, a string describing the error(s) encountered. *NOT mutually exclusive.*
+     - Note: Completion variables are **NOT** *mutually exclusive.*
+     
+     ~~~
+     completion(returnedUsers, errorDescriptor)
+     ~~~
      */
     func createRandomUsers(amountToCreate: Int?, completion: @escaping(_ returnedUsers: [User]?, _ errorDescriptor: String?) -> Void)
     {
@@ -66,7 +71,13 @@ class UserTestingSerialiser
     /**
      Creates a random **User** on the server.
      
-     - Parameter completion: Returns with a **User** object if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns with a **User** object. Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedUser, errorDescriptor)
+     ~~~
      */
     private func createRandomUser(completion: @escaping(_ returnedUser: User?, _ errorDescriptor: String?) -> Void)
     {

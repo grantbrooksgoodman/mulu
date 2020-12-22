@@ -26,6 +26,10 @@ class TeamSerialiser
      - Parameter overwrite: A Boolean describing whether to add these **Challenges** to the **Team** with or without overwriting the previous data.
      
      - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
      */
     func addCompletedChallenges(_ withBundle: [(Challenge, [(User, Date)])], toTeam: String, overwrite: Bool, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
@@ -53,6 +57,10 @@ class TeamSerialiser
      - Parameter toTeam: The **Team** to add these **Users** to.
      
      - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
      */
     func addUsers(_ users: [User], toTeam: Team, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
@@ -92,6 +100,18 @@ class TeamSerialiser
         }
     }
     
+    /**
+     Adds an array of **Team** identifiers to a **Tournament** with a specified identifier.
+     
+     - Parameter withIdentifiers: The identifiers of the **Teams** to be added to this **Tournament.**
+     - Parameter toTournament: The identifier of the **Tournament** to add these **Teams** to.
+     
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
     func addTeams(_ withIdentifiers: [String], toTournament: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
         for (index, identifier) in withIdentifiers.enumerated()
@@ -114,12 +134,16 @@ class TeamSerialiser
     
     #warning("Sometimes «associatedTournament» is not correctly set. (?)")
     /**
-     Adds a **Team** to a **Tournament.**
+     Adds a **Team** with a specified identifier to a **Tournament** with a specified identifier.
      
      - Parameter withIdentifier: The identifier of the **Team** to add to this **Tournament.**
      - Parameter toTournament: The identifier of the **Tournament** to add this **Team** to.
      
      - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
      */
     func addTeam(_ withIdentifier: String, toTournament: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
@@ -240,6 +264,10 @@ class TeamSerialiser
      - Parameter toTeam: The identifier of the **Team** to add this **User** to.
      
      - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
      */
     func addUser(_ withIdentifier: String, toTeam: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
@@ -349,12 +377,18 @@ class TeamSerialiser
     }
     
     /**
-     Creates a **Team** on the server.
+     Creates a new **Team** on the server.
      
      - Parameter name: The name of this **Team.**
      - Parameter participantIdentifiers: An array containing the identifiers of the **Users** on this **Team.**
      
-     - Parameter completion: Returns with the identifier of the newly created **Team** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns with the identifier of the newly created **Team.** Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedIdentifier, errorDescriptor)
+     ~~~
      */
     func createTeam(name: String, participantIdentifiers: [String], completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
     {
@@ -403,8 +437,13 @@ class TeamSerialiser
      Finds the **Team** with the specified join code.
      
      - Parameter byJoinCode: The join code of the **Team** to get.
+     - Parameter completion: Upon success, returns with the identifier of the **Team** with the corresponding join code. Upon failure, a string describing the error encountered.
      
-     - Parameter completion: Returns with the identifier of the **Team** with the corresponding join code if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedIdentifier, errorDescriptor)
+     ~~~
      */
     func getTeam(byJoinCode: Int, completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
     {
@@ -441,7 +480,13 @@ class TeamSerialiser
      Gets and deserialises a **Team** from a given identifier string.
      
      - Parameter withIdentifier: The identifier of the requested **Team.**
-     - Parameter completion: Returns a deserialised **Team** object if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns a deserialised **Team** object. Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedTeam, errorDescriptor)
+     ~~~
      */
     func getTeam(withIdentifier: String, completion: @escaping(_ returnedTeam: Team?, _ errorDescriptor: String?) -> Void)
     {
@@ -487,8 +532,13 @@ class TeamSerialiser
      Gets and deserialises multiple **Team** objects from a given array of identifier strings.
      
      - Parameter withIdentifiers: The identifiers to query for.
+     - Parameter completion: Upon success, returns an array of deserialised **Team** objects. Upon failure, an array of strings describing the error(s) encountered.
      
-     - Parameter completion: Returns an array of deserialised **Team** objects if successful. If unsuccessful, an array of strings describing the error(s) encountered. *Mutually exclusive.*
+     - Note: Completion variables are **NOT** *mutually exclusive.*
+     
+     ~~~
+     completion(returnedTeams, errorDescriptors)
+     ~~~
      */
     func getTeams(withIdentifiers: [String], completion: @escaping(_ returnedTeams: [Team]?, _ errorDescriptors: [String]?) -> Void)
     {
@@ -540,8 +590,13 @@ class TeamSerialiser
      Gets random **Team** identifiers from the server.
      
      - Parameter amountToGet: An optional integer specifying the amount of random **Team** identifiers to get. *Defaults to all.*
+     - Parameter completion: Upon success, returns an array of **Team** identifier strings. May also return a string describing an event or error encountered.
      
-     - Parameter completion: Returns an array of **Team** identifier strings if successful. May also return a string describing an event or error encountered. *NOT mutually exclusive.*
+     - Note: Completion variables are **NOT** *mutually exclusive.*
+     
+     ~~~
+     completion(returnedIdentifiers, noticeDescriptor)
+     ~~~
      */
     func getRandomTeams(amountToGet: Int?, completion: @escaping(_ returnedIdentifiers: [String]?, _ noticeDescriptor: String?) -> Void)
     {
@@ -581,9 +636,16 @@ class TeamSerialiser
     /* Private Functions */
     
     /**
-     Deserialises an array of completed **Challenges** from a given data bundle. Returns an array of deserialised `(Challenge, [(User, Date)]` tuples if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     Deserialises an array of completed **Challenges** from a given data bundle.
      
-     - Parameter from: The data bundle from which to deserialise the **Team.**
+     - Parameter challenges: The serialised **Challenges** to convert.
+     - Parameter completion: Upon success, returns an array of `(Challenge, [(User, Date)]` tuples. Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(completedChallenges, errorDescriptor)
+     ~~~
      */
     private func deSerialiseCompletedChallenges(with challenges: [String:[String]], completion: @escaping(_ completedChallenges: [(Challenge, [(user: User, dateCompleted: Date)])]?, _ errorDescriptor: String?) -> Void)
     {
@@ -650,9 +712,17 @@ class TeamSerialiser
     }
     
     /**
-     Deserialises a **Team** from a given data bundle. Returns a deserialised **Team** object if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     Deserialises a **Team** from a given data bundle.
      
      - Parameter from: The data bundle from which to deserialise the **Team.**
+     - Parameter completion: Upon success, returns a deserialised **Team** object. Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     - Requires: A well-formed bundle of **Team** metadata.
+     
+     ~~~
+     completion(deSerialisedTeam, errorDescriptor)
+     ~~~
      */
     private func deSerialiseTeam(from dataBundle: [String:Any], completion: @escaping(_ deSerialisedTeam: Team?, _ errorDescriptor: String?) -> Void)
     {
@@ -754,6 +824,8 @@ class TeamSerialiser
      Serialises an array of completed **Challenges** for the server.
      
      - Parameter with: The array of completed **Challenges** to serialise.
+     
+     - Returns: A dictionary of serialised completed **Challenges.**
      */
     private func serialiseCompletedChallenges(_ with: [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]) -> [String:[String]]
     {
@@ -780,6 +852,8 @@ class TeamSerialiser
      Validates the contents of a serialised **Team**.
      
      - Parameter withDataBundle: The serialised **Team** whose structural integrity will be verified.
+     
+     - Returns: A Boolean describing whether or not the data is well-formed.
      */
     private func validateTeamMetadata(_ withDataBundle: [String:Any]) -> Bool
     {

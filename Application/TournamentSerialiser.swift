@@ -22,13 +22,17 @@ class TournamentSerialiser
      Creates a **Tournament** on the server.
      
      - Parameter name: The name of this **Tournament.**
-     
      - Parameter startDate: The **Tournament's** start date.
      - Parameter endDate: The **Tournament's** end date.
-     
      - Parameter teamIdentifiers: An array containing the identifiers of the **Teams** participating in this **Tournament.**
      
-     - Parameter completion: Returns with the identifier of the newly created **Tournament** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns with the identifier of the newly created **Tournament.** Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedIdentifier, errorDescriptor)
+     ~~~
      */
     func createTournament(name: String,
                           startDate: Date,
@@ -70,7 +74,13 @@ class TournamentSerialiser
      Gets and deserialises a **Tournament** from a given identifier string.
      
      - Parameter withIdentifier: The identifier of the requested **Tournament**.
-     - Parameter completion: Returns a deserialised **Tournament** object if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns a deserialised **Tournament** object. Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedTournament, errorDescriptor)
+     ~~~
      */
     func getTournament(withIdentifier: String, completion: @escaping(_ returnedTournament: Tournament?, _ errorDescriptor: String?) -> Void)
     {
@@ -101,8 +111,13 @@ class TournamentSerialiser
      Gets and deserialises multiple **Tournament** objects from a given array of identifier strings.
      
      - Parameter withIdentifiers: The identifiers to query for.
+     - Parameter completion: Upon success, returns an array of deserialised **Tournament** objects. Upon failure, an array of strings describing the error(s) encountered.
      
-     - Parameter completion: Returns an array of deserialised **Tournament** objects if successful. If unsuccessful, an array of strings describing the error(s) encountered. *Mutually exclusive.*
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedTournaments, errorDescriptors)
+     ~~~
      */
     func getTournaments(withIdentifiers: [String], completion: @escaping(_ returnedTournaments: [Tournament]?, _ errorDescriptors: [String]?) -> Void)
     {
@@ -157,7 +172,14 @@ class TournamentSerialiser
      Deserialises a **Tournament** from a given data bundle.
      
      - Parameter from: The data bundle from which to deserialise the **Tournament**.
-     - Parameter completion: Returns a deserialised **Tournament** object if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns a deserialised **Tournament** object. Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     - Requires: A well-formed bundle of **Tournament** metadata.
+     
+     ~~~
+     completion(deSerialisedTournament, errorDescriptor)
+     ~~~
      */
     private func deSerialiseTournament(from dataBundle: [String:Any], completion: @escaping(_ deSerialisedTournament: Tournament?, _ errorDescriptor: String?) -> Void)
     {

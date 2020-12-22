@@ -20,10 +20,15 @@ class GenericTestingSerialiser
      
      - Parameter numberOfUsers: The number of **Users** to populate the server with.
      - Parameter numberOfChallenges: The number of **Challenges** to populate the server with.
+     - Parameter numberOfTeams: The number of **Teams** to populate the server with.
      
-     - Parameter completion: Returns with `status` as a string and exit `code` as an integer, where **0 = success** and **1 = failure.** *NOT mutually exclusive.*
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
      */
-    func createRandomDatabase(numberOfUsers: Int, numberOfChallenges: Int, numberOfTeams: Int, completion: @escaping(_ status: String?) -> Void)
+    func createRandomDatabase(numberOfUsers: Int, numberOfChallenges: Int, numberOfTeams: Int, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
         //at least 2 people per team
         //so can't be an odd number < 5, can't be 2 Teams 1 User, 3 Users. Must be ≥4.
@@ -213,6 +218,8 @@ class GenericTestingSerialiser
     
     /**
      Deletes all data on the database.
+     
+     - Warning: Dumps errors to console.
      */
     func trashDatabase()
     {

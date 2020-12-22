@@ -23,11 +23,16 @@ class ChallengeSerialiser
      
      - Parameter title: The title of this **Challenge.**
      - Parameter prompt: The **Challenge's** prompt.
-     
      - Parameter pointValue: An integer representing the point value for this **Challenge.**
      - Parameter media: An optional tuple providing a URL and a **MediaType** for any media associated with this **Challenge.**
      
-     - Parameter completion: Returns with the identifier of the newly created **Challenge** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns with the identifier of the newly created **Challenge.** Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedIdentifier, errorDescriptor)
+     ~~~
      */
     func createChallenge(title: String,
                          prompt: String,
@@ -79,7 +84,13 @@ class ChallengeSerialiser
      Gets and deserialises a **Challenge** from a given identifier string.
      
      - Parameter withIdentifier: The identifier of the requested **Challenge.**
-     - Parameter completion: Returns a deserialised **Challenge** object if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns a deserialised **Challenge** object. Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedChallenge, errorDescriptor)
+     ~~~
      */
     func getChallenge(withIdentifier: String, completion: @escaping(_ returnedChallenge: Challenge?, _ errorDescriptor: String?) -> Void)
     {
@@ -106,6 +117,18 @@ class ChallengeSerialiser
         }
     }
     
+    /**
+     Gets the identifiers of any **Challenges** posted on a specified date.
+     
+     - Parameter forDate: The date to query the requested **Challenges** for.
+     - Parameter completion: Upon success, returns an array of **Challenge** identifier strings. Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedIdentifiers, errorDescriptor)
+     ~~~
+     */
     func getChallenges(forDate: Date, completion: @escaping(_ returnedIdentifiers: [String]?, _ errorDescriptor: String?) -> Void)
     {
         var identifiers: [String] = []
@@ -143,8 +166,13 @@ class ChallengeSerialiser
      Gets and deserialises multiple **Challenge** objects from a given array of identifier strings.
      
      - Parameter withIdentifiers: The identifiers to query for.
+     - Parameter completion: Upon success, returns an array of deserialised **Challenge** objects. Upon failure, an array of strings describing the error(s) encountered.
      
-     - Parameter completion: Returns an array of deserialised **Challenge** objects if successful. If unsuccessful, an array of strings describing the error(s) encountered. *NOT mutually exclusive.*
+     - Note: Completion variables are **NOT** *mutually exclusive.*
+     
+     ~~~
+     completion(returnedChallenges, errorDescriptor)
+     ~~~
      */
     func getChallenges(withIdentifiers: [String], completion: @escaping(_ returnedChallenges: [Challenge]?, _ errorDescriptors: [String]?) -> Void)
     {
@@ -196,9 +224,12 @@ class ChallengeSerialiser
     /* Private Functions */
     
     /**
-     Deserialises a **Challenge** from a given data bundle. Returns a deserialised **Challenge** object if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     Deserialises a **Challenge** from a given data bundle.
      
      - Parameter from: The data bundle from which to deserialise the **Challenge.**
+     
+     - Note: Returned variables are *mutually exclusive.*
+     - Returns: Upon success, returns a deserialised **Challenge** object. Upon failure, a string describing the error encountered.
      */
     private func deSerialiseChallenge(from dataBundle: [String:Any]) -> (deSerialisedChallenge: Challenge?, errorDescriptor: String?)
     {

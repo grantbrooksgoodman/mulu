@@ -357,7 +357,6 @@ Wide squat stance</string>
                                                             </state>
                                                             <connections>
                                                                 <action selector="skippedButton:" destination="F5i-du-0Fh" eventType="touchUpInside" id="DJg-LR-DeA"/>
-                                                                <action selector="skippedButton:" destination="OT8-Dr-tzH" eventType="touchUpInside" id="zQn-en-oYU"/>
                                                             </connections>
                                                         </button>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" text="DAY 21 FITNESS CHALLENGE" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999403953552" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oeQ-Aa-t2T">
@@ -369,11 +368,11 @@ Wide squat stance</string>
                                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y76-xt-Q8g">
-                                                            <rect key="frame" x="44" y="204.33333333333334" width="300" height="97.666666666666657"/>
-                                                            <string key="text">No new challenges have been posted for today.
+                                                        <label opaque="NO" userInteractionEnabled="NO" alpha="0.0" tag="29976557" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y76-xt-Q8g">
+                                                            <rect key="frame" x="44" y="192" width="300" height="122"/>
+                                                            <string key="text">No new challenges to display.
 
-Check back later!</string>
+Pull to refresh or check back later!</string>
                                                             <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="20"/>
                                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <nil key="highlightedColor"/>
@@ -389,7 +388,7 @@ Check back later!</string>
                                                                 <wkPreferences key="preferences"/>
                                                             </wkWebViewConfiguration>
                                                         </wkWebView>
-                                                        <label opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Media Provided" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gF3-Sa-Cs0">
+                                                        <label opaque="NO" userInteractionEnabled="NO" alpha="0.0" tag="17333332" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Media Provided" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gF3-Sa-Cs0">
                                                             <rect key="frame" x="59" y="184" width="270" height="30"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="30" id="NGK-cx-mxE"/>

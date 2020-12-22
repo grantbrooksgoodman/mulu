@@ -215,7 +215,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                 if let email = UserDefaults.standard.value(forKey: "email") as? String,
                                    email != self.usernameTextField.text!
                                 {
-                                    UserDefaults.standard.removeObject(forKey: "skippedChallenge")
+                                    UserDefaults.standard.removeObject(forKey: "skippedChallenges")
                                 }
                                 
                                 UserDefaults.standard.setValue(self.usernameTextField.text!, forKey: "email")
@@ -439,7 +439,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                 if let email = UserDefaults.standard.value(forKey: "email") as? String,
                                    email != self.usernameTextField.text!
                                 {
-                                    UserDefaults.standard.removeObject(forKey: "skippedChallenge")
+                                    UserDefaults.standard.removeObject(forKey: "skippedChallenges")
                                 }
                                 
                                 UserDefaults.standard.setValue(self.usernameTextField.text!, forKey: "email")

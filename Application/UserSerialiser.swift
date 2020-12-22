@@ -24,14 +24,19 @@ class UserSerialiser
      
      - Parameter associatedTeams: An array containing the identifiers of the **Teams** this **User** is a member of.
      - Parameter emailAddress: The **User's** e-mail address.
-     
      - Parameter firstName: The **User's** first name.
      - Parameter lastName: The **User's** last name.
-     
      - Parameter profileImageData: An optional `base64Encoded` string containg the **User's** profile image data.
      - Parameter pushTokens: An optional array of strings containing the UUIDs of the devices the **User** has opted to receive push notifications for.
      
-     - Parameter completion: Returns with the identifier of the newly created **User** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns with the identifier of the newly created **User.** Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     - Requires: The `emailAddress` to be well-formed and the `password` to be 6 or more characters long.
+     
+     ~~~
+     completion(returnedUser, errorDescriptor)
+     ~~~
      */
     func createAccount(associatedTeams: [String]?,
                        emailAddress: String,
@@ -44,6 +49,9 @@ class UserSerialiser
     {
         guard emailAddress.isValidEmail else
         { completion(nil, "The e-mail address was improperly formatted."); return }
+        
+        guard password.lowercasedTrimmingWhitespace.count > 5 else
+        { completion(nil, "The password was not long enough."); return }
         
         Auth.auth().createUser(withEmail: emailAddress, password: password) { (returnedResult, returnedError) in
             if let error = returnedError
@@ -89,15 +97,19 @@ class UserSerialiser
      
      - Parameter associatedIdentifier: The identifier of the **User** to create. Provided after running `createAccount(...)`. If not provided, an identifier will be **auto-generated.**
      - Parameter associatedTeams: An array containing the identifiers of the **Teams** this **User** is a member of.
-     
      - Parameter emailAddress: The **User's** e-mail address.
      - Parameter firstName: The **User's** first name.
      - Parameter lastName: The **User's** last name.
-     
      - Parameter profileImageData: An optional `base64Encoded` string containg the **User's** profile image data.
      - Parameter pushTokens: An optional array of strings containing the UUIDs of the devices the **User** has opted to receive push notifications for.
      
-     - Parameter completion: Returns with the identifier of the newly created **User** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns with the identifier of the newly created **User.** Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedIdentifier, errorDescriptor)
+     ~~~
      */
     func createUser(associatedIdentifier: String?,
                     associatedTeams: [String]?,
@@ -145,7 +157,13 @@ class UserSerialiser
      Gets and deserialises a **User** from a given identifier string.
      
      - Parameter withIdentifier: The identifier of the requested **User.**
-     - Parameter completion: Returns a deserialised **User** object if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns a deserialised **User** object. Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedUser, errorDescriptor)
+     ~~~
      */
     func getUser(withIdentifier: String, completion: @escaping(_ returnedUser: User?, _ errorDescriptor: String?) -> Void)
     {
@@ -176,8 +194,13 @@ class UserSerialiser
      Gets and deserialises multiple **User** objects from a given array of identifier strings.
      
      - Parameter withIdentifiers: The identifiers to query for.
+     - Parameter completion: Upon success, returns an array of deserialised **User** objects. Upon failure, an array of strings describing the error(s) encountered.
      
-     - Parameter completion: Returns an array of deserialised **User** objects if successful. If unsuccessful, an array of strings describing the error(s) encountered. *NOT mutually exclusive.*
+     - Note: Completion variables are **NOT** *mutually exclusive.*
+     
+     ~~~
+     completion(returnedUsers, errorDescriptors)
+     ~~~
      */
     func getUsers(withIdentifiers: [String], completion: @escaping(_ returnedUsers: [User]?, _ errorDescriptors: [String]?) -> Void)
     {
@@ -228,8 +251,13 @@ class UserSerialiser
      Gets random **User** identifiers from the server.
      
      - Parameter amountToGet: An optional integer specifying the amount of random **User** identifiers to get. *Defaults to all.*
+     - Parameter completion: Upon success, returns an array of **User** identifier strings. May also return a string describing an event or error encountered.
      
-     - Parameter completion: Returns an array of **User** identifier strings if successful. May also return a string describing an event or error encountered. *NOT mutually exclusive.*
+     - Note: Completion variables are **NOT** *mutually exclusive.*
+     
+     ~~~
+     completion(returnedIdentifiers, noticeDescriptor)
+     ~~~
      */
     func getRandomUsers(amountToGet: Int?, completion: @escaping(_ returnedIdentifiers: [String]?, _ noticeDescriptor: String?) -> Void)
     {
@@ -269,9 +297,12 @@ class UserSerialiser
     /* Private Functions */
     
     /**
-     Deserialises a **User** from a given data bundle. Returns a deserialised **User** object if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     Deserialises a **User** from a given data bundle.
      
      - Parameter from: The data bundle from which to deserialise the **User.**
+     
+     - Note: Returned variables are *mutually exclusive.*
+     - Returns: Upon success, a deserialised **User** object. Upon failure, a string describing the error encountered.
      */
     private func deSerialiseUser(from dataBundle: [String:Any]) -> (deSerialisedUser: User?, errorDescriptor: String?)
     {

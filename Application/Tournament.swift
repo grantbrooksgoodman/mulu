@@ -48,7 +48,13 @@ class Tournament
     /**
      Gets and deserialises all of the **Teams** participating in the **Tournament** using the *teamIdentifiers* array.
      
-     - Parameter completion: Returns an array of deserialised **Team** objects if successful. If unsuccessful, a string describing the error(s) encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns an array of deserialised **Team** objects. Upon failure, a string describing the error(s) encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedTeams, errorDescriptor)
+     ~~~
      */
     func deSerialiseTeams(completion: @escaping(_ returnedTeams: [Team]?, _ errorDescriptor: String?) -> Void)
     {
@@ -77,6 +83,12 @@ class Tournament
         }
     }
     
+    /**
+     Gets the **Tourmament's** leaderboard.
+     
+     - Returns: An array of `(Team, Int)` tuples.
+     - Requires: *DSTeams* to have been previously set.
+     */
     func leaderboard() -> [(team: Team, points: Int)]?
     {
         guard let DSTeams = DSTeams else { report("Teams haven't been deserialised.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
@@ -94,7 +106,9 @@ class Tournament
     }
     
     /**
-     Sets the *DSTeams* value on the **Tournament** without closures. *Dumps errors to console.*
+     Sets the *DSTeams* value on the **Tournament.**
+     
+     - Warning: Dumps errors to console.
      */
     func setDSTeams()
     {

@@ -21,7 +21,13 @@ class TeamTestingSerialiser
      - Parameter with: The identifier of the **Users** to populate this **Team** with.
      - Parameter completedChallenges: The randomly generated completed **Challenges** to add to this **Team**.
      
-     - Parameter completion: Returns with the identifier of the newly created **Team** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns with the identifier of the newly created **Team.** Upon failure, a string describing the error encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedIdentifier, errorDescriptor)
+     ~~~
      */
     func createRandomTeam(with users: [User], completedChallenges: [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])], completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
     {
@@ -49,12 +55,20 @@ class TeamTestingSerialiser
     }
     
     /**
-     Creates a random **Team** on the server.
+     Creates multiple random **Teams** on the server.
      
-     - Parameter with: The identifier of the **Users** to populate this **Team** with.
-     - Parameter completedChallenges: The randomly generated completed **Challenges** to add to this **Team**.
+     - Parameter with: The identifier of the **Users** to populate these **Teams** with.
+     - Parameter completedChallenges: The randomly generated completed **Challenges** to add to these **Teams.**
+     - Parameter amount: The amount of **Teams** to create.
      
-     - Parameter completion: Returns with the identifier of the newly created **Team** if successful. If unsuccessful, a string describing the error encountered. *Mutually exclusive.*
+     - Parameter completion: Upon success, returns with an array of the identifiers of the newly created **Teams.** Upon failure, a string describing the error(s) encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     - Requires: The `users` array length to be equal to the `completedChallenges` array length.
+     
+     ~~~
+     completion(returnedIdentifiers, errorDescriptor)
+     ~~~
      */
     func createRandomTeams(with users: [[User]], completedChallenges: [[(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]], amount: Int, completion: @escaping(_ returnedIdentifiers: [String]?, _ errorDescriptor: String?) -> Void)
     {
