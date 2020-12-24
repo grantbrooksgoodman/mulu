@@ -85,6 +85,11 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
         {
             view.alpha = 0
         }
+        
+        #warning("DEBUG ONLY!")
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) {
+            self.signInButton(self.signInButton!)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -250,7 +255,9 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                     {
                                         currentTeam = teams[0]
                                         
-                                        self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
+                                        self.performSegue(withIdentifier: "CMSSegue", sender: self)
+                                        
+                                        //self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
                                     }
                                 }
                             }

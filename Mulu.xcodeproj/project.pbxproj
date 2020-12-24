@@ -66,6 +66,9 @@
 		A278D3252585A19C008D22D1 /* GenericTestingSerialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278D3242585A19C008D22D1 /* GenericTestingSerialiser.swift */; };
 		A28797ED258D663400C48A74 /* PostSignUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28797EC258D663400C48A74 /* PostSignUpController.swift */; };
 		A288D20025844F55002AFB51 /* ScrollerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A288D1FF25844F55002AFB51 /* ScrollerCell.swift */; };
+		A28927FD2593B28000610E48 /* CMS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A28927FC2593B28000610E48 /* CMS.storyboard */; };
+		A28928012593B5A700610E48 /* CreateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28928002593B5A700610E48 /* CreateController.swift */; };
+		A289281E2593B8AD00610E48 /* NewChallengeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A289281D2593B8AD00610E48 /* NewChallengeController.swift */; };
 		A28E99B7257AA47D00D8A4F7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */; };
 		A297BFB2258E9E32006DA5F5 /* ForgotPasswordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A297BFB1258E9E32006DA5F5 /* ForgotPasswordController.swift */; };
 		A2A554962577FFBF006D3B3E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A554952577FFBF006D3B3E /* Extensions.swift */; };
@@ -193,6 +196,9 @@
 		A278D3242585A19C008D22D1 /* GenericTestingSerialiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTestingSerialiser.swift; sourceTree = "<group>"; };
 		A28797EC258D663400C48A74 /* PostSignUpController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostSignUpController.swift; sourceTree = "<group>"; };
 		A288D1FF25844F55002AFB51 /* ScrollerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollerCell.swift; sourceTree = "<group>"; };
+		A28927FC2593B28000610E48 /* CMS.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = CMS.storyboard; sourceTree = "<group>"; };
+		A28928002593B5A700610E48 /* CreateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateController.swift; sourceTree = "<group>"; };
+		A289281D2593B8AD00610E48 /* NewChallengeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewChallengeController.swift; sourceTree = "<group>"; };
 		A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A297BFB1258E9E32006DA5F5 /* ForgotPasswordController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordController.swift; sourceTree = "<group>"; };
 		A2A554952577FFBF006D3B3E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -302,6 +308,7 @@
 			isa = PBXGroup;
 			children = (
 				A26961F322376F4600812759 /* Main.storyboard */,
+				A28927FC2593B28000610E48 /* CMS.storyboard */,
 				6874044F1CB1AC0C00BD2632 /* Launch Screen.storyboard */,
 			);
 			name = "Storyboard Files";
@@ -310,6 +317,7 @@
 		682A9B201C8E64F700014EA5 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				A28927F92593B1D700610E48 /* CMS Controllers */,
 				A2C3F39725910A130020A6B2 /* AnnouncementsController.swift */,
 				A297BFB1258E9E32006DA5F5 /* ForgotPasswordController.swift */,
 				A2D6DFB22580376900725D5C /* HomeController.swift */,
@@ -452,6 +460,15 @@
 				A2B1F7602458EC8900CB20AF /* ShadowButton.swift */,
 			);
 			name = Buttons;
+			sourceTree = "<group>";
+		};
+		A28927F92593B1D700610E48 /* CMS Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				A28928002593B5A700610E48 /* CreateController.swift */,
+				A289281D2593B8AD00610E48 /* NewChallengeController.swift */,
+			);
+			name = "CMS Controllers";
 			sourceTree = "<group>";
 		};
 		A2AEDD48257BDE0F0074CA11 /* Serialisation Layer */ = {
@@ -611,6 +628,7 @@
 				A207FFF22581B714004E70A6 /* Montserrat-Thin.ttf in Resources */,
 				A22169D5258A611D001C036D /* Gotham-XLightItalic.otf in Resources */,
 				A207FFFD2581B714004E70A6 /* Montserrat-ExtraBoldItalic.ttf in Resources */,
+				A28927FD2593B28000610E48 /* CMS.storyboard in Resources */,
 				A22169E0258A611D001C036D /* GothamBoldItalic.ttf in Resources */,
 				A20700042581C3E9004E70A6 /* Gradient.png in Resources */,
 				A2CA2D16257984BF0012DB17 /* San Francisco (Light).otf in Resources */,
@@ -762,7 +780,9 @@
 				A297BFB2258E9E32006DA5F5 /* ForgotPasswordController.swift in Sources */,
 				A278D31A25858A52008D22D1 /* UserTestingSerialiser.swift in Sources */,
 				A24A2331257DC1AA0063FE87 /* UserSerialiser.swift in Sources */,
+				A289281E2593B8AD00610E48 /* NewChallengeController.swift in Sources */,
 				A2A5549D25780BDD006D3B3E /* BuildInfoController.swift in Sources */,
+				A28928012593B5A700610E48 /* CreateController.swift in Sources */,
 				A2AEDD50257BE0540074CA11 /* Team.swift in Sources */,
 				A235173B258D54500055B8B3 /* SignUpController.swift in Sources */,
 				A2F32EE8258858830054C55A /* TournamentSerialiser.swift in Sources */,

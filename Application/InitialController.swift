@@ -42,7 +42,7 @@ class InitialController: UIViewController
         
         imageView.alpha = 0
         
-        UIView.animate(withDuration: 2, delay: 0.3, options: UIView.AnimationOptions(), animations: { () -> Void in
+        UIView.animate(withDuration: 0.5 /*2*/, delay: 0.3, options: UIView.AnimationOptions(), animations: { () -> Void in
             self.applicationDelegate.currentlyAnimating = true
             self.imageView.alpha = 1
         }, completion: { (finishedAnimating: Bool) -> Void in

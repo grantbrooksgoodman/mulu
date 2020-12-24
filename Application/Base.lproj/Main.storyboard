@@ -731,6 +731,16 @@ Pull to refresh or check back later!</string>
             </objects>
             <point key="canvasLocation" x="3312.6168224299063" y="530.66954643628515"/>
         </scene>
+        <!--CMS-->
+        <scene sceneID="kaX-Iz-yMf">
+            <objects>
+                <viewControllerPlaceholder storyboardName="CMS" id="9dY-m6-vV8" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="CZC-LF-wIg"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wja-cD-qFR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1013" y="-615"/>
+        </scene>
         <!--Sign In Controller-->
         <scene sceneID="5KN-fI-DEb">
             <objects>
@@ -840,6 +850,7 @@ Pull to refresh or check back later!</string>
                         <segue destination="YYy-1W-i5a" kind="modal" identifier="SignUpFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="Xk2-WI-bjm"/>
                         <segue destination="q0W-TP-J7A" kind="modal" identifier="ForgotPasswordFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="ygF-5x-KEF"/>
                         <segue destination="vkx-9d-gno" kind="modal" identifier="TabBarFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="ZkC-f4-a7K"/>
+                        <segue destination="9dY-m6-vV8" kind="modal" identifier="CMSSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="KCL-zc-qqP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PHx-1a-Zlc" sceneMemberID="firstResponder"/>
