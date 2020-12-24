@@ -192,12 +192,11 @@
                                 <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <segmentedControl opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="2" translatesAutoresizingMaskIntoConstraints="NO" id="RSx-iu-UxF">
+                            <segmentedControl opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="RSx-iu-UxF">
                                 <rect key="frame" x="20" y="372" width="388" height="32"/>
                                 <segments>
-                                    <segment title="GIF/STATIC IMAGE"/>
-                                    <segment title="VIDEO"/>
-                                    <segment title="NONE"/>
+                                    <segment title="YES"/>
+                                    <segment title="NO"/>
                                 </segments>
                                 <connections>
                                     <action selector="mediaSegmentedControl:" destination="1rP-Kj-7Em" eventType="valueChanged" id="ryD-oE-Vqy"/>
