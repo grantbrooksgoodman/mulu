@@ -166,18 +166,6 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     {
         if mediaSegmentedControl.selectedSegmentIndex != mediaSegmentedControl.numberOfSegments - 1
         {
-            switch mediaSegmentedControl.selectedSegmentIndex
-            {
-            case 0:
-                mediaType = .gif
-            case 1:
-                mediaType = .staticImage
-            case 2:
-                mediaType = .video
-            default:
-                mediaType = nil
-            }
-            
             UIView.animate(withDuration: 0.2) {
                 self.mediaTextField.alpha = 1
             } completion: { (_) in
@@ -191,6 +179,15 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             } completion: { (_) in
                 findAndResignFirstResponder()
             }
+        }
+        
+        if mediaSegmentedControl.selectedSegmentIndex == 1
+        {
+            AlertKit().successAlertController(withTitle: "Warning",
+                                              withMessage: "Video media are unable to be fully verified before submission. Please be sure that the video link is valid before continuing!",
+                                              withCancelButtonTitle: "OK",
+                                              withAlternateSelectors: nil,
+                                              preferredActionIndex: nil)
         }
     }
     
@@ -258,23 +255,55 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                 backButton.isEnabled = true
             }
         case .media:
-            if verifyMediaLink() || mediaSegmentedControl.selectedSegmentIndex == mediaSegmentedControl.numberOfSegments - 1
+            if mediaSegmentedControl.selectedSegmentIndex == 2
             {
                 forwardToAlert()
             }
             else
             {
-                AlertKit().errorAlertController(title:                       "Invalid Media Link",
-                                                message:                     "Please try again.",
-                                                dismissButtonTitle:          "OK",
-                                                additionalSelectors:         nil,
-                                                preferredAdditionalSelector: nil,
-                                                canFileReport:               false,
-                                                extraInfo:                   nil,
-                                                metadata:                    [#file, #function, #line],
-                                                networkDependent:            false)
-                nextButton.isEnabled = true
-                backButton.isEnabled = true
+                findAndResignFirstResponder()
+                
+                PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: "Analysing media...")
+                PKHUD.sharedHUD.show()
+                
+                verifyMedia(mediaTextField.text!) { (returnedMetadata, isMismatched) in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+                        hideHud()
+                    }
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(750)) {
+                        if let mismatched = isMismatched, mismatched
+                        {
+                            AlertKit().errorAlertController(title: "Mismatched Media Type", message: "This link appears to be for an image rather than a video.\n\nPlease specify the correct media type before continuing.", dismissButtonTitle: "OK", additionalSelectors: nil, preferredAdditionalSelector: nil, canFileReport: true, extraInfo: nil, metadata: [#file, #function, #line], networkDependent: true)
+                            
+                            self.mediaTextField.becomeFirstResponder()
+                            
+                            self.nextButton.isEnabled = true
+                            self.backButton.isEnabled = true
+                        }
+                        else if let metadata = returnedMetadata
+                        {
+                            self.mediaType = metadata.type
+                            self.mediaLink = metadata.link
+                            
+                            self.forwardToAlert()
+                        }
+                        else
+                        {
+                            AlertKit().errorAlertController(title:                       "Invalid Media Link",
+                                                            message:                     "Please try again.",
+                                                            dismissButtonTitle:          "OK",
+                                                            additionalSelectors:         nil,
+                                                            preferredAdditionalSelector: nil,
+                                                            canFileReport:               false,
+                                                            extraInfo:                   nil,
+                                                            metadata:                    [#file, #function, #line],
+                                                            networkDependent:            false)
+                            self.nextButton.isEnabled = true
+                            self.backButton.isEnabled = true
+                        }
+                    }
+                }
             }
         default:
             forwardToFinish()
@@ -298,6 +327,26 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                 self.navigationController?.dismiss(animated: true, completion: nil)
             }
         }
+    }
+    
+    func convertToEmbedded(_ link: URL) -> URL?
+    {
+        let linkString = link.absoluteString
+        
+        guard linkString.components(separatedBy: "watch?v=").count == 2 else
+        {
+            return nil
+        }
+        
+        let videoCode = linkString.components(separatedBy: "watch?v=")[1]
+        let videoLink = "https://www.youtube.com/embed/\(videoCode)"
+        
+        if let link = URL(string: videoLink)
+        {
+            return link
+        }
+        
+        return nil
     }
     
     func createChallenge()
@@ -333,6 +382,39 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                                                 networkDependent: true)
                 
                 self.navigationController?.dismiss(animated: true, completion: nil)
+            }
+        }
+    }
+    
+    func determineLinkType(_ link: URL, completion: @escaping(_ type: Challenge.MediaType?) -> Void)
+    {
+        verifyLink(link) { (returnedMetadata, errorDescriptor) in
+            if let metadata = returnedMetadata
+            {
+                if metadata.mimeType.hasSuffix("gif") && UIImage(data: metadata.data) != nil
+                {
+                    self.mediaLink = link
+                    
+                    completion(.gif)
+                }
+                else if metadata.mimeType.hasPrefix("image") && UIImage(data: metadata.data) != nil
+                {
+                    self.mediaLink = link
+                    
+                    completion(.staticImage)
+                }
+                else
+                {
+                    report("The metadata was malformed.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    
+                    completion(nil)
+                }
+            }
+            else
+            {
+                report(errorDescriptor!, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                
+                completion(nil)
             }
         }
     }
@@ -555,6 +637,65 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         }
     }
     
+    func verifyLink(_ link: URL, completion: @escaping(_ returnedMetadata: (mimeType: String, data: Data)?, _ errorDescriptor: String?) -> Void)
+    {
+        URLSession.shared.dataTask(with: link) { (privateRetrievedData, privateUrlResponse, privateOccurredError) in
+            
+            if let urlResponse = privateUrlResponse as? HTTPURLResponse,
+               urlResponse.statusCode == 200,
+               let mimeType = privateUrlResponse?.mimeType,
+               let retrievedData = privateRetrievedData
+            {
+                if let error = privateOccurredError
+                {
+                    completion(nil, errorInformation(forError: (error as NSError)))
+                }
+                else { completion((mimeType, retrievedData), nil) }
+            }
+            else
+            {
+                completion(nil, "The URL response was malformed.")
+            }
+            
+        }.resume()
+    }
+    
+    func verifyMedia(_ withString: String, completion: @escaping(_ metadata: (type: Challenge.MediaType, link: URL)?, _ mismatched: Bool?) -> Void)
+    {
+        if let link = URL(string: withString), UIApplication.shared.canOpenURL(link)
+        {
+            if mediaSegmentedControl.selectedSegmentIndex == 1
+            {
+                verifyVideoIsNotImage(link) { (isValid) in
+                    if isValid
+                    {
+                        if link.absoluteString.contains("youtube")
+                        {
+                            if let embeddedLink = self.convertToEmbedded(link)
+                            {
+                                completion((.video, embeddedLink), false)
+                            }
+                            else { completion(nil, false) }
+                        }
+                        else { completion((.video, link), false) }
+                    }
+                    else { completion(nil, true) }
+                }
+            }
+            else
+            {
+                determineLinkType(link) { (returnedType) in
+                    if let type = returnedType
+                    {
+                        completion((type, link), false)
+                    }
+                    else { completion(nil, false) }
+                }
+            }
+        }
+        else { completion(nil, false) }
+    }
+    
     func verifyTitle() -> Bool
     {
         if largeTextField.text!.lowercasedTrimmingWhitespace != ""
@@ -587,27 +728,26 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         return false
     }
     
-    func verifyMediaLink() -> Bool
+    func verifyVideoIsNotImage(_ link: URL, completion: @escaping(_ isValid: Bool) -> Void)
     {
-        if let link = URL(string: mediaTextField.text!), UIApplication.shared.canOpenURL(link)
-        {
-            mediaLink = link
-            
-            //            URLSession.shared.dataTask(with: link) { (privateRetrievedData, privateUrlResponse, privateOccurredError) in
-            //
-            //                guard let urlResponse = privateUrlResponse as? HTTPURLResponse, urlResponse.statusCode == 200,
-            //                      let mimeType = privateUrlResponse?.mimeType, mimeType.hasPrefix("image"),
-            //                      let retrievedData = privateRetrievedData, privateOccurredError == nil,
-            //                      let retrievedImage = UIImage(data: retrievedData) else
-            //                { return false }
-            //
-            //                DispatchQueue.main.async { self.image = retrievedImage }
-            //
-            //            }.resume()
-            
+        verifyLink(link) { (returnedMetadata, errorDescriptor) in
+            if let metadata = returnedMetadata
+            {
+                if !metadata.mimeType.hasPrefix("image")
+                {
+                    self.mediaLink = link
+                    
+                    completion(true)
+                }
+                else { completion(false) }
+            }
+            else
+            {
+                report(errorDescriptor!, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                
+                completion(false)
+            }
         }
-        
-        return false
     }
 }
 

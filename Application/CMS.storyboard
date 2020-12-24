@@ -131,6 +131,7 @@
                     <toolbarItems/>
                     <size key="freeformSize" width="428" height="926"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="kGP-vh-Tht">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
@@ -191,11 +192,10 @@
                                 <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <segmentedControl opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="3" translatesAutoresizingMaskIntoConstraints="NO" id="RSx-iu-UxF">
+                            <segmentedControl opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="2" translatesAutoresizingMaskIntoConstraints="NO" id="RSx-iu-UxF">
                                 <rect key="frame" x="20" y="372" width="388" height="32"/>
                                 <segments>
-                                    <segment title="GIF"/>
-                                    <segment title="IMAGE"/>
+                                    <segment title="GIF/STATIC IMAGE"/>
                                     <segment title="VIDEO"/>
                                     <segment title="NONE"/>
                                 </segments>
