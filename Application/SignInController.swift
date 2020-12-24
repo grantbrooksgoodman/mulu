@@ -255,9 +255,25 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                     {
                                         currentTeam = teams[0]
                                         
-                                        self.performSegue(withIdentifier: "CMSSegue", sender: self)
-                                        
-                                        //self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
+                                        #warning("DEBUG ONLY!")
+                                        AlertKit().optionAlertController(title: "Select User Type",
+                                                                         message: "Which type of user are you?",
+                                                                         cancelButtonTitle: nil,
+                                                                         additionalButtons: [("Administrator", false), ("Layman", false)],
+                                                                         preferredActionIndex: nil,
+                                                                         networkDependent: true) { (selectedIndex) in
+                                            if let index = selectedIndex
+                                            {
+                                                if index == 0
+                                                {
+                                                    self.performSegue(withIdentifier: "CMSSegue", sender: self)
+                                                }
+                                                else if index == 1
+                                                {
+                                                    self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -365,15 +381,14 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
              .sampleText:          "",
              .textAlignment:       NSTextAlignment.center]
         
-        AlertKit().textAlertController(title: "Join Code", message: "Enter your team's 5-digit join code below.", cancelButtonTitle: nil, additionalButtons: [("Join Team", false)], preferredActionIndex: 0, textFieldAttributes: textFieldAttributes, networkDependent: true) { (returnedString, selectedIndex) in
+        AlertKit().textAlertController(title: "Join Code", message: "Enter your team's 2-word join code below.", cancelButtonTitle: nil, additionalButtons: [("Join Team", false)], preferredActionIndex: 0, textFieldAttributes: textFieldAttributes, networkDependent: true) { (returnedString, selectedIndex) in
             if let index = selectedIndex, index == 0
             {
                 if let string = returnedString, string.lowercasedTrimmingWhitespace != ""
                 {
-                    guard let joinCode = Int(string),
-                          string.count == 5 else
+                    guard string.trimmingBorderedWhitespace.components(separatedBy: " ").count == 2 else
                     { AlertKit().errorAlertController(title: "Invalid Format",
-                                                      message: "Join codes consist of 5 digits only. Please try again.",
+                                                      message: "Join codes consist of 2 words only. Please try again.",
                                                       dismissButtonTitle: "Cancel",
                                                       additionalSelectors: ["Try Again": #selector(SignInController.presentJoinCodeAlert)],
                                                       preferredAdditionalSelector: 0,
@@ -382,7 +397,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                                       metadata: [#file, #function, #line],
                                                       networkDependent: true); return }
                     
-                    self.tryToJoin(teamWithCode: joinCode)
+                    self.tryToJoin(teamWithCode: string.trimmingBorderedWhitespace)
                 }
                 else
                 {
@@ -553,7 +568,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
         }
     }
     
-    func tryToJoin(teamWithCode: Int)
+    func tryToJoin(teamWithCode: String)
     {
         guard currentUser != nil else
         { report("No «currentUser»!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }

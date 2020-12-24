@@ -99,10 +99,9 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     {
         teamCodeTextField.resignFirstResponder()
         
-        guard teamCodeTextField.text!.count == 5,
-              let joinCode = Int(teamCodeTextField.text!) else
+        guard teamCodeTextField.text!.trimmingBorderedWhitespace.components(separatedBy: " ").count == 2 else
         {
-            let message = "Join codes consist of 5 numbers. Please try again."
+            let message = "Join codes consist of 2 words. Please try again."
             
             AlertKit().errorAlertController(title:                       "Invalid Code",
                                             message:                     message,
@@ -132,7 +131,7 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
             report("No User identifier passed!", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
         }
         
-        TeamSerialiser().getTeam(byJoinCode: joinCode) { (returnedIdentifier, errorDescriptor) in
+        TeamSerialiser().getTeam(byJoinCode: teamCodeTextField.text!.trimmingBorderedWhitespace) { (returnedIdentifier, errorDescriptor) in
             if let identifier = returnedIdentifier
             {
                 TeamSerialiser().addUser(userIdentifier, toTeam: identifier) { (errorDescriptor) in

@@ -70,6 +70,7 @@
 		A28928012593B5A700610E48 /* CreateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28928002593B5A700610E48 /* CreateController.swift */; };
 		A289281E2593B8AD00610E48 /* NewChallengeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A289281D2593B8AD00610E48 /* NewChallengeController.swift */; };
 		A28E99B7257AA47D00D8A4F7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */; };
+		A2962CFD2594FC2A00399F50 /* words.txt in Resources */ = {isa = PBXBuildFile; fileRef = A2962CFC2594FC2A00399F50 /* words.txt */; };
 		A297BFB2258E9E32006DA5F5 /* ForgotPasswordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A297BFB1258E9E32006DA5F5 /* ForgotPasswordController.swift */; };
 		A2A554962577FFBF006D3B3E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A554952577FFBF006D3B3E /* Extensions.swift */; };
 		A2A5549A25780BCB006D3B3E /* Builder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A5549925780BCB006D3B3E /* Builder.swift */; };
@@ -200,6 +201,7 @@
 		A28928002593B5A700610E48 /* CreateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateController.swift; sourceTree = "<group>"; };
 		A289281D2593B8AD00610E48 /* NewChallengeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewChallengeController.swift; sourceTree = "<group>"; };
 		A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A2962CFC2594FC2A00399F50 /* words.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = words.txt; sourceTree = "<group>"; };
 		A297BFB1258E9E32006DA5F5 /* ForgotPasswordController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordController.swift; sourceTree = "<group>"; };
 		A2A554952577FFBF006D3B3E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		A2A5549925780BCB006D3B3E /* Builder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Builder.swift; sourceTree = "<group>"; };
@@ -359,6 +361,7 @@
 				A288D1FF25844F55002AFB51 /* ScrollerCell.swift */,
 				687404491CB1AB4400BD2632 /* Info.plist */,
 				A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */,
+				A2962CFC2594FC2A00399F50 /* words.txt */,
 			);
 			name = "Other Files";
 			sourceTree = "<group>";
@@ -662,6 +665,7 @@
 				A22169DE258A611D001C036D /* GothamBold.ttf in Resources */,
 				A22169D3258A611D001C036D /* Gotham-Thin.otf in Resources */,
 				A28E99B7257AA47D00D8A4F7 /* GoogleService-Info.plist in Resources */,
+				A2962CFD2594FC2A00399F50 /* words.txt in Resources */,
 				A2CA2D0F257984BF0012DB17 /* San Francisco (Semibold Italic).otf in Resources */,
 				A22169D6258A611D001C036D /* GothamLight.ttf in Resources */,
 				A207FFED2581B714004E70A6 /* Montserrat-Medium.ttf in Resources */,

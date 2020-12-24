@@ -343,7 +343,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         largeTextField.placeholder = "Enter a title"
         largeTextField.text = challengeTitle ?? nil
         
-        stepText = "🔴 Set title\n🔴 Set prompt\n🔴 Set point value\n🔴 Add media\n🔴 Toggle alerts"
+        stepText = "🟡 Set title\n🔴 Set prompt\n🔴 Set point value\n🔴 Add media\n🔴 Toggle alerts"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
@@ -365,7 +365,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         findAndResignFirstResponder()
         stepProgress(forwardDirection: true)
         
-        stepText = "🟢 Set title\n🔴 Set prompt\n🔴 Set point value\n🔴 Add media\n🔴 Toggle alerts"
+        stepText = "🟢 Set title\n🟡 Set prompt\n🔴 Set point value\n🔴 Add media\n🔴 Toggle alerts"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
@@ -401,7 +401,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         findAndResignFirstResponder()
         stepProgress(forwardDirection: true)
         
-        stepText = "🟢 Set title\n🟢 Set prompt\n🔴 Set point value\n🔴 Add media\n🔴 Toggle alerts"
+        stepText = "🟢 Set title\n🟢 Set prompt\n🟡 Set point value\n🔴 Add media\n🔴 Toggle alerts"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
@@ -436,7 +436,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         findAndResignFirstResponder()
         stepProgress(forwardDirection: true)
         
-        stepText = "🟢 Set title\n🟢 Set prompt\n🟢 Set point value\n🔴 Add media\n🔴 Toggle alerts"
+        stepText = "🟢 Set title\n🟢 Set prompt\n🟢 Set point value\n🟡 Add media\n🔴 Toggle alerts"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
@@ -464,7 +464,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         findAndResignFirstResponder()
         stepProgress(forwardDirection: true)
         
-        stepText = "🟢 Set title\n🟢 Set prompt\n🟢 Set point value\n🟢 Add media\n🔴 Toggle alerts"
+        stepText = "🟢 Set title\n🟢 Set prompt\n🟢 Set point value\n🟢 Add media\n🟡 Toggle alerts"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
@@ -589,10 +589,22 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     
     func verifyMediaLink() -> Bool
     {
-        if let link = URL(string: mediaTextField.text!)
+        if let link = URL(string: mediaTextField.text!), UIApplication.shared.canOpenURL(link)
         {
             mediaLink = link
-            return UIApplication.shared.canOpenURL(link)
+            
+            //            URLSession.shared.dataTask(with: link) { (privateRetrievedData, privateUrlResponse, privateOccurredError) in
+            //
+            //                guard let urlResponse = privateUrlResponse as? HTTPURLResponse, urlResponse.statusCode == 200,
+            //                      let mimeType = privateUrlResponse?.mimeType, mimeType.hasPrefix("image"),
+            //                      let retrievedData = privateRetrievedData, privateOccurredError == nil,
+            //                      let retrievedImage = UIImage(data: retrievedData) else
+            //                { return false }
+            //
+            //                DispatchQueue.main.async { self.image = retrievedImage }
+            //
+            //            }.resume()
+            
         }
         
         return false

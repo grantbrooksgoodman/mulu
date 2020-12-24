@@ -23,11 +23,11 @@ class Team
     
     //Strings
     var associatedIdentifier: String!
+    var joinCode:             String!
     var name:                 String!
     
     //Other Declarations
     var associatedTournament:  Tournament?
-    var joinCode: Int!
     
     //==================================================//
     
@@ -36,7 +36,7 @@ class Team
     init(associatedIdentifier:   String,
          associatedTournament:   Tournament?,
          completedChallenges:    [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]?,
-         joinCode:               Int,
+         joinCode:               String,
          name:                   String,
          participantIdentifiers: [String])
     {

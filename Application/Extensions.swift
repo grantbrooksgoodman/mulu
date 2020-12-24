@@ -351,6 +351,13 @@ extension String
         return mutableSelf
     }
     
+    var trimmingBorderedWhitespace: String
+    {
+        var mutableSelf = self
+        
+        return mutableSelf.leadingWhitespaceRemoved.trailingWhitespaceRemoved
+    }
+    
     var whitespaceRemoved: String
     {
         return replacingOccurrences(of: " ", with: "")

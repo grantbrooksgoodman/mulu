@@ -396,41 +396,48 @@ class TeamSerialiser
         
         dataBundle["associatedTournament"] = "!"
         dataBundle["completedChallenges"] = ["!":["!"]]
-        dataBundle["joinCode"] = Int().random(min: 10000, max: 99999)
         dataBundle["name"] = name
         dataBundle["participantIdentifiers"] = participantIdentifiers
         
-        //Generate a key for the new Team.
-        if let generatedKey = Database.database().reference().child("/allTeams/").childByAutoId().key
-        {
-            GenericSerialiser().updateValue(onKey: "/allTeams/\(generatedKey)", withData: dataBundle) { (returnedError) in
-                if let error = returnedError
+        generateJoinCode { (returnedCode, returnedError) in
+            if let code = returnedCode
+            {
+                dataBundle["joinCode"] = code
+                
+                //Generate a key for the new Team.
+                if let generatedKey = Database.database().reference().child("/allTeams/").childByAutoId().key
                 {
-                    completion(nil, errorInformation(forError: (error as NSError)))
-                }
-                else
-                {
-                    for (index, user) in participantIdentifiers.enumerated()
-                    {
-                        GenericSerialiser().updateValue(onKey: "/allUsers/\(user)", withData: ["associatedTeams": [generatedKey]]) { (returnedError) in
-                            if let error = returnedError
+                    GenericSerialiser().updateValue(onKey: "/allTeams/\(generatedKey)", withData: dataBundle) { (returnedError) in
+                        if let error = returnedError
+                        {
+                            completion(nil, errorInformation(forError: (error as NSError)))
+                        }
+                        else
+                        {
+                            for (index, user) in participantIdentifiers.enumerated()
                             {
-                                completion(nil, errorInformation(forError: (error as NSError)))
-                            }
-                            else
-                            {
-                                if index == participantIdentifiers.count - 1
-                                {
-                                    completion(generatedKey, nil)
+                                GenericSerialiser().updateValue(onKey: "/allUsers/\(user)", withData: ["associatedTeams": [generatedKey]]) { (returnedError) in
+                                    if let error = returnedError
+                                    {
+                                        completion(nil, errorInformation(forError: (error as NSError)))
+                                    }
+                                    else
+                                    {
+                                        if index == participantIdentifiers.count - 1
+                                        {
+                                            completion(generatedKey, nil)
+                                        }
+                                    }
                                 }
                             }
+                            
                         }
                     }
-                    
                 }
+                else { completion(nil, "Unable to create key in database.") }
             }
+            else { completion(nil, errorInformation(forError: (returnedError! as NSError))) }
         }
-        else { completion(nil, "Unable to create key in database.") }
     }
     
     /**
@@ -445,7 +452,7 @@ class TeamSerialiser
      completion(returnedIdentifier, errorDescriptor)
      ~~~
      */
-    func getTeam(byJoinCode: Int, completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
+    func getTeam(byJoinCode: String, completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
     {
         Database.database().reference().child("allTeams").observeSingleEvent(of: .value) { (returnedSnapshot) in
             if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
@@ -454,7 +461,7 @@ class TeamSerialiser
                 for (index, identifier) in Array(asDataBundle.keys).enumerated()
                 {
                     if let data = asDataBundle[identifier] as? [String:Any],
-                       let joinCode = data["joinCode"] as? Int
+                       let joinCode = data["joinCode"] as? String
                     {
                         if joinCode == byJoinCode
                         {
@@ -734,7 +741,7 @@ class TeamSerialiser
         let associatedIdentifier = dataBundle["associatedIdentifier"] as! String
         let associatedTournament = dataBundle["associatedTournament"] as! String
         let completedChallenges = dataBundle["completedChallenges"] as! [String:[String]]
-        let joinCode = dataBundle["joinCode"] as! Int
+        let joinCode = dataBundle["joinCode"] as! String
         let name = dataBundle["name"] as! String
         let participantIdentifiers = dataBundle["participantIdentifiers"] as! [String]
         
@@ -821,6 +828,48 @@ class TeamSerialiser
     }
     
     /**
+     Generates a 2-word join code for the **Team.**
+     
+     - Parameter completion: Upon success, returns with the randomly generated join code. Upon failure, an error.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedCode, returnedError)
+     ~~~
+     */
+    private func generateJoinCode(completion: @escaping(_ returnedCode: String?, _ returnedError: Error?) -> Void)
+    {
+        if let wordsFilePath = Bundle.main.path(forResource: "words", ofType: "txt")
+        {
+            do {
+                let wordsString = try String(contentsOfFile: wordsFilePath)
+                let wordLines = wordsString.components(separatedBy: .newlines)
+                
+                var joinCodeArray: [String] = []
+                
+                while joinCodeArray.count < 2
+                {
+                    var randomWord = wordLines[numericCast(arc4random_uniform(numericCast(wordLines.count)))]
+                    
+                    while randomWord.count > 6 || randomWord.lowercased() != randomWord
+                    {
+                        randomWord = wordLines[numericCast(arc4random_uniform(numericCast(wordLines.count)))]
+                    }
+                    
+                    joinCodeArray.append(randomWord)
+                }
+                
+                completion(joinCodeArray.joined(separator: " "), nil)
+            }
+            catch
+            {
+                completion(nil, error)
+            }
+        }
+    }
+    
+    /**
      Serialises an array of completed **Challenges** for the server.
      
      - Parameter with: The array of completed **Challenges** to serialise.
@@ -866,7 +915,7 @@ class TeamSerialiser
         guard withDataBundle["completedChallenges"] as? [String:[String]] != nil else
         { report("Malformed «completedChallenges».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
         
-        guard withDataBundle["joinCode"] as? Int != nil else
+        guard withDataBundle["joinCode"] as? String != nil else
         { report("Malformed «joinCode».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
         
         guard withDataBundle["name"] as? String != nil else
