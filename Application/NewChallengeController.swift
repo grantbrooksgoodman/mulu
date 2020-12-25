@@ -122,6 +122,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         largeTextField.delegate = self
         
         forwardToTitle()
+        mediaTextField.text = "https://s3.amazonaws.com/dl.getforma.com/.attachments/f51216153e8473b38031c6e0a0b1dff5/18864464/tiktokcupidshuffle.mp4?AWSAccessKeyId=AKIAR7KB7OYSMPA2CKCB&Expires=1608938024&Signature=wZmXCyYvCKKUsDRmHPOHLzIRIsM%3D&response-content-disposition=attachment%3Bfilename%2A%3DUTF-8%27%27tiktokcupidshuffle.mp4&response-content-type=video%2Fmp4"
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -288,7 +289,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                             self.forwardToAlert()
                         case .video:
                             self.mediaType = .video
-                            self.mediaLink = MediaAnalyser().convertToEmbedded(linkString: self.mediaTextField.text!)!
+                            self.mediaLink = MediaAnalyser().convertToEmbedded(linkString: self.mediaTextField.text!) ?? URL(string: self.mediaTextField.text!)!
                             
                             self.forwardToAlert()
                         case .other:

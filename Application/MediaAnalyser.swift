@@ -46,7 +46,7 @@ class MediaAnalyser
                     }
                     else
                     {
-                        if self.convertToEmbedded(linkString: linkString) != nil
+                        if self.convertToEmbedded(linkString: linkString) != nil || metadata.mimeType.hasPrefix("video")
                         {
                             completion(.video)
                         }

@@ -383,7 +383,7 @@ Pull to refresh or check back later!</string>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" secondItem="jlq-PP-Yh0" secondAttribute="height" multiplier="27:17" id="Kqu-vl-EoD"/>
                                                             </constraints>
-                                                            <wkWebViewConfiguration key="configuration">
+                                                            <wkWebViewConfiguration key="configuration" allowsInlineMediaPlayback="YES">
                                                                 <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
                                                                 <wkPreferences key="preferences"/>
                                                             </wkWebViewConfiguration>
