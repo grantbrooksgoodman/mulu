@@ -74,7 +74,7 @@ class ChallengeSerialiser
             GenericSerialiser().updateValue(onKey: "/allChallenges/\(generatedKey)", withData: dataBundle) { (returnedError) in
                 if let error = returnedError
                 {
-                    completion(nil, errorInformation(forError: (error as NSError)))
+                    completion(nil, errorInfo(error))
                 }
                 else { completion(generatedKey, nil) }
             }

@@ -55,8 +55,9 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     var videoData: Data?
     
     //Strings
-    var challengeTitle: String?
+    var challengeTitle:    String?
     var stepText = "🔴 Set title\n🔴 Set prompt\n🔴 Set point value\n🔴 Add media\n🔴 Toggle alerts"
+    var uploadedMediaPath: String?
     
     //Other Declarations
     let mediaPicker = UIImagePickerController()
@@ -200,6 +201,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         {
             UIView.animate(withDuration: 0.2) {
                 self.mediaTextField.alpha = 0
+                self.uploadButton.alpha = 0
             } completion: { (_) in
                 findAndResignFirstResponder()
             }
@@ -379,7 +381,20 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                                                networkDepedent: false) { (didConfirm) in
             if didConfirm!
             {
-                self.navigationController?.dismiss(animated: true, completion: nil)
+                if let path = self.uploadedMediaPath
+                {
+                    let mediaReference = dataStorage.child(path)
+                    
+                    mediaReference.delete { (returnedError) in
+                        if let error = returnedError
+                        {
+                            report(error.localizedDescription, errorCode: (error as NSError).code, isFatal: true, metadata: [#file, #function, #line])
+                        }
+                        
+                        self.navigationController?.dismiss(animated: true, completion: nil)
+                    }
+                }
+                else { self.navigationController?.dismiss(animated: true, completion: nil) }
             }
         }
     }
@@ -644,7 +659,8 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     {
         if image
         {
-            let imageReference = dataStorage.child("images/\(Int().random(min: 1000, max: 10000)).\(`extension`)")
+            let imagePath = "images/\(Int().random(min: 1000, max: 10000)).\(`extension`)"
+            let imageReference = dataStorage.child(imagePath)
             
             let metadata = StorageMetadata()
             metadata.contentType = "image/\(`extension`)"
@@ -652,7 +668,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             let uploadTask = imageReference.putData(withData, metadata: metadata) { (returnedMetadata, returnedError) in
                 if let error = returnedError
                 {
-                    completion(errorInformation(forError: (error as NSError)))
+                    completion(errorInfo(error))
                 }
                 else
                 {
@@ -660,12 +676,13 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                         if let url = returnedURL
                         {
                             self.mediaLink = url
+                            self.uploadedMediaPath = imagePath
                             
                             completion(nil)
                         }
                         else if let error = returnedError
                         {
-                            completion(errorInformation(forError: (error as NSError)))
+                            completion(errorInfo(error))
                         }
                     }
                 }
@@ -675,7 +692,8 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         }
         else
         {
-            let videoReference = dataStorage.child("videos/\(Int().random(min: 1000, max: 10000)).\(`extension`)")
+            let videoPath = "videos/\(Int().random(min: 1000, max: 10000)).\(`extension`)"
+            let videoReference = dataStorage.child(videoPath)
             
             let metadata = StorageMetadata()
             metadata.contentType = "video/\(`extension`)"
@@ -683,7 +701,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             let uploadTask = videoReference.putData(withData, metadata: metadata) { (returnedMetadata, returnedError) in
                 if let error = returnedError
                 {
-                    completion(errorInformation(forError: (error as NSError)))
+                    completion(errorInfo(error))
                 }
                 else
                 {
@@ -691,12 +709,13 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                         if let url = returnedURL
                         {
                             self.mediaLink = url
+                            self.uploadedMediaPath = videoPath
                             
                             completion(nil)
                         }
                         else if let error = returnedError
                         {
-                            completion(errorInformation(forError: (error as NSError)))
+                            completion(errorInfo(error))
                         }
                     }
                 }
@@ -826,6 +845,11 @@ extension NewChallengeController: UIImagePickerControllerDelegate
                             {
                                 DispatchQueue.main.async {
                                     HUD.flash(.success, delay: 0.5)
+                                    
+                                    UIView.animate(withDuration: 0.2) {
+                                        self.uploadButton.setImage(nil, for: .normal)
+                                        self.uploadButton.setTitle("Tap to Replace", for: .normal)
+                                    }
                                 }
                             }
                         }
@@ -889,6 +913,11 @@ extension NewChallengeController: UIImagePickerControllerDelegate
                             {
                                 DispatchQueue.main.async {
                                     HUD.flash(.success, delay: 0.5)
+                                    
+                                    UIView.animate(withDuration: 0.2) {
+                                        self.uploadButton.setImage(nil, for: .normal)
+                                        self.uploadButton.setTitle("Tap to Replace", for: .normal)
+                                    }
                                 }
                             }
                         }

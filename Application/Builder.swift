@@ -173,7 +173,7 @@ class Build
             if withResult == .failed
             {
                 //Display an errorAlertController telling the user the message could not be sent.
-                AlertKit().errorAlertController(title: "Unable to Send", message: "The message failed to send. Please try again.", dismissButtonTitle: nil, additionalSelectors: nil, preferredAdditionalSelector: nil, canFileReport: true, extraInfo: (withError != nil ? errorInformation(forError: withError! as NSError) : nil), metadata: [#file, #function, #line], networkDependent: false)
+                AlertKit().errorAlertController(title: "Unable to Send", message: "The message failed to send. Please try again.", dismissButtonTitle: nil, additionalSelectors: nil, preferredAdditionalSelector: nil, canFileReport: true, extraInfo: (withError != nil ? errorInfo(withError!) : nil), metadata: [#file, #function, #line], networkDependent: false)
             }
             else if withResult == .sent //If the message did send.
             {

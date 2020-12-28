@@ -193,7 +193,7 @@ class User
                 GenericSerialiser().updateValue(onKey: "/allTeams/\(team.associatedIdentifier!)/", withData: ["completedChallenges": newCompletedChallenges]) { (returnedError) in
                     if let error = returnedError
                     {
-                        completion(errorInformation(forError: (error as NSError)))
+                        completion(errorInfo(error))
                     }
                     else { completion(nil) }
                 }

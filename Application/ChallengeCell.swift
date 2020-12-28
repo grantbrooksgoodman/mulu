@@ -11,6 +11,7 @@ import UIKit
 import WebKit
 
 /* Third-party Frameworks */
+import FirebaseAnalytics
 import PKHUD
 
 class ChallengeCell: UICollectionViewCell
@@ -65,6 +66,8 @@ class ChallengeCell: UICollectionViewCell
     
     @IBAction func doneButton(_ sender: Any)
     {
+        Analytics.logEvent("completed_challenge", parameters: ["challengeName": titleLabel.text!])
+        
         currentUser.completeChallenge(withIdentifier: challengeIdentifier, on: currentTeam) { (errorDescriptor) in
             if let error = errorDescriptor
             {
@@ -92,6 +95,8 @@ class ChallengeCell: UICollectionViewCell
     
     @IBAction func skippedButton(_ sender: Any)
     {
+        Analytics.logEvent("skipped_challenge", parameters: ["challengeName": titleLabel.text!])
+        
         if var skippedChallenges = UserDefaults.standard.value(forKey: "skippedChallenges") as? [String]
         {
             skippedChallenges.append(challengeIdentifier)

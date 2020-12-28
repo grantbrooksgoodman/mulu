@@ -41,7 +41,7 @@ class TeamSerialiser
         GenericSerialiser().updateValue(onKey: key, withData: data) { (returnedError) in
             if let error = returnedError
             {
-                completion(errorInformation(forError: (error as NSError)))
+                completion(errorInfo(error))
             }
             else
             {
@@ -78,7 +78,7 @@ class TeamSerialiser
             GenericSerialiser().updateValue(onKey: "/allUsers/\(user.associatedIdentifier!)", withData: ["associatedTeams": newAssociatedTeams]) { (returnedError) in
                 if let error = returnedError
                 {
-                    errors.append(errorInformation(forError: (error as NSError)))
+                    errors.append(errorInfo(error))
                     group.leave()
                 }
                 else { group.leave() }
@@ -92,7 +92,7 @@ class TeamSerialiser
             GenericSerialiser().updateValue(onKey: "/allTeams/\(toTeam.associatedIdentifier!)", withData: ["participantIdentifiers": newParticipantIdentifiers]) { (returnedError) in
                 if let error = returnedError
                 {
-                    completion(errors.count > 0 ? "\(errors.joined(separator: "\n"))\n\(errorInformation(forError: (error as NSError)))" : nil)
+                    completion(errors.count > 0 ? "\(errors.joined(separator: "\n"))\n\(errorInfo(error))" : nil)
                 }
                 else
                 { completion(errors.count > 0 ? errors.joined(separator: "\n") : nil) }
@@ -132,7 +132,6 @@ class TeamSerialiser
         }
     }
     
-    #warning("Sometimes «associatedTournament» is not correctly set. (?)")
     /**
      Adds a **Team** with a specified identifier to a **Tournament** with a specified identifier.
      
@@ -231,7 +230,7 @@ class TeamSerialiser
                     {
                         group.leave()
                         
-                        completion(errorInformation(forError: (error as NSError)))
+                        completion(errorInfo(error))
                     }
                     else
                     {
@@ -240,7 +239,7 @@ class TeamSerialiser
                             {
                                 group.leave()
                                 
-                                completion(errorInformation(forError: (error as NSError)))
+                                completion(errorInfo(error))
                             }
                             else
                             {
@@ -350,7 +349,7 @@ class TeamSerialiser
                     {
                         group.leave()
                         
-                        completion(errorInformation(forError: (error as NSError)))
+                        completion(errorInfo(error))
                     }
                     else
                     {
@@ -359,7 +358,7 @@ class TeamSerialiser
                             {
                                 group.leave()
                                 
-                                completion(errorInformation(forError: (error as NSError)))
+                                completion(errorInfo(error))
                             }
                             else
                             {
@@ -410,7 +409,7 @@ class TeamSerialiser
                     GenericSerialiser().updateValue(onKey: "/allTeams/\(generatedKey)", withData: dataBundle) { (returnedError) in
                         if let error = returnedError
                         {
-                            completion(nil, errorInformation(forError: (error as NSError)))
+                            completion(nil, errorInfo(error))
                         }
                         else
                         {
@@ -419,7 +418,7 @@ class TeamSerialiser
                                 GenericSerialiser().updateValue(onKey: "/allUsers/\(user)", withData: ["associatedTeams": [generatedKey]]) { (returnedError) in
                                     if let error = returnedError
                                     {
-                                        completion(nil, errorInformation(forError: (error as NSError)))
+                                        completion(nil, errorInfo(error))
                                     }
                                     else
                                     {
@@ -436,7 +435,7 @@ class TeamSerialiser
                 }
                 else { completion(nil, "Unable to create key in database.") }
             }
-            else { completion(nil, errorInformation(forError: (returnedError! as NSError))) }
+            else { completion(nil, errorInfo(returnedError!)) }
         }
     }
     

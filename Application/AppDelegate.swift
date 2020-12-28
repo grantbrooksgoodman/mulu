@@ -12,11 +12,10 @@ import UIKit
 
 /* Third-party Frameworks */
 import Firebase
+import FirebaseStorage
 import OneSignal
 import PKHUD
 import Reachability
-
-import FirebaseStorage
 
 //==================================================//
 
@@ -245,10 +244,30 @@ func composeMessage(withMessage: String, withRecipients: [String], withSubject: 
     }
 }
 
-///Retrieves a formatted error string from a given instance of NSError.
-func errorInformation(forError: NSError) -> String
+/**
+ Converts an instance of `Error` to a formatted string.
+ 
+ - Parameter for: The `Error` whose information will be extracted.
+ 
+ - Returns: A string with the error's localised description and code.
+ */
+func errorInfo(_ for: Error) -> String
 {
-    return "\(forError.localizedDescription) (\(forError.code))"
+    let asNSError = `for` as NSError
+    
+    return "\(asNSError.localizedDescription) (\(asNSError.code)"
+}
+
+/**
+ Converts an instance of `NSError` to a formatted string.
+ 
+ - Parameter for: The `NSError` whose information will be extracted.
+ 
+ - Returns: A string with the error's localised description and code.
+ */
+func errorInfo(_ for: NSError) -> String
+{
+    return "\(`for`.localizedDescription) (\(`for`.code)"
 }
 
 func fallbackReport(_ text: String, errorCode: Int?, isFatal: Bool)

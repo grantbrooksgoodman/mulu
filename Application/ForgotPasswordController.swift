@@ -147,7 +147,7 @@ class ForgotPasswordController: UIViewController, MFMailComposeViewControllerDel
                                                 additionalSelectors:         nil,
                                                 preferredAdditionalSelector: nil,
                                                 canFileReport:               true,
-                                                extraInfo:                   errorInformation(forError: (error as NSError)),
+                                                extraInfo:                   errorInfo(error),
                                                 metadata:                    [#file, #function, #line],
                                                 networkDependent:            true)
                 

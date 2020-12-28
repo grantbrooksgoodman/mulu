@@ -318,9 +318,9 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
             }
             else if let error = returnedError
             {
-                let message = errorInformation(forError: (error as NSError))
+                let message = errorInfo(error)
                 
-                var alertMessage = errorInformation(forError: (error as NSError))
+                var alertMessage = errorInfo(error)
                 
                 if alertMessage.hasPrefix("There is no user")
                 {
@@ -432,7 +432,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
         UserSerialiser().getRandomUsers(amountToGet: 1) { (returnedIdentifiers, errorDescriptor) in
             if let identifiers = returnedIdentifiers
             {
-                UserSerialiser().getUser(withIdentifier: "-MP1NOR6agMoyHZYUpvy" /*identifiers[0]*/) { (returnedUser, errorDescriptor) in
+                UserSerialiser().getUser(withIdentifier: identifiers[0]) { (returnedUser, errorDescriptor) in
                     if let user = returnedUser
                     {
                         currentUser = user

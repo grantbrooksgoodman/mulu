@@ -353,9 +353,7 @@ extension String
     
     var trimmingBorderedWhitespace: String
     {
-        var mutableSelf = self
-        
-        return mutableSelf.leadingWhitespaceRemoved.trailingWhitespaceRemoved
+        return self.leadingWhitespaceRemoved.trailingWhitespaceRemoved
     }
     
     var whitespaceRemoved: String

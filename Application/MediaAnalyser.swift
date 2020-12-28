@@ -119,7 +119,7 @@ class MediaAnalyser
             {
                 if let error = privateOccurredError
                 {
-                    completion(nil, errorInformation(forError: (error as NSError)))
+                    completion(nil, errorInfo(error))
                 }
                 else { completion((mimeType, retrievedData), nil) }
             }

@@ -56,7 +56,7 @@ class UserSerialiser
         Auth.auth().createUser(withEmail: emailAddress, password: password) { (returnedResult, returnedError) in
             if let error = returnedError
             {
-                completion(nil, errorInformation(forError: (error as NSError)))
+                completion(nil, errorInfo(error))
             }
             else if let result = returnedResult
             {
@@ -135,7 +135,7 @@ class UserSerialiser
             GenericSerialiser().updateValue(onKey: "/allUsers/\(identifier)", withData: dataBundle) { (returnedError) in
                 if let error = returnedError
                 {
-                    completion(nil, errorInformation(forError: (error as NSError)))
+                    completion(nil, errorInfo(error))
                 }
                 else { completion(identifier, nil) }
             }
@@ -145,7 +145,7 @@ class UserSerialiser
             GenericSerialiser().updateValue(onKey: "/allUsers/\(generatedKey)", withData: dataBundle) { (returnedError) in
                 if let error = returnedError
                 {
-                    completion(nil, errorInformation(forError: (error as NSError)))
+                    completion(nil, errorInfo(error))
                 }
                 else { completion(generatedKey, nil) }
             }

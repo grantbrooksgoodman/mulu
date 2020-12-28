@@ -10,6 +10,8 @@
 import MessageUI
 import UIKit
 
+/* Third-party Frameworks */
+import FirebaseAnalytics
 import PKHUD
 
 class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegate
@@ -176,6 +178,8 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     
     @IBAction func contactUsButton(_ sender: Any)
     {
+        Analytics.logEvent("contact_us", parameters: nil)
+        
         let url = URL(string: "mailto:hello@getmulu.com")!
         
         UIApplication.shared.open(url, options: [:]) { _ in }
@@ -183,6 +187,7 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     
     @IBAction func inviteYourFriendsButton(_ sender: Any)
     {
+        Analytics.logEvent("invite_your_friends", parameters: nil)
     }
     
     @IBAction func linkButton(_ sender: Any)
