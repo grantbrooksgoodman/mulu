@@ -16,6 +16,8 @@ import OneSignal
 import PKHUD
 import Reachability
 
+import FirebaseStorage
+
 //==================================================//
 
 /* Top-level Variable Declarations */
@@ -45,6 +47,7 @@ var appStoreReleaseVersion = 0
 var buildType: Build.BuildType = .alpha
 var currentTeam: Team!
 var currentUser: User!
+var dataStorage: StorageReference!
 var informationDictionary: [String:String]!
 var touchTimer: Timer?
 
@@ -88,6 +91,8 @@ var touchTimer: Timer?
         
         FirebaseConfiguration.shared.setLoggerLevel(.min)
         FirebaseApp.configure()
+        
+        dataStorage = Storage.storage().reference()
         
         // Remove this method to stop OneSignal Debugging
         OneSignal.setLogLevel(.LL_ERROR, visualLevel: .LL_NONE)

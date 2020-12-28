@@ -23,7 +23,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     /* Interface Builder UI Elements */
     
     //UILabels
-    @IBOutlet weak var welcomeLabel:     UILabel!
+    @IBOutlet weak var welcomeLabel: UILabel!
     
     //UITextViews
     @IBOutlet weak var statisticsTextView: UITextView!
@@ -35,11 +35,10 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     /* Class-level Variable Declarations */
     
+    //Other Declarations
     var buildInstance: Build!
     var currentChallenge: Challenge?
-    
     var incompleteChallenges: [Challenge] = []
-    
     var refreshControl: UIRefreshControl?
     
     //==================================================//
@@ -66,11 +65,11 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         
         collectionView.alwaysBounceVertical = true
         
-        let refresher = UIRefreshControl()
-        refresher.addTarget(self, action: #selector(HomeController.refreshStream), for: .valueChanged)
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(HomeController.reloadData), for: .valueChanged)
         
-        refreshControl = refresher
-        collectionView.addSubview(refreshControl!)
+        self.refreshControl = refreshControl
+        collectionView.addSubview(self.refreshControl!)
         
         NotificationCenter.default.addObserver(forName: UIWindow.didResignKeyNotification, object: view.window, queue: nil) { (notification) in
             (UIApplication.shared.delegate as! AppDelegate).restrictRotation = .all
@@ -96,14 +95,6 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         let streak = currentUser.streak(on: currentTeam)
         statisticsString += "+ \(streak == 0 ? "NO" : "\(streak) DAY") STREAK"
         statisticsTextView.text = statisticsString
-    }
-    
-    @objc func refreshStream()
-    {
-        print("refresh")
-        reloadData()
-        
-        refreshControl?.endRefreshing()
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -135,32 +126,26 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         return CGSize(width: width, height: 506)
     }
     
-    func reloadData()
+    func didCompleteChallenge(withIdentifier: String) -> Bool
     {
-        currentTeam.reloadData { (errorDescriptor) in
-            if let error = errorDescriptor
-            {
-                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-            }
-            else
-            {
-                self.incompleteChallengesForToday { (returnedChallenges, errorDescriptor) in
-                    if let challenges = returnedChallenges
-                    {
-                        self.incompleteChallenges = challenges.sorted(by: {$0.title < $1.title}).sorted(by: {$0.datePosted < $1.datePosted})
-                        
-                        self.collectionView.dataSource = self
-                        self.collectionView.delegate = self
-                        
-                        self.collectionView.reloadData()
-                    }
-                    else if let error = errorDescriptor
-                    {
-                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                    }
-                }
-            }
+        if let completedChallenges = currentUser.completedChallenges(on: currentTeam),
+           completedChallenges.contains(where: {$0.challenge.associatedIdentifier == withIdentifier})
+        {
+            return true
         }
+        
+        return false
+    }
+    
+    func didSkipChallenge(withIdentifier: String) -> Bool
+    {
+        if let skippedIdentifiers = UserDefaults.standard.value(forKey: "skippedChallenges") as? [String],
+           skippedIdentifiers.contains(withIdentifier)
+        {
+            return true
+        }
+        
+        return false
     }
     
     func incompleteChallengesForToday(completion: @escaping(_ returnedChallenge: [Challenge]?, _ errorDescriptor: String?) -> Void)
@@ -203,31 +188,39 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         }
     }
     
-    func didCompleteChallenge(withIdentifier: String) -> Bool
-    {
-        if let completedChallenges = currentUser.completedChallenges(on: currentTeam),
-           completedChallenges.contains(where: {$0.challenge.associatedIdentifier == withIdentifier})
-        {
-            return true
-        }
-        
-        return false
-    }
-    
-    func didSkipChallenge(withIdentifier: String) -> Bool
-    {
-        if let skippedIdentifiers = UserDefaults.standard.value(forKey: "skippedChallenges") as? [String],
-           skippedIdentifiers.contains(withIdentifier)
-        {
-            return true
-        }
-        
-        return false
-    }
-    
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
+    }
+    
+    @objc func reloadData()
+    {
+        currentTeam.reloadData { (errorDescriptor) in
+            self.refreshControl?.endRefreshing()
+            
+            if let error = errorDescriptor
+            {
+                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+            else
+            {
+                self.incompleteChallengesForToday { (returnedChallenges, errorDescriptor) in
+                    if let challenges = returnedChallenges
+                    {
+                        self.incompleteChallenges = challenges.sorted(by: {$0.title < $1.title}).sorted(by: {$0.datePosted < $1.datePosted})
+                        
+                        self.collectionView.dataSource = self
+                        self.collectionView.delegate = self
+                        
+                        self.collectionView.reloadData()
+                    }
+                    else if let error = errorDescriptor
+                    {
+                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    }
+                }
+            }
+        }
     }
     
     func toggleChallengeElements(hidden: Bool, onView: UIView)
@@ -266,16 +259,6 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
 extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
 {
-    func numberOfSections(in collectionView: UICollectionView) -> Int
-    {
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
-    {
-        return incompleteChallenges.count == 0 ? 1 : incompleteChallenges.count
-    }
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         let challengeCell = collectionView.dequeueReusableCell(withReuseIdentifier: "challengeCell", for: indexPath) as! ChallengeCell
@@ -328,6 +311,8 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
             
             if let media = incompleteChallenges[indexPath.row].media
             {
+                challengeCell.playButton.alpha = 0
+                
                 switch media.type
                 {
                 case .gif:
@@ -335,10 +320,18 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
                     challengeCell.imageView.setGifFromURL(media.link)
                 case .staticImage:
                     challengeCell.webView.alpha = 0
-                    challengeCell.imageView.downloadedFrom(url: media.link)
-                case .video:
+                    challengeCell.imageView.downloadedFrom(url: media.link, contentMode: .scaleAspectFit)
+                case .linkedVideo:
                     challengeCell.imageView.alpha = 0
                     challengeCell.webView.load(URLRequest(url: media.link))
+                case .autoPlayVideo:
+                    challengeCell.imageView.alpha = 0
+                    challengeCell.playButton.alpha = challengeCell.webView.url != media.link ? 1 : 0
+                    
+                    challengeCell.webView.isOpaque = false
+                    challengeCell.webView.isUserInteractionEnabled = false
+                    
+                    challengeCell.autoPlayVideoLink = media.link
                 }
             }
             else
@@ -365,6 +358,16 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
         challengeCell.layoutIfNeeded()
         
         return challengeCell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    {
+        return incompleteChallenges.count == 0 ? 1 : incompleteChallenges.count
+    }
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int
+    {
+        return 1
     }
 }
 

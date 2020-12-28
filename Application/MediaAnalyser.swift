@@ -17,9 +17,11 @@ class MediaAnalyser
     
     enum AnalysisResult
     {
+        case autoPlayVideo
+        case linkedVideo
+        
         case gif
         case image
-        case video
         
         case other
         case error
@@ -46,11 +48,16 @@ class MediaAnalyser
                     }
                     else
                     {
-                        if self.convertToEmbedded(linkString: linkString) != nil || metadata.mimeType.hasPrefix("video")
+                        if self.convertToEmbedded(linkString: linkString) != nil
                         {
-                            completion(.video)
+                            completion(.linkedVideo)
                         }
-                        else { completion(.other) }
+                        else if metadata.mimeType.hasPrefix("video")
+                        {
+                            completion(.autoPlayVideo)
+                        }
+                        else
+                        { completion(.other) }
                     }
                 }
                 else

@@ -12,8 +12,9 @@ import UIKit
 
 /* Third-party Frameworks */
 import PKHUD
+import FirebaseStorage
 
-class NewChallengeController: UIViewController, MFMailComposeViewControllerDelegate
+class NewChallengeController: UIViewController, MFMailComposeViewControllerDelegate, UINavigationControllerDelegate
 {
     //==================================================//
     
@@ -39,19 +40,27 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var stepTitleLabel: UILabel!
     
+    @IBOutlet weak var uploadButton: UIButton!
+    
     //==================================================//
     
     /* Class-level Variable Declarations */
     
     //Booleans
-    var hasShownWarning = false
-    var isWorking       = false
+    var currentlyUploading = false
+    var isWorking          = false
+    
+    //Data
+    var imageData: Data?
+    var videoData: Data?
     
     //Strings
     var challengeTitle: String?
     var stepText = "🔴 Set title\n🔴 Set prompt\n🔴 Set point value\n🔴 Add media\n🔴 Toggle alerts"
     
     //Other Declarations
+    let mediaPicker = UIImagePickerController()
+    
     var buildInstance: Build!
     var currentStep = Step.title
     var mediaLink: URL?
@@ -122,7 +131,10 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         largeTextField.delegate = self
         
         forwardToTitle()
-        mediaTextField.text = "https://s3.amazonaws.com/dl.getforma.com/.attachments/f51216153e8473b38031c6e0a0b1dff5/18864464/tiktokcupidshuffle.mp4?AWSAccessKeyId=AKIAR7KB7OYSMPA2CKCB&Expires=1608938024&Signature=wZmXCyYvCKKUsDRmHPOHLzIRIsM%3D&response-content-disposition=attachment%3Bfilename%2A%3DUTF-8%27%27tiktokcupidshuffle.mp4&response-content-type=video%2Fmp4"
+        
+        mediaPicker.sourceType = .photoLibrary
+        mediaPicker.delegate = self
+        mediaPicker.mediaTypes = ["public.image", "public.movie"]
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -151,11 +163,9 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             forwardToPrompt()
         case .media:
             goBack()
-            hasShownWarning = false
             forwardToPointValue()
         case .alert:
             goBack()
-            hasShownWarning = false
             forwardToMedia()
         default:
             goBack()
@@ -174,8 +184,16 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         {
             UIView.animate(withDuration: 0.2) {
                 self.mediaTextField.alpha = 1
+                self.uploadButton.alpha = 0
             } completion: { (_) in
                 self.mediaTextField.becomeFirstResponder()
+            }
+        }
+        else if mediaSegmentedControl.selectedSegmentIndex == 1
+        {
+            UIView.animate(withDuration: 0.2) {
+                self.mediaTextField.alpha = 0
+                self.uploadButton.alpha = 1
             }
         }
         else
@@ -252,7 +270,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                 backButton.isEnabled = true
             }
         case .media:
-            if mediaSegmentedControl.selectedSegmentIndex == 1
+            if mediaSegmentedControl.selectedSegmentIndex == 2
             {
                 forwardToAlert()
             }
@@ -260,59 +278,58 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             {
                 findAndResignFirstResponder()
                 
-                if !hasShownWarning
+                PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: "Analysing media...")
+                PKHUD.sharedHUD.show()
+                
+                var linkString = mediaTextField.text!
+                
+                if mediaSegmentedControl.selectedSegmentIndex == 1
                 {
-                    PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: "Analysing media...")
-                    PKHUD.sharedHUD.show()
+                    guard let link = mediaLink else
+                    { report("No media link!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
+                    
+                    linkString = link.absoluteString
                 }
                 
-                MediaAnalyser().analyseMedia(linkString: mediaTextField.text!) { (analysisResult) in
-                    if !self.hasShownWarning
-                    {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
-                            hideHud()
-                        }
+                MediaAnalyser().analyseMedia(linkString: linkString) { (analysisResult) in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+                        hideHud()
                     }
                     
                     DispatchQueue.main.async {
                         switch analysisResult
                         {
+                        case .autoPlayVideo:
+                            self.mediaType = .autoPlayVideo
+                            
+                            self.forwardToAlert()
                         case .gif:
                             self.mediaType = .gif
-                            self.mediaLink = URL(string: self.mediaTextField.text!)!
+                            self.mediaLink = self.mediaLink == nil ? URL(string: self.mediaTextField.text!)! : self.mediaLink
                             
                             self.forwardToAlert()
                         case .image:
                             self.mediaType = .staticImage
-                            self.mediaLink = URL(string: self.mediaTextField.text!)!
+                            self.mediaLink = self.mediaLink == nil ? URL(string: self.mediaTextField.text!)! : self.mediaLink
                             
                             self.forwardToAlert()
-                        case .video:
-                            self.mediaType = .video
+                        case .linkedVideo:
+                            self.mediaType = .linkedVideo
                             self.mediaLink = MediaAnalyser().convertToEmbedded(linkString: self.mediaTextField.text!) ?? URL(string: self.mediaTextField.text!)!
                             
                             self.forwardToAlert()
                         case .other:
-                            if !self.hasShownWarning
-                            {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(750)) {
-                                    AlertKit().successAlertController(withTitle:             "Warning!",
-                                                                      withMessage:           "The provided link appears to be valid but its media content could not be fully verified.\n\nPlease verify your entry before continuing.",
-                                                                      withCancelButtonTitle:  "OK",
-                                                                      withAlternateSelectors: nil,
-                                                                      preferredActionIndex:   nil)
-                                    
-                                    self.mediaTextField.becomeFirstResponder()
-                                    
-                                    self.nextButton.isEnabled = true
-                                    self.backButton.isEnabled = true
-                                    
-                                    self.hasShownWarning = true
-                                }
-                            }
-                            else
-                            {
-                                self.forwardToAlert()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(750)) {
+                                AlertKit().successAlertController(withTitle:             "Error",
+                                                                  withMessage:           "The provided link was to an unsupported media type.\n\nTry uploading the media instead.",
+                                                                  withCancelButtonTitle:  "OK",
+                                                                  withAlternateSelectors: nil,
+                                                                  preferredActionIndex:   nil)
+                                
+                                self.mediaTextField.becomeFirstResponder()
+                                
+                                self.nextButton.isEnabled = true
+                                self.backButton.isEnabled = true
                             }
                         case .error:
                             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(750)) {
@@ -338,6 +355,14 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         default:
             forwardToFinish()
         }
+    }
+    
+    @IBAction func uploadButton(_ sender: Any)
+    {
+        mediaPicker.allowsEditing = false
+        mediaPicker.sourceType = .photoLibrary
+        
+        present(mediaPicker, animated: true)
     }
     
     //==================================================//
@@ -489,7 +514,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             mediaTextField.text = "https://"
         }
         
-        stepTitleLabel.text = "ADD MEDIA?"
+        stepTitleLabel.text = "ADD MEDIA"
         stepTitleLabel.textAlignment = .left
         
         findAndResignFirstResponder()
@@ -532,6 +557,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             self.mediaSegmentedControl.alpha = 0
             self.mediaTextField.alpha = 0
             self.stepTitleLabel.alpha = 0
+            self.uploadButton.alpha = 0
         } completion: { (_) in
             self.stepTitleLabel.text = "ALERT USERS?"
             self.stepTitleLabel.textAlignment = .center
@@ -614,6 +640,72 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         }
     }
     
+    func upload(image: Bool, withData: Data, extension: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        if image
+        {
+            let imageReference = dataStorage.child("images/\(Int().random(min: 1000, max: 10000)).\(`extension`)")
+            
+            let metadata = StorageMetadata()
+            metadata.contentType = "image/\(`extension`)"
+            
+            let uploadTask = imageReference.putData(withData, metadata: metadata) { (returnedMetadata, returnedError) in
+                if let error = returnedError
+                {
+                    completion(errorInformation(forError: (error as NSError)))
+                }
+                else
+                {
+                    imageReference.downloadURL { (returnedURL, returnedError) in
+                        if let url = returnedURL
+                        {
+                            self.mediaLink = url
+                            
+                            completion(nil)
+                        }
+                        else if let error = returnedError
+                        {
+                            completion(errorInformation(forError: (error as NSError)))
+                        }
+                    }
+                }
+            }
+            
+            uploadTask.resume()
+        }
+        else
+        {
+            let videoReference = dataStorage.child("videos/\(Int().random(min: 1000, max: 10000)).\(`extension`)")
+            
+            let metadata = StorageMetadata()
+            metadata.contentType = "video/\(`extension`)"
+            
+            let uploadTask = videoReference.putData(withData, metadata: metadata) { (returnedMetadata, returnedError) in
+                if let error = returnedError
+                {
+                    completion(errorInformation(forError: (error as NSError)))
+                }
+                else
+                {
+                    videoReference.downloadURL { (returnedURL, returnedError) in
+                        if let url = returnedURL
+                        {
+                            self.mediaLink = url
+                            
+                            completion(nil)
+                        }
+                        else if let error = returnedError
+                        {
+                            completion(errorInformation(forError: (error as NSError)))
+                        }
+                    }
+                }
+            }
+            
+            uploadTask.resume()
+        }
+    }
+    
     func verifyTitle() -> Bool
     {
         if largeTextField.text!.lowercasedTrimmingWhitespace != ""
@@ -662,6 +754,157 @@ extension NewChallengeController: UIAdaptivePresentationControllerDelegate
         return false
     }
 }
+
+extension NewChallengeController: UIImagePickerControllerDelegate
+{
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any])
+    {
+        if !currentlyUploading
+        {
+            currentlyUploading = true
+            
+            if let imageURL = info[.imageURL] as? URL
+            {
+                var imageExtension: String?
+                
+                if imageURL.absoluteString.lowercased().hasSuffix("gif")
+                {
+                    imageExtension = "gif"
+                }
+                else if imageURL.absoluteString.lowercased().hasSuffix("heic")
+                {
+                    imageExtension = "heic"
+                }
+                else if imageURL.absoluteString.lowercased().hasSuffix("jpeg")
+                {
+                    imageExtension = "jpeg"
+                }
+                else if imageURL.absoluteString.lowercased().hasSuffix("jpg")
+                {
+                    imageExtension = "jpg"
+                }
+                else if imageURL.absoluteString.lowercased().hasSuffix("png")
+                {
+                    imageExtension = "png"
+                }
+                else
+                {
+                    dismiss(animated: true) {
+                        self.currentlyUploading = false
+                        
+                        AlertKit().errorAlertController(title: "Unsupported Media", message: "The selected media was of an unsupported type. Please select another piece of media to upload.", dismissButtonTitle: "OK", additionalSelectors: nil, preferredAdditionalSelector: nil, canFileReport: true, extraInfo: nil, metadata: [#file, #function, #line], networkDependent: false)
+                    }
+                }
+                
+                guard let `extension` = imageExtension else
+                { return }
+                
+                do {
+                    self.imageData = try Data(contentsOf: URL(fileURLWithPath: imageURL.path), options: .mappedIfSafe)
+                    
+                    dismiss(animated: true) {
+                        self.currentlyUploading = false
+                        
+                        guard let imageData = self.imageData else
+                        { report("Image data was not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
+                        
+                        PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: "Uploading image...")
+                        PKHUD.sharedHUD.show()
+                        
+                        self.upload(image: true, withData: imageData, extension: `extension`) { (errorDescriptor) in
+                            if let error = errorDescriptor
+                            {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+                                    hideHud()
+                                }
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
+                                    report(error, errorCode: nil, isFatal: true, metadata: [#file, #function, #line])
+                                }
+                            }
+                            else
+                            {
+                                DispatchQueue.main.async {
+                                    HUD.flash(.success, delay: 0.5)
+                                }
+                            }
+                        }
+                    }
+                } catch {
+                    dismiss(animated: true) {
+                        self.currentlyUploading = false
+                        
+                        report(error.localizedDescription, errorCode: (error as NSError).code, isFatal: true, metadata: [#file, #function, #line])
+                    }
+                }
+            }
+            else if let videoURL = info[.mediaURL] as? URL
+            {
+                var videoExtension: String?
+                
+                if videoURL.absoluteString.lowercased().hasSuffix("mp4")
+                {
+                    videoExtension = "mp4"
+                }
+                else if videoURL.absoluteString.lowercased().hasSuffix("mov")
+                {
+                    videoExtension = "mov"
+                }
+                else
+                {
+                    dismiss(animated: true) {
+                        self.currentlyUploading = false
+                        
+                        AlertKit().errorAlertController(title: "Unsupported Media", message: "The selected media was of an unsupported type. Please select another piece of media to upload.", dismissButtonTitle: "OK", additionalSelectors: nil, preferredAdditionalSelector: nil, canFileReport: true, extraInfo: nil, metadata: [#file, #function, #line], networkDependent: false)
+                    }
+                }
+                
+                guard let `extension` = videoExtension else
+                { return }
+                
+                do {
+                    self.videoData = try Data(contentsOf: URL(fileURLWithPath: videoURL.path), options: .mappedIfSafe)
+                    
+                    dismiss(animated: true) {
+                        self.currentlyUploading = false
+                        
+                        guard let videoData = self.videoData else
+                        { report("Video data was not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
+                        
+                        PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: "Uploading video...")
+                        PKHUD.sharedHUD.show()
+                        
+                        self.upload(image: false, withData: videoData, extension: `extension`) { (errorDescriptor) in
+                            if let error = errorDescriptor
+                            {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+                                    hideHud()
+                                }
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
+                                    report(error, errorCode: nil, isFatal: true, metadata: [#file, #function, #line])
+                                }
+                            }
+                            else
+                            {
+                                DispatchQueue.main.async {
+                                    HUD.flash(.success, delay: 0.5)
+                                }
+                            }
+                        }
+                    }
+                } catch {
+                    dismiss(animated: true) {
+                        self.currentlyUploading = false
+                        
+                        report(error.localizedDescription, errorCode: (error as NSError).code, isFatal: true, metadata: [#file, #function, #line])
+                    }
+                }
+            }
+        }
+    }
+}
+
 extension NewChallengeController: UITextFieldDelegate
 {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool

@@ -21,6 +21,7 @@ class ChallengeCell: UICollectionViewCell
     
     //UIButtons
     @IBOutlet weak var doneButton:    UIButton!
+    @IBOutlet weak var playButton:    UIButton!
     @IBOutlet weak var skippedButton: UIButton!
     
     //UILabels
@@ -40,7 +41,23 @@ class ChallengeCell: UICollectionViewCell
     
     /* Class-level Variable Declarations */
     
+    //Other Declarations
+    var autoPlayVideoLink: URL!
     var challengeIdentifier: String!
+    
+    //==================================================//
+    
+    /* Overridden Functions */
+    
+    override func draw(_ rect: CGRect)
+    {
+        super.draw(rect)
+        
+        let configuration = UIImage.SymbolConfiguration(pointSize: 60, weight: .regular, scale: .large)
+        let normalImage = UIImage(systemName: "play.circle", withConfiguration: configuration)
+        
+        playButton.setImage(normalImage, for: .normal)
+    }
     
     //==================================================//
     
@@ -60,6 +77,16 @@ class ChallengeCell: UICollectionViewCell
                     parent.reloadData()
                 }
             }
+        }
+    }
+    
+    @IBAction func playButton(_ sender: Any)
+    {
+        UIView.animate(withDuration: 0.2) {
+            self.playButton.alpha = 0
+        } completion: { (_) in
+            self.webView.isUserInteractionEnabled = true
+            self.webView.load(URLRequest(url: self.autoPlayVideoLink))
         }
     }
     

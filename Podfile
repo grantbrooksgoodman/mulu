@@ -8,6 +8,7 @@ target 'Mulu' do
   # Pods for Mulu
     pod 'Firebase/Analytics'
     pod 'Firebase/Auth'
+    pod 'Firebase/Storage'
     pod 'Firebase/Database'
     pod 'JTAppleCalendar', '~> 7.1'
     pod 'OneSignal', '>= 3.0.0', '< 4.0'

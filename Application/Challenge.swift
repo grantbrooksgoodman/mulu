@@ -31,9 +31,10 @@ class Challenge
     
     enum MediaType
     {
+        case autoPlayVideo
         case gif
+        case linkedVideo
         case staticImage
-        case video
     }
     
     //==================================================//

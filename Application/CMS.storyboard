@@ -3,6 +3,7 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -192,11 +193,12 @@
                                 <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <segmentedControl opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="RSx-iu-UxF">
+                            <segmentedControl opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="2" translatesAutoresizingMaskIntoConstraints="NO" id="RSx-iu-UxF">
                                 <rect key="frame" x="20" y="372" width="388" height="32"/>
                                 <segments>
-                                    <segment title="YES"/>
-                                    <segment title="NO"/>
+                                    <segment title="WEB LINK"/>
+                                    <segment title="FILE UPLOAD"/>
+                                    <segment title="NONE"/>
                                 </segments>
                                 <connections>
                                     <action selector="mediaSegmentedControl:" destination="1rP-Kj-7Em" eventType="valueChanged" id="ryD-oE-Vqy"/>
@@ -238,6 +240,16 @@
                             <activityIndicatorView opaque="NO" alpha="0.0" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="ddc-CB-4tl">
                                 <rect key="frame" x="195.5" y="372" width="37" height="37"/>
                             </activityIndicatorView>
+                            <button opaque="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dcu-Oq-cVf">
+                                <rect key="frame" x="199" y="419" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal">
+                                    <imageReference key="image" image="square.and.arrow.up" catalog="system" symbolScale="large"/>
+                                </state>
+                                <connections>
+                                    <action selector="uploadButton:" destination="1rP-Kj-7Em" eventType="touchUpInside" id="buv-fE-kas"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="lZT-Zz-e7W"/>
                         <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor"/>
@@ -313,6 +325,7 @@
                         <outlet property="promptTextView" destination="OBu-db-TGF" id="xiD-vT-8YU"/>
                         <outlet property="stepTextView" destination="EOY-FX-onC" id="8yB-Yy-Adz"/>
                         <outlet property="stepTitleLabel" destination="Ois-ea-x8o" id="fYd-sI-9ib"/>
+                        <outlet property="uploadButton" destination="dcu-Oq-cVf" id="sU8-Yx-8cS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aeI-2N-EgC" sceneMemberID="firstResponder"/>
@@ -346,6 +359,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

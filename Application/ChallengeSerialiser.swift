@@ -54,12 +54,14 @@ class ChallengeSerialiser
             
             switch media.1
             {
+            case .autoPlayVideo:
+                type = "autoPlayVideo"
             case .gif:
                 type = "gif"
+            case .linkedVideo:
+                type = "linkedVideo"
             case .staticImage:
                 type = "staticImage"
-            case .video:
-                type = "video"
             }
             
             dataBundle["media"] = "\(type!) – \(media.0.absoluteString)"
@@ -274,8 +276,10 @@ class ChallengeSerialiser
                     mediaType = .gif
                 case "staticImage":
                     mediaType = .staticImage
-                case "video":
-                    mediaType = .video
+                case "linkedVideo":
+                    mediaType = .linkedVideo
+                case "autoPlayVideo":
+                    mediaType = .autoPlayVideo
                 default:
                     return(nil, "Couldn't convert media type into «MediaType».")
                 }
