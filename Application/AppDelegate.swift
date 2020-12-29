@@ -334,6 +334,58 @@ func hideHud()
     }
 }
 
+func hideHUD(delay: Double?)
+{
+    if let delay = delay
+    {
+        let millisecondDelay = Int(delay * 1000)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
+            if PKHUD.sharedHUD.isVisible
+            {
+                PKHUD.sharedHUD.hide(true)
+            }
+        }
+    }
+    else
+    {
+        DispatchQueue.main.async {
+            if PKHUD.sharedHUD.isVisible
+            {
+                PKHUD.sharedHUD.hide(true)
+            }
+        }
+    }
+}
+
+func hideHUD(delay: Double?, completion: @escaping() -> Void)
+{
+    if let delay = delay
+    {
+        let millisecondDelay = Int(delay * 1000)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
+            if PKHUD.sharedHUD.isVisible
+            {
+                PKHUD.sharedHUD.hide(animated: true) { (_) in
+                    completion()
+                }
+            }
+        }
+    }
+    else
+    {
+        DispatchQueue.main.async {
+            if PKHUD.sharedHUD.isVisible
+            {
+                PKHUD.sharedHUD.hide(true) { (_) in
+                    completion()
+                }
+            }
+        }
+    }
+}
+
 ///Logs to the console stream.
 func logToStream(forLine: Int, withMessage: String)
 {
@@ -494,6 +546,32 @@ func showProgressHud()
         {
             PKHUD.sharedHUD.contentView = PKHUDProgressView()
             PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+        }
+    }
+}
+
+func showProgressHUD(text: String?, delay: Double?)
+{
+    if let delay = delay
+    {
+        let millisecondDelay = Int(delay * 1000)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
+            if !PKHUD.sharedHUD.isVisible
+            {
+                PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: text)
+                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+            }
+        }
+    }
+    else
+    {
+        DispatchQueue.main.async {
+            if !PKHUD.sharedHUD.isVisible
+            {
+                PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: text)
+                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+            }
         }
     }
 }

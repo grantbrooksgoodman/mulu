@@ -61,7 +61,7 @@ class UserSerialiser
             else if let result = returnedResult
             {
                 UserSerialiser().createUser(associatedIdentifier: result.user.uid,
-                                            associatedTeams:      associatedTeams == nil ? ["!"] : associatedTeams,
+                                            associatedTeams:      associatedTeams == nil ? nil : associatedTeams,
                                             emailAddress:         emailAddress,
                                             firstName:            firstName,
                                             lastName:             lastName,
@@ -174,6 +174,70 @@ class UserSerialiser
             }
         }
         else { completion(nil, "Unable to create key in database.") }
+    }
+    
+    func deleteUser(_ user: User, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        removeUserFromAllTeams(user) { (errorDescriptor) in
+            if let error = errorDescriptor
+            {
+                completion(error)
+            }
+            else
+            {
+                GenericSerialiser().setValue(onKey: "/allUsers/\(user.associatedIdentifier!)", withData: NSNull()) { (returnedError) in
+                    if let error = returnedError
+                    {
+                        completion(errorInfo(error))
+                    }
+                    else
+                    {
+                        GenericSerialiser().getValues(atPath: "/deletedUsers") { (returnedArray) in
+                            if var array = returnedArray as? [String]
+                            {
+                                array = array.filter({$0 != "!"})
+                                
+                                array.append(user.emailAddress!)
+                                
+                                GenericSerialiser().setValue(onKey: "/deletedUsers", withData: array) { (returnedError) in
+                                    if let error = returnedError
+                                    {
+                                        completion(errorInfo(error))
+                                    }
+                                    else { completion(nil) }
+                                }
+                            }
+                            else { completion("Couldn't update deleted users.") }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func getAllUsers(completion: @escaping(_ returnedUsers: [User]?, _ errorDescriptor: String?) -> Void)
+    {
+        Database.database().reference().child("allUsers").observeSingleEvent(of: .value) { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let teamIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
+            {
+                self.getUsers(withIdentifiers: teamIdentifiers) { (returnedUsers, errorDescriptors) in
+                    if let users = returnedUsers
+                    {
+                        completion(users, nil)
+                    }
+                    else if let errors = errorDescriptors
+                    {
+                        completion(nil, errors.joined(separator: "\n"))
+                    }
+                    else { completion(nil, "An unknown error occurred.") }
+                }
+            }
+            else
+            {
+                completion(nil, "Unable to deserialise snapshot.")
+            }
+        }
     }
     
     /**
@@ -313,6 +377,57 @@ class UserSerialiser
                 completion(nil, "Unable to deserialise snapshot.")
             }
         }
+    }
+    
+    func removeTeam(withIdentifier: String, fromUser: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        getUser(withIdentifier: fromUser) { (returnedUser, errorDescriptor) in
+            if let user = returnedUser
+            {
+                if var associatedTeams = user.associatedTeams
+                {
+                    associatedTeams = associatedTeams.filter({$0 != withIdentifier})
+                    
+                    let newAssociatedTeams = associatedTeams.count == 0 ? ["!"] : associatedTeams
+                    
+                    GenericSerialiser().setValue(onKey: "/allUsers/\(fromUser)/associatedTeams", withData: newAssociatedTeams) { (returnedError) in
+                        if let error = returnedError
+                        {
+                            completion(errorInfo(error))
+                        }
+                        else { completion(nil) }
+                    }
+                }
+                else { completion(nil) }
+            }
+            else { completion(errorDescriptor!) }
+        }
+    }
+    
+    func removeUserFromAllTeams(_ user: User, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        if let teams = user.associatedTeams
+        {
+            var errors: [String] = []
+            
+            for (index, teamIdentifier) in teams.enumerated()
+            {
+                TeamSerialiser().removeUser(user.associatedIdentifier, from: teamIdentifier) { (errorDescriptor) in
+                    if let error = errorDescriptor
+                    {
+                        errors.append(error)
+                    }
+                    else
+                    {
+                        if index == teams.count - 1
+                        {
+                            completion(errors.count == 0 ? nil : errors.joined(separator: "\n"))
+                        }
+                    }
+                }
+            }
+        }
+        else { completion(nil) }
     }
     
     //==================================================//

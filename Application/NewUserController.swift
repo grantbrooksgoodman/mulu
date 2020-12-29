@@ -246,6 +246,65 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
         }
     }
     
+    func createUser()
+    {
+        guard let fullName = fullName else
+        { report("Name was not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
+        
+        let nameComponents = fullName.components(separatedBy: " ")
+        let firstName = String(nameComponents[0])
+        let lastName = String(nameComponents[1...nameComponents.count - 1].joined(separator: " "))
+        
+        guard let emailAddress = emailAddress else
+        { report("E-mail address was not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
+        
+        UserSerialiser().createAccount(associatedTeams: selectedTeams.count == 0 ? nil : selectedTeams, emailAddress: emailAddress, firstName: firstName, lastName: lastName, password: "123456", profileImageData: nil, pushTokens: nil) { (returnedUser, errorDescriptor) in
+            if returnedUser != nil
+            {
+                Auth.auth().sendPasswordReset(withEmail: emailAddress) { (returnedError) in
+                    if let error = returnedError
+                    {
+                        AlertKit().errorAlertController(title: "Succeeded With Errors",
+                                                        message: "The user was successfully created, but the password reset e-mail could not be sent.",
+                                                        dismissButtonTitle: nil,
+                                                        additionalSelectors: nil,
+                                                        preferredAdditionalSelector: nil,
+                                                        canFileReport: true,
+                                                        extraInfo: errorInfo(error),
+                                                        metadata: [#file, #function, #line],
+                                                        networkDependent: true) {
+                            self.navigationController?.dismiss(animated: true, completion: nil)
+                        }
+                    }
+                    else
+                    {
+                        PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: "Successfully created user.")
+                        PKHUD.sharedHUD.show()
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                            hideHud()
+                            self.navigationController?.dismiss(animated: true, completion: nil)
+                        }
+                    }
+                }
+            }
+            else
+            {
+                AlertKit().errorAlertController(title: "Couldn't Create User",
+                                                message: errorDescriptor!,
+                                                dismissButtonTitle: nil,
+                                                additionalSelectors: nil,
+                                                preferredAdditionalSelector: nil,
+                                                canFileReport: true,
+                                                extraInfo: errorDescriptor!,
+                                                metadata: [#file, #function, #line],
+                                                networkDependent: true) {
+                    self.navigationController?.dismiss(animated: true, completion: nil)
+                }
+            }
+        }
+    }
+    
     func forwardToName()
     {
         findAndResignFirstResponder()
@@ -273,7 +332,6 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
             } completion: { (_) in
                 self.largeTextField.becomeFirstResponder()
                 
-                self.backButton.isEnabled = true
                 self.nextButton.isEnabled = true
             }
         }
@@ -383,65 +441,6 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
         }
     }
     
-    func createUser()
-    {
-        guard let fullName = fullName else
-        { report("Name was not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
-        
-        let nameComponents = fullName.components(separatedBy: " ")
-        let firstName = String(nameComponents[0])
-        let lastName = String(nameComponents[1...nameComponents.count - 1].joined(separator: " "))
-        
-        guard let emailAddress = emailAddress else
-        { report("E-mail address was not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
-        
-        UserSerialiser().createAccount(associatedTeams: selectedTeams.count == 0 ? nil : selectedTeams, emailAddress: emailAddress, firstName: firstName, lastName: lastName, password: "123456", profileImageData: nil, pushTokens: nil) { (returnedUser, errorDescriptor) in
-            if returnedUser != nil
-            {
-                Auth.auth().sendPasswordReset(withEmail: emailAddress) { (returnedError) in
-                    if let error = returnedError
-                    {
-                        AlertKit().errorAlertController(title: "Succeeded With Errors",
-                                                        message: "The user was successfully created, but the password reset e-mail could not be sent.",
-                                                        dismissButtonTitle: nil,
-                                                        additionalSelectors: nil,
-                                                        preferredAdditionalSelector: nil,
-                                                        canFileReport: true,
-                                                        extraInfo: errorInfo(error),
-                                                        metadata: [#file, #function, #line],
-                                                        networkDependent: true) {
-                            self.navigationController?.dismiss(animated: true, completion: nil)
-                        }
-                    }
-                    else
-                    {
-                        PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: "Successfully created user.")
-                        PKHUD.sharedHUD.show()
-                        
-                        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                            hideHud()
-                            self.navigationController?.dismiss(animated: true, completion: nil)
-                        }
-                    }
-                }
-            }
-            else
-            {
-                AlertKit().errorAlertController(title: "Couldn't Create User",
-                                                message: errorDescriptor!,
-                                                dismissButtonTitle: nil,
-                                                additionalSelectors: nil,
-                                                preferredAdditionalSelector: nil,
-                                                canFileReport: true,
-                                                extraInfo: errorDescriptor!,
-                                                metadata: [#file, #function, #line],
-                                                networkDependent: true) {
-                    self.navigationController?.dismiss(animated: true, completion: nil)
-                }
-            }
-        }
-    }
-    
     func goBack()
     {
         isWorking = false
@@ -502,11 +501,6 @@ extension NewUserController: UIAdaptivePresentationControllerDelegate
 
 extension NewUserController: UITableViewDataSource, UITableViewDelegate
 {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
-        return teamArray!.count
-    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let currentCell = tableView.dequeueReusableCell(withIdentifier: "TeamCell") as! TeamCell
@@ -540,6 +534,11 @@ extension NewUserController: UITableViewDataSource, UITableViewDelegate
             
             currentCell.radioButton.isSelected = !currentCell.radioButton.isSelected
         }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+        return teamArray!.count
     }
 }
 

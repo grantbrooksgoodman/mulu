@@ -470,6 +470,31 @@ class TeamSerialiser
         }
     }
     
+    func getAllTeams(completion: @escaping(_ returnedTeams: [Team]?, _ errorDescriptor: String?) -> Void)
+    {
+        Database.database().reference().child("allTeams").observeSingleEvent(of: .value) { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let teamIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
+            {
+                self.getTeams(withIdentifiers: teamIdentifiers) { (returnedTeams, errorDescriptors) in
+                    if let teams = returnedTeams
+                    {
+                        completion(teams, nil)
+                    }
+                    else if let errors = errorDescriptors
+                    {
+                        completion(nil, errors.joined(separator: "\n"))
+                    }
+                    else { completion(nil, "An unknown error occurred.") }
+                }
+            }
+            else
+            {
+                completion(nil, "Unable to deserialise snapshot.")
+            }
+        }
+    }
+    
     /**
      Finds the **Team** with the specified join code.
      
@@ -668,27 +693,95 @@ class TeamSerialiser
         }
     }
     
-    func getAllTeams(completion: @escaping(_ returnedTeams: [Team]?, _ errorDescriptor: String?) -> Void)
+    func removeUserFromCompletedChallenges(_ forUser: String, onTeam: Team, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
-        Database.database().reference().child("allTeams").observeSingleEvent(of: .value) { (returnedSnapshot) in
-            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
-               let teamIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
+        if let completedChallenges = onTeam.completedChallenges
+        {
+            var filteredChallenges: [(Challenge, [(User, Date)])] = []
+            
+            for challengeBundle in completedChallenges
             {
-                self.getTeams(withIdentifiers: teamIdentifiers) { (returnedTeams, errorDescriptors) in
-                    if let teams = returnedTeams
+                let filteredMetadata = challengeBundle.metadata.filteringOut(user: forUser)
+                
+                if filteredMetadata.count > 0
+                {
+                    filteredChallenges.append((challengeBundle.challenge, filteredMetadata))
+                }
+            }
+            
+            if filteredChallenges.count == 0
+            {
+                GenericSerialiser().setValue(onKey: "/allTeams/\(onTeam.associatedIdentifier!)/completedChallenges", withData: ["!":["!"]]) { (returnedError) in
+                    if let error = returnedError
                     {
-                        completion(teams, nil)
+                        completion(errorInfo(error))
                     }
-                    else if let errors = errorDescriptors
-                    {
-                        completion(nil, errors.joined(separator: "\n"))
-                    }
-                    else { completion(nil, "An unknown error occurred.") }
+                    else { completion(nil) }
                 }
             }
             else
             {
-                completion(nil, "Unable to deserialise snapshot.")
+                self.addCompletedChallenges(filteredChallenges, toTeam: onTeam.associatedIdentifier, overwrite: true) { (errorDescriptor) in
+                    if let error = errorDescriptor
+                    {
+                        completion(error)
+                    }
+                    else { completion(nil) }
+                }
+            }
+        }
+        else { completion(nil) }
+    }
+    
+    func removeUser(withIdentifier: String, fromParticipantsOn team: Team, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        team.participantIdentifiers = team.participantIdentifiers.filter({$0 != withIdentifier})
+        
+        let newParticipants = team.participantIdentifiers.count == 0 ? ["!"] : team.participantIdentifiers
+        
+        GenericSerialiser().setValue(onKey: "/allTeams/\(team.associatedIdentifier!)/participantIdentifiers", withData: newParticipants!) { (returnedError) in
+            if let error = returnedError
+            {
+                completion(errorInfo(error))
+            }
+            else { completion(nil) }
+        }
+    }
+    
+    func removeUser(_ withIdentifier: String, from: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        UserSerialiser().removeTeam(withIdentifier: from, fromUser: withIdentifier) { (errorDescriptor) in
+            if let error = errorDescriptor
+            {
+                completion(error)
+            }
+            else
+            {
+                self.getTeam(withIdentifier: from) { (returnedTeam, errorDescriptor) in
+                    if let team = returnedTeam
+                    {
+                        self.removeUserFromCompletedChallenges(withIdentifier, onTeam: team) { (errorDescriptor) in
+                            if let error = errorDescriptor
+                            {
+                                completion(error)
+                            }
+                            else
+                            {
+                                self.removeUser(withIdentifier: withIdentifier, fromParticipantsOn: team) { (errorDescriptor) in
+                                    if let error = errorDescriptor
+                                    {
+                                        completion(error)
+                                    }
+                                    else
+                                    {
+                                        completion(nil)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else { completion(errorDescriptor!) }
+                }
             }
         }
     }
@@ -980,5 +1073,23 @@ class TeamSerialiser
         { report("Malformed «participantIdentifiers».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
         
         return true
+    }
+}
+
+extension Array where Element == (user: User, dateCompleted: Date)
+{
+    func filteringOut(user: String) -> [(user: User, dateCompleted: Date)]
+    {
+        var filteredMetadata: [(user: User, dateCompleted: Date)] = []
+        
+        for datum in self
+        {
+            if datum.user.associatedIdentifier != user
+            {
+                filteredMetadata.append(datum)
+            }
+        }
+        
+        return filteredMetadata
     }
 }

@@ -92,7 +92,7 @@ class UserTestingSerialiser
         let randomEmail = "\(randomLastName.stringCharacters[0...randomLastName.count / 2].joined().lowercased())-\(Int().random(min: 100, max: 1000))@mulu.app"
         
         UserSerialiser().createUser(associatedIdentifier: nil,
-                                    associatedTeams:      ["!"],
+                                    associatedTeams:      nil,
                                     emailAddress:         randomEmail,
                                     firstName:            randomFirstName,
                                     lastName:             randomLastName,

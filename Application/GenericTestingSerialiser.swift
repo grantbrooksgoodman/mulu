@@ -200,7 +200,13 @@ class GenericTestingSerialiser
                     }
                     
                     dispatchGroup.notify(queue: .main) {
-                        completion(nil)
+                        GenericSerialiser().setValue(onKey: "/deletedUsers", withData: ["!"]) { (returnedError) in
+                            if let error = returnedError
+                            {
+                                completion(errorInfo(error))
+                            }
+                            else { completion(nil) }
+                        }
                     }
                 }
             }

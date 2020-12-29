@@ -38,7 +38,7 @@
                         <viewControllerLayoutGuide type="bottom" id="Y1n-3y-1ZE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="843"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0mT-z4-wbS">
@@ -238,7 +238,7 @@
                         <viewControllerLayoutGuide type="bottom" id="04L-vt-EAj"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="2Dj-7M-Ps3">
-                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="843"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" text="WELCOME BACK JOHN!" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999999999998" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GSb-H6-h6A">
@@ -574,7 +574,7 @@ Pull to refresh or check back later!</string>
                         <viewControllerLayoutGuide type="bottom" id="Uh3-xO-VFo"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="4ep-Ku-ghg">
-                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="843"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TEAM TUFTS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999999999998" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dk6-wJ-e5d">
@@ -1289,7 +1289,7 @@ Pull to refresh or check back later!</string>
                         <viewControllerLayoutGuide type="bottom" id="Si9-d0-WlP"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="G2X-31-4bc">
-                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="843"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="INFORMATION" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999403953552" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RNB-4c-uMq">
@@ -1359,7 +1359,7 @@ Pull to refresh or check back later!</string>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="hu9-pD-bfH"/>
+        <segue reference="ZlL-p8-kZR"/>
         <segue reference="Yvv-RL-5od"/>
     </inferredMetricsTieBreakers>
     <resources>
@@ -1370,8 +1370,8 @@ Pull to refresh or check back later!</string>
         <image name="Mulu" width="25" height="25"/>
         <image name="Mulu Logo" width="123" height="123"/>
         <image name="Trophy" width="51" height="51"/>
-        <image name="info.circle" catalog="system" width="32" height="32"/>
-        <image name="play.circle" catalog="system" width="32" height="32"/>
+        <image name="info.circle" catalog="system" width="128" height="121"/>
+        <image name="play.circle" catalog="system" width="128" height="121"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

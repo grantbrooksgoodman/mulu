@@ -424,7 +424,9 @@ class AlertKit
         
         if let unwrappedExtraInfo = extraInfo
         {
-            formattedExtraInfo = unwrappedExtraInfo.components(separatedBy: CharacterSet.punctuationCharacters).joined()
+            formattedExtraInfo = strippedDescriptor(for: unwrappedExtraInfo)
+            
+            formattedExtraInfo = formattedExtraInfo.components(separatedBy: CharacterSet.punctuationCharacters).joined()
             
             var semiFinalExtraInfo: String! = ""
             
@@ -916,6 +918,23 @@ class AlertKit
             return "\(modelCode).\(cipheredFilename)-\(lineNumber)-\(cipheredFunctionName).\(operatingSystemVersion)"
         }
         else { return "\(modelCode).\(cipheredFilename).\(operatingSystemVersion)" }
+    }
+    
+    private func strippedDescriptor(for: String) -> String
+    {
+        let stripWords = ["a", "is", "that", "the", "this"]
+        
+        var resultantString = ""
+        
+        for word in `for`.components(separatedBy: " ")
+        {
+            if !stripWords.contains(word.lowercased())
+            {
+                resultantString.append("\(word) ")
+            }
+        }
+        
+        return resultantString
     }
 }
 

@@ -201,6 +201,7 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate, U
                                        password: passwordTextField.text!,
                                        profileImageData: nil,
                                        pushTokens: nil) { (returnedUser, errorDescriptor) in
+            
             if let user = returnedUser
             {
                 report("SUCCESSFULLY CREATED USER \(user.firstName!) \(user.lastName!)!", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
