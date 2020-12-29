@@ -39,7 +39,6 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     @IBOutlet weak var mediaSegmentedControl: UISegmentedControl!
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var stepTitleLabel: UILabel!
-    
     @IBOutlet weak var uploadButton: UIButton!
     
     //==================================================//
@@ -429,9 +428,9 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                                                 canFileReport: true,
                                                 extraInfo: errorDescriptor!,
                                                 metadata: [#file, #function, #line],
-                                                networkDependent: true)
-                
-                self.navigationController?.dismiss(animated: true, completion: nil)
+                                                networkDependent: true) {
+                    self.navigationController?.dismiss(animated: true, completion: nil)
+                }
             }
         }
     }

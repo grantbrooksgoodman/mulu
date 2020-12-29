@@ -9,6 +9,9 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
+        <array key="San Francisco (Light).otf">
+            <string>SFUIText-Light</string>
+        </array>
         <array key="San Francisco (Regular).otf">
             <string>SFUIText-Regular</string>
         </array>
@@ -36,7 +39,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use this page to manually create Challenges, Teams, Tournaments, and Users." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dST-6k-eCl">
-                                <rect key="frame" x="32" y="125" width="365" height="35"/>
+                                <rect key="frame" x="32" y="125" width="365" height="36"/>
                                 <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="15"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -119,6 +122,7 @@
                         <outlet property="tournamentButton" destination="gom-mk-d28" id="yiF-Ol-XX2"/>
                         <outlet property="userButton" destination="of4-1v-zla" id="f6I-fB-cqc"/>
                         <segue destination="XTi-hW-bXg" kind="show" identifier="NewChallengeFromCreateSegue" id="1Iq-hZ-9ya"/>
+                        <segue destination="WVu-Dj-l6s" kind="show" identifier="NewUserFromCreateSegue" id="iVv-Gs-mRe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fls-s4-7IY" sceneMemberID="firstResponder"/>
@@ -153,7 +157,7 @@
                         <viewControllerLayoutGuide type="bottom" id="3sD-gc-d53"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="qtW-vj-Q9P">
-                        <rect key="frame" x="0.0" y="0.0" width="428" height="872"/>
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" tag="67283115" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Challenge" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NCA-aY-gg3">
@@ -356,7 +360,6 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="Bbx-VH-Ms8"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="AV1-fn-GRm">
-                        <rect key="frame" x="0.0" y="0.0" width="428" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -368,14 +371,231 @@
             </objects>
             <point key="canvasLocation" x="656.52173913043487" y="1345.9821428571429"/>
         </scene>
+        <!--New User Controller-->
+        <scene sceneID="dyB-r1-gkT">
+            <objects>
+                <viewController storyboardIdentifier="NewUserController" title="New User Controller" id="Raj-pT-NTT" customClass="NewUserController" customModule="Mulu" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="QYY-vU-Y9e"/>
+                        <viewControllerLayoutGuide type="bottom" id="ee0-UB-QMu"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="7pJ-pD-Mu1">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" tag="67283115" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New User" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KbT-we-eCx">
+                                <rect key="frame" x="10" y="56" width="398" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="3BB-BI-aJ1"/>
+                                    <constraint firstAttribute="height" constant="50" id="jQj-O8-vic"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Futura-Bold" family="Futura" pointSize="32"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SELECT TEAMS TO ADD THIS USER TO:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999999999998" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rph-IO-2gs">
+                                <rect key="frame" x="18" y="220.66666666666666" width="388" height="16"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="16" id="4Dl-AL-FMG"/>
+                                    <constraint firstAttribute="width" constant="388" id="tSj-S6-avZ"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="13"/>
+                                <color key="textColor" red="0.41960784309999999" green="0.42352941179999998" blue="0.43921568630000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter a title" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1gl-Ug-6iy">
+                                <rect key="frame" x="20" y="406" width="388" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="ECA-yd-lre"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="SFUIText-Semibold" family="SF UI Text" pointSize="25"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="next" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
+                            </textField>
+                            <progressView opaque="NO" tag="27910857" contentMode="scaleToFill" verticalHuggingPriority="750" progressViewStyle="bar" translatesAutoresizingMaskIntoConstraints="NO" id="bLs-gQ-9Q5">
+                                <rect key="frame" x="0.0" y="196" width="428" height="2.6666666666666572"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="1.5" id="XsP-hC-xpM"/>
+                                </constraints>
+                                <color key="progressTintColor" systemColor="systemOrangeColor"/>
+                                <color key="trackTintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </progressView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" tag="28248267" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uHy-s8-5sa">
+                                <rect key="frame" x="10" y="109" width="408" height="80"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="itv-iK-vtp"/>
+                                </constraints>
+                                <string key="text">🔴 Set name
+🔴 Set e-mail address
+🔴 Add to teams</string>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <activityIndicatorView opaque="NO" alpha="0.0" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="DmU-14-4iv">
+                                <rect key="frame" x="195.33333333333326" y="443.66666666666663" width="37" height="37.333333333333343"/>
+                            </activityIndicatorView>
+                            <tableView clipsSubviews="YES" alpha="0.0" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ti2-Bh-vwI">
+                                <rect key="frame" x="20" y="245.66666666666669" width="388" height="553.33333333333326"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="388" id="7Z8-Hn-55g"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="TeamCell" id="Kbp-XV-gBM" customClass="TeamCell" customModule="Mulu" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="388" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Kbp-XV-gBM" id="bVz-PW-mpo">
+                                            <rect key="frame" x="0.0" y="0.0" width="388" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Team Berkeley" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999999999998" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7xZ-Yg-A25">
+                                                    <rect key="frame" x="58" y="7" width="202" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="SFUIText-Semibold" family="SF UI Text" pointSize="17"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Kl-bz-x0Y" customClass="SSRadioButton" customModule="Mulu" customModuleProvider="target">
+                                                    <rect key="frame" x="20" y="5.0000000000000568" width="30" height="34"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="circleRadius">
+                                                            <real key="value" value="10"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                            <real key="value" value="4"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                        <userDefinedRuntimeAttribute type="color" keyPath="circleColor">
+                                                            <color key="value" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                    </userDefinedRuntimeAttributes>
+                                                </button>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="5 members" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999999999998" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tbR-OU-S6k">
+                                                    <rect key="frame" x="268" y="7" width="100" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="SFUIText-Light" family="SF UI Text" pointSize="12"/>
+                                                    <color key="textColor" systemColor="systemGrayColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <connections>
+                                            <outlet property="memberLabel" destination="tbR-OU-S6k" id="1zD-tX-3Jw"/>
+                                            <outlet property="radioButton" destination="4Kl-bz-x0Y" id="byd-yw-RZ3"/>
+                                            <outlet property="teamLabel" destination="7xZ-Yg-A25" id="aav-K0-Np2"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Svr-QA-96p"/>
+                        <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="bLs-gQ-9Q5" secondAttribute="trailing" id="049-58-BSh"/>
+                            <constraint firstItem="1gl-Ug-6iy" firstAttribute="leading" secondItem="Svr-QA-96p" secondAttribute="leading" constant="20" id="44R-dc-qks"/>
+                            <constraint firstItem="ti2-Bh-vwI" firstAttribute="leading" secondItem="Svr-QA-96p" secondAttribute="leading" constant="20" id="93R-zO-Q1C"/>
+                            <constraint firstItem="DmU-14-4iv" firstAttribute="centerX" secondItem="7pJ-pD-Mu1" secondAttribute="centerX" id="9p1-wX-0wv"/>
+                            <constraint firstItem="1gl-Ug-6iy" firstAttribute="centerY" secondItem="7pJ-pD-Mu1" secondAttribute="centerY" id="G6y-eC-NnM"/>
+                            <constraint firstItem="uHy-s8-5sa" firstAttribute="top" secondItem="KbT-we-eCx" secondAttribute="bottom" constant="3" id="Il8-SF-tBd"/>
+                            <constraint firstItem="Svr-QA-96p" firstAttribute="trailing" secondItem="KbT-we-eCx" secondAttribute="trailing" constant="20" id="RIJ-Il-CEX"/>
+                            <constraint firstItem="Rph-IO-2gs" firstAttribute="leading" secondItem="Svr-QA-96p" secondAttribute="leading" constant="18" id="Vm2-Gr-tBs"/>
+                            <constraint firstItem="bLs-gQ-9Q5" firstAttribute="top" secondItem="uHy-s8-5sa" secondAttribute="bottom" constant="7" id="WIu-BA-wUp"/>
+                            <constraint firstItem="KbT-we-eCx" firstAttribute="leading" secondItem="Svr-QA-96p" secondAttribute="leading" constant="10" id="Y2U-Xl-P45"/>
+                            <constraint firstItem="Svr-QA-96p" firstAttribute="trailing" secondItem="1gl-Ug-6iy" secondAttribute="trailing" constant="20" id="ctj-oa-SKh"/>
+                            <constraint firstItem="bLs-gQ-9Q5" firstAttribute="leading" secondItem="7pJ-pD-Mu1" secondAttribute="leading" id="eVd-HV-a32"/>
+                            <constraint firstItem="ti2-Bh-vwI" firstAttribute="top" secondItem="Rph-IO-2gs" secondAttribute="bottom" constant="9.0000000000000853" id="gvy-3Q-SKy"/>
+                            <constraint firstItem="DmU-14-4iv" firstAttribute="centerY" secondItem="7pJ-pD-Mu1" secondAttribute="centerY" id="k4S-KW-4sp"/>
+                            <constraint firstItem="1gl-Ug-6iy" firstAttribute="centerX" secondItem="7pJ-pD-Mu1" secondAttribute="centerX" id="kYx-Rl-22L"/>
+                            <constraint firstItem="Svr-QA-96p" firstAttribute="trailing" secondItem="Rph-IO-2gs" secondAttribute="trailing" constant="22" id="nel-SQ-9vX"/>
+                            <constraint firstItem="Svr-QA-96p" firstAttribute="bottom" secondItem="ti2-Bh-vwI" secondAttribute="bottom" constant="39" id="ns0-9O-Fkl"/>
+                            <constraint firstItem="KbT-we-eCx" firstAttribute="top" secondItem="Svr-QA-96p" secondAttribute="top" id="rFU-YF-gLO"/>
+                            <constraint firstItem="ti2-Bh-vwI" firstAttribute="top" secondItem="bLs-gQ-9Q5" secondAttribute="bottom" constant="48.000000000000085" id="v9r-Tp-VT4"/>
+                            <constraint firstItem="Svr-QA-96p" firstAttribute="trailing" secondItem="ti2-Bh-vwI" secondAttribute="trailing" constant="20" id="yex-yj-IOd"/>
+                            <constraint firstItem="uHy-s8-5sa" firstAttribute="leading" secondItem="Svr-QA-96p" secondAttribute="leading" constant="10" id="z6J-Cx-bTv"/>
+                            <constraint firstItem="Svr-QA-96p" firstAttribute="trailing" secondItem="uHy-s8-5sa" secondAttribute="trailing" constant="10" id="zmM-iG-JO3"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="Rjg-9z-bmM">
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="6ON-vA-N0X">
+                            <connections>
+                                <action selector="cancelButton:" destination="Raj-pT-NTT" id="G07-ac-beE"/>
+                            </connections>
+                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Next" id="QEm-Vv-vcb">
+                                <color key="tintColor" systemColor="systemGreenColor"/>
+                                <connections>
+                                    <action selector="nextButton:" destination="Raj-pT-NTT" id="rWF-sX-L5W"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem enabled="NO" title="Back" id="k1M-Si-zmh">
+                                <color key="tintColor" systemColor="systemOrangeColor"/>
+                                <connections>
+                                    <action selector="backButton:" destination="Raj-pT-NTT" id="VXZ-6K-TmA"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="428" height="926"/>
+                    <connections>
+                        <outlet property="activityIndicator" destination="DmU-14-4iv" id="rMa-wp-njd"/>
+                        <outlet property="backButton" destination="k1M-Si-zmh" id="kRR-Hp-UcK"/>
+                        <outlet property="cancelButton" destination="6ON-vA-N0X" id="cdP-8g-hFB"/>
+                        <outlet property="largeTextField" destination="1gl-Ug-6iy" id="8HM-5Z-QQ0"/>
+                        <outlet property="nextButton" destination="QEm-Vv-vcb" id="HgY-a9-NYJ"/>
+                        <outlet property="progressView" destination="bLs-gQ-9Q5" id="bQu-Cn-pzt"/>
+                        <outlet property="promptLabel" destination="Rph-IO-2gs" id="cLz-ad-c22"/>
+                        <outlet property="stepTextView" destination="uHy-s8-5sa" id="DLa-j0-P7S"/>
+                        <outlet property="tableView" destination="ti2-Bh-vwI" id="kN5-aL-DMU"/>
+                        <outlet property="titleLabel" destination="KbT-we-eCx" id="B7M-kK-JWq"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mNT-QO-o0B" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="0CX-Nb-twN">
+                    <connections>
+                        <action selector="longPress:" destination="Raj-pT-NTT" id="2uJ-E8-9Di"/>
+                    </connections>
+                </pongPressGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="2530.3738317757006" y="531.31749460043204"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="uJc-4k-Uk1">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="WVu-Dj-l6s" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="rNp-Wc-YDH"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="fME-iK-qmS">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Raj-pT-NTT" kind="relationship" relationship="rootViewController" id="75O-Sd-bHH"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="D4S-ZW-Hgh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1628.9719626168223" y="530.66954643628515"/>
+        </scene>
     </scenes>
+    <designables>
+        <designable name="4Kl-bz-x0Y">
+            <size key="intrinsicContentSize" width="30" height="34"/>
+        </designable>
+    </designables>
     <resources>
-        <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
+        <image name="square.and.arrow.up" catalog="system" width="32" height="32"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="linkColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemGrayColor">
+            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
             <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

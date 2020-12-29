@@ -83,7 +83,7 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
     
     @IBAction func userButton(_ sender: Any)
     {
-        
+        performSegue(withIdentifier: "NewUserFromCreateSegue", sender: self)
     }
     
     //==================================================//

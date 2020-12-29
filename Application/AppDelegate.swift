@@ -255,7 +255,7 @@ func errorInfo(_ for: Error) -> String
 {
     let asNSError = `for` as NSError
     
-    return "\(asNSError.localizedDescription) (\(asNSError.code)"
+    return "\(asNSError.localizedDescription) (\(asNSError.code))"
 }
 
 /**
@@ -267,7 +267,7 @@ func errorInfo(_ for: Error) -> String
  */
 func errorInfo(_ for: NSError) -> String
 {
-    return "\(`for`.localizedDescription) (\(`for`.code)"
+    return "\(`for`.localizedDescription) (\(`for`.code))"
 }
 
 func fallbackReport(_ text: String, errorCode: Int?, isFatal: Bool)

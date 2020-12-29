@@ -51,9 +51,9 @@ class TeamSerialiser
     }
     
     /**
-     Adds an array of **Users** to a **Team**.
+     Adds an array of **Users** to a **Team.**
      
-     - Parameter users: The **Users** to add to this **Team**.
+     - Parameter users: The **Users** to add to this **Team.**
      - Parameter toTeam: The **Team** to add these **Users** to.
      
      - Parameter completion: Upon failure, returns with a string describing the error encountered.
@@ -257,9 +257,9 @@ class TeamSerialiser
     }
     
     /**
-     Adds a **User** to a **Team**.
+     Adds a **User** to a **Team.**
      
-     - Parameter withIdentifier: The identifier of the **User** to add to this **Team**.
+     - Parameter withIdentifier: The identifier of the **User** to add to this **Team.**
      - Parameter toTeam: The identifier of the **Team** to add this **User** to.
      
      - Parameter completion: Upon failure, returns with a string describing the error encountered.
@@ -333,14 +333,11 @@ class TeamSerialiser
             }
             
             group.notify(queue: .main) {
-                guard let newUserList = newUserList else
+                guard let newUserList = newUserList?.unique() else
                 { completion("Couldn't get new User list."); return }
                 
-                guard let newAssociatedTeams = newAssociatedTeams else
+                guard let newAssociatedTeams = newAssociatedTeams?.unique() else
                 { completion("Couldn't get new associated Teams."); return }
-                
-                guard newUserList.unique() == newUserList && newAssociatedTeams.unique() == newAssociatedTeams else
-                { completion("This User is already on that Team."); return }
                 
                 group.enter()
                 
@@ -369,6 +366,40 @@ class TeamSerialiser
                                 completion(nil)
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     Adds a **User** to multiple **Teams.**
+     
+     - Parameter withIdentifier: The identifier of the **User** to add to this **Team.**
+     - Parameter toTeams: The array of **Team** identifiers to add this **User** to.
+     
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
+    func addUser(_ withIdentifier: String, toTeams: [String], completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        var errors: [String] = []
+        
+        for (index, team) in toTeams.enumerated()
+        {
+            addUser(withIdentifier, toTeam: team) { (errorDescriptor) in
+                if let error = errorDescriptor
+                {
+                    errors.append(error)
+                }
+                else
+                {
+                    if index == toTeams.count - 1
+                    {
+                        completion(errors.count == 0 ? nil : errors.joined(separator: "\n"))
                     }
                 }
             }
@@ -628,6 +659,31 @@ class TeamSerialiser
                     {
                         completion(Array(teamIdentifiers.shuffledValue[0...amountToGet!]), nil)
                     }
+                }
+            }
+            else
+            {
+                completion(nil, "Unable to deserialise snapshot.")
+            }
+        }
+    }
+    
+    func getAllTeams(completion: @escaping(_ returnedTeams: [Team]?, _ errorDescriptor: String?) -> Void)
+    {
+        Database.database().reference().child("allTeams").observeSingleEvent(of: .value) { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let teamIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
+            {
+                self.getTeams(withIdentifiers: teamIdentifiers) { (returnedTeams, errorDescriptors) in
+                    if let teams = returnedTeams
+                    {
+                        completion(teams, nil)
+                    }
+                    else if let errors = errorDescriptors
+                    {
+                        completion(nil, errors.joined(separator: "\n"))
+                    }
+                    else { completion(nil, "An unknown error occurred.") }
                 }
             }
             else
@@ -897,7 +953,7 @@ class TeamSerialiser
     }
     
     /**
-     Validates the contents of a serialised **Team**.
+     Validates the contents of a serialised **Team.**
      
      - Parameter withDataBundle: The serialised **Team** whose structural integrity will be verified.
      

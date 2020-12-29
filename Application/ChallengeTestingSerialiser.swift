@@ -92,7 +92,7 @@ class ChallengeTestingSerialiser
     }
     
     /**
-     Generates an random array of completed **Challenges** from an array of provided **Challenges**.
+     Generates an random array of completed **Challenges** from an array of provided **Challenges.**
      
      - Parameter fromChallenges: The **Challenge** objects from which to create the array.
      - Parameter withUsers: The **Users** objects from which to generate random metadata.

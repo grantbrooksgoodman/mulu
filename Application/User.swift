@@ -57,7 +57,7 @@ class User
     /* Public Functions */
     
     /**
-     Gets all of the **User's** completed **Challenges**.
+     Gets all of the **User's** completed **Challenges.**
      
      - Requires: *DSAssociatedTeams* to have been set.
      - Returns: An array of `(Date, Challenge)` tuples.
@@ -203,7 +203,7 @@ class User
     }
     
     /**
-     Returns the **User's** completed **Challenges** on the specified **Team**.
+     Returns the **User's** completed **Challenges** on the specified **Team.**
      
      - Parameter team: The **Team** on which to query for completed **Challenges.**
      

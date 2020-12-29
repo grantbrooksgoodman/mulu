@@ -73,7 +73,7 @@ class TournamentSerialiser
     /**
      Gets and deserialises a **Tournament** from a given identifier string.
      
-     - Parameter withIdentifier: The identifier of the requested **Tournament**.
+     - Parameter withIdentifier: The identifier of the requested **Tournament.**
      - Parameter completion: Upon success, returns a deserialised **Tournament** object. Upon failure, a string describing the error encountered.
      
      - Note: Completion variables are *mutually exclusive.*
@@ -171,7 +171,7 @@ class TournamentSerialiser
     /**
      Deserialises a **Tournament** from a given data bundle.
      
-     - Parameter from: The data bundle from which to deserialise the **Tournament**.
+     - Parameter from: The data bundle from which to deserialise the **Tournament.**
      - Parameter completion: Upon success, returns a deserialised **Tournament** object. Upon failure, a string describing the error encountered.
      
      - Note: Completion variables are *mutually exclusive.*

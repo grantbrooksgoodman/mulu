@@ -29,9 +29,9 @@ class UserSerialiser
      - Parameter profileImageData: An optional `base64Encoded` string containg the **User's** profile image data.
      - Parameter pushTokens: An optional array of strings containing the UUIDs of the devices the **User** has opted to receive push notifications for.
      
-     - Parameter completion: Upon success, returns with the identifier of the newly created **User.** Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns with the identifier of the newly created **User.** Upon failure, a string describing the error encountered. May return both if the **User** was successfully created but an error occurred while adding them to **Teams.**
      
-     - Note: Completion variables are *mutually exclusive.*
+     - Note: Completion variables are **NOT** *mutually exclusive.*
      - Requires: The `emailAddress` to be well-formed and the `password` to be 6 or more characters long.
      
      ~~~
@@ -67,11 +67,7 @@ class UserSerialiser
                                             lastName:             lastName,
                                             profileImageData:     profileImageData,
                                             pushTokens:           pushTokens) { (returnedIdentifier, errorDescriptor) in
-                    if let error = errorDescriptor
-                    {
-                        completion(nil, error)
-                    }
-                    else if let identifier = returnedIdentifier
+                    if let identifier = returnedIdentifier
                     {
                         let newUser = User(associatedIdentifier: identifier,
                                            associatedTeams:      associatedTeams,
@@ -81,8 +77,9 @@ class UserSerialiser
                                            profileImageData:     profileImageData,
                                            pushTokens:           pushTokens)
                         
-                        completion(newUser, nil)
+                        completion(newUser, errorDescriptor == nil ? nil : errorDescriptor!)
                     }
+                    else { completion(nil, errorDescriptor!) }
                 }
             }
             else
@@ -103,9 +100,9 @@ class UserSerialiser
      - Parameter profileImageData: An optional `base64Encoded` string containg the **User's** profile image data.
      - Parameter pushTokens: An optional array of strings containing the UUIDs of the devices the **User** has opted to receive push notifications for.
      
-     - Parameter completion: Upon success, returns with the identifier of the newly created **User.** Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns with the identifier of the newly created **User.** Upon failure, a string describing the error encountered. May return both if the **User** was successfully created but an error occurred while adding them to **Teams.**
      
-     - Note: Completion variables are *mutually exclusive.*
+     - Note: Completion variables are **NOT** *mutually exclusive.*
      
      ~~~
      completion(returnedIdentifier, errorDescriptor)
@@ -129,7 +126,7 @@ class UserSerialiser
         dataBundle["profileImageData"] = profileImageData ?? "!"
         dataBundle["pushTokens"] = pushTokens ?? ["!"]
         
-        //Generate a key for the new Team.
+        //Generate a key for the new User.
         if let identifier = associatedIdentifier
         {
             GenericSerialiser().updateValue(onKey: "/allUsers/\(identifier)", withData: dataBundle) { (returnedError) in
@@ -137,7 +134,20 @@ class UserSerialiser
                 {
                     completion(nil, errorInfo(error))
                 }
-                else { completion(identifier, nil) }
+                else
+                {
+                    if let teams = associatedTeams
+                    {
+                        TeamSerialiser().addUser(identifier, toTeams: teams) { (errorDescriptor) in
+                            if let error = errorDescriptor
+                            {
+                                completion(identifier, error)
+                            }
+                            else { completion(identifier, nil) }
+                        }
+                    }
+                    else { completion(identifier, nil) }
+                }
             }
         }
         else if let generatedKey = Database.database().reference().child("/allUsers/").childByAutoId().key
@@ -147,7 +157,20 @@ class UserSerialiser
                 {
                     completion(nil, errorInfo(error))
                 }
-                else { completion(generatedKey, nil) }
+                else
+                {
+                    if let teams = associatedTeams
+                    {
+                        TeamSerialiser().addUser(generatedKey, toTeams: teams) { (errorDescriptor) in
+                            if let error = errorDescriptor
+                            {
+                                completion(generatedKey, error)
+                            }
+                            else { completion(generatedKey, nil) }
+                        }
+                    }
+                    else { completion(generatedKey, nil) }
+                }
             }
         }
         else { completion(nil, "Unable to create key in database.") }

@@ -222,6 +222,102 @@ class AlertKit
         }
     }
     
+    /**
+     Presents a `UIAlertController` tailored to **display of errors.**
+     
+     - Parameter title: The alert controller's `title`. *Default value provided.*
+     - Parameter message: The alert controller's `message`. *Default value provided.*
+     - Parameter dismissButtonTitle: The `title` of the alert controller's cancel button. *Default value provided.*
+     
+     - Parameter additionalSelectors: Any **additional options** the user should have.
+     - Parameter preferredAdditionalSelector: The **index** of the **additional selector** to become the alert controller's `.preferredAction`.  Used only when *alternateSelectors* is provided.
+     
+     - Parameter canFileReport: Set to `true` if the user should be **able to report** this error.
+     - Parameter extraInfo: Represents the *extraneousInformation*  for filing a report. Used only when *canFileReport* is set to `true`.
+     
+     - Parameter metadata: The metadata Array. Must contain the **file name, function name, and line number** in that order.
+     - Parameter networkDependent: Set to `true` when having an internet connection is a **prequesite** for this alert controller's presentation.
+     
+     - Parameter completion: Called upon the user's selection of an action.
+     */
+    func errorAlertController(title: String?,
+                              message: String?,
+                              dismissButtonTitle: String?,
+                              additionalSelectors: [String:Selector]?,
+                              preferredAdditionalSelector: Int?,
+                              canFileReport: Bool,
+                              extraInfo: String?,
+                              metadata: [Any],
+                              networkDependent: Bool,
+                              completion: @escaping() -> Void)
+    {
+        DispatchQueue.main.async {
+            if networkDependent && !hasConnectivity()
+            {
+                self.connectionAlertController()
+            }
+            else
+            {
+                guard validateMetadata(metadata) else
+                { report("Improperly formatted metadata.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return }
+                
+                let lineNumber = metadata[2] as! Int
+                let errorCode = String(format:"%2X", lineNumber)
+                
+                let controllerTitle = title ?? "Exception 0x\(errorCode) Occurred"
+                let controllerMessage = message != nil ? "\(message!) (0x\(errorCode))" : "Unfortunately, an undocumented error has occurred.\n\nNo additional information is available at this time.\n\nIt may be possible to continue working normally, however it is strongly recommended to exit the application to prevent further error or possible data corruption. (0x\(errorCode))"
+                let controllerCancelButtonTitle = dismissButtonTitle ?? "Dismiss"
+                
+                let additionalSelectors = additionalSelectors ?? [:]
+                
+                let sortedKeyArray = additionalSelectors.keys.sorted(by: { $0 < $1 })
+                var iterationCount = sortedKeyArray.count
+                
+                let errorAlertController = UIAlertController(title: controllerTitle, message: controllerMessage, preferredStyle: .alert)
+                
+                errorAlertController.addAction(UIAlertAction(title: controllerCancelButtonTitle, style: .cancel, handler: { (action: UIAlertAction!) in
+                    completion()
+                }))
+                
+                //Add the additional selectors to the alert controller.
+                for individualKey in sortedKeyArray
+                {
+                    iterationCount = iterationCount - 1
+                    
+                    errorAlertController.addAction(UIAlertAction(title: individualKey, style: .default, handler: { (action: UIAlertAction!) in
+                        lastInitialisedController.performSelector(onMainThread: additionalSelectors[individualKey]!, with: nil, waitUntilDone: false)
+                        completion()
+                    }))
+                    
+                    //Set the preferred action.
+                    if iterationCount == 0
+                    {
+                        if let preferredSelector = preferredAdditionalSelector
+                        {
+                            guard errorAlertController.actions.count > preferredSelector + 1 else
+                            { report("Preferred Selector index was out of range of the provided Selectors.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return }
+                            
+                            errorAlertController.preferredAction = errorAlertController.actions[preferredSelector + 1]
+                        }
+                    }
+                }
+                
+                if canFileReport
+                {
+                    let fileName = AlertKit().retrieveFileName(forFile: metadata[0] as! String)
+                    let functionName = (metadata[1] as! String).components(separatedBy: "(")[0]
+                    
+                    errorAlertController.addAction(UIAlertAction(title: "File Report...", style: .default, handler: { (action: UIAlertAction!) in
+                        self.fileReport(type: .error, body: "Appended below are various data points useful in determining the cause of the error encountered. Please do not edit the information contained in the lines below.", prompt: "Error Descriptor", extraInfo: extraInfo, metadata: [fileName, functionName, lineNumber])
+                        completion()
+                    }))
+                }
+                
+                politelyPresent(viewController: errorAlertController)
+            }
+        }
+    }
+    
     ///Displays an expiry alert controller. Should only ever be invoked automatically.
     func expiryAlertController()
     {
