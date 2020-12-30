@@ -195,9 +195,9 @@ class UserSerialiser
     {
         Database.database().reference().child("allUsers").observeSingleEvent(of: .value) { (returnedSnapshot) in
             if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
-               let teamIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
+               let userIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
             {
-                self.getUsers(withIdentifiers: teamIdentifiers) { (returnedUsers, errorDescriptors) in
+                self.getUsers(withIdentifiers: userIdentifiers) { (returnedUsers, errorDescriptors) in
                     if let users = returnedUsers
                     {
                         completion(users, nil)

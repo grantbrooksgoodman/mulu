@@ -86,7 +86,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     
     @IBAction func backButton(_ sender: Any)
     {
-        performSegue(withIdentifier: "ViewFromViewUsersSegue", sender: self)
+        dismiss(animated: true, completion: nil)
     }
     
     //==================================================//
@@ -100,7 +100,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
              .correctionType:      UITextAutocorrectionType.no,
              .editingMode:         UITextField.ViewMode.never,
              .keyboardAppearance:  UIKeyboardAppearance.default,
-             .keyboardType:        UIKeyboardType.numberPad,
+             .keyboardType:        UIKeyboardType.default,
              .placeholderText:     "",
              .sampleText:          "",
              .textAlignment:       NSTextAlignment.center]
@@ -353,6 +353,10 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
             {
                 dateString = "– \(dateString)"
             }
+            else if dateString.contains(":")
+            {
+                dateString = "at \(dateString)"
+            }
             else { dateString = "on \(dateString)" }
             
             if challengesString == ""
@@ -449,7 +453,9 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
                         PKHUD.sharedHUD.show()
                         
                         hideHUD(delay: 1) {
-                            self.tableView.deselectRow(at: self.selectedIndexPath, animated: true)
+                            showProgressHUD(text: "Reloading data...", delay: nil)
+                            
+                            self.reloadData()
                         }
                     }
                 }
@@ -591,7 +597,11 @@ extension ViewUsersController: UITableViewDataSource, UITableViewDelegate
             actionSheet.addAction(viewCompletedChallengesAction)
         }
         
-        actionSheet.addAction(viewTeamMembershipAction)
+        if userArray[indexPath.row].associatedTeams != nil
+        {
+            actionSheet.addAction(viewTeamMembershipAction)
+        }
+        
         actionSheet.addAction(deleteUserAction)
         actionSheet.addAction(cancelAction)
         

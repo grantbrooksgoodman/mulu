@@ -73,7 +73,7 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
     
     @IBAction func teamButton(_ sender: Any)
     {
-        
+        performSegue(withIdentifier: "NewTeamFromCreateSegue", sender: self)
     }
     
     @IBAction func tournamentButton(_ sender: Any)

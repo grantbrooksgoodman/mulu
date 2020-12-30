@@ -776,6 +776,15 @@ class AlertKit
         return String(resultingCharacterArray)
     }
     
+    /**
+     Generates a coded string for the specified `ReportType`.
+     
+     - Parameter type: The `ReportType` of the code to generate.
+     - Parameter metadata: The metadata array. Must contain the **file name, function name, and line number** in that order.
+     
+     - Requires: A well-formed *metadata* array.
+     - Returns: Upon success, a string representing the generated code. Upon failure, returns `nil`.
+     */
     func code(for type: ReportType, metadata: [Any]) -> String?
     {
         guard validateMetadata(metadata) else
@@ -790,7 +799,7 @@ class AlertKit
         
         let functionTitle = rawFunctionTitle.components(separatedBy: "(")[0].lowercased()
         
-        guard let cipheredFilename = filename.ciphered(by: 14).randomlyCapitalised(with: lineNumber) else
+        guard let cipheredFilename = filename.lowercased().ciphered(by: 14).randomlyCapitalised(with: lineNumber) else
         { report("Unable to unwrap ciphered filename.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
         
         let modelCode = SystemInformation.modelCode.lowercased()
@@ -798,7 +807,7 @@ class AlertKit
         
         if type == .error
         {
-            guard let cipheredFunctionName = functionTitle.ciphered(by: 14).randomlyCapitalised(with: lineNumber) else
+            guard let cipheredFunctionName = functionTitle.lowercased().ciphered(by: 14).randomlyCapitalised(with: lineNumber) else
             { report("Unable to unwrap ciphered function name.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
             
             return "\(modelCode).\(cipheredFilename)-\(lineNumber)-\(cipheredFunctionName).\(operatingSystemVersion)"

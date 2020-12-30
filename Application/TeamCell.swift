@@ -26,6 +26,13 @@ class TeamCell: UITableViewCell, SSRadioButtonControllerDelegate
     
     /* MARK: Overridden Functions */
     
+    override func draw(_ rect: CGRect)
+    {
+        super.draw(rect)
+        
+        radioButton.isSelected = false
+    }
+    
     override func awakeFromNib()
     {
         super.awakeFromNib()
@@ -34,5 +41,7 @@ class TeamCell: UITableViewCell, SSRadioButtonControllerDelegate
         let radioButtonsController: SSRadioButtonsController?
         radioButtonsController = SSRadioButtonsController(buttons: radioButton)
         radioButtonsController!.delegate = self
+        
+        radioButton.isSelected = false
     }
 }

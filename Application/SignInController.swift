@@ -376,7 +376,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
              .correctionType:      UITextAutocorrectionType.no,
              .editingMode:         UITextField.ViewMode.never,
              .keyboardAppearance:  UIKeyboardAppearance.default,
-             .keyboardType:        UIKeyboardType.numberPad,
+             .keyboardType:        UIKeyboardType.default,
              .placeholderText:     "",
              .sampleText:          "",
              .textAlignment:       NSTextAlignment.center]

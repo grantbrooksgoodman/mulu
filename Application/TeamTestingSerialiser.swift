@@ -33,21 +33,21 @@ class TeamTestingSerialiser
     {
         let universityNames = ["Princeton", "Harvard", "Columbia", "MIT", "Yale", "Stanford", "UChicago", "UPenn", "Caltech", "Johns Hopkins", "Northwestern", "Duke", "Dartmouth", "Brown", "Vanderbilt", "Rice", "WashU St. Louis", "Cornell", "Notre Dame", "UCLA", "Emory", "UC Berkeley", "Georgetown", "UMich", "USC", "UVA", "UNC Chapel Hill", "Wake Forest", "NYU", "Tufts", "UCSB"]
         
-        TeamSerialiser().createTeam(name: "Team \(universityNames.randomElement()!)", participantIdentifiers: users.identifiers()) { (returnedIdentifier, errorDescriptor) in
+        TeamSerialiser().createTeam(name: "Team \(universityNames.randomElement()!)", participantIdentifiers: users.identifiers()) { (returnedMetadata, errorDescriptor) in
             if let error = errorDescriptor
             {
                 completion(nil, error)
             }
-            else if let identifier = returnedIdentifier
+            else if let metadata = returnedMetadata
             {
-                TeamSerialiser().addCompletedChallenges(completedChallenges, toTeam: identifier, overwrite: true) { (errorDescriptor) in
+                TeamSerialiser().addCompletedChallenges(completedChallenges, toTeam: metadata.identifier, overwrite: true) { (errorDescriptor) in
                     if let error = errorDescriptor
                     {
                         completion(nil, error)
                     }
                     else
                     {
-                        completion(identifier, nil)
+                        completion(metadata.identifier, nil)
                     }
                 }
             }
@@ -84,21 +84,21 @@ class TeamTestingSerialiser
             guard i < completedChallenges.count else
             { completion(nil, "Not enough completed Challenges!"); return }
             
-            TeamSerialiser().createTeam(name: "Team \(universityNames.randomElement()!)", participantIdentifiers: users[i].identifiers()) { (returnedIdentifier, errorDescriptor) in
+            TeamSerialiser().createTeam(name: "Team \(universityNames.randomElement()!)", participantIdentifiers: users[i].identifiers()) { (returnedMetadata, errorDescriptor) in
                 if let error = errorDescriptor
                 {
                     completion(nil, error)
                 }
-                else if let identifier = returnedIdentifier
+                else if let metadata = returnedMetadata
                 {
-                    TeamSerialiser().addCompletedChallenges(completedChallenges[i], toTeam: identifier, overwrite: true) { (errorDescriptor) in
+                    TeamSerialiser().addCompletedChallenges(completedChallenges[i], toTeam: metadata.identifier, overwrite: true) { (errorDescriptor) in
                         if let error = errorDescriptor
                         {
                             completion(nil, error)
                         }
                         else
                         {
-                            returnedIdentifiers.append(identifier)
+                            returnedIdentifiers.append(metadata.identifier)
                             
                             if i == amount - 1
                             {

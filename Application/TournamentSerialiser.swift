@@ -71,6 +71,42 @@ class TournamentSerialiser
     }
     
     /**
+     Retrieves and deserialises all existing **Tournaments** on the server.
+     
+     - Parameter completion: Upon success, returns an array of deserialised **Tournament** objects. Upon failure, a string describing the error(s) encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedTournaments, errorDescriptor)
+     ~~~
+     */
+    func getAllTournaments(completion: @escaping(_ returnedTournaments: [Tournament]?, _ errorDescriptor: String?) -> Void)
+    {
+        Database.database().reference().child("allTournaments").observeSingleEvent(of: .value) { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let tournamentIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
+            {
+                self.getTournaments(withIdentifiers: tournamentIdentifiers) { (returnedTournaments, errorDescriptors) in
+                    if let tournaments = returnedTournaments
+                    {
+                        completion(tournaments, nil)
+                    }
+                    else if let errors = errorDescriptors
+                    {
+                        completion(nil, errors.joined(separator: "\n"))
+                    }
+                    else { completion(nil, "An unknown error occurred.") }
+                }
+            }
+            else
+            {
+                completion(nil, "Unable to deserialise snapshot.")
+            }
+        }
+    }
+    
+    /**
      Gets and deserialises a **Tournament** from a given identifier string.
      
      - Parameter withIdentifier: The identifier of the requested **Tournament.**

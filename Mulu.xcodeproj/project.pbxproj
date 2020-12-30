@@ -17,6 +17,7 @@
 		68EB1C831DD7B7070074737B /* SampleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EB1C821DD7B7070074737B /* SampleController.swift */; };
 		97B9D4C94E9E4901E93B5772 /* Pods_Mulu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED1FA810D6B3836DDD55726D /* Pods_Mulu.framework */; };
 		A202DE34259522DA0053DA6F /* MediaAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A202DE33259522DA0053DA6F /* MediaAnalyser.swift */; };
+		A2054DF6259D1DF9008CBD4F /* NewTeamController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2054DF5259D1DF9008CBD4F /* NewTeamController.swift */; };
 		A20700002581C2C9004E70A6 /* TeamController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A207FFFF2581C2C9004E70A6 /* TeamController.swift */; };
 		A20700042581C3E9004E70A6 /* Gradient.png in Resources */ = {isa = PBXBuildFile; fileRef = A20700032581C3E9004E70A6 /* Gradient.png */; };
 		A207FFEC2581B714004E70A6 /* Montserrat-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A207FFDA2581B714004E70A6 /* Montserrat-LightItalic.ttf */; };
@@ -154,6 +155,7 @@
 		716E2482BFCF9EF240372321 /* Pods-Yosemite.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Yosemite.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Yosemite/Pods-Yosemite.debug.xcconfig"; sourceTree = "<group>"; };
 		719917EDBE64BB0C5A06C9BB /* Pods-Application.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Application.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Application/Pods-Application.debug.xcconfig"; sourceTree = "<group>"; };
 		A202DE33259522DA0053DA6F /* MediaAnalyser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaAnalyser.swift; sourceTree = "<group>"; };
+		A2054DF5259D1DF9008CBD4F /* NewTeamController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewTeamController.swift; sourceTree = "<group>"; };
 		A20700032581C3E9004E70A6 /* Gradient.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Gradient.png; sourceTree = "<group>"; };
 		A207FFDA2581B714004E70A6 /* Montserrat-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-LightItalic.ttf"; sourceTree = "<group>"; };
 		A207FFDB2581B714004E70A6 /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Medium.ttf"; sourceTree = "<group>"; };
@@ -490,6 +492,7 @@
 			children = (
 				A28928002593B5A700610E48 /* CreateController.swift */,
 				A289281D2593B8AD00610E48 /* NewChallengeController.swift */,
+				A2054DF5259D1DF9008CBD4F /* NewTeamController.swift */,
 				A278AFA4259A8E4A00EA3443 /* NewUserController.swift */,
 				A236BE29259AD5D900162A8B /* ViewController.swift */,
 				A28FF91B259AD69E000FC656 /* ViewUsersController.swift */,
@@ -855,6 +858,7 @@
 				A2C3F39825910A130020A6B2 /* AnnouncementsController.swift in Sources */,
 				A278D31F2585A036008D22D1 /* ChallengeTestingSerialiser.swift in Sources */,
 				A2CD9668258D366D00A174D0 /* SignInController.swift in Sources */,
+				A2054DF6259D1DF9008CBD4F /* NewTeamController.swift in Sources */,
 				68EB1C831DD7B7070074737B /* SampleController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

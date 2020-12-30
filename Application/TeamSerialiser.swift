@@ -416,15 +416,15 @@ class TeamSerialiser
      - Parameter name: The name of this **Team.**
      - Parameter participantIdentifiers: An array containing the identifiers of the **Users** on this **Team.**
      
-     - Parameter completion: Upon success, returns with the identifier of the newly created **Team.** Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns with a tuple containing the identifier of the newly created **Team** and its join code. Upon failure, a string describing the error encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      
      ~~~
-     completion(returnedIdentifier, errorDescriptor)
+     completion(returnedMetadata, errorDescriptor)
      ~~~
      */
-    func createTeam(name: String, participantIdentifiers: [String], completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
+    func createTeam(name: String, participantIdentifiers: [String], completion: @escaping(_ returnedMetadata: (identifier: String, joinCode: String)?, _ errorDescriptor: String?) -> Void)
     {
         var dataBundle: [String:Any] = [:]
         
@@ -459,7 +459,7 @@ class TeamSerialiser
                                     {
                                         if index == participantIdentifiers.count - 1
                                         {
-                                            completion(generatedKey, nil)
+                                            completion((generatedKey, code), nil)
                                         }
                                     }
                                 }
