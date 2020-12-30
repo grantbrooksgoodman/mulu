@@ -17,7 +17,7 @@ class ForgotPasswordController: UIViewController, MFMailComposeViewControllerDel
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //UIButtons
     @IBOutlet weak var backButton:          UIButton!
@@ -29,13 +29,13 @@ class ForgotPasswordController: UIViewController, MFMailComposeViewControllerDel
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     var buildInstance: Build!
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -45,7 +45,7 @@ class ForgotPasswordController: UIViewController, MFMailComposeViewControllerDel
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -110,7 +110,7 @@ class ForgotPasswordController: UIViewController, MFMailComposeViewControllerDel
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     @IBAction func resetPasswordButton(_ sender: Any)
     {
@@ -174,7 +174,7 @@ class ForgotPasswordController: UIViewController, MFMailComposeViewControllerDel
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     @objc func dismissKeyboard()
     {
@@ -187,6 +187,13 @@ class ForgotPasswordController: UIViewController, MFMailComposeViewControllerDel
     }
 }
 
+//==================================================//
+
+/* MARK: Extensions */
+
+/**/
+
+/* MARK: UITextFieldDelegate */
 extension ForgotPasswordController: UITextFieldDelegate
 {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool

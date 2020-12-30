@@ -10,7 +10,7 @@ import Foundation
 
 //==================================================//
 
-/* Enumerated Type Declarations */
+/* MARK: Enumerated Type Declarations */
 
 public enum SystemInformationError: Error
 {
@@ -22,7 +22,7 @@ public enum SystemInformationError: Error
 
 //==================================================//
 
-/* Public Functions */
+/* MARK: Public Functions */
 
 public func getInformation(fromLevelName: String) throws -> [Int32]
 {
@@ -94,7 +94,7 @@ public func informationString(withName: String) throws -> String
 
 //==================================================//
 
-/* Private Functions */
+/* MARK: Private Functions */
 
 private func integerFromSystemInformation(withLevels: [Int32]) throws -> Int64
 {
@@ -123,7 +123,7 @@ private func stringFromSystemInformation(withLevels: [Int32]) throws -> String
 
 //==================================================//
 
-/* Struct Declarations */
+/* MARK: Struct Declarations */
 
 public struct SystemInformation
 {

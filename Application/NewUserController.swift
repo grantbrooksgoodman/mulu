@@ -18,7 +18,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //UIBarButtonItems
     @IBOutlet weak var backButton:   UIBarButtonItem!
@@ -38,7 +38,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Arrays
     var selectedTeams: [String] = []
@@ -60,7 +60,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Enumerated Type Declarations */
+    /* MARK: Enumerated Type Declarations */
     
     enum Step
     {
@@ -71,7 +71,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -81,7 +81,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -130,7 +130,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     @IBAction func backButton(_ sender: Any)
     {
@@ -205,7 +205,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     func animateTeamTableViewAppearance()
     {
@@ -281,8 +281,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
                         PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: "Successfully created user.")
                         PKHUD.sharedHUD.show()
                         
-                        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                            hideHud()
+                        hideHUD(delay: 1) {
                             self.navigationController?.dismiss(animated: true, completion: nil)
                         }
                     }
@@ -483,6 +482,13 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
     }
 }
 
+//==================================================//
+
+/* MARK: Extensions */
+
+/**/
+
+/* MARK: UIAdaptivePresentationControllerDelegate */
 extension NewUserController: UIAdaptivePresentationControllerDelegate
 {
     func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController)
@@ -499,6 +505,9 @@ extension NewUserController: UIAdaptivePresentationControllerDelegate
     }
 }
 
+//--------------------------------------------------//
+
+/* MARK: UITableViewDataSource, UITableViewDelegate */
 extension NewUserController: UITableViewDataSource, UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
@@ -542,6 +551,9 @@ extension NewUserController: UITableViewDataSource, UITableViewDelegate
     }
 }
 
+//--------------------------------------------------//
+
+/* MARK: UITextFieldDelegate */
 extension NewUserController: UITextFieldDelegate
 {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool

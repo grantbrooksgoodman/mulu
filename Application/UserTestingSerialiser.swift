@@ -13,7 +13,7 @@ class UserTestingSerialiser
 {
     //==================================================//
     
-    /* Public Functions */
+    /* MARK: Public Functions */
     
     /**
      Creates a specified number of random **Users** on the server.
@@ -66,7 +66,7 @@ class UserTestingSerialiser
     
     //==================================================//
     
-    /* Private Functions */
+    /* MARK: Private Functions */
     
     /**
      Creates a random **User** on the server.

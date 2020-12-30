@@ -13,7 +13,7 @@ class Team
 {
     //==================================================//
     
-    /* Class-Level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Arrays
     private(set) var DSParticipants: [User]?
@@ -31,7 +31,7 @@ class Team
     
     //==================================================//
     
-    /* Constructor Function */
+    /* MARK: Constructor Function */
     
     init(associatedIdentifier:   String,
          associatedTournament:   Tournament?,
@@ -50,7 +50,7 @@ class Team
     
     //==================================================//
     
-    /* Public Functions */
+    /* MARK: Public Functions */
     
     /**
      Gets the total accrued points of a specific **User** on the **Team.**

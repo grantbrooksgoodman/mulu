@@ -16,7 +16,7 @@ class AlertKit
 {
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Other Declarations
     var decrementSeconds = 30
@@ -26,7 +26,7 @@ class AlertKit
     
     //==================================================//
     
-    /* Enumerated Type Declarations */
+    /* MARK: Enumerated Type Declarations */
     
     enum AlertControllerTextFieldAttribute
     {
@@ -37,35 +37,20 @@ class AlertKit
         case keyboardType
         case placeholderText
         case sampleText
+        case secureTextEntry
         case textAlignment
+    }
+    
+    enum ReportType
+    {
+        case bug
+        case error
+        case feedback
     }
     
     //==================================================//
     
-    /* Public Functions */
-    
-    ///Advances a string a given amount of characters.
-    func cipherString(withString: String, shiftModifier: Int) -> String
-    {
-        var resultingCharacterArray = [Character]()
-        
-        for utf8Value in withString.utf8
-        {
-            let shiftedValue = Int(utf8Value) + shiftModifier
-            
-            if shiftedValue > 97 + 25
-            {
-                resultingCharacterArray.append(Character(UnicodeScalar(shiftedValue - 26)!))
-            }
-            else if shiftedValue < 97
-            {
-                resultingCharacterArray.append(Character(UnicodeScalar(shiftedValue + 26)!))
-            }
-            else { resultingCharacterArray.append(Character(UnicodeScalar(shiftedValue)!)) }
-        }
-        
-        return String(resultingCharacterArray)
-    }
+    /* MARK: Alert Controller Functions */
     
     /**
      Presents a `UIAlertController` tailored to **confirmation of operations.**
@@ -557,77 +542,6 @@ class AlertKit
         }
     }
     
-    ///Displays a customisable protected alert controller.
-    ///A return value of 0 is a correct entry.
-    ///A return value of 1 is an incorrect entry.
-    ///A return value of 2 is a blank entry.
-    func protectedAlertController(withTitle: String?, withMessage: String?, withConfirmationButtonTitle: String?, withCancelButtonTitle: String?, confirmationDestructive: Bool!, confirmationPreferred: Bool!, correctPassword: String!, networkDependent: Bool!, keyboardAppearance: UIKeyboardAppearance?, keyboardType: UIKeyboardType?, editingMode: UITextField.ViewMode?, sampleText: String?, placeHolder: String?, textAlignment: NSTextAlignment?, completionHandler: @escaping (Int?) -> Void)
-    {
-        if networkDependent && !hasConnectivity()
-        {
-            connectionAlertController()
-            completionHandler(nil)
-        }
-        else
-        {
-            let controllerCancelButtonTitle = withCancelButtonTitle ?? "Cancel"
-            let controllerConfirmationButtonTitle = withConfirmationButtonTitle ?? "Confirm"
-            let controllerMessage = withMessage ?? "Please enter the password to perform this operation."
-            let controllerPlaceHolder = placeHolder ?? "Required"
-            let controllerSampleText = sampleText ?? ""
-            let controllerTitle = withTitle ?? "Enter Password"
-            
-            let protectedAlertController = UIAlertController(title: controllerTitle, message: controllerMessage, preferredStyle: .alert)
-            
-            let controllerEditingMode = editingMode ?? .never
-            let controllerKeyboardAppearance = keyboardAppearance ?? .light
-            let controllerKeyboardType = keyboardType ?? .default
-            let controllerTextAlignment = textAlignment ?? .left
-            
-            protectedAlertController.addTextField { (textField) in
-                textField.clearButtonMode = controllerEditingMode
-                textField.isSecureTextEntry = true
-                textField.keyboardAppearance = controllerKeyboardAppearance
-                textField.keyboardType = controllerKeyboardType
-                textField.placeholder = controllerPlaceHolder
-                textField.text = controllerSampleText
-                textField.textAlignment = controllerTextAlignment
-            }
-            
-            var confirmationButtonStyle = UIAlertAction.Style.default
-            
-            if confirmationDestructive!
-            {
-                confirmationButtonStyle = .destructive
-            }
-            
-            protectedAlertController.addAction(UIAlertAction(title: controllerConfirmationButtonTitle, style: confirmationButtonStyle) { [protectedAlertController] (action: UIAlertAction!) in
-                let returnedPassword = (protectedAlertController.textFields![0]).text!
-                
-                if returnedPassword.lowercasedTrimmingWhitespace != ""
-                {
-                    if returnedPassword == correctPassword
-                    {
-                        completionHandler(0)
-                    }
-                    else { completionHandler(1) }
-                }
-                else { completionHandler(2) }
-            })
-            
-            protectedAlertController.addAction(UIAlertAction(title: controllerCancelButtonTitle, style: .cancel, handler: { (action: UIAlertAction!) in
-                completionHandler(nil)
-            }))
-            
-            if confirmationPreferred!
-            {
-                protectedAlertController.preferredAction = protectedAlertController.actions[0]
-            }
-            
-            politelyPresent(viewController: protectedAlertController)
-        }
-    }
-    
     ///Retrieves a neatly formatted file name for any passed controller name.
     func retrieveFileName(forFile: String) -> String
     {
@@ -699,6 +613,7 @@ class AlertKit
      .keyboardType:        UIKeyboardType.default,
      .placeholderText:     "Here's to the crazy ones.",
      .sampleText:          "",
+     .secureTextEntry:     false,
      .textAlignment:       NSTextAlignment.left]
      ~~~
      */
@@ -731,6 +646,7 @@ class AlertKit
             var keyboardType:       UIKeyboardType               = .default
             var placeholderText                                  = "Here's to the crazy ones."
             var sampleText                                       = ""
+            var secureTextEntry                                  = false
             var textAlignment:      NSTextAlignment              = .left
             
             if let attributes = textFieldAttributes
@@ -772,6 +688,11 @@ class AlertKit
                     {
                         sampleText = specifiedSampleText
                     }
+                    else if attribute == .secureTextEntry,
+                            let specifiedSecureTextEntry = attributes[attribute] as? Bool
+                    {
+                        secureTextEntry = specifiedSecureTextEntry
+                    }
                     else if attribute == .textAlignment,
                             let specifiedTextAlignment = attributes[attribute] as? NSTextAlignment
                     {
@@ -784,7 +705,7 @@ class AlertKit
                 textField.autocapitalizationType = capitalisationType
                 textField.autocorrectionType = correctionType
                 textField.clearButtonMode = editingMode
-                textField.isSecureTextEntry = false
+                textField.isSecureTextEntry = secureTextEntry
                 textField.keyboardAppearance = keyboardAppearance
                 textField.keyboardType = keyboardType
                 textField.placeholder = placeholderText
@@ -830,7 +751,83 @@ class AlertKit
     
     //==================================================//
     
-    /* Private Functions */
+    /* MARK: Helper Functions */
+    
+    ///Advances a string a given amount of characters.
+    func cipherString(withString: String, shiftModifier: Int) -> String
+    {
+        var resultingCharacterArray = [Character]()
+        
+        for utf8Value in withString.utf8
+        {
+            let shiftedValue = Int(utf8Value) + shiftModifier
+            
+            if shiftedValue > 97 + 25
+            {
+                resultingCharacterArray.append(Character(UnicodeScalar(shiftedValue - 26)!))
+            }
+            else if shiftedValue < 97
+            {
+                resultingCharacterArray.append(Character(UnicodeScalar(shiftedValue + 26)!))
+            }
+            else { resultingCharacterArray.append(Character(UnicodeScalar(shiftedValue)!)) }
+        }
+        
+        return String(resultingCharacterArray)
+    }
+    
+    func code(for type: ReportType, metadata: [Any]) -> String?
+    {
+        guard validateMetadata(metadata) else
+        { report("IFM", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
+        
+        let rawFilename = metadata[0] as! String
+        let rawFunctionTitle = metadata[1] as! String
+        let lineNumber = metadata[2] as! Int
+        
+        let filePath = rawFilename.components(separatedBy: "/")
+        let filename = filePath[filePath.count - 1].components(separatedBy: ".")[0].replacingOccurrences(of: "-", with: "")
+        
+        let functionTitle = rawFunctionTitle.components(separatedBy: "(")[0].lowercased()
+        
+        guard let cipheredFilename = filename.ciphered(by: 14).randomlyCapitalised(with: lineNumber) else
+        { report("Unable to unwrap ciphered filename.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
+        
+        let modelCode = SystemInformation.modelCode.lowercased()
+        let operatingSystemVersion = SystemInformation.operatingSystemVersion.lowercased()
+        
+        if type == .error
+        {
+            guard let cipheredFunctionName = functionTitle.ciphered(by: 14).randomlyCapitalised(with: lineNumber) else
+            { report("Unable to unwrap ciphered function name.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
+            
+            return "\(modelCode).\(cipheredFilename)-\(lineNumber)-\(cipheredFunctionName).\(operatingSystemVersion)"
+        }
+        else { return "\(modelCode).\(cipheredFilename).\(operatingSystemVersion)" }
+    }
+    
+    func fileReport(type: ReportType, body: String, prompt: String, extraInfo: String?, metadata: [Any])
+    {
+        guard validateMetadata(metadata) else
+        { report("IFM", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return }
+        
+        guard let code = code(for: type, metadata: metadata) else
+        { report("Unable to generate code.", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
+        
+        let connectionStatus = hasConnectivity() ? "online" : "offline"
+        
+        let bodySection = body.split(separator: ".").count > 1 ? "<i>\(body.split(separator: ".")[0]).<p></p>\(body.split(separator: ".")[1]).</i><p></p>" : "<i>\(body.split(separator: ".")[0]).</i><p></p>"
+        
+        let compiledRemainder = "<b>Project ID:</b> \(informationDictionary["projectIdentifier"]!)<p></p><b>Build SKU:</b> \(informationDictionary["buildSku"]!)<p></p><b>Occurrence Date:</b> \(secondaryDateFormatter.string(from: Date()))<p></p><b>Internet Connection Status:</b> \(connectionStatus)<p></p>\(extraInfo == nil ? "" : "<b>Extraneous Information:</b> \(extraInfo!)<p></p>")<b>Reference Code:</b> [\(code)]<p></p><b>\(prompt):</b> "
+        
+        let subject = "\((buildType == .generalRelease ? finalName : codeName)) (\(informationDictionary["bundleVersion"]!)) \(type == .bug ? "Bug" : (type == .error ? "Error" : "Feedback")) Report"
+        
+        composeMessage(withMessage: (bodySection + compiledRemainder), withRecipients: ["me@grantbrooks.io"], withSubject: subject, isHtmlMessage: true)
+    }
+    
+    //==================================================//
+    
+    /* MARK: Private Functions */
     
     ///Decrements one second from the expiry counter. If it reaches less than zero, it kills the application.
     @objc private func decrementSecond()
@@ -864,62 +861,6 @@ class AlertKit
         }
     }
     
-    enum ReportType
-    {
-        case bug
-        case error
-        case feedback
-    }
-    
-    func fileReport(type: ReportType, body: String, prompt: String, extraInfo: String?, metadata: [Any])
-    {
-        guard validateMetadata(metadata) else
-        { report("IFM", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return }
-        
-        guard let code = code(for: type, metadata: metadata) else
-        { report("Unable to generate code.", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
-        
-        let connectionStatus = hasConnectivity() ? "online" : "offline"
-        
-        let bodySection = body.split(separator: ".").count > 1 ? "<i>\(body.split(separator: ".")[0]).<p></p>\(body.split(separator: ".")[1]).</i><p></p>" : "<i>\(body.split(separator: ".")[0]).</i><p></p>"
-        
-        let compiledRemainder = "<b>Project ID:</b> \(informationDictionary["projectIdentifier"]!)<p></p><b>Build SKU:</b> \(informationDictionary["buildSku"]!)<p></p><b>Occurrence Date:</b> \(secondaryDateFormatter.string(from: Date()))<p></p><b>Internet Connection Status:</b> \(connectionStatus)<p></p>\(extraInfo == nil ? "" : "<b>Extraneous Information:</b> \(extraInfo!)<p></p>")<b>Reference Code:</b> [\(code)]<p></p><b>\(prompt):</b> "
-        
-        let subject = "\((buildType == .generalRelease ? finalName : codeName)) (\(informationDictionary["bundleVersion"]!)) \(type == .bug ? "Bug" : (type == .error ? "Error" : "Feedback")) Report"
-        
-        composeMessage(withMessage: (bodySection + compiledRemainder), withRecipients: ["me@grantbrooks.io"], withSubject: subject, isHtmlMessage: true)
-    }
-    
-    func code(for type: ReportType, metadata: [Any]) -> String?
-    {
-        guard validateMetadata(metadata) else
-        { report("IFM", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
-        
-        let rawFilename = metadata[0] as! String
-        let rawFunctionTitle = metadata[1] as! String
-        let lineNumber = metadata[2] as! Int
-        
-        let filePath = rawFilename.components(separatedBy: "/")
-        let filename = filePath[filePath.count - 1].components(separatedBy: ".")[0].replacingOccurrences(of: "-", with: "")
-        
-        let functionTitle = rawFunctionTitle.components(separatedBy: "(")[0].lowercased()
-        
-        guard let cipheredFilename = filename.ciphered(by: 14).randomlyCapitalised(with: lineNumber) else
-        { report("Unable to unwrap ciphered filename.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
-        
-        let modelCode = SystemInformation.modelCode.lowercased()
-        let operatingSystemVersion = SystemInformation.operatingSystemVersion.lowercased()
-        
-        if type == .error
-        {
-            guard let cipheredFunctionName = functionTitle.ciphered(by: 14).randomlyCapitalised(with: lineNumber) else
-            { report("Unable to unwrap ciphered function name.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
-            
-            return "\(modelCode).\(cipheredFilename)-\(lineNumber)-\(cipheredFunctionName).\(operatingSystemVersion)"
-        }
-        else { return "\(modelCode).\(cipheredFilename).\(operatingSystemVersion)" }
-    }
-    
     private func strippedDescriptor(for: String) -> String
     {
         let stripWords = ["a", "is", "that", "the", "this"]
@@ -940,7 +881,7 @@ class AlertKit
 
 //==================================================//
 
-/* Extensions */
+/* MARK: Extensions */
 
 extension String
 {

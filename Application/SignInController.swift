@@ -18,7 +18,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //UIButtons
     @IBOutlet weak var forgotPasswordButton: UIButton!
@@ -31,13 +31,13 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     var buildInstance: Build!
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -47,7 +47,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -122,7 +122,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     @IBAction func forgotPasswordButton(_ sender: Any)
     {
@@ -189,7 +189,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
         
         //signInRandomUser()
         
-        showProgressHud()
+        showProgressHUD()
         
         Auth.auth().signIn(withEmail: usernameTextField.text!, password: passwordTextField.text!) { (returnedResult, returnedError) in
             if let result = returnedResult
@@ -202,7 +202,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                         currentUser!.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
                             if let teams = returnedTeams
                             {
-                                hideHud()
+                                hideHUD(delay: nil)
                                 
                                 if let deSerialisedTeams = user.DSAssociatedTeams
                                 {
@@ -362,7 +362,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
@@ -427,7 +427,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     
     func signInRandomUser()
     {
-        showProgressHud()
+        showProgressHUD()
         
         UserSerialiser().getRandomUsers(amountToGet: 1) { (returnedIdentifiers, errorDescriptor) in
             if let identifiers = returnedIdentifiers
@@ -443,7 +443,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                         currentUser!.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
                             if let teams = returnedTeams
                             {
-                                hideHud()
+                                hideHUD(delay: nil)
                                 
                                 if let deSerialisedTeams = user.DSAssociatedTeams
                                 {
@@ -596,8 +596,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                         PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: "Successfully added to team.")
                         PKHUD.sharedHUD.show()
                         
-                        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                            hideHud()
+                        hideHUD(delay: 1) {
                             self.signInButton(self.signInButton as Any)
                         }
                     }
@@ -621,6 +620,13 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     }
 }
 
+//==================================================//
+
+/* MARK: Extensions */
+
+/**/
+
+/* MARK: UITextFieldDelegate */
 extension SignInController: UITextFieldDelegate
 {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool
@@ -638,6 +644,9 @@ extension SignInController: UITextFieldDelegate
     }
 }
 
+//--------------------------------------------------//
+
+/* MARK: UITextField */
 extension UITextField
 {
     func addGreyUnderline()

@@ -15,13 +15,13 @@ class InitialController: UIViewController
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     @IBOutlet weak var imageView: UIImageView!
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Other Declarations
     let applicationDelegate = UIApplication.shared.delegate! as! AppDelegate
@@ -32,7 +32,7 @@ class InitialController: UIViewController
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -67,7 +67,7 @@ class InitialController: UIViewController
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     @IBAction func skipButton(_ sender: Any)
     {

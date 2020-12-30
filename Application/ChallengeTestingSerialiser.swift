@@ -13,7 +13,7 @@ class ChallengeTestingSerialiser
 {
     //==================================================//
     
-    /* Class-Level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     let sampleChallenges = ["Commandos": "- Up and down on both arms counts as 1 rep\n- Keep your core activated so your hips don't sway\n- Works arms, abs, and triceps",
                             "Star jumps": "- Start in a quarter squat position with feet together, back flat, and arms down touching your lower legs\n- Works quadriceps, glutes, hamstrings, calves, deltoids",
@@ -38,7 +38,7 @@ class ChallengeTestingSerialiser
     
     //==================================================//
     
-    /* Public Functions */
+    /* MARK: Public Functions */
     
     /**
      Creates a specified number of random **Challenges** on the server.
@@ -137,7 +137,7 @@ class ChallengeTestingSerialiser
     
     //==================================================//
     
-    /* Private Functions */
+    /* MARK: Private Functions */
     
     /**
      Returns an array of unique metadata from an array of provided completed **Challenge** metadata.

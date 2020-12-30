@@ -18,7 +18,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
@@ -26,7 +26,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     var buildInstance: Build!
     var selectedIndexPath: IndexPath!
@@ -34,7 +34,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -44,7 +44,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -82,7 +82,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     @IBAction func backButton(_ sender: Any)
     {
@@ -91,175 +91,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Other Functions */
-    
-    func attributedString(_ with:                  String,
-                          mainAttributes:          [NSAttributedString.Key:Any],
-                          alternateAttributes:     [NSAttributedString.Key:Any],
-                          alternateAttributeRange: [String]) -> NSAttributedString
-    {
-        let attributedString = NSMutableAttributedString(string: with, attributes: mainAttributes)
-        
-        for string in alternateAttributeRange
-        {
-            let currentRange = (with as NSString).range(of: (string as NSString) as String)
-            
-            attributedString.addAttributes(alternateAttributes, range: currentRange)
-        }
-        
-        return attributedString
-    }
-    
-    func challengeTitles() -> [String]
-    {
-        var titleArray: [String] = []
-        
-        let sortedChallenges = userArray[selectedIndexPath.row].allCompletedChallenges()!.sorted(by: {$0.challenge.title < $1.challenge.title})
-        
-        for challengeBundle in sortedChallenges
-        {
-            titleArray.append(challengeBundle.challenge.title!)
-        }
-        
-        return titleArray
-    }
-    
-    func generateChallengesString() -> String
-    {
-        var challengesString = ""
-        
-        let sortedChallenges = userArray[selectedIndexPath.row].allCompletedChallenges()!.sorted(by: {$0.challenge.title < $1.challenge.title})
-        
-        for challenge in sortedChallenges
-        {
-            var dateString = challenge.date.formattedString()
-            
-            if dateString == "Today" || dateString == "Yesterday"
-            {
-                dateString = "– \(dateString)"
-            }
-            else { dateString = "on \(dateString)" }
-            
-            if challengesString == ""
-            {
-                challengesString.append("• \(challenge.challenge.title!) \(dateString)")
-            }
-            else { challengesString.append("\n• \(challenge.challenge.title!) \(dateString)") }
-        }
-        
-        return challengesString
-    }
-    
-    func generateTeamsString() -> String
-    {
-        var teamsString = ""
-        
-        let sortedTeams = userArray[selectedIndexPath.row].DSAssociatedTeams!.sorted(by: {$0.name < $1.name})
-        
-        for team in sortedTeams
-        {
-            if teamsString == ""
-            {
-                teamsString.append("• \(team.name!)")
-            }
-            else { teamsString.append("\n• \(team.name!)") }
-        }
-        
-        return teamsString
-    }
-    
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
-    {
-        buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
-    }
-    
-    @objc func reloadData()
-    {
-        tableView.isUserInteractionEnabled = false
-        
-        UIView.animate(withDuration: 0.2) {
-            self.tableView.alpha = 0
-        } completion: { (_) in
-            UserSerialiser().getAllUsers { (returnedUsers, errorDescriptor) in
-                if let users = returnedUsers
-                {
-                    self.userArray = users
-                    
-                    for user in users
-                    {
-                        user.setDSAssociatedTeams()
-                    }
-                    
-                    self.tableView.dataSource = self
-                    self.tableView.delegate = self
-                    
-                    self.tableView.reloadData()
-                    
-                    hideHUD(delay: 1.5) {
-                        UIView.animate(withDuration: 0.2) {
-                            self.tableView.alpha = 0.6
-                        } completion: { (_) in
-                            self.tableView.isUserInteractionEnabled = true
-                        }
-                    }
-                }
-                else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
-            }
-        }
-    }
-    
-    func tryToJoin(teamWithCode: String)
-    {
-        TeamSerialiser().getTeam(byJoinCode: teamWithCode) { (returnedIdentifier, errorDescriptor) in
-            if let identifier = returnedIdentifier
-            {
-                TeamSerialiser().addUser(self.userArray[self.selectedIndexPath.row].associatedIdentifier, toTeam: identifier) { (errorDescriptor) in
-                    if let error = errorDescriptor
-                    {
-                        AlertKit().errorAlertController(title:                       nil,
-                                                        message:                     error,
-                                                        dismissButtonTitle:          "OK",
-                                                        additionalSelectors:         ["Try Again": #selector(ViewUsersController.addToTeamAction)],
-                                                        preferredAdditionalSelector: 0,
-                                                        canFileReport:               true,
-                                                        extraInfo:                   nil,
-                                                        metadata:                    [#file, #function, #line],
-                                                        networkDependent:            false)
-                        
-                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                    }
-                    else
-                    {
-                        PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: "Successfully added to team.")
-                        PKHUD.sharedHUD.show()
-                        
-                        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                            hideHud()
-                            self.tableView.deselectRow(at: self.selectedIndexPath, animated: true)
-                        }
-                    }
-                }
-            }
-            else if let error = errorDescriptor
-            {
-                AlertKit().errorAlertController(title:                       nil,
-                                                message:                     error,
-                                                dismissButtonTitle:          "OK",
-                                                additionalSelectors:         ["Try Again": #selector(ViewUsersController.addToTeamAction)],
-                                                preferredAdditionalSelector: 0,
-                                                canFileReport:               true,
-                                                extraInfo:                   nil,
-                                                metadata:                    [#file, #function, #line],
-                                                networkDependent:            false)
-                
-                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-            }
-        }
-    }
-    
-    //==================================================//
-    
-    /* Action Sheet Functions */
+    /* MARK: Action Sheet Functions */
     
     @objc func addToTeamAction()
     {
@@ -471,8 +303,182 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
         
         present(actionSheet, animated: true)
     }
+    
+    //==================================================//
+    
+    /* MARK: Other Functions */
+    
+    func attributedString(_ with:                  String,
+                          mainAttributes:          [NSAttributedString.Key:Any],
+                          alternateAttributes:     [NSAttributedString.Key:Any],
+                          alternateAttributeRange: [String]) -> NSAttributedString
+    {
+        let attributedString = NSMutableAttributedString(string: with, attributes: mainAttributes)
+        
+        for string in alternateAttributeRange
+        {
+            let currentRange = (with as NSString).range(of: (string as NSString) as String)
+            
+            attributedString.addAttributes(alternateAttributes, range: currentRange)
+        }
+        
+        return attributedString
+    }
+    
+    func challengeTitles() -> [String]
+    {
+        var titleArray: [String] = []
+        
+        let sortedChallenges = userArray[selectedIndexPath.row].allCompletedChallenges()!.sorted(by: {$0.challenge.title < $1.challenge.title})
+        
+        for challengeBundle in sortedChallenges
+        {
+            titleArray.append(challengeBundle.challenge.title!)
+        }
+        
+        return titleArray
+    }
+    
+    func generateChallengesString() -> String
+    {
+        var challengesString = ""
+        
+        let sortedChallenges = userArray[selectedIndexPath.row].allCompletedChallenges()!.sorted(by: {$0.challenge.title < $1.challenge.title})
+        
+        for challenge in sortedChallenges
+        {
+            var dateString = challenge.date.formattedString()
+            
+            if dateString == "Today" || dateString == "Yesterday"
+            {
+                dateString = "– \(dateString)"
+            }
+            else { dateString = "on \(dateString)" }
+            
+            if challengesString == ""
+            {
+                challengesString.append("• \(challenge.challenge.title!) \(dateString)")
+            }
+            else { challengesString.append("\n• \(challenge.challenge.title!) \(dateString)") }
+        }
+        
+        return challengesString
+    }
+    
+    func generateTeamsString() -> String
+    {
+        var teamsString = ""
+        
+        let sortedTeams = userArray[selectedIndexPath.row].DSAssociatedTeams!.sorted(by: {$0.name < $1.name})
+        
+        for team in sortedTeams
+        {
+            if teamsString == ""
+            {
+                teamsString.append("• \(team.name!)")
+            }
+            else { teamsString.append("\n• \(team.name!)") }
+        }
+        
+        return teamsString
+    }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
+    {
+        buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
+    }
+    
+    @objc func reloadData()
+    {
+        tableView.isUserInteractionEnabled = false
+        
+        UIView.animate(withDuration: 0.2) {
+            self.tableView.alpha = 0
+        } completion: { (_) in
+            UserSerialiser().getAllUsers { (returnedUsers, errorDescriptor) in
+                if let users = returnedUsers
+                {
+                    self.userArray = users
+                    
+                    for user in users
+                    {
+                        user.setDSAssociatedTeams()
+                    }
+                    
+                    self.tableView.dataSource = self
+                    self.tableView.delegate = self
+                    
+                    self.tableView.reloadData()
+                    
+                    hideHUD(delay: 1.5) {
+                        UIView.animate(withDuration: 0.2) {
+                            self.tableView.alpha = 0.6
+                        } completion: { (_) in
+                            self.tableView.isUserInteractionEnabled = true
+                        }
+                    }
+                }
+                else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
+            }
+        }
+    }
+    
+    func tryToJoin(teamWithCode: String)
+    {
+        TeamSerialiser().getTeam(byJoinCode: teamWithCode) { (returnedIdentifier, errorDescriptor) in
+            if let identifier = returnedIdentifier
+            {
+                TeamSerialiser().addUser(self.userArray[self.selectedIndexPath.row].associatedIdentifier, toTeam: identifier) { (errorDescriptor) in
+                    if let error = errorDescriptor
+                    {
+                        AlertKit().errorAlertController(title:                       nil,
+                                                        message:                     error,
+                                                        dismissButtonTitle:          "OK",
+                                                        additionalSelectors:         ["Try Again": #selector(ViewUsersController.addToTeamAction)],
+                                                        preferredAdditionalSelector: 0,
+                                                        canFileReport:               true,
+                                                        extraInfo:                   nil,
+                                                        metadata:                    [#file, #function, #line],
+                                                        networkDependent:            false)
+                        
+                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    }
+                    else
+                    {
+                        PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: "Successfully added to team.")
+                        PKHUD.sharedHUD.show()
+                        
+                        hideHUD(delay: 1) {
+                            self.tableView.deselectRow(at: self.selectedIndexPath, animated: true)
+                        }
+                    }
+                }
+            }
+            else if let error = errorDescriptor
+            {
+                AlertKit().errorAlertController(title:                       nil,
+                                                message:                     error,
+                                                dismissButtonTitle:          "OK",
+                                                additionalSelectors:         ["Try Again": #selector(ViewUsersController.addToTeamAction)],
+                                                preferredAdditionalSelector: 0,
+                                                canFileReport:               true,
+                                                extraInfo:                   nil,
+                                                metadata:                    [#file, #function, #line],
+                                                networkDependent:            false)
+                
+                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+        }
+    }
 }
 
+//==================================================//
+
+/* MARK: Extensions */
+
+/**/
+
+/* MARK: UITableViewDataSource, UITableViewDelegate */
 extension ViewUsersController: UITableViewDataSource, UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell

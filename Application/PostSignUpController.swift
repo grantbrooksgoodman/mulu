@@ -18,7 +18,7 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //UIButtons
     @IBOutlet weak var contactUsButton:         UIButton!
@@ -30,14 +30,14 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     var buildInstance: Build!
     var userIdentifier: String?
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -47,7 +47,7 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -95,7 +95,7 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     @IBAction func goButton(_ sender: Any)
     {
@@ -222,7 +222,7 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {

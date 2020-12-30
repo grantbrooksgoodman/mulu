@@ -13,7 +13,7 @@ class TeamCell: UITableViewCell, SSRadioButtonControllerDelegate
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //UILabels
     @IBOutlet weak var memberLabel: UILabel!
@@ -24,7 +24,7 @@ class TeamCell: UITableViewCell, SSRadioButtonControllerDelegate
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func awakeFromNib()
     {

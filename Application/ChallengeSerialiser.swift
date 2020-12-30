@@ -16,7 +16,7 @@ class ChallengeSerialiser
 {
     //==================================================//
     
-    /* Public Functions */
+    /* MARK: Public Functions */
     
     /**
      Creates a **Challenge** on the server.
@@ -223,7 +223,7 @@ class ChallengeSerialiser
     
     //==================================================//
     
-    /* Private Functions */
+    /* MARK: Private Functions */
     
     /**
      Deserialises a **Challenge** from a given data bundle.

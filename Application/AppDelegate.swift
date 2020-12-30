@@ -19,7 +19,7 @@ import Reachability
 
 //==================================================//
 
-/* Top-level Variable Declarations */
+/* MARK: Top-level Variable Declarations */
 
 //Booleans
 var darkMode                              = false
@@ -56,7 +56,7 @@ var touchTimer: Timer?
 {
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Boolean Declarations
     var currentlyAnimating = false
@@ -71,7 +71,7 @@ var touchTimer: Timer?
     
     //==================================================//
     
-    /* Required Functions */
+    /* MARK: Required Functions */
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
@@ -145,7 +145,7 @@ var touchTimer: Timer?
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool
     {
@@ -178,72 +178,11 @@ var touchTimer: Timer?
 
 //==================================================//
 
-/* Other Functions */
+/* MARK: Helper Functions */
 
-///Retrieves the appropriately random tag integer for a given title.
-func aTagFor(_ theViewNamed: String) -> Int
-{
-    var finalValue: Float = 1.0
-    
-    for individualCharacter in String(theViewNamed.unicodeScalars.filter(CharacterSet.letters.contains)).stringCharacters
-    {
-        finalValue += (finalValue / Float(individualCharacter.alphabeticalPosition))
-    }
-    
-    return Int(String(finalValue).replacingOccurrences(of: ".", with: "")) ?? Int().random(min: 5, max: 10)
-}
+/**/
 
-func buildTypeAsString(short: Bool) -> String
-{
-    switch buildType
-    {
-    case .preAlpha:
-        return short ? "p" : "pre-alpha"
-    case .alpha:
-        return short ? "a" : "alpha"
-    case .beta:
-        return short ? "b" : "beta"
-    case .releaseCandidate:
-        return short ? "c" : "release candidate"
-    default:
-        return short ? "g" : "general"
-    }
-}
-
-///Closes a console stream.
-func closeStream(onLine: Int?, withMessage: String?)
-{
-    if verboseFunctionExposure
-    {
-        if let closingMessage = withMessage, let lastLine = onLine
-        {
-            print("[\(lastLine)]: \(closingMessage)\n*------------------------STREAM CLOSED------------------------*\n")
-        }
-        else { print("*------------------------STREAM CLOSED------------------------*\n") }
-    }
-}
-
-///Presents a mail composition view.
-func composeMessage(withMessage: String, withRecipients: [String], withSubject: String, isHtmlMessage: Bool)
-{
-    hideHud()
-    
-    if MFMailComposeViewController.canSendMail()
-    {
-        let composeController = MFMailComposeViewController()
-        composeController.mailComposeDelegate = lastInitialisedController as! MFMailComposeViewControllerDelegate?
-        composeController.setToRecipients(withRecipients)
-        composeController.setMessageBody(withMessage, isHTML: isHtmlMessage)
-        composeController.setSubject(withSubject)
-        
-        politelyPresent(viewController: composeController)
-    }
-    else
-    {
-        AlertKit().errorAlertController(title: "Cannot Send Mail", message: "It appears that your device is not able to send e-mail.\n\nPlease verify that your e-mail client is set up and try again.", dismissButtonTitle: nil, additionalSelectors: nil, preferredAdditionalSelector: nil, canFileReport: false, extraInfo: nil, metadata: [#file, #function, #line], networkDependent: true)
-    }
-}
-
+/* MARK: Error Processing Functions */
 /**
  Converts an instance of `Error` to a formatted string.
  
@@ -270,6 +209,23 @@ func errorInfo(_ for: NSError) -> String
     return "\(`for`.localizedDescription) (\(`for`.code))"
 }
 
+//--------------------------------------------------//
+
+/* MARK: Event Reporting Functions */
+
+///Closes a console stream.
+func closeStream(onLine: Int?, withMessage: String?)
+{
+    if verboseFunctionExposure
+    {
+        if let closingMessage = withMessage, let lastLine = onLine
+        {
+            print("[\(lastLine)]: \(closingMessage)\n*------------------------STREAM CLOSED------------------------*\n")
+        }
+        else { print("*------------------------STREAM CLOSED------------------------*\n") }
+    }
+}
+
 func fallbackReport(_ text: String, errorCode: Int?, isFatal: Bool)
 {
     if let unwrappedErrorCode = errorCode
@@ -283,6 +239,93 @@ func fallbackReport(_ text: String, errorCode: Int?, isFatal: Bool)
         AlertKit().fatalErrorController()
     }
 }
+
+///Logs to the console stream.
+func logToStream(forLine: Int, withMessage: String)
+{
+    if verboseFunctionExposure
+    {
+        print("[\(forLine)]: \(withMessage)")
+    }
+}
+
+///Opens a console stream.
+func openStream(forFile: String, forFunction: String, forLine: Int?, withMessage: String?)
+{
+    if verboseFunctionExposure
+    {
+        let functionTitle = forFunction.components(separatedBy: "(")[0]
+        
+        if let firstEntry = withMessage
+        {
+            print("\n*------------------------STREAM OPENED------------------------*\n\(AlertKit().retrieveFileName(forFile: forFile)): \(functionTitle)()\n[\(forLine!)]: \(firstEntry)")
+        }
+        else
+        { print("\n*------------------------STREAM OPENED------------------------*\n\(AlertKit().retrieveFileName(forFile: forFile)): \(functionTitle)()") }
+    }
+}
+
+/**
+ Prints a formatted event report to the console. Also supports displaying a fatal error alert.
+ 
+ - Parameter text: The content of the message to print.
+ - Parameter errorCode: An optional error code to include in the report.
+ 
+ - Parameter isFatal: A Boolean representing whether or not to display a fatal error alert along with the event report.
+ - Parameter metadata: The metadata Array. Must contain the **file name, function name, and line number** in that order.
+ */
+func report(_ text: String, errorCode: Int?, isFatal: Bool, metadata: [Any])
+{
+    guard validateMetadata(metadata) else
+    { fallbackReport(text, errorCode: errorCode, isFatal: isFatal); return }
+    
+    let unformattedFileName = metadata[0] as! String
+    let unformattedFunctionName = metadata[1] as! String
+    let lineNumber = metadata[2] as! Int
+    
+    let fileName = AlertKit().retrieveFileName(forFile: unformattedFileName)
+    let functionName = unformattedFunctionName.components(separatedBy: "(")[0]
+    
+    if let unwrappedErrorCode = errorCode
+    {
+        print("\n--------------------------------------------------\n\(fileName): \(functionName)() [\(lineNumber)]\n\(text) (\(unwrappedErrorCode))\n--------------------------------------------------\n")
+        
+        if isFatal
+        {
+            AlertKit().fatalErrorController(extraInfo: "\(text) (\(unwrappedErrorCode))", metadata: [fileName, functionName, lineNumber])
+        }
+    }
+    else
+    {
+        print("\n--------------------------------------------------\n\(fileName): \(functionName)() [\(lineNumber)]\n\(text)\n--------------------------------------------------\n")
+        
+        if isFatal
+        {
+            AlertKit().fatalErrorController(extraInfo: text, metadata: [fileName, functionName, lineNumber])
+        }
+    }
+}
+
+func validateMetadata(_ metadata: [Any]) -> Bool
+{
+    guard metadata.count == 3 else
+    { return false }
+    
+    guard metadata[0] is String else
+    { return false }
+    
+    guard metadata[1] is String else
+    { return false }
+    
+    guard metadata[2] is Int else
+    { return false }
+    
+    return true
+}
+
+//--------------------------------------------------//
+
+/* MARK: First Responder Functions */
 
 ///Finds and resigns the first responder.
 func findAndResignFirstResponder()
@@ -314,17 +357,12 @@ func findFirstResponder(inView view: UIView) -> UIView?
     return nil
 }
 
-///Returns a boolean describing whether or not the device has an active Internet connection.
-func hasConnectivity() -> Bool
-{
-    let connectionReachability = try! Reachability()
-    let networkStatus = connectionReachability.connection.description
-    
-    return (networkStatus != "No Connection")
-}
+//--------------------------------------------------//
+
+/* MARK: HUD Functions */
 
 ///Hides the HUD.
-func hideHud()
+func hideHUD()
 {
     DispatchQueue.main.async {
         if PKHUD.sharedHUD.isVisible
@@ -386,35 +424,112 @@ func hideHUD(delay: Double?, completion: @escaping() -> Void)
     }
 }
 
-///Logs to the console stream.
-func logToStream(forLine: Int, withMessage: String)
+///Shows the progress HUD.
+func showProgressHUD()
 {
-    if verboseFunctionExposure
-    {
-        print("[\(forLine)]: \(withMessage)")
+    DispatchQueue.main.async {
+        if !PKHUD.sharedHUD.isVisible
+        {
+            PKHUD.sharedHUD.contentView = PKHUDProgressView()
+            PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+        }
     }
 }
 
-///Opens a console stream.
-func openStream(forFile: String, forFunction: String, forLine: Int?, withMessage: String?)
+func showProgressHUD(text: String?, delay: Double?)
 {
-    if verboseFunctionExposure
+    if let delay = delay
     {
-        let functionTitle = forFunction.components(separatedBy: "(")[0]
+        let millisecondDelay = Int(delay * 1000)
         
-        if let firstEntry = withMessage
-        {
-            print("\n*------------------------STREAM OPENED------------------------*\n\(AlertKit().retrieveFileName(forFile: forFile)): \(functionTitle)()\n[\(forLine!)]: \(firstEntry)")
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
+            if !PKHUD.sharedHUD.isVisible
+            {
+                PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: text)
+                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+            }
         }
-        else
-        { print("\n*------------------------STREAM OPENED------------------------*\n\(AlertKit().retrieveFileName(forFile: forFile)): \(functionTitle)()") }
     }
+    else
+    {
+        DispatchQueue.main.async {
+            if !PKHUD.sharedHUD.isVisible
+            {
+                PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: text)
+                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+            }
+        }
+    }
+}
+
+//--------------------------------------------------//
+
+/* MARK: Miscellaneous Functions */
+
+///Retrieves the appropriately random tag integer for a given title.
+func aTagFor(_ theViewNamed: String) -> Int
+{
+    var finalValue: Float = 1.0
+    
+    for individualCharacter in String(theViewNamed.unicodeScalars.filter(CharacterSet.letters.contains)).stringCharacters
+    {
+        finalValue += (finalValue / Float(individualCharacter.alphabeticalPosition))
+    }
+    
+    return Int(String(finalValue).replacingOccurrences(of: ".", with: "")) ?? Int().random(min: 5, max: 10)
+}
+
+func buildTypeAsString(short: Bool) -> String
+{
+    switch buildType
+    {
+    case .preAlpha:
+        return short ? "p" : "pre-alpha"
+    case .alpha:
+        return short ? "a" : "alpha"
+    case .beta:
+        return short ? "b" : "beta"
+    case .releaseCandidate:
+        return short ? "c" : "release candidate"
+    default:
+        return short ? "g" : "general"
+    }
+}
+
+///Presents a mail composition view.
+func composeMessage(withMessage: String, withRecipients: [String], withSubject: String, isHtmlMessage: Bool)
+{
+    hideHUD(delay: nil)
+    
+    if MFMailComposeViewController.canSendMail()
+    {
+        let composeController = MFMailComposeViewController()
+        composeController.mailComposeDelegate = lastInitialisedController as! MFMailComposeViewControllerDelegate?
+        composeController.setToRecipients(withRecipients)
+        composeController.setMessageBody(withMessage, isHTML: isHtmlMessage)
+        composeController.setSubject(withSubject)
+        
+        politelyPresent(viewController: composeController)
+    }
+    else
+    {
+        AlertKit().errorAlertController(title: "Cannot Send Mail", message: "It appears that your device is not able to send e-mail.\n\nPlease verify that your e-mail client is set up and try again.", dismissButtonTitle: nil, additionalSelectors: nil, preferredAdditionalSelector: nil, canFileReport: false, extraInfo: nil, metadata: [#file, #function, #line], networkDependent: true)
+    }
+}
+
+///Returns a boolean describing whether or not the device has an active Internet connection.
+func hasConnectivity() -> Bool
+{
+    let connectionReachability = try! Reachability()
+    let networkStatus = connectionReachability.connection.description
+    
+    return (networkStatus != "No Connection")
 }
 
 ///Presents a given view controller, but waits for others to be dismissed before doing so.
 func politelyPresent(viewController: UIViewController)
 {
-    hideHud()
+    hideHUD(delay: nil)
     
     if viewController as? MFMailComposeViewController != nil
     {
@@ -444,47 +559,6 @@ func politelyPresent(viewController: UIViewController)
         else
         {
             DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: { politelyPresent(viewController: viewController) })
-        }
-    }
-}
-
-/**
- Prints a formatted event report to the console. Also supports displaying a fatal error alert.
- 
- - Parameter withText: The content of the message to print.
- - Parameter errorCode: An optional error code to include in the report.
- 
- - Parameter isFatal: A Boolean representing whether or not to display a fatal error alert along with the event report.
- - Parameter metadata: The metadata Array. Must contain the **file name, function name, and line number** in that order.
- */
-func report(_ text: String, errorCode: Int?, isFatal: Bool, metadata: [Any])
-{
-    guard validateMetadata(metadata) else
-    { fallbackReport(text, errorCode: errorCode, isFatal: isFatal); return }
-    
-    let unformattedFileName = metadata[0] as! String
-    let unformattedFunctionName = metadata[1] as! String
-    let lineNumber = metadata[2] as! Int
-    
-    let fileName = AlertKit().retrieveFileName(forFile: unformattedFileName)
-    let functionName = unformattedFunctionName.components(separatedBy: "(")[0]
-    
-    if let unwrappedErrorCode = errorCode
-    {
-        print("\n--------------------------------------------------\n\(fileName): \(functionName)() [\(lineNumber)]\n\(text) (\(unwrappedErrorCode))\n--------------------------------------------------\n")
-        
-        if isFatal
-        {
-            AlertKit().fatalErrorController(extraInfo: "\(text) (\(unwrappedErrorCode))", metadata: [fileName, functionName, lineNumber])
-        }
-    }
-    else
-    {
-        print("\n--------------------------------------------------\n\(fileName): \(functionName)() [\(lineNumber)]\n\(text)\n--------------------------------------------------\n")
-        
-        if isFatal
-        {
-            AlertKit().fatalErrorController(extraInfo: text, metadata: [fileName, functionName, lineNumber])
         }
     }
 }
@@ -536,59 +610,4 @@ func roundCorners(forViews: [UIView], withCornerType: Int!)
         individualView.layer.masksToBounds = false
         individualView.clipsToBounds = true
     }
-}
-
-///Shows the progress HUD.
-func showProgressHud()
-{
-    DispatchQueue.main.async {
-        if !PKHUD.sharedHUD.isVisible
-        {
-            PKHUD.sharedHUD.contentView = PKHUDProgressView()
-            PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
-        }
-    }
-}
-
-func showProgressHUD(text: String?, delay: Double?)
-{
-    if let delay = delay
-    {
-        let millisecondDelay = Int(delay * 1000)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
-            if !PKHUD.sharedHUD.isVisible
-            {
-                PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: text)
-                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
-            }
-        }
-    }
-    else
-    {
-        DispatchQueue.main.async {
-            if !PKHUD.sharedHUD.isVisible
-            {
-                PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: text)
-                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
-            }
-        }
-    }
-}
-
-func validateMetadata(_ metadata: [Any]) -> Bool
-{
-    guard metadata.count == 3 else
-    { return false }
-    
-    guard metadata[0] is String else
-    { return false }
-    
-    guard metadata[1] is String else
-    { return false }
-    
-    guard metadata[2] is Int else
-    { return false }
-    
-    return true
 }

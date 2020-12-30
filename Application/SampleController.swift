@@ -14,17 +14,17 @@ class SampleController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     var buildInstance: Build!
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -34,7 +34,7 @@ class SampleController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -58,11 +58,11 @@ class SampleController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {

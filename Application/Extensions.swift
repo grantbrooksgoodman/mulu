@@ -11,7 +11,7 @@ import UIKit
 
 //==================================================//
 
-/* Array Extensions */
+/* MARK: Array Extensions */
 
 extension Array
 {
@@ -51,11 +51,11 @@ extension Array where Element == String
 
 //==================================================//
 
-/* Date Extensions */
+/* MARK: Date Extensions */
 
 extension Date
 {
-    /* Functions */
+    /* MARK: Functions */
     
     func elapsedInterval() -> String
     {
@@ -123,7 +123,7 @@ extension Date
     
     //--------------------------------------------------//
     
-    /* Variables */
+    /* MARK: Variables */
     
     var comparator: Date
     {
@@ -133,7 +133,7 @@ extension Date
 
 //==================================================//
 
-/* Dictionary Extensions */
+/* MARK: Dictionary Extensions */
 
 extension Dictionary
 {
@@ -156,11 +156,11 @@ extension Dictionary where Value: Equatable
 
 //==================================================//
 
-/* Int Extensions */
+/* MARK: Int Extensions */
 
 extension Int
 {
-    /* Functions */
+    /* MARK: Functions */
     
     ///Returns a random integer value.
     func random(min: Int, max: Int) -> Int
@@ -170,7 +170,7 @@ extension Int
     
     //--------------------------------------------------//
     
-    /* Variables */
+    /* MARK: Variables */
     
     var ordinalValue: String
     {
@@ -201,7 +201,7 @@ extension Int
 
 //==================================================//
 
-/* Sequence Extensions */
+/* MARK: Sequence Extensions */
 
 extension Sequence where Iterator.Element: Hashable
 {
@@ -215,11 +215,11 @@ extension Sequence where Iterator.Element: Hashable
 
 //==================================================//
 
-/* String Extensions */
+/* MARK: String Extensions */
 
 extension String
 {
-    /* Functions */
+    /* MARK: Functions */
     
     func containsAny(in: String) -> Bool
     {
@@ -297,7 +297,7 @@ extension String
     
     //--------------------------------------------------//
     
-    /* Variables */
+    /* MARK: Variables */
     
     var alphabeticalPosition: Int
     {
@@ -364,7 +364,7 @@ extension String
 
 //==================================================//
 
-/* UIColor Extensions */
+/* MARK: UIColor Extensions */
 
 extension UIColor
 {
@@ -397,7 +397,7 @@ extension UIColor
 
 //==================================================//
 
-/* UIImageView Extensions */
+/* MARK: UIImageView Extensions */
 
 extension UIImageView
 {
@@ -428,11 +428,11 @@ extension UIImageView
 
 //==================================================//
 
-/* UILabel Extensions */
+/* MARK: UILabel Extensions */
 
 extension UILabel
 {
-    /* Functions */
+    /* MARK: Functions */
     
     func fontSizeThatFits(_ alternateText: String?) -> CGFloat
     {
@@ -496,7 +496,7 @@ extension UILabel
     
     //--------------------------------------------------//
     
-    /* Variables */
+    /* MARK: Variables */
     
     var isTruncated: Bool
     {
@@ -511,7 +511,7 @@ extension UILabel
 
 //==================================================//
 
-/* UITextView Extensions */
+/* MARK: UITextView Extensions */
 
 extension UITextView
 {
@@ -575,11 +575,11 @@ extension UITextView
 
 //==================================================//
 
-/* UIView Extensions */
+/* MARK: UIView Extensions */
 
 extension UIView
 {
-    /* Functions */
+    /* MARK: Functions */
     
     func addBlur(withActivityIndicator: Bool, withStyle: UIBlurEffect.Style, withTag: Int, alpha: CGFloat)
     {
@@ -730,7 +730,7 @@ extension UIView
     
     //--------------------------------------------------//
     
-    /* Variables */
+    /* MARK: Variables */
     
     var parentViewController: UIViewController?
     {

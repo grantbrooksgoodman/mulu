@@ -16,7 +16,7 @@ class TeamSerialiser
 {
     //==================================================//
     
-    /* Public Functions */
+    /* MARK: Adding Functions */
     
     /**
      Adds an array of completed **Challenges** to a **Team** on the server.
@@ -406,6 +406,10 @@ class TeamSerialiser
         }
     }
     
+    //==================================================//
+    
+    /* MARK: Creation Functions */
+    
     /**
      Creates a new **Team** on the server.
      
@@ -470,6 +474,21 @@ class TeamSerialiser
         }
     }
     
+    //==================================================//
+    
+    /* MARK: Getter Functions */
+    
+    /**
+     Retrieves and deserialises all existing **Teams** on the server.
+     
+     - Parameter completion: Upon success, returns an array of deserialised **Team** objects. Upon failure, a string describing the error(s) encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedTeams, errorDescriptor)
+     ~~~
+     */
     func getAllTeams(completion: @escaping(_ returnedTeams: [Team]?, _ errorDescriptor: String?) -> Void)
     {
         Database.database().reference().child("allTeams").observeSingleEvent(of: .value) { (returnedSnapshot) in
@@ -486,6 +505,51 @@ class TeamSerialiser
                         completion(nil, errors.joined(separator: "\n"))
                     }
                     else { completion(nil, "An unknown error occurred.") }
+                }
+            }
+            else
+            {
+                completion(nil, "Unable to deserialise snapshot.")
+            }
+        }
+    }
+    
+    /**
+     Gets random **Team** identifiers from the server.
+     
+     - Parameter amountToGet: An optional integer specifying the amount of random **Team** identifiers to get. *Defaults to all.*
+     - Parameter completion: Upon success, returns an array of **Team** identifier strings. May also return a string describing an event or error encountered.
+     
+     - Note: Completion variables are **NOT** *mutually exclusive.*
+     
+     ~~~
+     completion(returnedIdentifiers, noticeDescriptor)
+     ~~~
+     */
+    func getRandomTeams(amountToGet: Int?, completion: @escaping(_ returnedIdentifiers: [String]?, _ noticeDescriptor: String?) -> Void)
+    {
+        Database.database().reference().child("allTeams").observeSingleEvent(of: .value) { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let teamIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
+            {
+                if amountToGet == nil
+                {
+                    completion(teamIdentifiers.shuffledValue, nil)
+                }
+                else
+                {
+                    if amountToGet! > teamIdentifiers.count
+                    {
+                        completion(teamIdentifiers.shuffledValue, "Requested amount was larger than database size.")
+                    }
+                    else if amountToGet! == teamIdentifiers.count
+                    {
+                        completion(teamIdentifiers.shuffledValue, nil)
+                    }
+                    else if amountToGet! < teamIdentifiers.count
+                    {
+                        completion(Array(teamIdentifiers.shuffledValue[0...amountToGet!]), nil)
+                    }
                 }
             }
             else
@@ -648,51 +712,22 @@ class TeamSerialiser
         }
     }
     
+    //==================================================//
+    
+    /* MARK: Removal Functions */
+    
     /**
-     Gets random **Team** identifiers from the server.
+     Removes the **User** with the specified identifier from all completed **Challenges** on the specified **Team.**
      
-     - Parameter amountToGet: An optional integer specifying the amount of random **Team** identifiers to get. *Defaults to all.*
-     - Parameter completion: Upon success, returns an array of **Team** identifier strings. May also return a string describing an event or error encountered.
+     - Parameter forUser: The identifier of the **User** to remove from the completed **Challenges.**
+     - Parameter onTeam: The **Team** whose completed **Challenges** will be filtered.
      
-     - Note: Completion variables are **NOT** *mutually exclusive.*
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
      
      ~~~
-     completion(returnedIdentifiers, noticeDescriptor)
+     completion(errorDescriptor)
      ~~~
      */
-    func getRandomTeams(amountToGet: Int?, completion: @escaping(_ returnedIdentifiers: [String]?, _ noticeDescriptor: String?) -> Void)
-    {
-        Database.database().reference().child("allTeams").observeSingleEvent(of: .value) { (returnedSnapshot) in
-            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
-               let teamIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
-            {
-                if amountToGet == nil
-                {
-                    completion(teamIdentifiers.shuffledValue, nil)
-                }
-                else
-                {
-                    if amountToGet! > teamIdentifiers.count
-                    {
-                        completion(teamIdentifiers.shuffledValue, "Requested amount was larger than database size.")
-                    }
-                    else if amountToGet! == teamIdentifiers.count
-                    {
-                        completion(teamIdentifiers.shuffledValue, nil)
-                    }
-                    else if amountToGet! < teamIdentifiers.count
-                    {
-                        completion(Array(teamIdentifiers.shuffledValue[0...amountToGet!]), nil)
-                    }
-                }
-            }
-            else
-            {
-                completion(nil, "Unable to deserialise snapshot.")
-            }
-        }
-    }
-    
     func removeUserFromCompletedChallenges(_ forUser: String, onTeam: Team, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
         if let completedChallenges = onTeam.completedChallenges
@@ -733,6 +768,18 @@ class TeamSerialiser
         else { completion(nil) }
     }
     
+    /**
+     Removes the **User** with the specified identifier from the *participantIdentifiers* array of the provided **Team.**
+     
+     - Parameter withIdentifier: The identifier of the **User** to remove from the **Team's** *participantIdentifiers.*
+     - Parameter fromParticipantsOn: The **Team** whose *participantIdentifiers* array will be modified.
+     
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
     func removeUser(withIdentifier: String, fromParticipantsOn team: Team, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
         team.participantIdentifiers = team.participantIdentifiers.filter({$0 != withIdentifier})
@@ -748,6 +795,18 @@ class TeamSerialiser
         }
     }
     
+    /**
+     Removes a **User** from a **Team** using their identifiers.
+     
+     - Parameter withIdentifier: The identifier of the **User** to remove from the **Team.**
+     - Parameter from: The identifier of the **Team** to remove the **User** from.
+     
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
     func removeUser(_ withIdentifier: String, from: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
         UserSerialiser().removeTeam(withIdentifier: from, fromUser: withIdentifier) { (errorDescriptor) in
@@ -772,10 +831,7 @@ class TeamSerialiser
                                     {
                                         completion(error)
                                     }
-                                    else
-                                    {
-                                        completion(nil)
-                                    }
+                                    else { completion(nil) }
                                 }
                             }
                         }
@@ -788,7 +844,7 @@ class TeamSerialiser
     
     //==================================================//
     
-    /* Private Functions */
+    /* MARK: Private Functions */
     
     /**
      Deserialises an array of completed **Challenges** from a given data bundle.
@@ -1075,6 +1131,10 @@ class TeamSerialiser
         return true
     }
 }
+
+//==================================================//
+
+/* MARK: Extensions */
 
 extension Array where Element == (user: User, dateCompleted: Date)
 {

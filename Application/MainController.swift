@@ -17,7 +17,7 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //UIButtons
     @IBOutlet weak var codeNameButton:     UIButton!
@@ -36,7 +36,7 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Overridden Variables
     override var prefersStatusBarHidden:            Bool                 { return false }
@@ -48,7 +48,7 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -66,7 +66,7 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -95,7 +95,7 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     @IBAction func codeNameButton(_ sender: AnyObject)
     {
@@ -119,7 +119,7 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     func bunchaLetters() -> String
     {
@@ -129,6 +129,25 @@ class MainController: UIViewController, MFMailComposeViewControllerDelegate
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
+    }
+}
+
+//==================================================//
+
+/* MARK: Extensions */
+
+extension Array where Element == Challenge
+{
+    func titles() -> [String]
+    {
+        var titles: [String] = []
+        
+        for challenge in self
+        {
+            titles.append(challenge.title)
+        }
+        
+        return titles
     }
 }
 
@@ -144,20 +163,5 @@ extension Array where Element == User
         }
         
         return identifiers
-    }
-}
-
-extension Array where Element == Challenge
-{
-    func titles() -> [String]
-    {
-        var titles: [String] = []
-        
-        for challenge in self
-        {
-            titles.append(challenge.title)
-        }
-        
-        return titles
     }
 }

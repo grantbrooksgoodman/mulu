@@ -13,7 +13,7 @@ class MediaAnalyser
 {
     //==================================================//
     
-    /* Enumerated Type Declarations */
+    /* MARK: Enumerated Type Declarations */
     
     enum AnalysisResult
     {
@@ -29,7 +29,7 @@ class MediaAnalyser
     
     //==================================================//
     
-    /* Public Functions */
+    /* MARK: Public Functions */
     
     func analyseMedia(linkString: String, completion: @escaping(_ returnedResult: AnalysisResult) -> Void)
     {
@@ -106,7 +106,7 @@ class MediaAnalyser
     
     //==================================================//
     
-    /* Private Functions */
+    /* MARK: Private Functions */
     
     private func verifyLink(_ link: URL, completion: @escaping(_ returnedMetadata: (mimeType: String, data: Data)?, _ errorDescriptor: String?) -> Void)
     {

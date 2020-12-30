@@ -20,7 +20,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //UILabels
     @IBOutlet weak var welcomeLabel: UILabel!
@@ -33,7 +33,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Other Declarations
     var buildInstance: Build!
@@ -43,7 +43,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -53,7 +53,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -112,11 +112,11 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
     {
@@ -257,6 +257,13 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     }
 }
 
+//==================================================//
+
+/* MARK: Extensions */
+
+/**/
+
+/* MARK: UICollectionViewDataSource, UICollectionViewDelegate */
 extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
 {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
@@ -371,6 +378,9 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
     }
 }
 
+//--------------------------------------------------//
+
+/* MARK: Array Extensions */
 extension Array where Element == (challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])
 {
     func users() -> [User]

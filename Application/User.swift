@@ -16,7 +16,7 @@ class User
 {
     //==================================================//
     
-    /* Class-Level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Arrays
     var associatedTeams: [String]? //String = team ID
@@ -33,7 +33,7 @@ class User
     
     //==================================================//
     
-    /* Constructor Function */
+    /* MARK: Constructor Function */
     
     init(associatedIdentifier: String,
          associatedTeams:      [String]?,
@@ -54,7 +54,7 @@ class User
     
     //==================================================//
     
-    /* Public Functions */
+    /* MARK: Public Functions */
     
     /**
      Gets all of the **User's** completed **Challenges.**

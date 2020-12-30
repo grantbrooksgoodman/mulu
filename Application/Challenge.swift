@@ -13,7 +13,7 @@ class Challenge
 {
     //==================================================//
     
-    /* Class-Level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Strings
     var associatedIdentifier: String!
@@ -27,7 +27,7 @@ class Challenge
     
     //==================================================//
     
-    /* Enumerated Type Declarations */
+    /* MARK: Enumerated Type Declarations */
     
     enum MediaType
     {
@@ -39,7 +39,7 @@ class Challenge
     
     //==================================================//
     
-    /* Constructor Function */
+    /* MARK: Constructor Function */
     
     init(associatedIdentifier: String,
          title:                String,

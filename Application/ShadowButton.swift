@@ -12,7 +12,7 @@ class ShadowButton: UIButton
 {
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Booleans
     override var isEnabled:      Bool {
@@ -37,7 +37,7 @@ class ShadowButton: UIButton
     
     //==================================================//
     
-    /* Class Declaration */
+    /* MARK: Class Declaration */
     
     class func buttonWithType(_ buttonType: UIButton.ButtonType?) -> AnyObject
     {
@@ -48,7 +48,7 @@ class ShadowButton: UIButton
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
@@ -81,7 +81,7 @@ class ShadowButton: UIButton
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseLayer(animateTouches: Bool, backgroundColour: UIColor, customBorderFrame: CGRect?, customCornerRadius: CGFloat?, shadowColour: CGColor)
     {

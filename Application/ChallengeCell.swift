@@ -18,7 +18,7 @@ class ChallengeCell: UICollectionViewCell
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //UIButtons
     @IBOutlet weak var doneButton:    UIButton!
@@ -40,7 +40,7 @@ class ChallengeCell: UICollectionViewCell
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Other Declarations
     var autoPlayVideoLink: URL!
@@ -48,7 +48,7 @@ class ChallengeCell: UICollectionViewCell
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func draw(_ rect: CGRect)
     {
@@ -62,7 +62,7 @@ class ChallengeCell: UICollectionViewCell
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     @IBAction func doneButton(_ sender: Any)
     {

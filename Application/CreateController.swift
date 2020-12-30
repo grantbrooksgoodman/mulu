@@ -14,7 +14,7 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //UIButtons
     @IBOutlet weak var challengeButton:  UIButton!
@@ -24,13 +24,13 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     var buildInstance: Build!
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -40,7 +40,7 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -64,7 +64,7 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     @IBAction func challengeButton(_ sender: Any)
     {
@@ -88,7 +88,7 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {

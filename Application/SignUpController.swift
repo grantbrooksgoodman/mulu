@@ -14,7 +14,7 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate, U
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //UIButtons
     @IBOutlet weak var backButton:   UIButton!
@@ -27,14 +27,14 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate, U
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     var buildInstance: Build!
     var userIdentifier: String!
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -44,7 +44,7 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate, U
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -113,7 +113,7 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate, U
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     @IBAction func backButton(_ sender: Any)
     {
@@ -233,7 +233,7 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate, U
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     @objc func dismissKeyboard()
     {
@@ -246,6 +246,13 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate, U
     }
 }
 
+//==================================================//
+
+/* MARK: Extensions */
+
+/**/
+
+/* MARK: UITextFieldDelegate */
 extension SignUpController: UITextFieldDelegate
 {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool

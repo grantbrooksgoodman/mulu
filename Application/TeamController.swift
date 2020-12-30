@@ -17,7 +17,7 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //UILabels
     @IBOutlet weak var titleLabel:  UILabel!
@@ -29,14 +29,14 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     var buildInstance: Build!
     var completedChallenges: [(date: Date, challenge: Challenge)]?
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -46,7 +46,7 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -111,11 +111,11 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     func calculateTeamStatistics(withRankString: Bool, completion: @escaping(_ statisticsString: NSAttributedString?, _ errorDescriptor: String?) -> Void)
     {
@@ -184,6 +184,13 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     }
 }
 
+//==================================================//
+
+/* MARK: Extensions */
+
+/**/
+
+/* MARK: JTAppleCalendarViewDataSource */
 extension TeamController: JTAppleCalendarViewDataSource
 {
     func configureCalendar(_ calendar: JTAppleCalendarView) -> ConfigurationParameters
@@ -198,6 +205,9 @@ extension TeamController: JTAppleCalendarViewDataSource
     }
 }
 
+//--------------------------------------------------//
+
+/* MARK: JTAppleCalendarViewDelegate */
 extension TeamController: JTAppleCalendarViewDelegate
 {
     func calendar(_ calendar: JTAppleCalendarView, cellForItemAt date: Date, cellState: CellState, indexPath: IndexPath) -> JTAppleCell
@@ -236,6 +246,9 @@ extension TeamController: JTAppleCalendarViewDelegate
     }
 }
 
+//--------------------------------------------------//
+
+/* MARK: UICollectionViewDataSource, UICollectionViewDelegate */
 extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
 {
     func numberOfSections(in collectionView: UICollectionView) -> Int
@@ -318,6 +331,9 @@ extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
     }
 }
 
+//--------------------------------------------------//
+
+/* MARK: Array Extensions */
 extension Array where Element == (Challenge, [(User, Date)])
 {
     func dates() -> [Date]

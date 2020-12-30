@@ -17,7 +17,7 @@ class UserSerialiser
 {
     //==================================================//
     
-    /* Public Functions */
+    /* MARK: Creation Functions */
     
     /**
      Creates an account for a new user, as well as a serialised **User** object on the server.
@@ -176,45 +176,21 @@ class UserSerialiser
         else { completion(nil, "Unable to create key in database.") }
     }
     
-    func deleteUser(_ user: User, completion: @escaping(_ errorDescriptor: String?) -> Void)
-    {
-        removeUserFromAllTeams(user) { (errorDescriptor) in
-            if let error = errorDescriptor
-            {
-                completion(error)
-            }
-            else
-            {
-                GenericSerialiser().setValue(onKey: "/allUsers/\(user.associatedIdentifier!)", withData: NSNull()) { (returnedError) in
-                    if let error = returnedError
-                    {
-                        completion(errorInfo(error))
-                    }
-                    else
-                    {
-                        GenericSerialiser().getValues(atPath: "/deletedUsers") { (returnedArray) in
-                            if var array = returnedArray as? [String]
-                            {
-                                array = array.filter({$0 != "!"})
-                                
-                                array.append(user.emailAddress!)
-                                
-                                GenericSerialiser().setValue(onKey: "/deletedUsers", withData: array) { (returnedError) in
-                                    if let error = returnedError
-                                    {
-                                        completion(errorInfo(error))
-                                    }
-                                    else { completion(nil) }
-                                }
-                            }
-                            else { completion("Couldn't update deleted users.") }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    //==================================================//
     
+    /* MARK: Getter Functions */
+    
+    /**
+     Retrieves and deserialises all existing **Users** on the server.
+     
+     - Parameter completion: Upon success, returns an array of deserialised **User** objects. Upon failure, a string describing the error(s) encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedUsers, errorDescriptor)
+     ~~~
+     */
     func getAllUsers(completion: @escaping(_ returnedUsers: [User]?, _ errorDescriptor: String?) -> Void)
     {
         Database.database().reference().child("allUsers").observeSingleEvent(of: .value) { (returnedSnapshot) in
@@ -231,6 +207,51 @@ class UserSerialiser
                         completion(nil, errors.joined(separator: "\n"))
                     }
                     else { completion(nil, "An unknown error occurred.") }
+                }
+            }
+            else
+            {
+                completion(nil, "Unable to deserialise snapshot.")
+            }
+        }
+    }
+    
+    /**
+     Gets random **User** identifiers from the server.
+     
+     - Parameter amountToGet: An optional integer specifying the amount of random **User** identifiers to get. *Defaults to all.*
+     - Parameter completion: Upon success, returns an array of **User** identifier strings. May also return a string describing an event or error encountered.
+     
+     - Note: Completion variables are **NOT** *mutually exclusive.*
+     
+     ~~~
+     completion(returnedIdentifiers, noticeDescriptor)
+     ~~~
+     */
+    func getRandomUsers(amountToGet: Int?, completion: @escaping(_ returnedIdentifiers: [String]?, _ noticeDescriptor: String?) -> Void)
+    {
+        Database.database().reference().child("allUsers").observeSingleEvent(of: .value) { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let userIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
+            {
+                if amountToGet == nil
+                {
+                    completion(userIdentifiers.shuffledValue, nil)
+                }
+                else
+                {
+                    if amountToGet! > userIdentifiers.count
+                    {
+                        completion(userIdentifiers.shuffledValue, "Requested amount was larger than database size.")
+                    }
+                    else if amountToGet! == userIdentifiers.count
+                    {
+                        completion(userIdentifiers.shuffledValue, nil)
+                    }
+                    else if amountToGet! < userIdentifiers.count
+                    {
+                        completion(Array(userIdentifiers.shuffledValue[0...amountToGet!]), nil)
+                    }
                 }
             }
             else
@@ -334,51 +355,71 @@ class UserSerialiser
         }
     }
     
+    //==================================================//
+    
+    /* MARK: Removal Functions */
+    
     /**
-     Gets random **User** identifiers from the server.
+     Deletes a **User** from the server.
      
-     - Parameter amountToGet: An optional integer specifying the amount of random **User** identifiers to get. *Defaults to all.*
-     - Parameter completion: Upon success, returns an array of **User** identifier strings. May also return a string describing an event or error encountered.
-     
-     - Note: Completion variables are **NOT** *mutually exclusive.*
+     - Parameter user: The **User** to be deleted.
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
      
      ~~~
-     completion(returnedIdentifiers, noticeDescriptor)
+     completion(errorDescriptor)
      ~~~
      */
-    func getRandomUsers(amountToGet: Int?, completion: @escaping(_ returnedIdentifiers: [String]?, _ noticeDescriptor: String?) -> Void)
+    func deleteUser(_ user: User, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
-        Database.database().reference().child("allUsers").observeSingleEvent(of: .value) { (returnedSnapshot) in
-            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
-               let userIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
+        removeUserFromAllTeams(user) { (errorDescriptor) in
+            if let error = errorDescriptor
             {
-                if amountToGet == nil
-                {
-                    completion(userIdentifiers.shuffledValue, nil)
-                }
-                else
-                {
-                    if amountToGet! > userIdentifiers.count
-                    {
-                        completion(userIdentifiers.shuffledValue, "Requested amount was larger than database size.")
-                    }
-                    else if amountToGet! == userIdentifiers.count
-                    {
-                        completion(userIdentifiers.shuffledValue, nil)
-                    }
-                    else if amountToGet! < userIdentifiers.count
-                    {
-                        completion(Array(userIdentifiers.shuffledValue[0...amountToGet!]), nil)
-                    }
-                }
+                completion(error)
             }
             else
             {
-                completion(nil, "Unable to deserialise snapshot.")
+                GenericSerialiser().setValue(onKey: "/allUsers/\(user.associatedIdentifier!)", withData: NSNull()) { (returnedError) in
+                    if let error = returnedError
+                    {
+                        completion(errorInfo(error))
+                    }
+                    else
+                    {
+                        GenericSerialiser().getValues(atPath: "/deletedUsers") { (returnedArray) in
+                            if var array = returnedArray as? [String]
+                            {
+                                array = array.filter({$0 != "!"})
+                                
+                                array.append(user.emailAddress!)
+                                
+                                GenericSerialiser().setValue(onKey: "/deletedUsers", withData: array) { (returnedError) in
+                                    if let error = returnedError
+                                    {
+                                        completion(errorInfo(error))
+                                    }
+                                    else { completion(nil) }
+                                }
+                            }
+                            else { completion("Couldn't update deleted users.") }
+                        }
+                    }
+                }
             }
         }
     }
     
+    /**
+     Removes a **Team** with the specified identifier from a **User's** *associatedTeams* array.
+     
+     - Parameter withIdentifier: The identifier of the **Team** to be removed from the **User's** *associatedTeams* array.
+     - Parameter fromUser: The identifier of the **User** whose *associatedTeams* will be modified.
+     
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
     func removeTeam(withIdentifier: String, fromUser: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
         getUser(withIdentifier: fromUser) { (returnedUser, errorDescriptor) in
@@ -404,6 +445,16 @@ class UserSerialiser
         }
     }
     
+    /**
+     Removes a **User** from all of their associated **Teams.**
+     
+     - Parameter user: The **User** who will be removed from all **Teams.**
+     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
     func removeUserFromAllTeams(_ user: User, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
         if let teams = user.associatedTeams
@@ -432,7 +483,7 @@ class UserSerialiser
     
     //==================================================//
     
-    /* Private Functions */
+    /* MARK: Private Functions */
     
     /**
      Deserialises a **User** from a given data bundle.

@@ -12,7 +12,7 @@ class BuildInfoController: UIViewController
 {
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Overriden Variables
     override var prefersStatusBarHidden:            Bool                 { return false }
@@ -28,7 +28,7 @@ class BuildInfoController: UIViewController
     
     //==================================================//
     
-    /* Constructor Functions */
+    /* MARK: Constructor Functions */
     
     init()
     {
@@ -48,7 +48,7 @@ class BuildInfoController: UIViewController
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func loadView()
     {
@@ -68,7 +68,7 @@ class BuildInfoController: UIViewController
     
     //==================================================//
     
-    /* Public Functions */
+    /* MARK: Public Functions */
     
     @objc func keyboardDidShow(note: NSNotification)
     {
@@ -125,7 +125,7 @@ class BuildInfoController: UIViewController
     
     //==================================================//
     
-    /* Private Functions */
+    /* MARK: Private Functions */
     
     private func getBuildInfoLabel(xBaseline: CGFloat) -> UILabel
     {
@@ -179,13 +179,13 @@ private class BuildInfoWindow: UIWindow
 {
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     var sendFeedbackButton: UIButton?
     
     //==================================================//
     
-    /* Constructor Functions */
+    /* MARK: Constructor Functions */
     
     init()
     {
@@ -201,7 +201,7 @@ private class BuildInfoWindow: UIWindow
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     fileprivate override func point(inside point: CGPoint, with event: UIEvent?) -> Bool
     {

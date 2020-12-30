@@ -13,7 +13,7 @@ class Tournament
 {
     //==================================================//
     
-    /* Class-Level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Dates
     var startDate: Date!
@@ -30,7 +30,7 @@ class Tournament
     
     //==================================================//
     
-    /* Constructor Function */
+    /* MARK: Constructor Function */
     
     init(associatedIdentifier: String, name: String, startDate: Date, endDate: Date, teamIdentifiers: [String])
     {
@@ -43,7 +43,7 @@ class Tournament
     
     //==================================================//
     
-    /* Public Functions */
+    /* MARK: Public Functions */
     
     /**
      Gets and deserialises all of the **Teams** participating in the **Tournament** using the *teamIdentifiers* array.

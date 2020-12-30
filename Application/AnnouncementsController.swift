@@ -14,19 +14,19 @@ class AnnouncementsController: UIViewController, MFMailComposeViewControllerDele
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     @IBOutlet weak var textView: UITextView!
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     var buildInstance: Build!
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -36,7 +36,7 @@ class AnnouncementsController: UIViewController, MFMailComposeViewControllerDele
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -77,11 +77,11 @@ class AnnouncementsController: UIViewController, MFMailComposeViewControllerDele
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {

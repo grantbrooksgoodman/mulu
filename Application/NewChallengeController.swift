@@ -18,7 +18,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //UIBarButtonItems
     @IBOutlet weak var backButton:   UIBarButtonItem!
@@ -43,7 +43,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //Booleans
     var currentlyUploading = false
@@ -70,7 +70,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     
     //==================================================//
     
-    /* Enumerated Type Declarations */
+    /* MARK: Enumerated Type Declarations */
     
     enum Step
     {
@@ -83,7 +83,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     
     //==================================================//
     
-    /* Initialiser Function */
+    /* MARK: Initialiser Function */
     
     func initialiseController()
     {
@@ -93,7 +93,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override func viewDidLoad()
     {
@@ -152,7 +152,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     
     //==================================================//
     
-    /* Interface Builder Actions */
+    /* MARK: Interface Builder Actions */
     
     @IBAction func backButton(_ sender: Any)
     {
@@ -279,8 +279,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             {
                 findAndResignFirstResponder()
                 
-                PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: "Analysing media...")
-                PKHUD.sharedHUD.show()
+                showProgressHUD(text: "Analysing media...", delay: nil)
                 
                 var linkString = mediaTextField.text!
                 
@@ -293,9 +292,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                 }
                 
                 MediaAnalyser().analyseMedia(linkString: linkString) { (analysisResult) in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
-                        hideHud()
-                    }
+                    hideHUD(delay: 0.5)
                     
                     DispatchQueue.main.async {
                         switch analysisResult
@@ -368,7 +365,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     
     //==================================================//
     
-    /* Other Functions */
+    /* MARK: Other Functions */
     
     func confirmCancellation()
     {
@@ -413,8 +410,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                 PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: "Successfully created challenge.")
                 PKHUD.sharedHUD.show()
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                    hideHud()
+                hideHUD(delay: 1) {
                     self.navigationController?.dismiss(animated: true, completion: nil)
                 }
             }
@@ -757,6 +753,13 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     }
 }
 
+//==================================================//
+
+/* MARK: Extensions */
+
+/**/
+
+/* MARK: UIAdaptivePresentationControllerDelegate */
 extension NewChallengeController: UIAdaptivePresentationControllerDelegate
 {
     func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController)
@@ -773,6 +776,9 @@ extension NewChallengeController: UIAdaptivePresentationControllerDelegate
     }
 }
 
+//--------------------------------------------------//
+
+/* MARK: UIImagePickerControllerDelegate */
 extension NewChallengeController: UIImagePickerControllerDelegate
 {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any])
@@ -826,15 +832,12 @@ extension NewChallengeController: UIImagePickerControllerDelegate
                         guard let imageData = self.imageData else
                         { report("Image data was not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
                         
-                        PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: "Uploading image...")
-                        PKHUD.sharedHUD.show()
+                        showProgressHUD(text: "Uploading image...", delay: nil)
                         
                         self.upload(image: true, withData: imageData, extension: `extension`) { (errorDescriptor) in
                             if let error = errorDescriptor
                             {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
-                                    hideHud()
-                                }
+                                hideHUD(delay: 0.5)
                                 
                                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
                                     report(error, errorCode: nil, isFatal: true, metadata: [#file, #function, #line])
@@ -894,15 +897,12 @@ extension NewChallengeController: UIImagePickerControllerDelegate
                         guard let videoData = self.videoData else
                         { report("Video data was not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
                         
-                        PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: "Uploading video...")
-                        PKHUD.sharedHUD.show()
+                        showProgressHUD(text: "Uploading video...", delay: nil)
                         
                         self.upload(image: false, withData: videoData, extension: `extension`) { (errorDescriptor) in
                             if let error = errorDescriptor
                             {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
-                                    hideHud()
-                                }
+                                hideHUD(delay: 0.5)
                                 
                                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
                                     report(error, errorCode: nil, isFatal: true, metadata: [#file, #function, #line])
@@ -933,6 +933,9 @@ extension NewChallengeController: UIImagePickerControllerDelegate
     }
 }
 
+//--------------------------------------------------//
+
+/* MARK: UITextFieldDelegate */
 extension NewChallengeController: UITextFieldDelegate
 {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool

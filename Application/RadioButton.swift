@@ -15,7 +15,7 @@ class SSRadioButton: UIButton
 {
     //==================================================//
     
-    /* Interface Builder UI Elements */
+    /* MARK: Interface Builder UI Elements */
     
     //CGFloats
     @IBInspectable var circleRadius: CGFloat = 5.0
@@ -42,7 +42,7 @@ class SSRadioButton: UIButton
     
     //==================================================//
     
-    /* Class-level Variable Declarations */
+    /* MARK: Class-level Variable Declarations */
     
     //CAShapeLayer Declarations
     fileprivate var circleLayer     = CAShapeLayer()
@@ -58,7 +58,7 @@ class SSRadioButton: UIButton
     
     //==================================================//
     
-    /* Overridden Functions */
+    /* MARK: Overridden Functions */
     
     override init(frame: CGRect)
     {
@@ -87,7 +87,7 @@ class SSRadioButton: UIButton
     
     //==================================================//
     
-    /* Constructor Functions */
+    /* MARK: Constructor Functions */
     
     required init?(coder aDecoder: NSCoder)
     {
@@ -98,7 +98,7 @@ class SSRadioButton: UIButton
     
     //==================================================//
     
-    /* Private Functions */
+    /* MARK: Private Functions */
     
     fileprivate func circleFrame() -> CGRect
     {
@@ -141,7 +141,7 @@ class SSRadioButton: UIButton
     
     //==================================================//
     
-    /* Public Functions */
+    /* MARK: Public Functions */
     
     ///Toggles the selected state of the radio button.
     func toggleButon()

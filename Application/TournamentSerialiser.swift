@@ -16,7 +16,7 @@ class TournamentSerialiser
 {
     //==================================================//
     
-    /* Public Functions */
+    /* MARK: Public Functions */
     
     /**
      Creates a **Tournament** on the server.
@@ -166,7 +166,7 @@ class TournamentSerialiser
     
     //==================================================//
     
-    /* Private Functions */
+    /* MARK: Private Functions */
     
     /**
      Deserialises a **Tournament** from a given data bundle.
