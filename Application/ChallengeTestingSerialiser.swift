@@ -165,7 +165,7 @@ class ChallengeTestingSerialiser
      Creates a random **Challenge** on the server.
      
      - Parameter excludingTitles: An optional array providing title strings to exclude when generating a random title.
-     - Parameter completion: Upon success, returns with a **Challenge** object. Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns with a **Challenge** object. Upon failure, a string describing the error(s) encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      

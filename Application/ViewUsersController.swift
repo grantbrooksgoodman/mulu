@@ -145,6 +145,33 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
         }
     }
     
+    func displayProblematicTeams(with: [String])
+    {
+        TeamSerialiser().getTeams(withIdentifiers: with) { (returnedTeams, errorDescriptors) in
+            if let teams = returnedTeams
+            {
+                var teamString = ""
+                
+                for team in teams
+                {
+                    if teamString == ""
+                    {
+                        teamString = team.name!
+                    }
+                    else { teamString = teamString + "\n\(team.name!)" }
+                }
+                
+                hideHUD(delay: 0.5) {
+                    AlertKit().errorAlertController(title: "Delete Teams First", message: "Please delete the following teams before deleting this user. Otherwise, they will be left with no participants.\n\n\(teamString)", dismissButtonTitle: nil, additionalSelectors: nil, preferredAdditionalSelector: nil, canFileReport: true, extraInfo: teamString, metadata: [#file, #function, #line], networkDependent: true)
+                }
+            }
+            else if let errors = errorDescriptors
+            {
+                report(errors.joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+        }
+    }
+    
     func deleteUserAction()
     {
         AlertKit().confirmationAlertController(title: "Are You Sure?",
@@ -157,8 +184,12 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
             {
                 showProgressHUD(text: "Deleting user...", delay: nil)
                 
-                UserSerialiser().deleteUser(self.userArray[self.selectedIndexPath.row]) { (errorDescriptor) in
-                    if let error = errorDescriptor
+                UserSerialiser().deleteUser(self.userArray[self.selectedIndexPath.row]) { (problematicTeams, errorDescriptor) in
+                    if let teams = problematicTeams
+                    {
+                        self.displayProblematicTeams(with: teams)
+                    }
+                    else if let error = errorDescriptor
                     {
                         hideHUD(delay: 0.5) {
                             AlertKit().errorAlertController(title: nil,

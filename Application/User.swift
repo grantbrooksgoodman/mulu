@@ -89,7 +89,7 @@ class User
      Gets any **Challenges** the **User** has yet to complete on the specified **Team.**
      
      - Parameter team: The **Team** on which to find incomplete **Challenges** for this **User.**
-     - Parameter completion: Upon success, returns with an array of **Challenge** identifiers. Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns with an array of **Challenge** identifiers. Upon failure, a string describing the error(s) encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      
@@ -153,7 +153,7 @@ class User
      - Parameter withIdentifier: The identifier of the **Challenge** to be marked complete.
      - Parameter team: The **Team** on which to mark this **Challenge** complete.
      
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
      
      ~~~
      completion(errorDescriptor)

@@ -16,7 +16,7 @@ class ChallengeSerialiser
 {
     //==================================================//
     
-    /* MARK: Public Functions */
+    /* MARK: Creation Functions */
     
     /**
      Creates a **Challenge** on the server.
@@ -26,7 +26,7 @@ class ChallengeSerialiser
      - Parameter pointValue: An integer representing the point value for this **Challenge.**
      - Parameter media: An optional tuple providing a URL and a **MediaType** for any media associated with this **Challenge.**
      
-     - Parameter completion: Upon success, returns with the identifier of the newly created **Challenge.** Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns with the identifier of the newly created **Challenge.** Upon failure, a string describing the error(s) encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      
@@ -82,48 +82,15 @@ class ChallengeSerialiser
         else { completion(nil, "Unable to create key in database.") }
     }
     
-    /**
-     Gets and deserialises a **Challenge** from a given identifier string.
-     
-     - Parameter withIdentifier: The identifier of the requested **Challenge.**
-     - Parameter completion: Upon success, returns a deserialised **Challenge** object. Upon failure, a string describing the error encountered.
-     
-     - Note: Completion variables are *mutually exclusive.*
-     
-     ~~~
-     completion(returnedChallenge, errorDescriptor)
-     ~~~
-     */
-    func getChallenge(withIdentifier: String, completion: @escaping(_ returnedChallenge: Challenge?, _ errorDescriptor: String?) -> Void)
-    {
-        Database.database().reference().child("allChallenges").child(withIdentifier).observeSingleEvent(of: .value, with: { (returnedSnapshot) in
-            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary, let asDataBundle = returnedSnapshotAsDictionary as? [String:Any]
-            {
-                var mutableDataBundle = asDataBundle
-                
-                mutableDataBundle["associatedIdentifier"] = withIdentifier
-                
-                let deSerialisationResult = self.deSerialiseChallenge(from: mutableDataBundle)
-                
-                if let deSerialisedChallenge = deSerialisationResult.deSerialisedChallenge
-                {
-                    completion(deSerialisedChallenge, nil)
-                }
-                else { completion(nil, deSerialisationResult.errorDescriptor!) }
-            }
-            else { completion(nil, "No Challenge exists with the identifier \"\(withIdentifier)\".") }
-        })
-        { (returnedError) in
-            
-            completion(nil, "Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
-        }
-    }
+    //==================================================//
+    
+    /* MARK: Getter Functions */
     
     /**
      Gets the identifiers of any **Challenges** posted on a specified date.
      
      - Parameter forDate: The date to query the requested **Challenges** for.
-     - Parameter completion: Upon success, returns an array of **Challenge** identifier strings. Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns an array of **Challenge** identifier strings. Upon failure, a string describing the error(s) encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      
@@ -221,6 +188,43 @@ class ChallengeSerialiser
         }
     }
     
+    /**
+     Gets and deserialises a **Challenge** from a given identifier string.
+     
+     - Parameter withIdentifier: The identifier of the requested **Challenge.**
+     - Parameter completion: Upon success, returns a deserialised **Challenge** object. Upon failure, a string describing the error(s) encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedChallenge, errorDescriptor)
+     ~~~
+     */
+    func getChallenge(withIdentifier: String, completion: @escaping(_ returnedChallenge: Challenge?, _ errorDescriptor: String?) -> Void)
+    {
+        Database.database().reference().child("allChallenges").child(withIdentifier).observeSingleEvent(of: .value, with: { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary, let asDataBundle = returnedSnapshotAsDictionary as? [String:Any]
+            {
+                var mutableDataBundle = asDataBundle
+                
+                mutableDataBundle["associatedIdentifier"] = withIdentifier
+                
+                let deSerialisationResult = self.deSerialiseChallenge(from: mutableDataBundle)
+                
+                if let deSerialisedChallenge = deSerialisationResult.deSerialisedChallenge
+                {
+                    completion(deSerialisedChallenge, nil)
+                }
+                else { completion(nil, deSerialisationResult.errorDescriptor!) }
+            }
+            else { completion(nil, "No Challenge exists with the identifier \"\(withIdentifier)\".") }
+        })
+        { (returnedError) in
+            
+            completion(nil, "Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
+        }
+    }
+    
     //==================================================//
     
     /* MARK: Private Functions */
@@ -231,7 +235,7 @@ class ChallengeSerialiser
      - Parameter from: The data bundle from which to deserialise the **Challenge.**
      
      - Note: Returned variables are *mutually exclusive.*
-     - Returns: Upon success, returns a deserialised **Challenge** object. Upon failure, a string describing the error encountered.
+     - Returns: Upon success, returns a deserialised **Challenge** object. Upon failure, a string describing the error(s) encountered.
      */
     private func deSerialiseChallenge(from dataBundle: [String:Any]) -> (deSerialisedChallenge: Challenge?, errorDescriptor: String?)
     {

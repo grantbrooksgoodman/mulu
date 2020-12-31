@@ -39,7 +39,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use this page to manually create Challenges, Teams, Tournaments, and Users." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dST-6k-eCl">
-                                <rect key="frame" x="32" y="125" width="365" height="35"/>
+                                <rect key="frame" x="32" y="125" width="365" height="36"/>
                                 <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="15"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -113,7 +113,7 @@
                             <constraint firstItem="of4-1v-zla" firstAttribute="leading" secondItem="r23-af-lwD" secondAttribute="leading" constant="20" id="vUL-Wc-WYK"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Create" id="Kan-Uy-alI"/>
+                    <tabBarItem key="tabBarItem" title="Create" image="plus.app.fill" catalog="system" selectedImage="plus.app.fill" id="Kan-Uy-alI"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="428" height="926"/>
                     <connections>
@@ -159,7 +159,7 @@
                         <viewControllerLayoutGuide type="bottom" id="3sD-gc-d53"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="qtW-vj-Q9P">
-                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="872"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" tag="67283115" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Challenge" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NCA-aY-gg3">
@@ -362,6 +362,7 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="Bbx-VH-Ms8"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="AV1-fn-GRm">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -382,7 +383,7 @@
                         <viewControllerLayoutGuide type="bottom" id="ee0-UB-QMu"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="7pJ-pD-Mu1">
-                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="872"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" tag="67283115" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Team" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KbT-we-eCx">
@@ -571,6 +572,7 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="rNp-Wc-YDH"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="fME-iK-qmS">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -675,7 +677,7 @@
                             <constraint firstItem="nt1-Oj-YkY" firstAttribute="leading" secondItem="gf0-ZS-mhE" secondAttribute="leading" constant="20" id="ytU-4q-TtN"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="View" id="2zL-nf-bnd"/>
+                    <tabBarItem key="tabBarItem" title="View" image="eye.fill" catalog="system" selectedImage="eye.fill" id="2zL-nf-bnd"/>
                     <navigationItem key="navigationItem" id="L7q-uF-GI4"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="428" height="926"/>
@@ -807,7 +809,7 @@
                         <viewControllerLayoutGuide type="bottom" id="3M3-YZ-zTm"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="VDj-Go-Po5">
-                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="872"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" tag="67283115" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New User" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bag-KU-oc3">
@@ -996,6 +998,7 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="K7d-N3-Vgt"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="GvM-5x-hoQ">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1018,7 +1021,9 @@
     </designables>
     <resources>
         <image name="Back" width="49" height="47"/>
-        <image name="square.and.arrow.up" catalog="system" width="32" height="32"/>
+        <image name="eye.fill" catalog="system" width="128" height="78"/>
+        <image name="plus.app.fill" catalog="system" width="128" height="114"/>
+        <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

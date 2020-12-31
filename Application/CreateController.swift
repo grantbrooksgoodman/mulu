@@ -78,7 +78,42 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
     
     @IBAction func tournamentButton(_ sender: Any)
     {
-        
+        #warning("For testing purposes only.")
+        AlertKit().optionAlertController(title: "Choose", message: nil, cancelButtonTitle: nil, additionalButtons: [("Delete Tournament", false), ("Delete Team", false), ("Remove Team from Tournament", false)], preferredActionIndex: nil, networkDependent: true) { (selectedIndex) in
+            if let index = selectedIndex
+            {
+                if index == 0
+                {
+                    TournamentSerialiser().deleteTournament("-MPr2-_Lc72yX-r0SIkW") { (errorDescriptor) in
+                        if let error = errorDescriptor
+                        {
+                            report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                        }
+                        else { print("SUCCESS!!!") }
+                    }
+                }
+                else if index == 1
+                {
+                    TeamSerialiser().deleteTeam("-MPr2-Wzrbk17mJUvWEE") { (errorDescriptor) in
+                        if let error = errorDescriptor
+                        {
+                            report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                        }
+                        else { print("SUCCESS!!") }
+                    }
+                }
+                else if index == 2
+                {
+                    TournamentSerialiser().removeTeam("-MPr2-Wzrbk17mJUvWEE", fromTournament: "-MPr2-_Lc72yX-r0SIkW", deleting: false) { (errorDescriptor) in
+                        if let error = errorDescriptor
+                        {
+                            report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                        }
+                        else { print("SUCCESS!") }
+                    }
+                }
+            }
+        }
     }
     
     @IBAction func userButton(_ sender: Any)

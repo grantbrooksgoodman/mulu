@@ -71,7 +71,7 @@ class UserTestingSerialiser
     /**
      Creates a random **User** on the server.
      
-     - Parameter completion: Upon success, returns with a **User** object. Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns with a **User** object. Upon failure, a string describing the error(s) encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      

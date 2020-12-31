@@ -29,7 +29,7 @@ class UserSerialiser
      - Parameter profileImageData: An optional `base64Encoded` string containg the **User's** profile image data.
      - Parameter pushTokens: An optional array of strings containing the UUIDs of the devices the **User** has opted to receive push notifications for.
      
-     - Parameter completion: Upon success, returns with the identifier of the newly created **User.** Upon failure, a string describing the error encountered. May return both if the **User** was successfully created but an error occurred while adding them to **Teams.**
+     - Parameter completion: Upon success, returns with the identifier of the newly created **User.** Upon failure, a string describing the error(s) encountered. May return both if the **User** was successfully created but an error occurred while adding them to **Teams.**
      
      - Note: Completion variables are **NOT** *mutually exclusive.*
      - Requires: The `emailAddress` to be well-formed and the `password` to be 6 or more characters long.
@@ -100,7 +100,7 @@ class UserSerialiser
      - Parameter profileImageData: An optional `base64Encoded` string containg the **User's** profile image data.
      - Parameter pushTokens: An optional array of strings containing the UUIDs of the devices the **User** has opted to receive push notifications for.
      
-     - Parameter completion: Upon success, returns with the identifier of the newly created **User.** Upon failure, a string describing the error encountered. May return both if the **User** was successfully created but an error occurred while adding them to **Teams.**
+     - Parameter completion: Upon success, returns with the identifier of the newly created **User.** Upon failure, a string describing the error(s) encountered. May return both if the **User** was successfully created but an error occurred while adding them to **Teams.**
      
      - Note: Completion variables are **NOT** *mutually exclusive.*
      
@@ -265,7 +265,7 @@ class UserSerialiser
      Gets and deserialises a **User** from a given identifier string.
      
      - Parameter withIdentifier: The identifier of the requested **User.**
-     - Parameter completion: Upon success, returns a deserialised **User** object. Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns a deserialised **User** object. Upon failure, a string describing the error(s) encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      
@@ -363,25 +363,31 @@ class UserSerialiser
      Deletes a **User** from the server.
      
      - Parameter user: The **User** to be deleted.
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with either an array of problematic **Teams**, or a string describing the error(s) encountered.
+     
+     - Requires: All **Teams** the **User** is on (if applicable) to have more participants than just the specified **User.**
      
      ~~~
      completion(errorDescriptor)
      ~~~
      */
-    func deleteUser(_ user: User, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    func deleteUser(_ user: User, completion: @escaping(_ problematicTeams: [String]?, _ errorDescriptor: String?) -> Void)
     {
-        removeUserFromAllTeams(user) { (errorDescriptor) in
-            if let error = errorDescriptor
+        removeUserFromAllTeams(user) { (problematicTeams, errorDescriptor) in
+            if let teams = problematicTeams
             {
-                completion(error)
+                completion(teams, nil)
+            }
+            else if let error = errorDescriptor
+            {
+                completion(nil, error)
             }
             else
             {
                 GenericSerialiser().setValue(onKey: "/allUsers/\(user.associatedIdentifier!)", withData: NSNull()) { (returnedError) in
                     if let error = returnedError
                     {
-                        completion(errorInfo(error))
+                        completion(nil, errorInfo(error))
                     }
                     else
                     {
@@ -395,12 +401,12 @@ class UserSerialiser
                                 GenericSerialiser().setValue(onKey: "/deletedUsers", withData: array) { (returnedError) in
                                     if let error = returnedError
                                     {
-                                        completion(errorInfo(error))
+                                        completion(nil, errorInfo(error))
                                     }
-                                    else { completion(nil) }
+                                    else { completion(nil, nil) }
                                 }
                             }
-                            else { completion("Couldn't update deleted users.") }
+                            else { completion(nil, "Couldn't update deleted users.") }
                         }
                     }
                 }
@@ -414,7 +420,7 @@ class UserSerialiser
      - Parameter withIdentifier: The identifier of the **Team** to be removed from the **User's** *associatedTeams* array.
      - Parameter fromUser: The identifier of the **User** whose *associatedTeams* will be modified.
      
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
      
      ~~~
      completion(errorDescriptor)
@@ -445,42 +451,6 @@ class UserSerialiser
         }
     }
     
-    /**
-     Removes a **User** from all of their associated **Teams.**
-     
-     - Parameter user: The **User** who will be removed from all **Teams.**
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
-     
-     ~~~
-     completion(errorDescriptor)
-     ~~~
-     */
-    func removeUserFromAllTeams(_ user: User, completion: @escaping(_ errorDescriptor: String?) -> Void)
-    {
-        if let teams = user.associatedTeams
-        {
-            var errors: [String] = []
-            
-            for (index, teamIdentifier) in teams.enumerated()
-            {
-                TeamSerialiser().removeUser(user.associatedIdentifier, from: teamIdentifier) { (errorDescriptor) in
-                    if let error = errorDescriptor
-                    {
-                        errors.append(error)
-                    }
-                    else
-                    {
-                        if index == teams.count - 1
-                        {
-                            completion(errors.count == 0 ? nil : errors.joined(separator: "\n"))
-                        }
-                    }
-                }
-            }
-        }
-        else { completion(nil) }
-    }
-    
     //==================================================//
     
     /* MARK: Private Functions */
@@ -491,7 +461,7 @@ class UserSerialiser
      - Parameter from: The data bundle from which to deserialise the **User.**
      
      - Note: Returned variables are *mutually exclusive.*
-     - Returns: Upon success, a deserialised **User** object. Upon failure, a string describing the error encountered.
+     - Returns: Upon success, a deserialised **User** object. Upon failure, a string describing the error(s) encountered.
      */
     private func deSerialiseUser(from dataBundle: [String:Any]) -> (deSerialisedUser: User?, errorDescriptor: String?)
     {
@@ -525,5 +495,99 @@ class UserSerialiser
                                     pushTokens:           pushTokens == ["!"] ? nil : pushTokens)
         
         return (deSerialisedUser, nil)
+    }
+    
+    /**
+     Removes a **User** from all of their associated **Teams.**
+     
+     - Parameter user: The **User** who will be removed from all **Teams.**
+     - Parameter completion: Upon failure, returns with either an array of problematic **Teams**, or a string describing the error(s) encountered.
+     
+     - Requires: All **Teams** the **User** is on (if applicable) to have more participants than just the specified **User.**
+     
+     ~~~
+     completion(problematicTeams, errorDescriptor)
+     ~~~
+     */
+    private func removeUserFromAllTeams(_ user: User, completion: @escaping(_ problematicTeams: [String]?, _ errorDescriptor: String?) -> Void)
+    {
+        verifyGoodToDelete(forUser: user) { (problematicTeams, errorDescriptor) in
+            if let teams = problematicTeams
+            {
+                completion(teams, nil)
+            }
+            else if let error = errorDescriptor
+            {
+                completion(nil, error)
+            }
+            else
+            {
+                if let teams = user.associatedTeams
+                {
+                    var errors: [String] = []
+                    
+                    for (index, teamIdentifier) in teams.enumerated()
+                    {
+                        TeamSerialiser().removeUser(user.associatedIdentifier, fromTeam: teamIdentifier, deleting: false) { (errorDescriptor) in
+                            if let error = errorDescriptor
+                            {
+                                errors.append(error)
+                                
+                                if index == teams.count - 1
+                                {
+                                    completion(nil, errors.joined(separator: "\n"))
+                                }
+                            }
+                            else
+                            {
+                                if index == teams.count - 1
+                                {
+                                    completion(nil, errors.count == 0 ? nil : errors.joined(separator: "\n"))
+                                }
+                            }
+                        }
+                    }
+                }
+                else { completion(nil, nil) }
+            }
+        }
+    }
+    
+    /**
+     Iterates through all the **User's** associated **Teams** to verify that they all have more participants than just the specified **User.**
+     
+     - Parameter forUser: The **User** whose associated **Teams** will be iterated through.
+     - Parameter completion: Upon success, optionally returns with an array of problematic **Team** identifiers. Upon failure, returns with a string describing the error(s) encountered.
+     
+     ~~~
+     completion(problematicTeams, errorDescriptor)
+     ~~~
+     */
+    private func verifyGoodToDelete(forUser: User, completion: @escaping(_ problematicTeams: [String]?, _ errorDescriptor: String?) -> Void)
+    {
+        if forUser.associatedTeams != nil
+        {
+            forUser.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
+                if let teams = returnedTeams
+                {
+                    var problematicTeams: [String] = []
+                    
+                    for (index, team) in teams.enumerated()
+                    {
+                        if team.participantIdentifiers.filter({$0 != forUser.associatedIdentifier}).count == 0
+                        {
+                            problematicTeams.append(team.associatedIdentifier)
+                        }
+                        
+                        if index == teams.count - 1
+                        {
+                            completion(problematicTeams.count == 0 ? nil : problematicTeams, nil)
+                        }
+                    }
+                }
+                else { completion(nil, errorDescriptor!) }
+            }
+        }
+        else { completion(nil, nil) }
     }
 }

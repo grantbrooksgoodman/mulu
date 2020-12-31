@@ -25,7 +25,7 @@ class TeamSerialiser
      - Parameter toTeam: The identifier of the **Team** to add these **Challenges** to.
      - Parameter overwrite: A Boolean describing whether to add these **Challenges** to the **Team** with or without overwriting the previous data.
      
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
      
      ~~~
      completion(errorDescriptor)
@@ -56,7 +56,7 @@ class TeamSerialiser
      - Parameter users: The **Users** to add to this **Team.**
      - Parameter toTeam: The **Team** to add these **Users** to.
      
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
      
      ~~~
      completion(errorDescriptor)
@@ -106,7 +106,7 @@ class TeamSerialiser
      - Parameter withIdentifiers: The identifiers of the **Teams** to be added to this **Tournament.**
      - Parameter toTournament: The identifier of the **Tournament** to add these **Teams** to.
      
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
      
      ~~~
      completion(errorDescriptor)
@@ -138,7 +138,7 @@ class TeamSerialiser
      - Parameter withIdentifier: The identifier of the **Team** to add to this **Tournament.**
      - Parameter toTournament: The identifier of the **Tournament** to add this **Team** to.
      
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
      
      ~~~
      completion(errorDescriptor)
@@ -262,7 +262,7 @@ class TeamSerialiser
      - Parameter withIdentifier: The identifier of the **User** to add to this **Team.**
      - Parameter toTeam: The identifier of the **Team** to add this **User** to.
      
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
      
      ~~~
      completion(errorDescriptor)
@@ -378,7 +378,7 @@ class TeamSerialiser
      - Parameter withIdentifier: The identifier of the **User** to add to this **Team.**
      - Parameter toTeams: The array of **Team** identifiers to add this **User** to.
      
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
      
      ~~~
      completion(errorDescriptor)
@@ -394,6 +394,11 @@ class TeamSerialiser
                 if let error = errorDescriptor
                 {
                     errors.append(error)
+                    
+                    if index == toTeams.count - 1
+                    {
+                        completion(errors.joined(separator: "\n"))
+                    }
                 }
                 else
                 {
@@ -416,7 +421,7 @@ class TeamSerialiser
      - Parameter name: The name of this **Team.**
      - Parameter participantIdentifiers: An array containing the identifiers of the **Users** on this **Team.**
      
-     - Parameter completion: Upon success, returns with a tuple containing the identifier of the newly created **Team** and its join code. Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns with a tuple containing the identifier of the newly created **Team** and its join code. Upon failure, a string describing the error(s) encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      
@@ -563,7 +568,7 @@ class TeamSerialiser
      Finds the **Team** with the specified join code.
      
      - Parameter byJoinCode: The join code of the **Team** to get.
-     - Parameter completion: Upon success, returns with the identifier of the **Team** with the corresponding join code. Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns with the identifier of the **Team** with the corresponding join code. Upon failure, a string describing the error(s) encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      
@@ -606,7 +611,7 @@ class TeamSerialiser
      Gets and deserialises a **Team** from a given identifier string.
      
      - Parameter withIdentifier: The identifier of the requested **Team.**
-     - Parameter completion: Upon success, returns a deserialised **Team** object. Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns a deserialised **Team** object. Upon failure, a string describing the error(s) encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      
@@ -717,12 +722,71 @@ class TeamSerialiser
     /* MARK: Removal Functions */
     
     /**
+     Deletes the **Team** with the specified identifier from the server.
+     
+     - Parameter identifier: The identifier of the **Team** to be deleted.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
+     
+     - Requires: The **Team's** associated **Tournament** (if applicable) to have more than just the specified **Team** in its list of *teamIdentifiers.*
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
+    func deleteTeam(_ identifier: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        getTeam(withIdentifier: identifier) { (returnedTeam, errorDescriptor) in
+            if let team = returnedTeam
+            {
+                if let tournament = team.associatedTournament,
+                   tournament.teamIdentifiers.filter({$0 != identifier}).count == 0
+                {
+                    completion("Deleting this Team would leave its associated Tournament with no participating Teams. Delete the Tournament first.")
+                }
+                else
+                {
+                    if let tournament = team.associatedTournament
+                    {
+                        TournamentSerialiser().removeTeam(identifier, fromTournament: tournament.associatedIdentifier, deleting: false) { (errorDescriptor) in
+                            if let error = errorDescriptor
+                            {
+                                completion(error)
+                            }
+                            else
+                            {
+                                self.finishDeletingTeam(identifier, withParticipants: team.participantIdentifiers) { (errorDescriptor) in
+                                    if let error = errorDescriptor
+                                    {
+                                        completion(error)
+                                    }
+                                    else { completion(nil) }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        self.finishDeletingTeam(identifier, withParticipants: team.participantIdentifiers) { (errorDescriptor) in
+                            if let error = errorDescriptor
+                            {
+                                completion(error)
+                            }
+                            else { completion(nil) }
+                        }
+                    }
+                }
+            }
+            else { completion(errorDescriptor!) }
+        }
+    }
+    
+    /**
      Removes the **User** with the specified identifier from all completed **Challenges** on the specified **Team.**
      
      - Parameter forUser: The identifier of the **User** to remove from the completed **Challenges.**
      - Parameter onTeam: The **Team** whose completed **Challenges** will be filtered.
      
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
      
      ~~~
      completion(errorDescriptor)
@@ -774,7 +838,7 @@ class TeamSerialiser
      - Parameter withIdentifier: The identifier of the **User** to remove from the **Team's** *participantIdentifiers.*
      - Parameter fromParticipantsOn: The **Team** whose *participantIdentifiers* array will be modified.
      
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
      
      ~~~
      completion(errorDescriptor)
@@ -796,49 +860,59 @@ class TeamSerialiser
     }
     
     /**
-     Removes a **User** from a **Team** using their identifiers.
+     Removes a **User** from a **Team.**
      
      - Parameter withIdentifier: The identifier of the **User** to remove from the **Team.**
-     - Parameter from: The identifier of the **Team** to remove the **User** from.
+     - Parameter fromTeam: The identifier of the **Team** to remove the **User** from.
+     - Parameter deleting: A Boolean describing whether the **Team** is being deleted or not.
      
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
+     
+     - Requires: If the **Team** is not being deleted, for the **Team** to have more participants than just the specified **User.**
      
      ~~~
      completion(errorDescriptor)
      ~~~
      */
-    func removeUser(_ withIdentifier: String, from: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    func removeUser(_ withIdentifier: String, fromTeam: String, deleting: Bool, completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
-        UserSerialiser().removeTeam(withIdentifier: from, fromUser: withIdentifier) { (errorDescriptor) in
-            if let error = errorDescriptor
+        getTeam(withIdentifier: fromTeam) { (returnedTeam, errorDescriptor) in
+            if let team = returnedTeam
             {
-                completion(error)
-            }
-            else
-            {
-                self.getTeam(withIdentifier: from) { (returnedTeam, errorDescriptor) in
-                    if let team = returnedTeam
-                    {
-                        self.removeUserFromCompletedChallenges(withIdentifier, onTeam: team) { (errorDescriptor) in
-                            if let error = errorDescriptor
-                            {
-                                completion(error)
-                            }
-                            else
-                            {
-                                self.removeUser(withIdentifier: withIdentifier, fromParticipantsOn: team) { (errorDescriptor) in
-                                    if let error = errorDescriptor
-                                    {
-                                        completion(error)
+                if team.participantIdentifiers.filter({$0 != withIdentifier}).count == 0 && !deleting
+                {
+                    completion("Removing this User leaves the Team with no participants; delete the Team.")
+                }
+                else
+                {
+                    UserSerialiser().removeTeam(withIdentifier: fromTeam, fromUser: withIdentifier) { (errorDescriptor) in
+                        if let error = errorDescriptor
+                        {
+                            completion(error)
+                        }
+                        else
+                        {
+                            self.removeUserFromCompletedChallenges(withIdentifier, onTeam: team) { (errorDescriptor) in
+                                if let error = errorDescriptor
+                                {
+                                    completion(error)
+                                }
+                                else
+                                {
+                                    self.removeUser(withIdentifier: withIdentifier, fromParticipantsOn: team) { (errorDescriptor) in
+                                        if let error = errorDescriptor
+                                        {
+                                            completion(error)
+                                        }
+                                        else { completion(nil) }
                                     }
-                                    else { completion(nil) }
                                 }
                             }
                         }
                     }
-                    else { completion(errorDescriptor!) }
                 }
             }
+            else { completion(errorDescriptor!) }
         }
     }
     
@@ -850,7 +924,7 @@ class TeamSerialiser
      Deserialises an array of completed **Challenges** from a given data bundle.
      
      - Parameter challenges: The serialised **Challenges** to convert.
-     - Parameter completion: Upon success, returns an array of `(Challenge, [(User, Date)]` tuples. Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns an array of `(Challenge, [(User, Date)]` tuples. Upon failure, a string describing the error(s) encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      
@@ -926,7 +1000,7 @@ class TeamSerialiser
      Deserialises a **Team** from a given data bundle.
      
      - Parameter from: The data bundle from which to deserialise the **Team.**
-     - Parameter completion: Upon success, returns a deserialised **Team** object. Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns a deserialised **Team** object. Upon failure, a string describing the error(s) encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      - Requires: A well-formed bundle of **Team** metadata.
@@ -1032,6 +1106,38 @@ class TeamSerialiser
     }
     
     /**
+     Finalises **Team** deletion by removing all **Users** from the **Team** and clearing the **Team's** data on the server.
+     
+     - Parameter identifier: The identifier of the **Team** being deleted.
+     - Parameter withParticipants: An array of **User** identifiers to be removed from the specified **Team.**
+     
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
+    private func finishDeletingTeam(_ identifier: String, withParticipants: [String], completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        self.removeUsers(withParticipants, fromTeam: identifier) { (errorDescriptor) in
+            if let error = errorDescriptor
+            {
+                completion(error)
+            }
+            else
+            {
+                GenericSerialiser().setValue(onKey: "/allTeams/\(identifier)", withData: NSNull()) { (returnedError) in
+                    if let error = returnedError
+                    {
+                        completion(errorInfo(error))
+                    }
+                    else { completion(nil) }
+                }
+            }
+        }
+    }
+    
+    /**
      Generates a 2-word join code for the **Team.**
      
      - Parameter completion: Upon success, returns with the randomly generated join code. Upon failure, an error.
@@ -1069,6 +1175,45 @@ class TeamSerialiser
             catch
             {
                 completion(nil, error)
+            }
+        }
+    }
+    
+    /**
+     Removes an array of **Users** from a **Team.**
+     
+     - Parameter users: An array of **User** identifiers to be removed from the specified **Team.**
+     - Parameter fromTeam: The identifier of the **Team** from which to remove the specified **Users.**
+     
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
+    private func removeUsers(_ users: [String], fromTeam: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        var errors: [String] = []
+        
+        for (index, user) in users.enumerated()
+        {
+            removeUser(user, fromTeam: fromTeam, deleting: true) { (errorDescriptor) in
+                if let error = errorDescriptor
+                {
+                    errors.append(error)
+                    
+                    if index == users.count - 1
+                    {
+                        completion(errors.joined(separator: "\n"))
+                    }
+                }
+                else
+                {
+                    if index == users.count - 1
+                    {
+                        completion(errors.count == 0 ? nil : errors.joined(separator: "\n"))
+                    }
+                }
             }
         }
     }

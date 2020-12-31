@@ -21,7 +21,7 @@ class TeamTestingSerialiser
      - Parameter with: The identifier of the **Users** to populate this **Team** with.
      - Parameter completedChallenges: The randomly generated completed **Challenges** to add to this **Team.**
      
-     - Parameter completion: Upon success, returns with the identifier of the newly created **Team.** Upon failure, a string describing the error encountered.
+     - Parameter completion: Upon success, returns with the identifier of the newly created **Team.** Upon failure, a string describing the error(s) encountered.
      
      - Note: Completion variables are *mutually exclusive.*
      

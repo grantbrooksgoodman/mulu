@@ -22,7 +22,7 @@ class GenericTestingSerialiser
      - Parameter numberOfChallenges: The number of **Challenges** to populate the server with.
      - Parameter numberOfTeams: The number of **Teams** to populate the server with.
      
-     - Parameter completion: Upon failure, returns with a string describing the error encountered.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
      
      ~~~
      completion(errorDescriptor)
@@ -229,7 +229,7 @@ class GenericTestingSerialiser
      */
     func trashDatabase()
     {
-        GenericSerialiser().setValue(onKey: "/", withData: "NULL") { (returnedError) in
+        GenericSerialiser().setValue(onKey: "/", withData: NSNull()) { (returnedError) in
             if let error = returnedError
             {
                 report(error.localizedDescription, errorCode: (error as NSError).code, isFatal: false, metadata: [#file, #function, #line])
