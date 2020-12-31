@@ -50,6 +50,8 @@ var dataStorage: StorageReference!
 var informationDictionary: [String:String]!
 var touchTimer: Timer?
 
+var generatedJoinCode: String?
+
 //==================================================//
 
 @UIApplicationMain class AppDelegate: UIResponder, MFMailComposeViewControllerDelegate, UIApplicationDelegate, UIGestureRecognizerDelegate

@@ -102,6 +102,8 @@ class TeamTestingSerialiser
                             
                             if i == amount - 1
                             {
+                                generatedJoinCode = metadata.joinCode
+                                
                                 completion(returnedIdentifiers, nil)
                             }
                         }

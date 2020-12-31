@@ -73,7 +73,47 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate
     
     @IBAction func teamButton(_ sender: Any)
     {
-        
+        #warning("For testing purposes only.")
+        AlertKit().confirmationAlertController(title: nil, message: "Reformat database?", cancelConfirmTitles: ["confirm": "Reformat"], confirmationDestructive: true, confirmationPreferred: true, networkDepedent: true) { (didConfirm) in
+            if let confirmed = didConfirm, confirmed
+            {
+                showProgressHUD(text: "Working...", delay: nil)
+                
+                GenericTestingSerialiser().trashDatabase()
+                
+                GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 10, numberOfChallenges: 5, numberOfTeams: 4) { (errorDescriptor) in
+                    hideHUD(delay: 1)
+                    
+                    if let error = errorDescriptor
+                    {
+                        AlertKit().errorAlertController(title: nil,
+                                                        message: error,
+                                                        dismissButtonTitle: nil,
+                                                        additionalSelectors: nil,
+                                                        preferredAdditionalSelector: nil,
+                                                        canFileReport: true,
+                                                        extraInfo: error,
+                                                        metadata: [#file, #function, #line],
+                                                        networkDependent: true)
+                    }
+                    else
+                    {
+                        if let joinCode = generatedJoinCode
+                        {
+                            AlertKit().optionAlertController(title: "Operation Completed Successfully", message: "Successfully reformatted database. Here's a team join code:\n\n«\(joinCode)»", cancelButtonTitle: "Dismiss", additionalButtons: nil, preferredActionIndex: nil, networkDependent: true) { (_) in
+                                print("finished")
+                            }
+                        }
+                        else
+                        {
+                            AlertKit().optionAlertController(title: "Succeeded with Errors", message: "Successfully reformatted database, but couldn't get a team join code.", cancelButtonTitle: "OK", additionalButtons: nil, preferredActionIndex: nil, networkDependent: true) { (_) in
+                                print("finished")
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     @IBAction func tournamentButton(_ sender: Any)
