@@ -426,6 +426,38 @@ func hideHUD(delay: Double?, completion: @escaping() -> Void)
     }
 }
 
+func flashSuccessHUD(text: String?, for: Double, delay: Double?, completion: @escaping() -> Void)
+{
+    if let delay = delay
+    {
+        let millisecondDelay = Int(delay * 1000)
+        
+        if !PKHUD.sharedHUD.isVisible
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
+                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: text)
+                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+            }
+        }
+    }
+    else
+    {
+        if !PKHUD.sharedHUD.isVisible
+        {
+            PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: text)
+            PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+        }
+    }
+    
+    let flashTime = Int(`for` * 1000)
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(flashTime)) {
+        hideHUD(delay: 0) {
+            completion()
+        }
+    }
+}
+
 ///Shows the progress HUD.
 func showProgressHUD()
 {
@@ -458,6 +490,32 @@ func showProgressHUD(text: String?, delay: Double?)
             if !PKHUD.sharedHUD.isVisible
             {
                 PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: text)
+                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+            }
+        }
+    }
+}
+
+func showSuccessHUD(text: String?, delay: Double?)
+{
+    if let delay = delay
+    {
+        let millisecondDelay = Int(delay * 1000)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
+            if !PKHUD.sharedHUD.isVisible
+            {
+                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: text)
+                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+            }
+        }
+    }
+    else
+    {
+        DispatchQueue.main.async {
+            if !PKHUD.sharedHUD.isVisible
+            {
+                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: text)
                 PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
             }
         }

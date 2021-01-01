@@ -50,21 +50,7 @@ class ChallengeSerialiser
         
         if let media = media
         {
-            var type: String!
-            
-            switch media.1
-            {
-            case .autoPlayVideo:
-                type = "autoPlayVideo"
-            case .gif:
-                type = "gif"
-            case .linkedVideo:
-                type = "linkedVideo"
-            case .staticImage:
-                type = "staticImage"
-            }
-            
-            dataBundle["media"] = "\(type!) – \(media.0.absoluteString)"
+            dataBundle["media"] = "\(media.1.uploadString()) – \(media.0.absoluteString)"
         }
         else { dataBundle["media"] = "!" }
         
@@ -85,6 +71,42 @@ class ChallengeSerialiser
     //==================================================//
     
     /* MARK: Getter Functions */
+    
+    /**
+     Retrieves and deserialises all existing **Challenges** on the server.
+     
+     - Parameter completion: Upon success, returns an array of deserialised **Challenge** objects. Upon failure, a string describing the error(s) encountered.
+     
+     - Note: Completion variables are *mutually exclusive.*
+     
+     ~~~
+     completion(returnedChallenges, errorDescriptor)
+     ~~~
+     */
+    func getAllChallenges(completion: @escaping(_ returnedChallenges: [Challenge]?, _ errorDescriptor: String?) -> Void)
+    {
+        Database.database().reference().child("allChallenges").observeSingleEvent(of: .value) { (returnedSnapshot) in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
+               let challengeIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
+            {
+                self.getChallenges(withIdentifiers: challengeIdentifiers) { (returnedChallenges, errorDescriptors) in
+                    if let challenges = returnedChallenges
+                    {
+                        completion(challenges, nil)
+                    }
+                    else if let errors = errorDescriptors
+                    {
+                        completion(nil, errors.joined(separator: "\n"))
+                    }
+                    else { completion(nil, "An unknown error occurred.") }
+                }
+            }
+            else
+            {
+                completion(nil, "Unable to deserialise snapshot.")
+            }
+        }
+    }
     
     /**
      Gets the identifiers of any **Challenges** posted on a specified date.
@@ -222,6 +244,79 @@ class ChallengeSerialiser
         { (returnedError) in
             
             completion(nil, "Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
+        }
+    }
+    
+    func deleteChallenge(_ identifier: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        removeChallengeFromAllTeams(identifier) { (errorDescriptor) in
+            if let error = errorDescriptor
+            {
+                completion(error)
+            }
+            else
+            {
+                GenericSerialiser().setValue(onKey: "/allChallenges/\(identifier)", withData: NSNull()) { (returnedError) in
+                    if let error = returnedError
+                    {
+                        completion(errorInfo(error))
+                    }
+                    else { completion(nil) }
+                }
+            }
+        }
+    }
+    
+    func removeChallengeFromAllTeams(_ identifier: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        TeamSerialiser().getAllTeams { (returnedTeams, errorDescriptor) in
+            if let teams = returnedTeams
+            {
+                var errors: [String] = []
+                
+                for (index, team) in teams.enumerated()
+                {
+                    if let challenges = team.completedChallenges
+                    {
+                        var newCompletedChallenges: [(Challenge, [(User, Date)])] = []
+                        
+                        for challengeBundle in challenges
+                        {
+                            if challengeBundle.challenge.associatedIdentifier != identifier
+                            {
+                                newCompletedChallenges.append(challengeBundle)
+                            }
+                        }
+                        
+                        TeamSerialiser().addCompletedChallenges(newCompletedChallenges, toTeam: team.associatedIdentifier, overwrite: true) { (errorDescriptor) in
+                            if let error = errorDescriptor
+                            {
+                                errors.append(error)
+                                
+                                if index == teams.count - 1
+                                {
+                                    completion(errors.joined(separator: "\n"))
+                                }
+                            }
+                            else
+                            {
+                                if index == teams.count - 1
+                                {
+                                    completion(errors.count == 0 ? nil : errors.joined(separator: "\n"))
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if index == teams.count - 1
+                        {
+                            completion(errors.count == 0 ? nil : errors.joined(separator: "\n"))
+                        }
+                    }
+                }
+            }
+            else { completion(errorDescriptor!) }
         }
     }
     

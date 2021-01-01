@@ -8,7 +8,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "8B772C19-9870-4184-9686-A28728134665"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Application/NewTeamController.swift"
@@ -48,54 +48,6 @@
                   startingLineNumber = "292"
                   endingLineNumber = "292"
                   offsetFromSymbolStart = "397">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0657BBEE-EF13-403E-8FDF-F37417B09E22"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Application/TeamSerialiser.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "457"
-            endingLineNumber = "457"
-            landmarkName = "createTeam(name:participantIdentifiers:completion:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "0657BBEE-EF13-403E-8FDF-F37417B09E22 - 3a8bdc4d536d9b0b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Optional&lt;Swift.Error&gt;) -&gt; () in closure #1 (Swift.Optional&lt;Swift.String&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Mulu.TeamSerialiser.createTeam(name: Swift.String, participantIdentifiers: Swift.Array&lt;Swift.String&gt;, completion: (Swift.Optional&lt;(identifier: Swift.String, joinCode: Swift.String)&gt;, Swift.Optional&lt;Swift.String&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "Mulu"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/grantbrooks/Documents/Projects/mulu/Application/TeamSerialiser.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "458"
-                  endingLineNumber = "458"
-                  offsetFromSymbolStart = "1229">
-               </Location>
-               <Location
-                  uuid = "0657BBEE-EF13-403E-8FDF-F37417B09E22 - 214ca621499d232e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Optional&lt;Swift.Error&gt;) -&gt; () in closure #1 (Swift.Optional&lt;Swift.Error&gt;) -&gt; () in closure #1 (Swift.Optional&lt;Swift.String&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Mulu.TeamSerialiser.createTeam(name: Swift.String, participantIdentifiers: Swift.Array&lt;Swift.String&gt;, completion: (Swift.Optional&lt;(identifier: Swift.String, joinCode: Swift.String)&gt;, Swift.Optional&lt;Swift.String&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "Mulu"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/grantbrooks/Documents/Projects/mulu/Application/TeamSerialiser.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "459"
-                  endingLineNumber = "459"
-                  offsetFromSymbolStart = "368">
                </Location>
             </Locations>
          </BreakpointContent>

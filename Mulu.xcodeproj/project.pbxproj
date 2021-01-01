@@ -38,6 +38,7 @@
 		A207FFFB2581B714004E70A6 /* Montserrat-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A207FFE92581B714004E70A6 /* Montserrat-Italic.ttf */; };
 		A207FFFC2581B714004E70A6 /* Montserrat-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A207FFEA2581B714004E70A6 /* Montserrat-SemiBoldItalic.ttf */; };
 		A207FFFD2581B714004E70A6 /* Montserrat-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A207FFEB2581B714004E70A6 /* Montserrat-ExtraBoldItalic.ttf */; };
+		A20E80C6259E701C00D1EB0B /* ViewChallengesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20E80C5259E701C00D1EB0B /* ViewChallengesController.swift */; };
 		A22169D2258A611D001C036D /* Gotham-XLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C0258A611D001C036D /* Gotham-XLight.otf */; };
 		A22169D3258A611D001C036D /* Gotham-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C1258A611D001C036D /* Gotham-Thin.otf */; };
 		A22169D4258A611D001C036D /* Gotham-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C2258A611D001C036D /* Gotham-Black.otf */; };
@@ -76,7 +77,7 @@
 		A289281E2593B8AD00610E48 /* NewChallengeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A289281D2593B8AD00610E48 /* NewChallengeController.swift */; };
 		A28E99B7257AA47D00D8A4F7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */; };
 		A28FF91C259AD69E000FC656 /* ViewUsersController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28FF91B259AD69E000FC656 /* ViewUsersController.swift */; };
-		A28FF920259AD834000FC656 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28FF91F259AD834000FC656 /* UserCell.swift */; };
+		A28FF920259AD834000FC656 /* SubtitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28FF91F259AD834000FC656 /* SubtitleCell.swift */; };
 		A2962CFD2594FC2A00399F50 /* words.txt in Resources */ = {isa = PBXBuildFile; fileRef = A2962CFC2594FC2A00399F50 /* words.txt */; };
 		A297BFB2258E9E32006DA5F5 /* ForgotPasswordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A297BFB1258E9E32006DA5F5 /* ForgotPasswordController.swift */; };
 		A2A554962577FFBF006D3B3E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A554952577FFBF006D3B3E /* Extensions.swift */; };
@@ -176,6 +177,7 @@
 		A207FFEA2581B714004E70A6 /* Montserrat-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		A207FFEB2581B714004E70A6 /* Montserrat-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		A207FFFF2581C2C9004E70A6 /* TeamController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamController.swift; sourceTree = "<group>"; };
+		A20E80C5259E701C00D1EB0B /* ViewChallengesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewChallengesController.swift; sourceTree = "<group>"; };
 		A22169C0258A611D001C036D /* Gotham-XLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-XLight.otf"; sourceTree = "<group>"; };
 		A22169C1258A611D001C036D /* Gotham-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Thin.otf"; sourceTree = "<group>"; };
 		A22169C2258A611D001C036D /* Gotham-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Black.otf"; sourceTree = "<group>"; };
@@ -216,7 +218,7 @@
 		A289281D2593B8AD00610E48 /* NewChallengeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewChallengeController.swift; sourceTree = "<group>"; };
 		A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A28FF91B259AD69E000FC656 /* ViewUsersController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewUsersController.swift; sourceTree = "<group>"; };
-		A28FF91F259AD834000FC656 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
+		A28FF91F259AD834000FC656 /* SubtitleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleCell.swift; sourceTree = "<group>"; };
 		A2962CFC2594FC2A00399F50 /* words.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = words.txt; sourceTree = "<group>"; };
 		A297BFB1258E9E32006DA5F5 /* ForgotPasswordController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordController.swift; sourceTree = "<group>"; };
 		A2A554952577FFBF006D3B3E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -379,7 +381,7 @@
 				A202DE33259522DA0053DA6F /* MediaAnalyser.swift */,
 				A288D1FF25844F55002AFB51 /* ScrollerCell.swift */,
 				A278AFA8259A920800EA3443 /* TeamCell.swift */,
-				A28FF91F259AD834000FC656 /* UserCell.swift */,
+				A28FF91F259AD834000FC656 /* SubtitleCell.swift */,
 				687404491CB1AB4400BD2632 /* Info.plist */,
 				A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */,
 				A2962CFC2594FC2A00399F50 /* words.txt */,
@@ -494,6 +496,7 @@
 				A289281D2593B8AD00610E48 /* NewChallengeController.swift */,
 				A2054DF5259D1DF9008CBD4F /* NewTeamController.swift */,
 				A278AFA4259A8E4A00EA3443 /* NewUserController.swift */,
+				A20E80C5259E701C00D1EB0B /* ViewChallengesController.swift */,
 				A236BE29259AD5D900162A8B /* ViewController.swift */,
 				A28FF91B259AD69E000FC656 /* ViewUsersController.swift */,
 			);
@@ -835,7 +838,7 @@
 				A20700002581C2C9004E70A6 /* TeamController.swift in Sources */,
 				A236BE2A259AD5D900162A8B /* ViewController.swift in Sources */,
 				A2B1F7612458EC8900CB20AF /* ShadowButton.swift in Sources */,
-				A28FF920259AD834000FC656 /* UserCell.swift in Sources */,
+				A28FF920259AD834000FC656 /* SubtitleCell.swift in Sources */,
 				A2A5549A25780BCB006D3B3E /* Builder.swift in Sources */,
 				A2F32EE5258856E70054C55A /* Tournament.swift in Sources */,
 				687404481CB1AB3400BD2632 /* MainController.swift in Sources */,
@@ -849,6 +852,7 @@
 				6881EA4C1E29CD360007D873 /* SystemInformation.swift in Sources */,
 				A2EFF34325835A590070B320 /* DateCell.swift in Sources */,
 				68D29A131DD79C8A00BFF4D5 /* InitialController.swift in Sources */,
+				A20E80C6259E701C00D1EB0B /* ViewChallengesController.swift in Sources */,
 				A2DD2C2B259A9EE300DFA423 /* RadioButtonController.swift in Sources */,
 				A2AEDD4A257BDE220074CA11 /* GenericSerialiser.swift in Sources */,
 				A202DE34259522DA0053DA6F /* MediaAnalyser.swift in Sources */,

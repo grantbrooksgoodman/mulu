@@ -520,20 +520,20 @@ extension ViewUsersController: UITableViewDataSource, UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let currentCell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
+        let currentCell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! SubtitleCell
         
-        currentCell.nameLabel.text = "\(userArray[indexPath.row].firstName!) \(userArray[indexPath.row].lastName!)"
-        currentCell.emailLabel.text = userArray[indexPath.row].emailAddress!
+        currentCell.titleLabel.text = "\(userArray[indexPath.row].firstName!) \(userArray[indexPath.row].lastName!)"
+        currentCell.subtitleLabel.text = userArray[indexPath.row].emailAddress!
         
         return currentCell
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath)
     {
-        if let currentCell = tableView.cellForRow(at: indexPath) as? UserCell
+        if let currentCell = tableView.cellForRow(at: indexPath) as? SubtitleCell
         {
-            currentCell.nameLabel.textColor = .white
-            currentCell.emailLabel.textColor = .white
+            currentCell.titleLabel.textColor = .white
+            currentCell.subtitleLabel.textColor = .white
         }
     }
     
@@ -541,10 +541,10 @@ extension ViewUsersController: UITableViewDataSource, UITableViewDelegate
     {
         selectedIndexPath = indexPath
         
-        if let currentCell = tableView.cellForRow(at: indexPath) as? UserCell
+        if let currentCell = tableView.cellForRow(at: indexPath) as? SubtitleCell
         {
-            currentCell.nameLabel.textColor = .black
-            currentCell.emailLabel.textColor = .black
+            currentCell.titleLabel.textColor = .black
+            currentCell.subtitleLabel.textColor = .black
         }
         
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)

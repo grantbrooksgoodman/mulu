@@ -567,7 +567,7 @@ extension NewTeamController: UITableViewDataSource, UITableViewDelegate
             
             if let teams = userArray![indexPath.row].associatedTeams
             {
-                currentCell.memberLabel.text = "on \(teams.count) teams"
+                currentCell.memberLabel.text = "on \(teams.count) team\(teams.count == 1 ? "" : "s")"
             }
             else
             {

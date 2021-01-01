@@ -45,13 +45,13 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        initialiseController()
     }
     
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        
+        initialiseController()
         
         currentFile = #file
         buildInfoController?.view.isHidden = false
@@ -68,7 +68,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate
     
     @IBAction func challengeButton(_ sender: Any)
     {
-        
+        performSegue(withIdentifier: "ViewChallengesFromViewSegue", sender: self)
     }
     
     @IBAction func teamButton(_ sender: Any)

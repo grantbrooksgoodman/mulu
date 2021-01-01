@@ -421,9 +421,9 @@ class TeamSerialiser
      - Parameter name: The name of this **Team.**
      - Parameter participantIdentifiers: An array containing the identifiers of the **Users** on this **Team.**
      
-     - Parameter completion: Upon success, returns with a tuple containing the identifier of the newly created **Team** and its join code. Upon failure, a string describing the error(s) encountered.
+     - Parameter completion: Upon success, returns with a tuple containing the identifier of the newly created **Team** and its join code. May also return with a string describing the error(s) encountered.
      
-     - Note: Completion variables are *mutually exclusive.*
+     - Note: Completion variables are **NOT** *mutually exclusive.*
      
      ~~~
      completion(returnedMetadata, errorDescriptor)
@@ -453,18 +453,25 @@ class TeamSerialiser
                         }
                         else
                         {
+                            var errors: [String] = []
+                            
                             for (index, user) in participantIdentifiers.enumerated()
                             {
-                                GenericSerialiser().updateValue(onKey: "/allUsers/\(user)", withData: ["associatedTeams": [generatedKey]]) { (returnedError) in
-                                    if let error = returnedError
+                                TeamSerialiser().addUser(user, toTeam: generatedKey) { (errorDescriptor) in
+                                    if let error = errorDescriptor
                                     {
-                                        completion(nil, errorInfo(error))
+                                        errors.append(error)
+                                        
+                                        if index == participantIdentifiers.count - 1
+                                        {
+                                            completion(nil, errors.joined(separator: "\n"))
+                                        }
                                     }
                                     else
                                     {
                                         if index == participantIdentifiers.count - 1
                                         {
-                                            completion((generatedKey, code), nil)
+                                            completion((generatedKey, code), errors.count == 0 ? nil : errors.joined(separator: "\n"))
                                         }
                                     }
                                 }
@@ -1241,6 +1248,11 @@ class TeamSerialiser
             }
             
             dataBundle["\(bundle.challenge.associatedIdentifier!)"] = serialisedMetadata
+        }
+        
+        if dataBundle == [:]
+        {
+            dataBundle = ["!":["!"]]
         }
         
         return dataBundle

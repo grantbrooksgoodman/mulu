@@ -345,6 +345,7 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
             {
                 challengeCell.webView.alpha = 0
                 challengeCell.imageView.alpha = 0
+                challengeCell.playButton.alpha = 0
                 challengeCell.noMediaLabel.alpha = 1
             }
         }

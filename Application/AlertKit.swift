@@ -616,6 +616,10 @@ class AlertKit
      .secureTextEntry:     false,
      .textAlignment:       NSTextAlignment.left]
      ~~~
+     
+     ~~~
+     completion(returnedString, selectedIndex)
+     ~~~
      */
     func textAlertController(title: String?,
                              message: String?,

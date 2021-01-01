@@ -194,6 +194,8 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             UIView.animate(withDuration: 0.2) {
                 self.mediaTextField.alpha = 0
                 self.uploadButton.alpha = 1
+            } completion: { (_) in
+                findAndResignFirstResponder()
             }
         }
         else
@@ -650,76 +652,6 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         }
     }
     
-    func upload(image: Bool, withData: Data, extension: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
-    {
-        if image
-        {
-            let imagePath = "images/\(Int().random(min: 1000, max: 10000)).\(`extension`)"
-            let imageReference = dataStorage.child(imagePath)
-            
-            let metadata = StorageMetadata()
-            metadata.contentType = "image/\(`extension`)"
-            
-            let uploadTask = imageReference.putData(withData, metadata: metadata) { (returnedMetadata, returnedError) in
-                if let error = returnedError
-                {
-                    completion(errorInfo(error))
-                }
-                else
-                {
-                    imageReference.downloadURL { (returnedURL, returnedError) in
-                        if let url = returnedURL
-                        {
-                            self.mediaLink = url
-                            self.uploadedMediaPath = imagePath
-                            
-                            completion(nil)
-                        }
-                        else if let error = returnedError
-                        {
-                            completion(errorInfo(error))
-                        }
-                    }
-                }
-            }
-            
-            uploadTask.resume()
-        }
-        else
-        {
-            let videoPath = "videos/\(Int().random(min: 1000, max: 10000)).\(`extension`)"
-            let videoReference = dataStorage.child(videoPath)
-            
-            let metadata = StorageMetadata()
-            metadata.contentType = "video/\(`extension`)"
-            
-            let uploadTask = videoReference.putData(withData, metadata: metadata) { (returnedMetadata, returnedError) in
-                if let error = returnedError
-                {
-                    completion(errorInfo(error))
-                }
-                else
-                {
-                    videoReference.downloadURL { (returnedURL, returnedError) in
-                        if let url = returnedURL
-                        {
-                            self.mediaLink = url
-                            self.uploadedMediaPath = videoPath
-                            
-                            completion(nil)
-                        }
-                        else if let error = returnedError
-                        {
-                            completion(errorInfo(error))
-                        }
-                    }
-                }
-            }
-            
-            uploadTask.resume()
-        }
-    }
-    
     func verifyTitle() -> Bool
     {
         if largeTextField.text!.lowercasedTrimmingWhitespace != ""
@@ -834,17 +766,12 @@ extension NewChallengeController: UIImagePickerControllerDelegate
                         
                         showProgressHUD(text: "Uploading image...", delay: nil)
                         
-                        self.upload(image: true, withData: imageData, extension: `extension`) { (errorDescriptor) in
-                            if let error = errorDescriptor
+                        GenericSerialiser().upload(image: true, withData: imageData, extension: `extension`) { (returnedMetadata, errorDescriptor) in
+                            if let metadata = returnedMetadata
                             {
-                                hideHUD(delay: 0.5)
+                                self.mediaLink = metadata.link
+                                self.uploadedMediaPath = metadata.path
                                 
-                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
-                                    report(error, errorCode: nil, isFatal: true, metadata: [#file, #function, #line])
-                                }
-                            }
-                            else
-                            {
                                 DispatchQueue.main.async {
                                     HUD.flash(.success, delay: 0.5)
                                     
@@ -852,6 +779,14 @@ extension NewChallengeController: UIImagePickerControllerDelegate
                                         self.uploadButton.setImage(nil, for: .normal)
                                         self.uploadButton.setTitle("Tap to Replace", for: .normal)
                                     }
+                                }
+                            }
+                            else
+                            {
+                                hideHUD(delay: 0.5)
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
+                                    report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line])
                                 }
                             }
                         }
@@ -899,17 +834,12 @@ extension NewChallengeController: UIImagePickerControllerDelegate
                         
                         showProgressHUD(text: "Uploading video...", delay: nil)
                         
-                        self.upload(image: false, withData: videoData, extension: `extension`) { (errorDescriptor) in
-                            if let error = errorDescriptor
+                        GenericSerialiser().upload(image: false, withData: videoData, extension: `extension`) { (returnedMetadata, errorDescriptor) in
+                            if let metadata = returnedMetadata
                             {
-                                hideHUD(delay: 0.5)
+                                self.mediaLink = metadata.link
+                                self.uploadedMediaPath = metadata.path
                                 
-                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
-                                    report(error, errorCode: nil, isFatal: true, metadata: [#file, #function, #line])
-                                }
-                            }
-                            else
-                            {
                                 DispatchQueue.main.async {
                                     HUD.flash(.success, delay: 0.5)
                                     
@@ -917,6 +847,14 @@ extension NewChallengeController: UIImagePickerControllerDelegate
                                         self.uploadButton.setImage(nil, for: .normal)
                                         self.uploadButton.setTitle("Tap to Replace", for: .normal)
                                     }
+                                }
+                            }
+                            else
+                            {
+                                hideHUD(delay: 0.5)
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
+                                    report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line])
                                 }
                             }
                         }

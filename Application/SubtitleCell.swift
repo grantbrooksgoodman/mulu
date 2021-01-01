@@ -1,5 +1,5 @@
 //
-//  UserCell.swift
+//  SubtitleCell.swift
 //  Mulu Party
 //
 //  Created by Grant Brooks Goodman on 28/12/2020.
@@ -9,14 +9,14 @@
 /* First-party Frameworks */
 import UIKit
 
-class UserCell: UITableViewCell
+class SubtitleCell: UITableViewCell
 {
     //==================================================//
     
     /* MARK: Interface Builder UI Elements */
     
-    @IBOutlet weak var emailLabel: UILabel!
-    @IBOutlet weak var nameLabel:  UILabel!
+    @IBOutlet weak var subtitleLabel: UILabel!
+    @IBOutlet weak var titleLabel:  UILabel!
     
     //==================================================//
     
