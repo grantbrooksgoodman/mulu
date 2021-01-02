@@ -13,7 +13,6 @@ import UIKit
 /* Third-party Frameworks */
 import Firebase
 import FirebaseStorage
-import OneSignal
 import PKHUD
 import Reachability
 
@@ -36,6 +35,8 @@ var codeName                  = "Mulu"
 var currentFile               = #file
 var dmyFirstCompileDateString = "04122020"
 var finalName                 = "Mulu Party"
+var generatedJoinCode: String?
+var pushToken:         String?
 
 //UIViewControllers
 var buildInfoController: BuildInfoController?
@@ -50,11 +51,9 @@ var dataStorage: StorageReference!
 var informationDictionary: [String:String]!
 var touchTimer: Timer?
 
-var generatedJoinCode: String?
-
 //==================================================//
 
-@UIApplicationMain class AppDelegate: UIResponder, MFMailComposeViewControllerDelegate, UIApplicationDelegate, UIGestureRecognizerDelegate
+@UIApplicationMain class AppDelegate: UIResponder, MessagingDelegate, MFMailComposeViewControllerDelegate, UIApplicationDelegate, UIGestureRecognizerDelegate, UNUserNotificationCenterDelegate
 {
     //==================================================//
     
@@ -95,18 +94,25 @@ var generatedJoinCode: String?
         
         dataStorage = Storage.storage().reference()
         
-        // Remove this method to stop OneSignal Debugging
-        OneSignal.setLogLevel(.LL_ERROR, visualLevel: .LL_NONE)
+        if #available(iOS 10.0, *)
+        {
+            // For iOS 10 display notification (sent via APNS)
+            UNUserNotificationCenter.current().delegate = self
+            
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            
+            UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: {_, _ in })
+        }
+        else
+        {
+            let settings: UIUserNotificationSettings = UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+            
+            application.registerUserNotificationSettings(settings)
+        }
         
-        // OneSignal initialization
-        OneSignal.initWithLaunchOptions(launchOptions)
-        OneSignal.setAppId("887d799b-9980-48e7-a36f-e27fe211c023")
+        application.registerForRemoteNotifications()
         
-        // promptForPushNotifications will show the native iOS notification permission prompt.
-        // We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step 8)
-        OneSignal.promptForPushNotifications(userResponse: { accepted in
-            print("User accepted notifications: \(accepted)")
-        })
+        Messaging.messaging().delegate = self
         
         return true
     }
@@ -162,6 +168,14 @@ var generatedJoinCode: String?
         }
         
         return false
+    }
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String)
+    {
+        //        let dataDict: [String:String] = ["token": fcmToken]
+        //        NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)
+        
+        pushToken = fcmToken
     }
     
     @objc func touchTimerAction()
@@ -586,6 +600,49 @@ func hasConnectivity() -> Bool
     return (networkStatus != "No Connection")
 }
 
+func notifyAllUsers(title: String, body: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+{
+    UserSerialiser().getAllUsers { (returnedUsers, errorDescriptor) in
+        if let users = returnedUsers
+        {
+            var errors: [String] = []
+            
+            for (index, user) in users.enumerated()
+            {
+                if let pushTokens = user.pushTokens
+                {
+                    for token in pushTokens
+                    {
+                        pushNotification(to: token, title: title, body: body) { (errorDescriptor) in
+                            if let error = errorDescriptor
+                            {
+                                errors.append(error)
+                                
+                                if index == users.count - 1
+                                {
+                                    completion(errors.joined(separator: "\n"))
+                                }
+                            }
+                            else
+                            {
+                                if index == users.count - 1
+                                {
+                                    completion(errors.count == 0 ? nil : errors.joined(separator: "\n"))
+                                }
+                            }
+                        }
+                    }
+                }
+                else if index == users.count - 1
+                {
+                    completion(errors.count == 0 ? nil : errors.joined(separator: "\n"))
+                }
+            }
+        }
+        else { completion(errorDescriptor!) }
+    }
+}
+
 ///Presents a given view controller, but waits for others to be dismissed before doing so.
 func politelyPresent(viewController: UIViewController)
 {
@@ -621,6 +678,35 @@ func politelyPresent(viewController: UIViewController)
             DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: { politelyPresent(viewController: viewController) })
         }
     }
+}
+
+func pushNotification(to token: String, title: String, body: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+{
+    let messagingKey = "ADD ME BACK POST-COMMIT"
+    
+    let jsonParameters: [String:Any] = ["to":           token,
+                                        "notification": ["title": title, "body": body],
+                                        "data":         ["user": "test_id"]]
+    
+    let urlRequest = NSMutableURLRequest(url: URL(string: "https://fcm.googleapis.com/fcm/send")!)
+    
+    urlRequest.httpBody = try? JSONSerialization.data(withJSONObject: jsonParameters, options: [.prettyPrinted])
+    urlRequest.httpMethod = "POST"
+    
+    urlRequest.setValue("application/json",    forHTTPHeaderField: "Content-Type")
+    urlRequest.setValue("key=\(messagingKey)", forHTTPHeaderField: "Authorization")
+    
+    let dataTask = URLSession.shared.dataTask(with: urlRequest as URLRequest)  { (returnedData, returnedResponse, returnedError) in
+        do {
+            if let error = returnedError
+            {
+                completion(errorInfo(error))
+            }
+            else { completion(nil) }
+        }
+    }
+    
+    dataTask.resume()
 }
 
 ///Rounds the corners on any desired view.

@@ -22,7 +22,7 @@ class Challenge
     
     //Other Declarations
     var datePosted: Date!
-    var media: (link: URL, type: MediaType)?
+    var media: (link: URL, path: String?, type: MediaType)?
     var pointValue: Int!
     
     //==================================================//
@@ -46,7 +46,7 @@ class Challenge
          prompt:               String,
          datePosted:           Date,
          pointValue:           Int,
-         media:                (URL, MediaType)?)
+         media:                (URL, String?, MediaType)?)
     {
         self.associatedIdentifier = associatedIdentifier
         self.title = title
@@ -65,20 +65,42 @@ class Challenge
      
      - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
      
-     - Warning: Does not actually *delete* the uploaded media.
-     
      ~~~
      completion(errorDescriptor)
      ~~~
      */
-    func removeMediaAssociation(completion: @escaping(_ errorDescriptor: String?) -> Void)
+    func removeMedia(completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
-        GenericSerialiser().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/media", withData: "!") { (returnedError) in
-            if let error = returnedError
-            {
-                completion(errorInfo(error))
+        if let mediaPath = media?.path
+        {
+            let mediaReference = dataStorage.child(mediaPath)
+            
+            mediaReference.delete { (returnedError) in
+                if let error = returnedError
+                {
+                    completion(errorInfo(error))
+                }
+                else
+                {
+                    GenericSerialiser().setValue(onKey: "/allChallenges/\(self.associatedIdentifier!)/media", withData: "!") { (returnedError) in
+                        if let error = returnedError
+                        {
+                            completion(errorInfo(error))
+                        }
+                        else { completion(nil) }
+                    }
+                }
             }
-            else { completion(nil) }
+        }
+        else
+        {
+            GenericSerialiser().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/media", withData: "!") { (returnedError) in
+                if let error = returnedError
+                {
+                    completion(errorInfo(error))
+                }
+                else { completion(nil) }
+            }
         }
     }
     

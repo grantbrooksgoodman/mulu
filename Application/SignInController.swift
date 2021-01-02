@@ -199,6 +199,16 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                     {
                         currentUser = user
                         
+                        if let token = pushToken
+                        {
+                            currentUser!.updatePushTokens(token) { (errorDescriptor) in
+                                if let error = errorDescriptor
+                                {
+                                    report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                                }
+                            }
+                        }
+                        
                         currentUser!.deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
                             if let teams = returnedTeams
                             {

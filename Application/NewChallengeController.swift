@@ -371,12 +371,12 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     
     func confirmCancellation()
     {
-        AlertKit().confirmationAlertController(title: "Are You Sure?",
-                                               message: "Would you really like to cancel?",
-                                               cancelConfirmTitles: ["cancel": "No", "confirm": "Yes"],
+        AlertKit().confirmationAlertController(title:                   "Are You Sure?",
+                                               message:                 "Would you really like to cancel?",
+                                               cancelConfirmTitles:     ["cancel": "No", "confirm": "Yes"],
                                                confirmationDestructive: true,
-                                               confirmationPreferred: false,
-                                               networkDepedent: false) { (didConfirm) in
+                                               confirmationPreferred:   false,
+                                               networkDepedent:         false) { (didConfirm) in
             if didConfirm!
             {
                 if let path = self.uploadedMediaPath
@@ -399,11 +399,11 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     
     func createChallenge()
     {
-        var media: (URL, Challenge.MediaType)?
+        var media: (URL, String?, Challenge.MediaType)?
         
         if let type = mediaType, let link = mediaLink
         {
-            media = (link, type)
+            media = (link, uploadedMediaPath, type)
         }
         
         ChallengeSerialiser().createChallenge(title: challengeTitle!, prompt: promptTextView.text!, datePosted: Date(), pointValue: pointValue!, media: media) { (returnedIdentifier, errorDescriptor) in
@@ -413,6 +413,24 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                 PKHUD.sharedHUD.show()
                 
                 hideHUD(delay: 1) {
+                    if self.alertSwitch.isOn
+                    {
+                        notifyAllUsers(title: "New Challenge Posted", body: self.challengeTitle!) { (errorDescriptor) in
+                            if let error = errorDescriptor
+                            {
+                                AlertKit().errorAlertController(title:                       "Unable to Notify",
+                                                                message:                     error,
+                                                                dismissButtonTitle:          nil,
+                                                                additionalSelectors:         nil,
+                                                                preferredAdditionalSelector: nil,
+                                                                canFileReport:               true,
+                                                                extraInfo:                   error,
+                                                                metadata:                    [#file, #function, #line],
+                                                                networkDependent:            true)
+                            }
+                        }
+                    }
+                    
                     self.navigationController?.dismiss(animated: true, completion: nil)
                 }
             }

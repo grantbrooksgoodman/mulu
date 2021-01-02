@@ -380,7 +380,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
             {
                 showProgressHUD(text: "Removing media...", delay: nil)
                 
-                self.challengeArray[self.selectedIndexPath.row].removeMediaAssociation { (errorDescriptor) in
+                self.challengeArray[self.selectedIndexPath.row].removeMedia { (errorDescriptor) in
                     if let error = errorDescriptor
                     {
                         hideHUD(delay: 0.5) {

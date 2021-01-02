@@ -369,6 +369,30 @@ class User
         
         return total
     }
+    
+    /**
+     Updates the **User's** push notification tokens.
+     
+     - Parameter token: The token string to add to the **User's** push notification token array.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
+     
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
+    func updatePushTokens(_ token: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    {
+        var newPushTokens = pushTokens ?? []
+        newPushTokens.append(token)
+        
+        GenericSerialiser().setValue(onKey: "/allUsers/\(associatedIdentifier!)/pushTokens", withData: newPushTokens.unique()) { (returnedError) in
+            if let error = returnedError
+            {
+                completion(errorInfo(error))
+            }
+            else { completion(nil) }
+        }
+    }
 }
 
 extension Array where Element == (challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])

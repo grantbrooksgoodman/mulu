@@ -205,7 +205,16 @@ class GenericTestingSerialiser
                             {
                                 completion(errorInfo(error))
                             }
-                            else { completion(nil) }
+                            else
+                            {
+                                GenericSerialiser().setValue(onKey: "/globalAnnouncement", withData: "This is a test!") { (returnedError) in
+                                    if let error = returnedError
+                                    {
+                                        completion(errorInfo(error))
+                                    }
+                                    else { completion(nil) }
+                                }
+                            }
                         }
                     }
                 }

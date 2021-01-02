@@ -270,12 +270,12 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
     
     func confirmCancellation()
     {
-        AlertKit().confirmationAlertController(title: "Are You Sure?",
-                                               message: "Would you really like to cancel?",
-                                               cancelConfirmTitles: ["cancel": "No", "confirm": "Yes"],
+        AlertKit().confirmationAlertController(title:                   "Are You Sure?",
+                                               message:                 "Would you really like to cancel?",
+                                               cancelConfirmTitles:     ["cancel": "No", "confirm": "Yes"],
                                                confirmationDestructive: true,
-                                               confirmationPreferred: false,
-                                               networkDepedent: false) { (didConfirm) in
+                                               confirmationPreferred:   false,
+                                               networkDepedent:         false) { (didConfirm) in
             if didConfirm!
             {
                 self.navigationController?.dismiss(animated: true, completion: nil)

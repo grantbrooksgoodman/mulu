@@ -38,7 +38,7 @@ class ChallengeSerialiser
                          prompt: String,
                          datePosted: Date?,
                          pointValue: Int,
-                         media: (URL, Challenge.MediaType)?,
+                         media: (URL, String?, Challenge.MediaType)?,
                          completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
     {
         var dataBundle: [String:Any] = [:]
@@ -50,7 +50,12 @@ class ChallengeSerialiser
         
         if let media = media
         {
-            dataBundle["media"] = "\(media.1.uploadString()) – \(media.0.absoluteString)"
+            if let pathString = media.1
+            {
+                dataBundle["media"] = "\(media.2.uploadString()) – \(pathString) – \(media.0.absoluteString)"
+            }
+            else
+            { dataBundle["media"] = "\(media.2.uploadString()) – \(media.0.absoluteString)" }
         }
         else { dataBundle["media"] = "!" }
         
@@ -256,12 +261,27 @@ class ChallengeSerialiser
             }
             else
             {
-                GenericSerialiser().setValue(onKey: "/allChallenges/\(identifier)", withData: NSNull()) { (returnedError) in
-                    if let error = returnedError
+                self.getChallenge(withIdentifier: identifier) { (returnedChallenge, errorDescriptor) in
+                    if let challenge = returnedChallenge
                     {
-                        completion(errorInfo(error))
+                        challenge.removeMedia { (errorDescriptor) in
+                            if let error = errorDescriptor
+                            {
+                                completion(error)
+                            }
+                            else
+                            {
+                                GenericSerialiser().setValue(onKey: "/allChallenges/\(identifier)", withData: NSNull()) { (returnedError) in
+                                    if let error = returnedError
+                                    {
+                                        completion(errorInfo(error))
+                                    }
+                                    else { completion(nil) }
+                                }
+                            }
+                        }
                     }
-                    else { completion(nil) }
+                    else { completion(errorDescriptor!) }
                 }
             }
         }
@@ -353,17 +373,28 @@ class ChallengeSerialiser
         guard let mediaString = dataBundle["media"] as? String else
         { return (nil, "Unable to deserialise «media».") }
         
-        var media: (URL, Challenge.MediaType)?
+        var media: (URL, String?, Challenge.MediaType)?
         
         if mediaString != "!"
         {
-            let components = mediaString.components(separatedBy: " – ")
+            let components = mediaString.components(separatedBy: " – ")
             
-            guard components.count == 2 else
-            { return(nil, "The media string was improperly formatted.") }
+            var mediaTypeString: String!
+            var pathString: String?
+            var linkString: String!
             
-            let mediaTypeString = components[0]
-            let linkString = components[1]
+            if components.count == 2
+            {
+                mediaTypeString = components[0]
+                linkString = components[1]
+            }
+            else if components.count == 3
+            {
+                mediaTypeString = components[0]
+                pathString = components[1]
+                linkString = components[2]
+            }
+            else { return(nil, "The media string was improperly formatted.") }
             
             var mediaType: Challenge.MediaType!
             
@@ -383,7 +414,7 @@ class ChallengeSerialiser
                     return(nil, "Couldn't convert media type into «MediaType».")
                 }
                 
-                media = (url, mediaType)
+                media = (url, pathString, mediaType)
             }
             else { return(nil, "Could not convert media link to URL.") }
         }
