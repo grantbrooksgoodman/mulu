@@ -50,8 +50,6 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     {
         super.viewDidLoad()
         
-        initialiseController()
-        
         tableView.backgroundColor = .black
         tableView.alpha = 0
         
@@ -61,6 +59,8 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        
+        initialiseController()
         
         currentFile = #file
         buildInfoController?.view.isHidden = false

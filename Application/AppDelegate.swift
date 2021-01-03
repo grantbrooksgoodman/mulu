@@ -38,6 +38,8 @@ var finalName                 = "Mulu Party"
 var generatedJoinCode: String?
 var pushToken:         String?
 
+var pushAPIKey = ""
+
 //UIViewControllers
 var buildInfoController: BuildInfoController?
 var lastInitialisedController: UIViewController! = MainController()
@@ -682,8 +684,6 @@ func politelyPresent(viewController: UIViewController)
 
 func pushNotification(to token: String, title: String, body: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
 {
-    let messagingKey = "ADD ME BACK POST-COMMIT"
-    
     let jsonParameters: [String:Any] = ["to":           token,
                                         "notification": ["title": title, "body": body],
                                         "data":         ["user": "test_id"]]
@@ -694,7 +694,7 @@ func pushNotification(to token: String, title: String, body: String, completion:
     urlRequest.httpMethod = "POST"
     
     urlRequest.setValue("application/json",    forHTTPHeaderField: "Content-Type")
-    urlRequest.setValue("key=\(messagingKey)", forHTTPHeaderField: "Authorization")
+    urlRequest.setValue("key=\(pushAPIKey)", forHTTPHeaderField: "Authorization")
     
     let dataTask = URLSession.shared.dataTask(with: urlRequest as URLRequest)  { (returnedData, returnedResponse, returnedError) in
         do {

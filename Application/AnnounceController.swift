@@ -49,11 +49,11 @@ class AnnounceController: UIViewController, MFMailComposeViewControllerDelegate
     {
         super.viewDidLoad()
         
-        initialiseController()
-        
         cancelButton.alpha = 0
         doneButton.alpha   = 0
         textView.alpha     = 0
+        
+        doneButton.isEnabled = false
         
         cancelButton.initialiseLayer(animateTouches:     true,
                                      backgroundColour:   UIColor(hex: 0xE95A53),
@@ -105,6 +105,8 @@ class AnnounceController: UIViewController, MFMailComposeViewControllerDelegate
     {
         super.viewWillAppear(animated)
         
+        initialiseController()
+        
         currentFile = #file
         buildInfoController?.view.isHidden = false
     }
@@ -125,6 +127,7 @@ class AnnounceController: UIViewController, MFMailComposeViewControllerDelegate
         UIView.animate(withDuration: 0.2) {
             self.cancelButton.alpha = 0
             self.textView.text = self.previousAnnouncement
+            self.doneButton.isEnabled = false
         }
     }
     
@@ -179,6 +182,7 @@ class AnnounceController: UIViewController, MFMailComposeViewControllerDelegate
                     hideHUD(delay: 1) {
                         flashSuccessHUD(text: nil, for: 1, delay: nil) {
                             self.previousAnnouncement = self.textView.text!
+                            self.doneButton.isEnabled = false
                         }
                     }
                 }
@@ -198,11 +202,8 @@ class AnnounceController: UIViewController, MFMailComposeViewControllerDelegate
     func showView()
     {
         UIView.animate(withDuration: 0.2) {
-            self.cancelButton.alpha = 1
             self.doneButton.alpha = 1
             self.textView.alpha = 1
-        } completion: { (_) in
-            self.textView.becomeFirstResponder()
         }
     }
 }
@@ -218,5 +219,10 @@ extension AnnounceController: UITextViewDelegate
         UIView.animate(withDuration: 0.2) {
             self.cancelButton.alpha = 1
         }
+    }
+    
+    func textViewDidChange(_ textView: UITextView)
+    {
+        doneButton.isEnabled = textView.text! != previousAnnouncement
     }
 }

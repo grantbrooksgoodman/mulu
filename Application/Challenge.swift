@@ -118,9 +118,18 @@ class Challenge
      completion(errorDescriptor)
      ~~~
      */
-    func updateMedia(_ media: (link: URL, type: MediaType), completion: @escaping(_ errorDescriptor: String?) -> Void)
+    func updateMedia(_ media: (link: URL, path: String?, type: MediaType), completion: @escaping(_ errorDescriptor: String?) -> Void)
     {
-        let serialisedMedia = "\(media.type.uploadString()) – \(media.link.absoluteString)"
+        var serialisedMedia = "\(media.type.uploadString())"
+        
+        if let mediaPath = media.path
+        {
+            serialisedMedia = "\(serialisedMedia) – \(mediaPath) – \(media.link.absoluteString)"
+        }
+        else
+        {
+            serialisedMedia = "\(serialisedMedia) – \(media.link.absoluteString)"
+        }
         
         GenericSerialiser().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/media", withData: serialisedMedia) { (returnedError) in
             if let error = returnedError

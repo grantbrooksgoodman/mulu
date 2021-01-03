@@ -195,10 +195,9 @@ extension TeamController: JTAppleCalendarViewDataSource
 {
     func configureCalendar(_ calendar: JTAppleCalendarView) -> ConfigurationParameters
     {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy MM dd"
+        let components = Calendar.current.dateComponents([.year, .month], from: Date())
         
-        let startDate = formatter.date(from: "2020 12 01")!
+        let startDate = Calendar.current.date(from: components)!
         let endDate = Date()
         
         return ConfigurationParameters(startDate: startDate, endDate: endDate, numberOfRows: 7, calendar: Calendar.current, generateInDates: .off, generateOutDates: .off, firstDayOfWeek: nil, hasStrictBoundaries: true)

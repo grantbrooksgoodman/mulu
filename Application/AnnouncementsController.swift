@@ -47,7 +47,7 @@ class AnnouncementsController: UIViewController, MFMailComposeViewControllerDele
         view.setBackground(withImageNamed: "Gradient.png")
         
         //        let titleAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Gotham-Black", size: 19)!]
-        //        let suibtitleAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBold", size: 18)!]
+        let suibtitleAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBold", size: 18)!]
         //
         //        let schedule = NSMutableAttributedString(string: "SCHEDULE\n\n", attributes: titleAttributes)
         //        let scheduleSubtitle = NSAttributedString(string: "– THURSDAY 1/7 12PM PT\n– THURSDAY 1/14 12PM PT\n– THURSDAY 1/21 12PM PT\n– THURSDAY 1/28 12PM PT\n\n", attributes: suibtitleAttributes)
@@ -62,7 +62,7 @@ class AnnouncementsController: UIViewController, MFMailComposeViewControllerDele
         GenericSerialiser().getValues(atPath: "/globalAnnouncement") { (returnedString) in
             if let string = returnedString as? String
             {
-                self.textView.attributedText = NSAttributedString(string: string)
+                self.textView.attributedText = NSAttributedString(string: string, attributes: suibtitleAttributes)
             }
             else { self.textView.text = "Failed to get announcements." }
         }

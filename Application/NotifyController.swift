@@ -10,7 +10,7 @@
 import MessageUI
 import UIKit
 
-class NotifyController: UIViewController, MFMailComposeViewControllerDelegate
+class NotifyController: UIViewController, MFMailComposeViewControllerDelegate, UIGestureRecognizerDelegate
 {
     //==================================================//
     
@@ -47,8 +47,6 @@ class NotifyController: UIViewController, MFMailComposeViewControllerDelegate
     {
         super.viewDidLoad()
         
-        initialiseController()
-        
         sendButton.initialiseLayer(animateTouches:     true,
                                    backgroundColour:   UIColor(hex: 0x60C129),
                                    customBorderFrame:  nil,
@@ -70,11 +68,19 @@ class NotifyController: UIViewController, MFMailComposeViewControllerDelegate
         NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: messageTextField, queue: .main) { (notification) -> Void in
             self.messageTextField.text = "  \(self.messageTextField.text!.leadingWhitespaceRemoved)"
         }
+        
+        let tapRecogniser = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        tapRecogniser.delegate = self
+        tapRecogniser.numberOfTapsRequired = 1
+        
+        view.addGestureRecognizer(tapRecogniser)
     }
     
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        
+        initialiseController()
         
         currentFile = #file
         buildInfoController?.view.isHidden = false
@@ -138,6 +144,12 @@ class NotifyController: UIViewController, MFMailComposeViewControllerDelegate
     //==================================================//
     
     /* MARK: Other Functions */
+    
+    @objc func dismissKeyboard()
+    {
+        self.titleTextField.resignFirstResponder()
+        self.messageTextField.resignFirstResponder()
+    }
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {

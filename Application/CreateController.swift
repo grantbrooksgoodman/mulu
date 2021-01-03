@@ -45,13 +45,13 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        initialiseController()
     }
     
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        
+        initialiseController()
         
         currentFile = #file
         buildInfoController?.view.isHidden = false

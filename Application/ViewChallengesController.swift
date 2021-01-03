@@ -59,8 +59,6 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     {
         super.viewDidLoad()
         
-        initialiseController()
-        
         cancelButton.initialiseLayer(animateTouches:     true,
                                      backgroundColour:   UIColor(hex: 0xE95A53),
                                      customBorderFrame:  nil,
@@ -92,6 +90,8 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        
+        initialiseController()
         
         currentFile = #file
         buildInfoController?.view.isHidden = false
@@ -517,14 +517,19 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
         }
     }
     
-    func updateChallengeMedia(_ media: (link: URL, type: Challenge.MediaType))
+    func updateChallengeMedia(_ media: (link: URL, path: String?, type: Challenge.MediaType))
     {
         challengeArray[selectedIndexPath.row].updateMedia(media) { (errorDescriptor) in
             if let error = errorDescriptor
             {
                 self.errorAlert(title: "Failed to Update Media", message: error)
             }
-            else { self.showSuccessAndReload() }
+            else
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                    self.showSuccessAndReload()
+                }
+            }
         }
     }
     
@@ -552,21 +557,19 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                     showProgressHUD(text: "Updating media...", delay: nil)
                     
                     MediaAnalyser().analyseMedia(linkString: string) { (analysisResult) in
-                        hideHUD(delay: 0.5)
-                        
                         DispatchQueue.main.async {
                             switch analysisResult
                             {
                             case .autoPlayVideo:
-                                self.updateChallengeMedia((URL(string: string)!, .autoPlayVideo))
+                                self.updateChallengeMedia((URL(string: string)!, nil, .autoPlayVideo))
                             case .gif:
-                                self.updateChallengeMedia((URL(string: string)!, .gif))
+                                self.updateChallengeMedia((URL(string: string)!, nil, .gif))
                             case .image:
-                                self.updateChallengeMedia((URL(string: string)!, .staticImage))
+                                self.updateChallengeMedia((URL(string: string)!, nil, .staticImage))
                             case .linkedVideo:
-                                self.updateChallengeMedia((MediaAnalyser().convertToEmbedded(linkString: string) ?? URL(string: string)!, .linkedVideo))
+                                self.updateChallengeMedia((MediaAnalyser().convertToEmbedded(linkString: string) ?? URL(string: string)!, nil, .linkedVideo))
                             case .other:
-                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(750)) {
+                                hideHUD(delay: 0.5) {
                                     AlertKit().errorAlertController(title:                       "Error",
                                                                     message:                     "The provided link was to an unsupported media type.\n\nTry uploading the media instead.",
                                                                     dismissButtonTitle:          "Cancel",
@@ -578,7 +581,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                                                                     networkDependent:            false)
                                 }
                             case .error:
-                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(750)) {
+                                hideHUD(delay: 0.5) {
                                     AlertKit().errorAlertController(title:                       "Invalid Link",
                                                                     message:                     "The provided link was not valid.",
                                                                     dismissButtonTitle:          "Cancel",
@@ -671,7 +674,7 @@ extension ViewChallengesController: UIImagePickerControllerDelegate
                             {
                                 let mediaType: Challenge.MediaType = imageExtension == "gif" ? .gif : .staticImage
                                 
-                                self.challengeArray[self.selectedIndexPath.row].updateMedia((metadata.link, mediaType)) { (errorDescriptor) in
+                                self.challengeArray[self.selectedIndexPath.row].updateMedia((metadata.link, metadata.path, mediaType)) { (errorDescriptor) in
                                     if let error = errorDescriptor
                                     {
                                         self.errorAlert(title: "Failed to Upload Media", message: error)
@@ -745,7 +748,7 @@ extension ViewChallengesController: UIImagePickerControllerDelegate
                         GenericSerialiser().upload(image: false, withData: videoData, extension: `extension`) { (returnedMetadata, errorDescriptor) in
                             if let metadata = returnedMetadata
                             {
-                                self.challengeArray[self.selectedIndexPath.row].updateMedia((metadata.link, .autoPlayVideo)) { (errorDescriptor) in
+                                self.challengeArray[self.selectedIndexPath.row].updateMedia((metadata.link, metadata.path, .autoPlayVideo)) { (errorDescriptor) in
                                     if let error = errorDescriptor
                                     {
                                         self.errorAlert(title: "Failed to Upload Media", message: error)

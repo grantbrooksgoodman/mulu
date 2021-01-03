@@ -88,8 +88,6 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
     {
         super.viewDidLoad()
         
-        initialiseController()
-        
         navigationController?.presentationController?.delegate = self
         
         let paragraphStyle = NSMutableParagraphStyle()
@@ -119,6 +117,8 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        
+        initialiseController()
         
         currentFile = #file
         buildInfoController?.view.isHidden = false

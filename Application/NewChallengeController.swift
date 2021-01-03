@@ -99,8 +99,6 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     {
         super.viewDidLoad()
         
-        initialiseController()
-        
         navigationController?.presentationController?.delegate = self
         
         let paragraphStyle = NSMutableParagraphStyle()
@@ -140,6 +138,8 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        
+        initialiseController()
         
         currentFile = #file
         buildInfoController?.view.isHidden = false
