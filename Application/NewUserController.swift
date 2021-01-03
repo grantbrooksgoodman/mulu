@@ -12,7 +12,6 @@ import UIKit
 
 /* Third-party Frameworks */
 import FirebaseAuth
-import PKHUD
 
 class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
 {
@@ -55,6 +54,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
     
     //Other Declarations
     var buildInstance: Build!
+    var controllerReference: CreateController!
     var currentStep = Step.name
     var stepAttributes: [NSAttributedString.Key:Any]!
     
@@ -120,12 +120,21 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
         initialiseController()
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = true
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
         
+    }
+    
+    override func viewWillDisappear(_ animated: Bool)
+    {
+        super.viewWillDisappear(animated)
+        
+        lastInitialisedController = controllerReference
+        buildInstance = Build(controllerReference)
+        buildInfoController?.view.isHidden = !preReleaseApplication
     }
     
     //==================================================//
@@ -209,9 +218,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
     
     func animateTeamTableViewAppearance()
     {
-        UIView.animate(withDuration: 0.2) {
-            self.largeTextField.alpha = 0
-        } completion: { (_) in
+        UIView.animate(withDuration: 0.2) { self.largeTextField.alpha = 0 } completion: { (_) in
             self.tableView.dataSource = self
             self.tableView.delegate = self
             self.tableView.reloadData()
@@ -278,12 +285,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
                     }
                     else
                     {
-                        PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: "Successfully created user.")
-                        PKHUD.sharedHUD.show()
-                        
-                        hideHUD(delay: 1) {
-                            self.navigationController?.dismiss(animated: true, completion: nil)
-                        }
+                        flashSuccessHUD(text: "Successfully created user.", for: 1, delay: nil) { self.navigationController?.dismiss(animated: true, completion: nil) }
                     }
                 }
             }
@@ -326,9 +328,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
             self.largeTextField.placeholder = "Enter the user's full name"
             self.largeTextField.text = self.fullName ?? nil
         } completion: { (_) in
-            UIView.animate(withDuration: 0.2) {
-                self.largeTextField.alpha = 1
-            } completion: { (_) in
+            UIView.animate(withDuration: 0.2) { self.largeTextField.alpha = 1 } completion: { (_) in
                 self.largeTextField.becomeFirstResponder()
                 
                 self.nextButton.isEnabled = true
@@ -358,9 +358,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
             self.largeTextField.placeholder = "Enter the user's e-mail address"
             self.largeTextField.text = self.emailAddress ?? nil
         } completion: { (_) in
-            UIView.animate(withDuration: 0.2) {
-                self.largeTextField.alpha = 1
-            } completion: { (_) in
+            UIView.animate(withDuration: 0.2) { self.largeTextField.alpha = 1 } completion: { (_) in
                 self.largeTextField.becomeFirstResponder()
                 
                 self.backButton.isEnabled = true
@@ -433,9 +431,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
                 self.promptLabel.alpha = 1
                 self.activityIndicator.alpha = 1
             } completion: { (_) in
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2500)) {
-                    self.createUser()
-                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2500)) { self.createUser() }
             }
         }
     }
@@ -466,9 +462,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
     
     func stepProgress(forwardDirection: Bool)
     {
-        UIView.animate(withDuration: 0.2) {
-            self.progressView.setProgress(self.progressView.progress + (forwardDirection ? 1/3 : -(1/3)), animated: true)
-        }
+        UIView.animate(withDuration: 0.2) { self.progressView.setProgress(self.progressView.progress + (forwardDirection ? 1/3 : -(1/3)), animated: true) }
     }
     
     func verifyName() -> Bool

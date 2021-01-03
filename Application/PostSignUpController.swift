@@ -12,7 +12,6 @@ import UIKit
 
 /* Third-party Frameworks */
 import FirebaseAnalytics
-import PKHUD
 
 class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegate
 {
@@ -71,7 +70,7 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
         super.viewWillAppear(animated)
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = !preReleaseApplication
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -153,9 +152,7 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
                     }
                     else
                     {
-                        HUD.flash(.success, delay: 1) { (_) in
-                            self.performSegue(withIdentifier: "SignInFromPostSignUpSegue", sender: self)
-                        }
+                        flashSuccessHUD(text: nil, for: 1.5, delay: 1) { self.performSegue(withIdentifier: "SignInFromPostSignUpSegue", sender: self) }
                     }
                 }
             }

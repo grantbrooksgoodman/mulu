@@ -24,6 +24,14 @@ class BuildInfoController: UIViewController
     private let window = BuildInfoWindow()
     
     private(set) var sendFeedbackButton: UIButton!
+    var customYOffset: CGFloat? {
+        didSet {
+            loadView()
+            
+            sendFeedbackButton?.addTarget(self, action: #selector(self.sendFeedbackButtonAction), for: .touchUpInside)
+            window.sendFeedbackButton?.addTarget(self, action: #selector(self.sendFeedbackButtonAction), for: .touchUpInside)
+        }
+    }
     var dismissTimer: Timer?
     
     //==================================================//
@@ -143,7 +151,7 @@ class BuildInfoController: UIViewController
         let buildInfoWidth = buildInfoLabel.sizeThatFits(buildInfoLabel.intrinsicContentSize).width
         
         let buildInfoXOrigin = xBaseline - (buildInfoWidth)
-        let buildInfoYOrigin = UIScreen.main.bounds.maxY - (15 + 20)
+        let buildInfoYOrigin = UIScreen.main.bounds.maxY - ((15 + 20) + (customYOffset ?? 0))
         
         buildInfoLabel.frame = CGRect(x: buildInfoXOrigin, y: buildInfoYOrigin, width: buildInfoWidth, height: 15)
         
@@ -166,7 +174,7 @@ class BuildInfoController: UIViewController
         let sendFeedbackWidth = sendFeedbackButton.intrinsicContentSize.width
         
         let sendFeedbackXOrigin = screenBounds.width - (sendFeedbackWidth + 25)
-        let sendFeedbackYOrigin = screenBounds.maxY - (sendFeedbackHeight + 35)
+        let sendFeedbackYOrigin = screenBounds.maxY - ((sendFeedbackHeight + 35) + (customYOffset ?? 0))
         
         sendFeedbackButton.backgroundColor = .black
         sendFeedbackButton.frame = CGRect(x: sendFeedbackXOrigin, y: sendFeedbackYOrigin, width: sendFeedbackWidth, height: sendFeedbackHeight)

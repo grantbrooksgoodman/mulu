@@ -763,6 +763,9 @@
                                     <action selector="backButton:" destination="tuX-9l-c4e" eventType="touchUpInside" id="fe2-ve-kkX"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="8fi-KR-Yip">
+                                <rect key="frame" x="195.66666666666666" y="444.66666666666669" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="fpJ-Nm-520"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -772,17 +775,20 @@
                             <constraint firstItem="sBy-I6-nGp" firstAttribute="leading" secondItem="fpJ-Nm-520" secondAttribute="leading" constant="20" id="JhZ-Z0-S52"/>
                             <constraint firstItem="hcD-82-NOY" firstAttribute="leading" secondItem="fpJ-Nm-520" secondAttribute="leading" constant="20" id="N0U-l7-mDs"/>
                             <constraint firstItem="fpJ-Nm-520" firstAttribute="bottom" secondItem="sBy-I6-nGp" secondAttribute="bottom" constant="8" id="N8N-IU-kmJ"/>
+                            <constraint firstItem="8fi-KR-Yip" firstAttribute="centerX" secondItem="Sce-cd-uSq" secondAttribute="centerX" id="OFj-Dd-NYV"/>
                             <constraint firstItem="hcD-82-NOY" firstAttribute="top" secondItem="uUF-k5-Pqe" secondAttribute="bottom" constant="8" symbolic="YES" id="Szv-Un-0J4"/>
                             <constraint firstItem="fpJ-Nm-520" firstAttribute="trailing" secondItem="hcD-82-NOY" secondAttribute="trailing" constant="20" id="dJM-8m-GDE"/>
                             <constraint firstItem="fpJ-Nm-520" firstAttribute="trailing" secondItem="sBy-I6-nGp" secondAttribute="trailing" priority="750" constant="348" id="dJV-dl-Z2B"/>
                             <constraint firstItem="uUF-k5-Pqe" firstAttribute="leading" secondItem="fpJ-Nm-520" secondAttribute="leading" constant="20" id="g28-cp-wiN"/>
                             <constraint firstItem="uUF-k5-Pqe" firstAttribute="top" secondItem="fpJ-Nm-520" secondAttribute="top" id="mg4-Af-zWc"/>
+                            <constraint firstItem="8fi-KR-Yip" firstAttribute="centerY" secondItem="Sce-cd-uSq" secondAttribute="centerY" id="tF1-9v-FUi"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Item" id="Afa-Ss-Fci"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="428" height="926"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="8fi-KR-Yip" id="C8p-PK-SVv"/>
                         <outlet property="backButton" destination="sBy-I6-nGp" id="t4R-n0-Xcl"/>
                         <outlet property="tableView" destination="hcD-82-NOY" id="RhP-mD-Zyd"/>
                         <outlet property="titleLabel" destination="uUF-k5-Pqe" id="U3p-o8-uKF"/>
@@ -1109,10 +1115,14 @@
                                     <action selector="cancelButton:" destination="vbb-IO-gxz" eventType="touchUpInside" id="V3X-e2-T6p"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="kSz-fc-oE5">
+                                <rect key="frame" x="195.66666666666666" y="444.66666666666669" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Y17-Go-Lg9"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="kSz-fc-oE5" firstAttribute="centerX" secondItem="hOU-5o-HfU" secondAttribute="centerX" id="4VR-rZ-0xl"/>
                             <constraint firstItem="MUb-mT-JOf" firstAttribute="top" relation="lessThanOrEqual" secondItem="498-eL-Kxg" secondAttribute="bottom" priority="750" constant="589" id="5Tz-vy-HEo"/>
                             <constraint firstItem="100-dI-hdK" firstAttribute="leading" secondItem="Y17-Go-Lg9" secondAttribute="leading" constant="20" id="6EV-aP-BOa"/>
                             <constraint firstItem="Y17-Go-Lg9" firstAttribute="trailing" secondItem="498-eL-Kxg" secondAttribute="trailing" constant="20" id="A3C-LG-QhF"/>
@@ -1125,6 +1135,7 @@
                             <constraint firstItem="MUb-mT-JOf" firstAttribute="top" relation="lessThanOrEqual" secondItem="dQ8-Yg-fxK" secondAttribute="bottom" priority="750" constant="8" symbolic="YES" id="Qce-qA-D4R"/>
                             <constraint firstItem="dQ8-Yg-fxK" firstAttribute="leading" secondItem="Y17-Go-Lg9" secondAttribute="leading" constant="20" id="ZOD-JB-9mH"/>
                             <constraint firstItem="Y17-Go-Lg9" firstAttribute="trailing" secondItem="100-dI-hdK" secondAttribute="trailing" constant="20" id="dS8-dU-3CE"/>
+                            <constraint firstItem="kSz-fc-oE5" firstAttribute="centerY" secondItem="hOU-5o-HfU" secondAttribute="centerY" id="gkf-fC-aRV"/>
                             <constraint firstItem="Y17-Go-Lg9" firstAttribute="trailing" secondItem="V5O-4u-SZc" secondAttribute="trailing" constant="20" id="nJY-R4-aG7"/>
                             <constraint firstItem="498-eL-Kxg" firstAttribute="centerY" secondItem="dQ8-Yg-fxK" secondAttribute="centerY" id="q5T-vy-AGr"/>
                             <constraint firstItem="Y17-Go-Lg9" firstAttribute="trailing" secondItem="u4y-er-Iwu" secondAttribute="trailing" constant="20" id="qQM-gr-PNf"/>
@@ -1138,6 +1149,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="428" height="926"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="kSz-fc-oE5" id="wiy-bp-3yg"/>
                         <outlet property="backButton" destination="qEt-Dt-XeG" id="cBq-CP-f8C"/>
                         <outlet property="cancelButton" destination="dQ8-Yg-fxK" id="9Hb-tn-qol"/>
                         <outlet property="doneButton" destination="498-eL-Kxg" id="T5D-O9-UQq"/>
@@ -1314,8 +1326,9 @@
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES" address="YES" calendarEvent="YES"/>
                             </textView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MbT-Rg-gIg" customClass="ShadowButton" customModule="Mulu" customModuleProvider="target">
+                            <button opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MbT-Rg-gIg" customClass="ShadowButton" customModule="Mulu" customModuleProvider="target">
                                 <rect key="frame" x="20" y="359" width="169" height="40"/>
                                 <color key="backgroundColor" red="0.91372549020000005" green="0.35294117650000001" blue="0.32549019610000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
@@ -1327,14 +1340,26 @@
                                     <action selector="cancelButton:" destination="zoA-Gr-Oku" eventType="touchUpInside" id="FFB-ez-OaV"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="✅ Up to Date" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999999999998" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ov6-QX-Ija">
+                                <rect key="frame" x="20" y="359" width="169" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="Af8-Rd-A6V"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="SFUIText-Bold" family="SF UI Text" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Hqa-Uf-2Y6"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="Ov6-QX-Ija" firstAttribute="top" secondItem="o8g-fd-0ma" secondAttribute="bottom" constant="8" symbolic="YES" id="6Gl-Kh-NfU"/>
                             <constraint firstItem="mia-oW-OLo" firstAttribute="width" secondItem="MbT-Rg-gIg" secondAttribute="width" id="Aqm-Fx-J7y"/>
+                            <constraint firstItem="mia-oW-OLo" firstAttribute="leading" secondItem="Ov6-QX-Ija" secondAttribute="trailing" constant="50" id="Auk-xI-eE1"/>
                             <constraint firstItem="Hqa-Uf-2Y6" firstAttribute="trailing" secondItem="qhn-4J-kOu" secondAttribute="trailing" constant="20" id="DmY-qY-V7E"/>
                             <constraint firstItem="o8g-fd-0ma" firstAttribute="top" secondItem="fnF-Ws-wui" secondAttribute="bottom" constant="8" symbolic="YES" id="IQy-4t-ZOe"/>
                             <constraint firstItem="Hqa-Uf-2Y6" firstAttribute="trailing" secondItem="mia-oW-OLo" secondAttribute="trailing" constant="20" id="Jzq-6P-4XO"/>
+                            <constraint firstItem="Ov6-QX-Ija" firstAttribute="leading" secondItem="Hqa-Uf-2Y6" secondAttribute="leading" constant="20" id="L2W-Nh-I4k"/>
                             <constraint firstItem="MbT-Rg-gIg" firstAttribute="leading" secondItem="Hqa-Uf-2Y6" secondAttribute="leading" constant="20" id="OvS-xW-08C"/>
                             <constraint firstItem="qhn-4J-kOu" firstAttribute="top" secondItem="8th-Av-fLB" secondAttribute="bottom" constant="8" id="TGc-bF-DeO"/>
                             <constraint firstItem="fnF-Ws-wui" firstAttribute="top" secondItem="qhn-4J-kOu" secondAttribute="bottom" constant="8" symbolic="YES" id="U9o-qN-cuZ"/>
@@ -1356,6 +1381,7 @@
                     <connections>
                         <outlet property="cancelButton" destination="MbT-Rg-gIg" id="m9p-HT-QhD"/>
                         <outlet property="doneButton" destination="mia-oW-OLo" id="a6V-uz-5e1"/>
+                        <outlet property="statusLabel" destination="Ov6-QX-Ija" id="4cM-X7-W2q"/>
                         <outlet property="textView" destination="o8g-fd-0ma" id="onM-Kt-hbJ"/>
                     </connections>
                 </viewController>

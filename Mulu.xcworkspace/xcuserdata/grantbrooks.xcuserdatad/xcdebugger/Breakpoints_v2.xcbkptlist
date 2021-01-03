@@ -62,8 +62,8 @@
             filePath = "Application/ViewChallengesController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "527"
-            endingLineNumber = "527"
+            startingLineNumber = "542"
+            endingLineNumber = "542"
             landmarkName = "updateChallengeMedia(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -78,8 +78,8 @@
             filePath = "Application/ChallengeSerialiser.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "385"
-            endingLineNumber = "385"
+            startingLineNumber = "376"
+            endingLineNumber = "376"
             landmarkName = "deSerialiseChallenge(from:)"
             landmarkType = "7">
          </BreakpointContent>

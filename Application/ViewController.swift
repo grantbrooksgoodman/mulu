@@ -54,7 +54,10 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate
         initialiseController()
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = !preReleaseApplication
+        
+        let screenHeight = UIScreen.main.bounds.height
+        buildInfoController?.customYOffset = (screenHeight <= 736 ? 40 : 70)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)

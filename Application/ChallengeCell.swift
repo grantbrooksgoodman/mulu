@@ -12,7 +12,6 @@ import WebKit
 
 /* Third-party Frameworks */
 import FirebaseAnalytics
-import PKHUD
 
 class ChallengeCell: UICollectionViewCell
 {
@@ -75,7 +74,7 @@ class ChallengeCell: UICollectionViewCell
             }
             else
             {
-                HUD.flash(.success, delay: 1.0) { finished in
+                flashSuccessHUD(text: nil, for: 1.5, delay: 1) {
                     let parent = self.parentViewController as! HomeController
                     parent.reloadData()
                 }
@@ -104,7 +103,7 @@ class ChallengeCell: UICollectionViewCell
         }
         else { UserDefaults.standard.setValue([challengeIdentifier], forKey: "skippedChallenges") }
         
-        HUD.flash(.success, delay: 1.0) { finished in
+        flashSuccessHUD(text: nil, for: 1.5, delay: 1) {
             let parent = self.parentViewController as! HomeController
             parent.reloadData()
         }

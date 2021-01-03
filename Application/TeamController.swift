@@ -24,7 +24,6 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     
     //Other Elements
     @IBOutlet weak var collectionView: UICollectionView!
-    
     @IBOutlet weak var statisticsTextView: UITextView!
     
     //==================================================//
@@ -101,7 +100,10 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         super.viewWillAppear(animated)
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = !preReleaseApplication
+        
+        let screenHeight = UIScreen.main.bounds.height
+        buildInfoController?.customYOffset = (screenHeight <= 736 ? 35 : 70)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
@@ -217,10 +219,7 @@ extension TeamController: JTAppleCalendarViewDelegate
         {
             cell.titleLabel.text = "🔥"
         }
-        else
-        {
-            cell.titleLabel.text = cellState.text
-        }
+        else { cell.titleLabel.text = cellState.text }
         
         cell.layer.cornerRadius = cell.frame.width / 2
         

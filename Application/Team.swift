@@ -129,10 +129,7 @@ class Team
                 }
             }
         }
-        else
-        {
-            report("This Team does not have any Users.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        }
+        else { report("This Team does not have any Users.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
     }
     
     /**
@@ -276,15 +273,9 @@ class Team
                     
                     if verboseFunctionExposure { report("Successfully set «DSParticipants».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
                 }
-                else
-                {
-                    report("No returned Users, but no error either.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                }
+                else { report("No returned Users, but no error either.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
             }
         }
-        else
-        {
-            report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        }
+        else { report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
     }
 }

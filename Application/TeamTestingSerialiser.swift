@@ -45,10 +45,7 @@ class TeamTestingSerialiser
                     {
                         completion(nil, error)
                     }
-                    else
-                    {
-                        completion(metadata.identifier, nil)
-                    }
+                    else { completion(metadata.identifier, nil) }
                 }
             }
         }

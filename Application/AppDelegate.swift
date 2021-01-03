@@ -41,7 +41,7 @@ var pushToken:         String?
 var pushAPIKey = ""
 
 //UIViewControllers
-var buildInfoController: BuildInfoController?
+var buildInfoController:       BuildInfoController?
 var lastInitialisedController: UIViewController! = MainController()
 
 //Other Declarations
@@ -427,6 +427,7 @@ func hideHUD(delay: Double?, completion: @escaping() -> Void)
                     completion()
                 }
             }
+            else { completion() }
         }
     }
     else
@@ -438,6 +439,7 @@ func hideHUD(delay: Double?, completion: @escaping() -> Void)
                     completion()
                 }
             }
+            else { completion() }
         }
     }
 }
@@ -455,6 +457,7 @@ func flashSuccessHUD(text: String?, for: Double, delay: Double?, completion: @es
                 PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
             }
         }
+        else { completion() }
     }
     else
     {
@@ -463,6 +466,7 @@ func flashSuccessHUD(text: String?, for: Double, delay: Double?, completion: @es
             PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: text)
             PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
         }
+        else { completion() }
     }
     
     let flashTime = Int(`for` * 1000)
@@ -587,10 +591,15 @@ func composeMessage(withMessage: String, withRecipients: [String], withSubject: 
         
         politelyPresent(viewController: composeController)
     }
-    else
-    {
-        AlertKit().errorAlertController(title: "Cannot Send Mail", message: "It appears that your device is not able to send e-mail.\n\nPlease verify that your e-mail client is set up and try again.", dismissButtonTitle: nil, additionalSelectors: nil, preferredAdditionalSelector: nil, canFileReport: false, extraInfo: nil, metadata: [#file, #function, #line], networkDependent: true)
-    }
+    else { AlertKit().errorAlertController(title:                       "Cannot Send Mail",
+                                           message:                     "It appears that your device is not able to send e-mail.\n\nPlease verify that your e-mail client is set up and try again.",
+                                           dismissButtonTitle:          nil,
+                                           additionalSelectors:         nil,
+                                           preferredAdditionalSelector: nil,
+                                           canFileReport:               false,
+                                           extraInfo:                   nil,
+                                           metadata:                    [#file, #function, #line],
+                                           networkDependent:            true) }
 }
 
 ///Returns a boolean describing whether or not the device has an active Internet connection.
@@ -653,6 +662,7 @@ func politelyPresent(viewController: UIViewController)
     if viewController as? MFMailComposeViewController != nil
     {
         isPresentingMailComposeViewController = true
+        buildInfoController?.view.isHidden = true
     }
     
     let keyWindow = UIApplication.shared.windows.filter{$0.isKeyWindow}.first

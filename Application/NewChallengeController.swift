@@ -11,7 +11,6 @@ import MessageUI
 import UIKit
 
 /* Third-party Frameworks */
-import PKHUD
 import FirebaseStorage
 
 class NewChallengeController: UIViewController, MFMailComposeViewControllerDelegate, UINavigationControllerDelegate
@@ -62,6 +61,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     let mediaPicker = UIImagePickerController()
     
     var buildInstance: Build!
+    var controllerReference: CreateController!
     var currentStep = Step.title
     var mediaLink: URL?
     var mediaType: Challenge.MediaType?
@@ -142,12 +142,21 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         initialiseController()
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = true
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
         
+    }
+    
+    override func viewWillDisappear(_ animated: Bool)
+    {
+        super.viewWillDisappear(animated)
+        
+        lastInitialisedController = controllerReference
+        buildInstance = Build(controllerReference)
+        buildInfoController?.view.isHidden = !preReleaseApplication
     }
     
     //==================================================//
@@ -185,27 +194,21 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             UIView.animate(withDuration: 0.2) {
                 self.mediaTextField.alpha = 1
                 self.uploadButton.alpha = 0
-            } completion: { (_) in
-                self.mediaTextField.becomeFirstResponder()
-            }
+            } completion: { (_) in self.mediaTextField.becomeFirstResponder() }
         }
         else if mediaSegmentedControl.selectedSegmentIndex == 1
         {
             UIView.animate(withDuration: 0.2) {
                 self.mediaTextField.alpha = 0
                 self.uploadButton.alpha = 1
-            } completion: { (_) in
-                findAndResignFirstResponder()
-            }
+            } completion: { (_) in findAndResignFirstResponder() }
         }
         else
         {
             UIView.animate(withDuration: 0.2) {
                 self.mediaTextField.alpha = 0
                 self.uploadButton.alpha = 0
-            } completion: { (_) in
-                findAndResignFirstResponder()
-            }
+            } completion: { (_) in findAndResignFirstResponder() }
         }
     }
     
@@ -409,10 +412,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         ChallengeSerialiser().createChallenge(title: challengeTitle!, prompt: promptTextView.text!, datePosted: Date(), pointValue: pointValue!, media: media) { (returnedIdentifier, errorDescriptor) in
             if returnedIdentifier != nil
             {
-                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: "Successfully created challenge.")
-                PKHUD.sharedHUD.show()
-                
-                hideHUD(delay: 1) {
+                flashSuccessHUD(text: "Successfully created challenge.", for: 1, delay: nil) {
                     if self.alertSwitch.isOn
                     {
                         notifyAllUsers(title: "New Challenge Posted", body: self.challengeTitle!) { (errorDescriptor) in
@@ -630,9 +630,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                 self.stepTitleLabel.alpha = 1
                 self.activityIndicator.alpha = 1
             } completion: { (_) in
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2500)) {
-                    self.createChallenge()
-                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2500)) { self.createChallenge() }
             }
         }
     }
@@ -665,9 +663,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     
     func stepProgress(forwardDirection: Bool)
     {
-        UIView.animate(withDuration: 0.2) {
-            self.progressView.setProgress(self.progressView.progress + (forwardDirection ? 0.2 : -0.2), animated: true)
-        }
+        UIView.animate(withDuration: 0.2) { self.progressView.setProgress(self.progressView.progress + (forwardDirection ? 0.2 : -0.2), animated: true) }
     }
     
     func verifyTitle() -> Bool
@@ -791,7 +787,7 @@ extension NewChallengeController: UIImagePickerControllerDelegate
                                 self.uploadedMediaPath = metadata.path
                                 
                                 DispatchQueue.main.async {
-                                    HUD.flash(.success, delay: 0.5)
+                                    flashSuccessHUD(text: nil, for: 1.5, delay: 0.5) {}
                                     
                                     UIView.animate(withDuration: 0.2) {
                                         self.uploadButton.setImage(nil, for: .normal)
@@ -859,7 +855,7 @@ extension NewChallengeController: UIImagePickerControllerDelegate
                                 self.uploadedMediaPath = metadata.path
                                 
                                 DispatchQueue.main.async {
-                                    HUD.flash(.success, delay: 0.5)
+                                    flashSuccessHUD(text: nil, for: 1.5, delay: 0.5) {}
                                     
                                     UIView.animate(withDuration: 0.2) {
                                         self.uploadButton.setImage(nil, for: .normal)

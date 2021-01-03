@@ -163,7 +163,9 @@ class Build
     func handleMailComposition(withController: MFMailComposeViewController, withResult: MFMailComposeResult, withError: Error?)
     {
         //Dismiss the mail controller.
-        withController.dismiss(animated: true)
+        withController.dismiss(animated: true) {
+            buildInfoController?.view.isHidden = !preReleaseApplication
+        }
         
         isPresentingMailComposeViewController = false
         
@@ -203,7 +205,7 @@ class Build
                 withButton.titleLabel!.font = withButton.titleLabel!.font.withSize(withButton.titleLabel!.fontSizeThatFits(titleToSet))
                 
                 //Animate the presentation of the button.
-                UIView.animate(withDuration: 0.2, delay: 0.1, animations: { withButton.alpha = 1 })            }
+                UIView.animate(withDuration: 0.2, delay: 0.1, animations: { withButton.alpha = 1 }) }
         }
     }
     

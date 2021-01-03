@@ -54,12 +54,29 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
         initialiseController()
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = !preReleaseApplication
+        
+        let screenHeight = UIScreen.main.bounds.height
+        buildInfoController?.customYOffset = (screenHeight <= 736 ? 40 : 70)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
-        
+        if segue.identifier == "NewChallengeFromCreateSegue",
+           let destination = segue.destination.children[0] as? NewChallengeController
+        {
+            destination.controllerReference = self
+        }
+        else if segue.identifier == "NewTeamFromCreateSegue",
+                let destination = segue.destination.children[0] as? NewTeamController
+        {
+            destination.controllerReference = self
+        }
+        else if segue.identifier == "NewUserFromCreateSegue",
+                let desintation = segue.destination.children[0] as? NewUserController
+        {
+            desintation.controllerReference = self
+        }
     }
     
     //==================================================//

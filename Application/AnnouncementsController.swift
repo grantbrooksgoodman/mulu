@@ -73,7 +73,7 @@ class AnnouncementsController: UIViewController, MFMailComposeViewControllerDele
         super.viewWillAppear(animated)
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = !preReleaseApplication
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)

@@ -209,10 +209,7 @@ class UserSerialiser
                     else { completion(nil, "An unknown error occurred.") }
                 }
             }
-            else
-            {
-                completion(nil, "Unable to deserialise snapshot.")
-            }
+            else { completion(nil, "Unable to deserialise snapshot.") }
         }
     }
     
@@ -254,10 +251,7 @@ class UserSerialiser
                     }
                 }
             }
-            else
-            {
-                completion(nil, "Unable to deserialise snapshot.")
-            }
+            else { completion(nil, "Unable to deserialise snapshot.") }
         }
     }
     
@@ -349,10 +343,7 @@ class UserSerialiser
                 }
             }
         }
-        else
-        {
-            completion(nil, ["No identifiers passed!"])
-        }
+        else { completion(nil, ["No identifiers passed!"]) }
     }
     
     //==================================================//

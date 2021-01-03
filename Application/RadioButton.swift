@@ -150,9 +150,6 @@ class SSRadioButton: UIButton
         {
             fillCircleLayer.fillColor = circleColor.cgColor
         }
-        else
-        {
-            fillCircleLayer.fillColor = UIColor.clear.cgColor
-        }
+        else { fillCircleLayer.fillColor = UIColor.clear.cgColor }
     }
 }

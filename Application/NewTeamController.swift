@@ -12,7 +12,6 @@ import UIKit
 
 /* Third-party Frameworks */
 import FirebaseAuth
-import PKHUD
 
 class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
 {
@@ -56,6 +55,7 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
     
     //Other Declarations
     var buildInstance: Build!
+    var controllerReference: CreateController!
     var currentStep = Step.name
     var stepAttributes: [NSAttributedString.Key:Any]!
     
@@ -121,12 +121,21 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
         initialiseController()
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = true
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
         
+    }
+    
+    override func viewWillDisappear(_ animated: Bool)
+    {
+        super.viewWillDisappear(animated)
+        
+        lastInitialisedController = controllerReference
+        buildInstance = Build(controllerReference)
+        buildInfoController?.view.isHidden = !preReleaseApplication
     }
     
     //==================================================//
@@ -142,14 +151,10 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
             forwardToName()
         case .tournament:
             goBack()
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
-                self.forwardToUsers()
-            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { self.forwardToUsers() }
         default:
             goBack()
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
-                self.forwardToTournament()
-            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { self.forwardToTournament() }
         }
     }
     
@@ -200,10 +205,7 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
                     self.nextButton.isEnabled = true
                 }
             }
-            else
-            {
-                forwardToTournament()
-            }
+            else { forwardToTournament() }
         default:
             forwardToFinish()
         }
@@ -245,9 +247,7 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
     
     func animateUserTableViewAppearance()
     {
-        UIView.animate(withDuration: 0.2) {
-            self.largeTextField.alpha = 0
-        } completion: { (_) in
+        UIView.animate(withDuration: 0.2) { self.largeTextField.alpha = 0 } completion: { (_) in
             self.deselectAllCells()
             
             self.tableView.dataSource = self
@@ -372,9 +372,7 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
             self.largeTextField.placeholder = "Enter a name for the team"
             self.largeTextField.text = self.teamName ?? nil
         } completion: { (_) in
-            UIView.animate(withDuration: 0.2) {
-                self.largeTextField.alpha = 1
-            } completion: { (_) in
+            UIView.animate(withDuration: 0.2) { self.largeTextField.alpha = 1 } completion: { (_) in
                 self.largeTextField.becomeFirstResponder()
                 
                 self.nextButton.isEnabled = true
@@ -490,9 +488,7 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
                 self.promptLabel.alpha = 1
                 self.activityIndicator.alpha = 1
             } completion: { (_) in
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2500)) {
-                    self.createTeam()
-                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2500)) { self.createTeam() }
             }
         }
     }
@@ -523,9 +519,7 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
     
     func stepProgress(forwardDirection: Bool)
     {
-        UIView.animate(withDuration: 0.2) {
-            self.progressView.setProgress(self.progressView.progress + (forwardDirection ? 1/3 : -(1/3)), animated: true)
-        }
+        UIView.animate(withDuration: 0.2) { self.progressView.setProgress(self.progressView.progress + (forwardDirection ? 1/3 : -(1/3)), animated: true) }
     }
 }
 
@@ -569,10 +563,7 @@ extension NewTeamController: UITableViewDataSource, UITableViewDelegate
             {
                 currentCell.memberLabel.text = "on \(teams.count) team\(teams.count == 1 ? "" : "s")"
             }
-            else
-            {
-                currentCell.memberLabel.text = "on 0 teams"
-            }
+            else { currentCell.memberLabel.text = "on 0 teams" }
             
             if selectedUsers.contains(userArray![indexPath.row].associatedIdentifier)
             {

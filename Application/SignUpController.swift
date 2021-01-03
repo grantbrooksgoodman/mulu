@@ -82,7 +82,7 @@ class SignUpController: UIViewController, MFMailComposeViewControllerDelegate, U
         super.viewWillAppear(animated)
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = !preReleaseApplication
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -265,10 +265,7 @@ extension SignUpController: UITextFieldDelegate
         {
             passwordTextField.becomeFirstResponder()
         }
-        else
-        {
-            passwordTextField.resignFirstResponder()
-        }
+        else { passwordTextField.resignFirstResponder() }
         
         return true
     }

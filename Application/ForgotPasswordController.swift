@@ -79,7 +79,7 @@ class ForgotPasswordController: UIViewController, MFMailComposeViewControllerDel
         super.viewWillAppear(animated)
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = !preReleaseApplication
     }
     
     override func viewDidAppear(_ animated: Bool)

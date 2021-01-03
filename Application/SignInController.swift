@@ -12,7 +12,6 @@ import UIKit
 
 /* Third-party Frameworks */
 import FirebaseAuth
-import PKHUD
 
 class SignInController: UIViewController, MFMailComposeViewControllerDelegate
 {
@@ -87,9 +86,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
         }
         
         #warning("DEBUG ONLY!")
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) {
-            self.signInButton(self.signInButton!)
-        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) { self.signInButton(self.signInButton!) }
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -97,7 +94,9 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
         super.viewWillAppear(animated)
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = !preReleaseApplication
+        
+        buildInfoController?.customYOffset = 30
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -603,12 +602,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                     }
                     else
                     {
-                        PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: "Successfully added to team.")
-                        PKHUD.sharedHUD.show()
-                        
-                        hideHUD(delay: 1) {
-                            self.signInButton(self.signInButton as Any)
-                        }
+                        flashSuccessHUD(text: "Successfully added to team.", for: 1, delay: nil) { self.signInButton(self.signInButton as Any) }
                     }
                 }
             }
@@ -645,10 +639,7 @@ extension SignInController: UITextFieldDelegate
         {
             passwordTextField.becomeFirstResponder()
         }
-        else
-        {
-            passwordTextField.resignFirstResponder()
-        }
+        else { passwordTextField.resignFirstResponder() }
         
         return true
     }

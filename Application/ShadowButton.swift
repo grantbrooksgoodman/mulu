@@ -23,16 +23,17 @@ class ShadowButton: UIButton
             backgroundColor       = isEnabled ? enabledBackgroundColour : disabledBackgroundColour
         }
     }
-    private  var animateTouches: Bool!
+    private var animateTouches:  Bool!
     
     //UIColors
     private var enabledBackgroundColour: UIColor!
-    private var enabledShadowColour:     CGColor!
     
     var disabledBackgroundColour = UIColor.gray
     var disabledShadowColour     = UIColor.darkGray
     
     //Other Declarations
+    private var enabledShadowColour: CGColor!
+    
     var fontSize: CGFloat!
     
     //==================================================//
@@ -83,7 +84,11 @@ class ShadowButton: UIButton
     
     /* MARK: Initialiser Function */
     
-    func initialiseLayer(animateTouches: Bool, backgroundColour: UIColor, customBorderFrame: CGRect?, customCornerRadius: CGFloat?, shadowColour: CGColor)
+    func initialiseLayer(animateTouches:     Bool,
+                         backgroundColour:   UIColor,
+                         customBorderFrame:  CGRect?,
+                         customCornerRadius: CGFloat?,
+                         shadowColour:       CGColor)
     {
         self.animateTouches = animateTouches
         

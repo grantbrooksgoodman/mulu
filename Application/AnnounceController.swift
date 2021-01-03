@@ -21,6 +21,7 @@ class AnnounceController: UIViewController, MFMailComposeViewControllerDelegate
     @IBOutlet weak var doneButton:   ShadowButton!
     
     //Other Elements
+    @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var textView: UITextView!
     
     //==================================================//
@@ -28,7 +29,7 @@ class AnnounceController: UIViewController, MFMailComposeViewControllerDelegate
     /* MARK: Class-level Variable Declarations */
     
     var buildInstance: Build!
-    
+    var loadingTimer: Timer!
     var previousAnnouncement: String!
     
     //==================================================//
@@ -108,7 +109,10 @@ class AnnounceController: UIViewController, MFMailComposeViewControllerDelegate
         initialiseController()
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = !preReleaseApplication
+        
+        let screenHeight = UIScreen.main.bounds.height
+        buildInfoController?.customYOffset = (screenHeight <= 736 ? 40 : 70)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
@@ -126,6 +130,7 @@ class AnnounceController: UIViewController, MFMailComposeViewControllerDelegate
         
         UIView.animate(withDuration: 0.2) {
             self.cancelButton.alpha = 0
+            self.statusLabel.alpha = 1
             self.textView.text = self.previousAnnouncement
             self.doneButton.isEnabled = false
         }
@@ -150,41 +155,38 @@ class AnnounceController: UIViewController, MFMailComposeViewControllerDelegate
         {
             self.textView.resignFirstResponder()
             
-            flashSuccessHUD(text: nil, for: 1.5, delay: 0.5) {
-                self.cancelButton(self.cancelButton!)
-            }; return
+            flashSuccessHUD(text: nil, for: 1.5, delay: 0.5) { self.cancelButton(self.cancelButton!) }; return
         }
         
+        doneButton.isEnabled = false
         textView.resignFirstResponder()
+        textView.isUserInteractionEnabled = false
         
-        UIView.animate(withDuration: 0.2) {
-            self.cancelButton.alpha = 0
-        } completion: { (_) in
-            showProgressHUD(text: "Setting announcement...", delay: 0)
+        UIView.animate(withDuration: 0.2) { self.cancelButton.alpha = 0 } completion: { (_) in
+            self.statusLabel.text = "🟡 Updating..."
+            
+            self.loadingTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.loadingStatus), userInfo: nil, repeats: true)
             
             GenericSerialiser().setValue(onKey: "/globalAnnouncement", withData: self.textView.text!) { (returnedError) in
                 if let error = returnedError
                 {
-                    hideHUD(delay: 1) {
-                        AlertKit().errorAlertController(title:                       "Failed to Set Announcement",
-                                                        message:                     error.localizedDescription,
-                                                        dismissButtonTitle:          nil,
-                                                        additionalSelectors:         nil,
-                                                        preferredAdditionalSelector: nil,
-                                                        canFileReport:               true,
-                                                        extraInfo:                   errorInfo(error),
-                                                        metadata:                    [#file, #function, #line],
-                                                        networkDependent:            true)
-                    }
+                    self.updateStatus(failed: true)
+                    
+                    AlertKit().errorAlertController(title:                       "Failed to Set Announcement",
+                                                    message:                     error.localizedDescription,
+                                                    dismissButtonTitle:          nil,
+                                                    additionalSelectors:         nil,
+                                                    preferredAdditionalSelector: nil,
+                                                    canFileReport:               true,
+                                                    extraInfo:                   errorInfo(error),
+                                                    metadata:                    [#file, #function, #line],
+                                                    networkDependent:            true)
                 }
                 else
                 {
-                    hideHUD(delay: 1) {
-                        flashSuccessHUD(text: nil, for: 1, delay: nil) {
-                            self.previousAnnouncement = self.textView.text!
-                            self.doneButton.isEnabled = false
-                        }
-                    }
+                    self.updateStatus(failed: false)
+                    
+                    self.previousAnnouncement = self.textView.text!
                 }
             }
         }
@@ -193,6 +195,15 @@ class AnnounceController: UIViewController, MFMailComposeViewControllerDelegate
     //==================================================//
     
     /* MARK: Other Functions */
+    
+    @objc func loadingStatus()
+    {
+        UIView.animate(withDuration: 0.5) { self.statusLabel.alpha = 1 } completion: { (_) in
+            UIView.animate(withDuration: 0.5) {
+                self.statusLabel.alpha = 0
+            }
+        }
+    }
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
@@ -204,6 +215,21 @@ class AnnounceController: UIViewController, MFMailComposeViewControllerDelegate
         UIView.animate(withDuration: 0.2) {
             self.doneButton.alpha = 1
             self.textView.alpha = 1
+        }
+    }
+    
+    func updateStatus(failed: Bool)
+    {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1500)) {
+            self.loadingTimer.invalidate()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+                UIView.transition(with: self.statusLabel, duration: 0.35, options: .transitionCrossDissolve) {
+                    self.statusLabel.text = failed ? "⚠️ Failed" : "✅ Up to Date"
+                    self.statusLabel.alpha = 1
+                    self.textView.isUserInteractionEnabled = true
+                }
+            }
         }
     }
 }
@@ -218,6 +244,7 @@ extension AnnounceController: UITextViewDelegate
     {
         UIView.animate(withDuration: 0.2) {
             self.cancelButton.alpha = 1
+            self.statusLabel.alpha = 0
         }
     }
     

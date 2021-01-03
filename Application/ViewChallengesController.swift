@@ -12,7 +12,6 @@ import UIKit
 
 /* Third-party Frameworks */
 import FirebaseAuth
-import PKHUD
 
 class ViewChallengesController: UIViewController, MFMailComposeViewControllerDelegate, UINavigationControllerDelegate
 {
@@ -25,6 +24,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     @IBOutlet weak var cancelButton: ShadowButton!
     
     //Other Elements
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var textView: UITextView!
@@ -94,9 +94,9 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
         initialiseController()
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = !preReleaseApplication
         
-        showProgressHUD(text: "Loading data...", delay: 0.5)
+        buildInfoController?.customYOffset = 0
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -133,9 +133,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
             self.doneButton.alpha = 0
             self.cancelButton.alpha = 0
         } completion: { (_) in
-            UIView.animate(withDuration: 0.2) {
-                self.tableView.alpha = 0.6
-            }
+            UIView.animate(withDuration: 0.2) { self.tableView.alpha = 0.6 }
         }
     }
     
@@ -178,9 +176,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                         self.textView.alpha = 0
                         self.doneButton.alpha = 0
                         self.cancelButton.alpha = 0
-                    } completion: { (_) in
-                        self.showSuccessAndReload()
-                    }
+                    } completion: { (_) in self.showSuccessAndReload() }
                 }
             }
         }
@@ -212,19 +208,21 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                                                confirmationDestructive: true,
                                                confirmationPreferred:   false,
                                                networkDepedent:         true) { (didConfirm) in
-            if let confirmed = didConfirm, confirmed
+            if let confirmed = didConfirm
             {
-                showProgressHUD(text: "Deleting challenge...", delay: nil)
-                
-                ChallengeSerialiser().deleteChallenge(self.challengeArray[self.selectedIndexPath.row].associatedIdentifier) { (errorDescriptor) in
-                    if let error = errorDescriptor
-                    {
-                        hideHUD(delay: 0.5) {
-                            self.errorAlert(title: "Failed to Delete Challenge", message: error)
+                if confirmed
+                {
+                    showProgressHUD(text: "Deleting challenge...", delay: nil)
+                    
+                    ChallengeSerialiser().deleteChallenge(self.challengeArray[self.selectedIndexPath.row].associatedIdentifier) { (errorDescriptor) in
+                        if let error = errorDescriptor
+                        {
+                            hideHUD(delay: 0.5) { self.errorAlert(title: "Failed to Delete Challenge", message: error) }
                         }
+                        else { self.showSuccessAndReload() }
                     }
-                    else { self.showSuccessAndReload() }
                 }
+                else { self.reSelectRow() }
             }
         }
     }
@@ -250,6 +248,10 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                     
                     self.present(self.mediaPicker, animated: true)
                 }
+                else if index == -1
+                {
+                    self.reSelectRow()
+                }
             }
         }
     }
@@ -270,42 +272,47 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                                        preferredActionIndex: 0,
                                        textFieldAttributes:  textFieldAttributes,
                                        networkDependent:     true) { (returnedString, selectedIndex) in
-            if let index = selectedIndex, index == 0
+            if let index = selectedIndex
             {
-                if let string = returnedString, string.lowercasedTrimmingWhitespace != ""
+                if index == 0
                 {
-                    if let pointValue = Int(string)
+                    if let string = returnedString, string.lowercasedTrimmingWhitespace != ""
                     {
-                        if pointValue != self.challengeArray[self.selectedIndexPath.row].pointValue
+                        if let pointValue = Int(string)
                         {
-                            showProgressHUD(text: "Updating point value...", delay: nil)
-                            
-                            self.challengeArray[self.selectedIndexPath.row].updatePointValue(pointValue) { (errorDescriptor) in
-                                if let error = errorDescriptor
-                                {
-                                    hideHUD(delay: 0.5) {
-                                        self.errorAlert(title: "Failed to Update Challenge", message: error)
+                            if pointValue != self.challengeArray[self.selectedIndexPath.row].pointValue
+                            {
+                                showProgressHUD(text: "Updating point value...", delay: nil)
+                                
+                                self.challengeArray[self.selectedIndexPath.row].updatePointValue(pointValue) { (errorDescriptor) in
+                                    if let error = errorDescriptor
+                                    {
+                                        hideHUD(delay: 0.5) { self.errorAlert(title: "Failed to Update Challenge", message: error) }
                                     }
+                                    else { self.showSuccessAndReload() }
                                 }
-                                else { self.showSuccessAndReload() }
                             }
+                            else { self.sameInputAlert(#selector(self.editPointValueAction)) }
                         }
-                        else { self.sameInputAlert(#selector(self.editPointValueAction)) }
+                        else
+                        {
+                            AlertKit().errorAlertController(title:                       "Invalid Point Value",
+                                                            message:                     "Be sure to enter only numbers and that they do not exceed the integer ceiling.",
+                                                            dismissButtonTitle:          "Cancel",
+                                                            additionalSelectors:         ["Try Again": #selector(ViewChallengesController.editPointValueAction)],
+                                                            preferredAdditionalSelector: 0,
+                                                            canFileReport:               false,
+                                                            extraInfo:                   nil,
+                                                            metadata:                    [#file, #function, #line],
+                                                            networkDependent:            false)
+                        }
                     }
-                    else
-                    {
-                        AlertKit().errorAlertController(title:                       "Invalid Point Value",
-                                                        message:                     "Be sure to enter only numbers and that they do not exceed the integer ceiling.",
-                                                        dismissButtonTitle:          "Cancel",
-                                                        additionalSelectors:         ["Try Again": #selector(ViewChallengesController.editPointValueAction)],
-                                                        preferredAdditionalSelector: 0,
-                                                        canFileReport:               false,
-                                                        extraInfo:                   nil,
-                                                        metadata:                    [#file, #function, #line],
-                                                        networkDependent:            false)
-                    }
+                    else { self.noTextAlert(#selector(self.editPointValueAction)) }
                 }
-                else { self.noTextAlert(#selector(self.editPointValueAction)) }
+                else if index == -1
+                {
+                    self.reSelectRow()
+                }
             }
         }
     }
@@ -323,9 +330,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
             self.textView.alpha = 1
             self.doneButton.alpha = 1
             self.cancelButton.alpha = 1
-        } completion: { (_) in
-            self.textView.becomeFirstResponder()
-        }
+        } completion: { (_) in self.textView.becomeFirstResponder() }
     }
     
     @objc func editTitleAction()
@@ -343,27 +348,32 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                                        preferredActionIndex: 0,
                                        textFieldAttributes:  textFieldAttributes,
                                        networkDependent:     true) { (returnedString, selectedIndex) in
-            if let index = selectedIndex, index == 0
+            if let index = selectedIndex
             {
-                if let string = returnedString, string.lowercasedTrimmingWhitespace != ""
+                if index == 0
                 {
-                    if string != self.challengeArray[self.selectedIndexPath.row].title
+                    if let string = returnedString, string.lowercasedTrimmingWhitespace != ""
                     {
-                        showProgressHUD(text: "Updating title...", delay: nil)
-                        
-                        self.challengeArray[self.selectedIndexPath.row].updateTitle(string) { (errorDescriptor) in
-                            if let error = errorDescriptor
-                            {
-                                hideHUD(delay: 0.5) {
-                                    self.errorAlert(title: "Failed to Update Title", message: error)
+                        if string != self.challengeArray[self.selectedIndexPath.row].title
+                        {
+                            showProgressHUD(text: "Updating title...", delay: nil)
+                            
+                            self.challengeArray[self.selectedIndexPath.row].updateTitle(string) { (errorDescriptor) in
+                                if let error = errorDescriptor
+                                {
+                                    hideHUD(delay: 0.5) { self.errorAlert(title: "Failed to Update Title", message: error) }
                                 }
+                                else { self.showSuccessAndReload() }
                             }
-                            else { self.showSuccessAndReload() }
                         }
+                        else { self.sameInputAlert(#selector(self.editTitleAction)) }
                     }
-                    else { self.sameInputAlert(#selector(self.editTitleAction)) }
+                    else { self.noTextAlert(#selector(self.editTitleAction)) }
                 }
-                else { self.noTextAlert(#selector(self.editTitleAction)) }
+                else if index == -1
+                {
+                    self.reSelectRow()
+                }
             }
         }
     }
@@ -376,18 +386,23 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                                          additionalButtons:    [("Remove Media", true)],
                                          preferredActionIndex: nil,
                                          networkDependent:     true) { (selectedIndex) in
-            if let index = selectedIndex, index == 0
+            if let index = selectedIndex
             {
-                showProgressHUD(text: "Removing media...", delay: nil)
-                
-                self.challengeArray[self.selectedIndexPath.row].removeMedia { (errorDescriptor) in
-                    if let error = errorDescriptor
-                    {
-                        hideHUD(delay: 0.5) {
-                            self.errorAlert(title: "Failed to Remove Media", message: error)
+                if index == 0
+                {
+                    showProgressHUD(text: "Removing media...", delay: nil)
+                    
+                    self.challengeArray[self.selectedIndexPath.row].removeMedia { (errorDescriptor) in
+                        if let error = errorDescriptor
+                        {
+                            hideHUD(delay: 0.5) { self.errorAlert(title: "Failed to Remove Media", message: error) }
                         }
+                        else { self.showSuccessAndReload() }
                     }
-                    else { self.showSuccessAndReload() }
+                }
+                else if index == -1
+                {
+                    self.reSelectRow()
                 }
             }
         }
@@ -440,8 +455,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     {
         hideHUD(delay: 0.5) {
             flashSuccessHUD(text: nil, for: 1.2, delay: 0) {
-                showProgressHUD(text: "Reloading data...", delay: nil)
-                
+                self.activityIndicator.alpha = 1
                 self.reloadData()
             }
         }
@@ -491,9 +505,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     {
         tableView.isUserInteractionEnabled = false
         
-        UIView.animate(withDuration: 0.2) {
-            self.tableView.alpha = 0
-        } completion: { (_) in
+        UIView.animate(withDuration: 0.2) { self.tableView.alpha = 0 } completion: { (_) in
             ChallengeSerialiser().getAllChallenges { (returnedChallenges, errorDescriptor) in
                 if let challenges = returnedChallenges
                 {
@@ -504,17 +516,20 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                     
                     self.tableView.reloadData()
                     
-                    hideHUD(delay: 1.5) {
-                        UIView.animate(withDuration: 0.2) {
-                            self.tableView.alpha = 0.6
-                        } completion: { (_) in
-                            self.tableView.isUserInteractionEnabled = true
-                        }
-                    }
+                    UIView.animate(withDuration: 0.2, delay: 1) {
+                        self.activityIndicator.alpha = 0
+                        self.tableView.alpha = 0.6
+                    } completion: { (_) in self.tableView.isUserInteractionEnabled = true }
                 }
                 else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
             }
         }
+    }
+    
+    func reSelectRow()
+    {
+        self.tableView.selectRow(at: self.selectedIndexPath, animated: true, scrollPosition: .none)
+        self.tableView.delegate?.tableView!(self.tableView, didSelectRowAt: self.selectedIndexPath)
     }
     
     func updateChallengeMedia(_ media: (link: URL, path: String?, type: Challenge.MediaType))
@@ -526,9 +541,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
             }
             else
             {
-                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                    self.showSuccessAndReload()
-                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { self.showSuccessAndReload() }
             }
         }
     }
@@ -550,53 +563,60 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                                        preferredActionIndex: 0,
                                        textFieldAttributes:  textFieldAttributes,
                                        networkDependent:     true) { (returnedString, selectedIndex) in
-            if let index = selectedIndex, index == 0
+            if let index = selectedIndex
             {
-                if let string = returnedString, string.lowercasedTrimmingWhitespace != ""
+                if index == 0
                 {
-                    showProgressHUD(text: "Updating media...", delay: nil)
-                    
-                    MediaAnalyser().analyseMedia(linkString: string) { (analysisResult) in
-                        DispatchQueue.main.async {
-                            switch analysisResult
-                            {
-                            case .autoPlayVideo:
-                                self.updateChallengeMedia((URL(string: string)!, nil, .autoPlayVideo))
-                            case .gif:
-                                self.updateChallengeMedia((URL(string: string)!, nil, .gif))
-                            case .image:
-                                self.updateChallengeMedia((URL(string: string)!, nil, .staticImage))
-                            case .linkedVideo:
-                                self.updateChallengeMedia((MediaAnalyser().convertToEmbedded(linkString: string) ?? URL(string: string)!, nil, .linkedVideo))
-                            case .other:
-                                hideHUD(delay: 0.5) {
-                                    AlertKit().errorAlertController(title:                       "Error",
-                                                                    message:                     "The provided link was to an unsupported media type.\n\nTry uploading the media instead.",
-                                                                    dismissButtonTitle:          "Cancel",
-                                                                    additionalSelectors:         ["Try Again": #selector(self.webLinkMediaAlert)],
-                                                                    preferredAdditionalSelector: nil,
-                                                                    canFileReport:               false,
-                                                                    extraInfo:                   nil,
-                                                                    metadata:                    [#file, #function, #line],
-                                                                    networkDependent:            false)
-                                }
-                            case .error:
-                                hideHUD(delay: 0.5) {
-                                    AlertKit().errorAlertController(title:                       "Invalid Link",
-                                                                    message:                     "The provided link was not valid.",
-                                                                    dismissButtonTitle:          "Cancel",
-                                                                    additionalSelectors:         ["Try Again": #selector(self.webLinkMediaAlert)],
-                                                                    preferredAdditionalSelector: nil,
-                                                                    canFileReport:               false,
-                                                                    extraInfo:                   nil,
-                                                                    metadata:                    [#file, #function, #line],
-                                                                    networkDependent:            false)
+                    if let string = returnedString, string.lowercasedTrimmingWhitespace != ""
+                    {
+                        showProgressHUD(text: "Updating media...", delay: nil)
+                        
+                        MediaAnalyser().analyseMedia(linkString: string) { (analysisResult) in
+                            DispatchQueue.main.async {
+                                switch analysisResult
+                                {
+                                case .autoPlayVideo:
+                                    self.updateChallengeMedia((URL(string: string)!, nil, .autoPlayVideo))
+                                case .gif:
+                                    self.updateChallengeMedia((URL(string: string)!, nil, .gif))
+                                case .image:
+                                    self.updateChallengeMedia((URL(string: string)!, nil, .staticImage))
+                                case .linkedVideo:
+                                    self.updateChallengeMedia((MediaAnalyser().convertToEmbedded(linkString: string) ?? URL(string: string)!, nil, .linkedVideo))
+                                case .other:
+                                    hideHUD(delay: 0.5) {
+                                        AlertKit().errorAlertController(title:                       "Error",
+                                                                        message:                     "The provided link was to an unsupported media type.\n\nTry uploading the media instead.",
+                                                                        dismissButtonTitle:          "Cancel",
+                                                                        additionalSelectors:         ["Try Again": #selector(self.webLinkMediaAlert)],
+                                                                        preferredAdditionalSelector: nil,
+                                                                        canFileReport:               false,
+                                                                        extraInfo:                   nil,
+                                                                        metadata:                    [#file, #function, #line],
+                                                                        networkDependent:            false)
+                                    }
+                                case .error:
+                                    hideHUD(delay: 0.5) {
+                                        AlertKit().errorAlertController(title:                       "Invalid Link",
+                                                                        message:                     "The provided link was not valid.",
+                                                                        dismissButtonTitle:          "Cancel",
+                                                                        additionalSelectors:         ["Try Again": #selector(self.webLinkMediaAlert)],
+                                                                        preferredAdditionalSelector: nil,
+                                                                        canFileReport:               false,
+                                                                        extraInfo:                   nil,
+                                                                        metadata:                    [#file, #function, #line],
+                                                                        networkDependent:            false)
+                                    }
                                 }
                             }
                         }
                     }
+                    else { self.noTextAlert(#selector(self.webLinkMediaAlert)) }
                 }
-                else { self.noTextAlert(#selector(self.webLinkMediaAlert)) }
+                else if index == -1
+                {
+                    self.reSelectRow()
+                }
             }
         }
     }
@@ -611,6 +631,11 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
 /* MARK: UIImagePickerControllerDelegate */
 extension ViewChallengesController: UIImagePickerControllerDelegate
 {
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController)
+    {
+        dismiss(animated: true) { self.reSelectRow() }
+    }
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any])
     {
         if !currentlyUploading
@@ -681,9 +706,7 @@ extension ViewChallengesController: UIImagePickerControllerDelegate
                                     }
                                     else
                                     {
-                                        DispatchQueue.main.async {
-                                            self.showSuccessAndReload()
-                                        }
+                                        DispatchQueue.main.async { self.showSuccessAndReload() }
                                     }
                                 }
                             }
@@ -755,9 +778,7 @@ extension ViewChallengesController: UIImagePickerControllerDelegate
                                     }
                                     else
                                     {
-                                        DispatchQueue.main.async {
-                                            self.showSuccessAndReload()
-                                        }
+                                        DispatchQueue.main.async { self.showSuccessAndReload() }
                                     }
                                 }
                             }
@@ -765,9 +786,7 @@ extension ViewChallengesController: UIImagePickerControllerDelegate
                             {
                                 hideHUD(delay: 0.5)
                                 
-                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
-                                    report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line])
-                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
                             }
                         }
                     }

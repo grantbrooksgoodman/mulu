@@ -13,7 +13,6 @@ import WebKit
 
 /* Third-party Frameworks */
 import Firebase
-import PKHUD
 import SwiftyGif
 
 class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UICollectionViewDelegateFlowLayout
@@ -102,7 +101,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         super.viewWillAppear(animated)
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = !preReleaseApplication
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
@@ -349,8 +348,7 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
                 challengeCell.noMediaLabel.alpha = 1
             }
         }
-        else
-        { toggleChallengeElements(hidden: true, onView: challengeCell.encapsulatingView) }
+        else { toggleChallengeElements(hidden: true, onView: challengeCell.encapsulatingView) }
         
         let screenWidth = UIScreen.main.bounds.width
         

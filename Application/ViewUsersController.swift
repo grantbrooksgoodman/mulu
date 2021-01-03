@@ -12,7 +12,6 @@ import UIKit
 
 /* Third-party Frameworks */
 import FirebaseAuth
-import PKHUD
 
 class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
 {
@@ -20,6 +19,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     
     /* MARK: Interface Builder UI Elements */
     
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -63,9 +63,9 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
         initialiseController()
         
         currentFile = #file
-        buildInfoController?.view.isHidden = false
+        buildInfoController?.view.isHidden = !preReleaseApplication
         
-        showProgressHUD(text: "Loading data...", delay: 0.5)
+        buildInfoController?.customYOffset = 0
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -112,35 +112,92 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
                                        preferredActionIndex: 0,
                                        textFieldAttributes: textFieldAttributes,
                                        networkDependent: true) { (returnedString, selectedIndex) in
-            if let index = selectedIndex, index == 0
+            if let index = selectedIndex
             {
-                if let string = returnedString, string.lowercasedTrimmingWhitespace != ""
+                if index == 0
                 {
-                    guard string.trimmingBorderedWhitespace.components(separatedBy: " ").count == 2 else
-                    { AlertKit().errorAlertController(title: "Invalid Format",
-                                                      message: "Join codes consist of 2 words only. Please try again.",
-                                                      dismissButtonTitle: "Cancel",
-                                                      additionalSelectors: ["Try Again": #selector(ViewUsersController.addToTeamAction)],
-                                                      preferredAdditionalSelector: 0,
-                                                      canFileReport: false,
-                                                      extraInfo: nil,
-                                                      metadata: [#file, #function, #line],
-                                                      networkDependent: true); return }
+                    if let string = returnedString, string.lowercasedTrimmingWhitespace != ""
+                    {
+                        guard string.trimmingBorderedWhitespace.components(separatedBy: " ").count == 2 else
+                        { AlertKit().errorAlertController(title: "Invalid Format",
+                                                          message: "Join codes consist of 2 words only. Please try again.",
+                                                          dismissButtonTitle: "Cancel",
+                                                          additionalSelectors: ["Try Again": #selector(ViewUsersController.addToTeamAction)],
+                                                          preferredAdditionalSelector: 0,
+                                                          canFileReport: false,
+                                                          extraInfo: nil,
+                                                          metadata: [#file, #function, #line],
+                                                          networkDependent: true); return }
+                        
+                        self.tryToJoin(teamWithCode: string.trimmingBorderedWhitespace)
+                    }
+                    else
+                    {
+                        AlertKit().errorAlertController(title: "Nothing Entered",
+                                                        message: "No text was entered. Please try again.",
+                                                        dismissButtonTitle: "Cancel",
+                                                        additionalSelectors: ["Try Again": #selector(ViewUsersController.addToTeamAction)],
+                                                        preferredAdditionalSelector: 0,
+                                                        canFileReport: false,
+                                                        extraInfo: nil,
+                                                        metadata: [#file, #function, #line],
+                                                        networkDependent: true)
+                    }
+                }
+                else if index == -1
+                {
+                    self.reSelectRow()
+                }
+            }
+        }
+    }
+    
+    func deleteUserAction()
+    {
+        AlertKit().confirmationAlertController(title: "Are You Sure?",
+                                               message: "Please confirm that you would like to delete the user account for \(self.userArray[self.selectedIndexPath.row].firstName!) \(self.userArray[self.selectedIndexPath.row].lastName!).",
+                                               cancelConfirmTitles: ["confirm":"Delete User"],
+                                               confirmationDestructive: true,
+                                               confirmationPreferred: false,
+                                               networkDepedent: true) { (didConfirm) in
+            if let confirmed = didConfirm
+            {
+                if confirmed
+                {
+                    showProgressHUD(text: "Deleting user...", delay: nil)
                     
-                    self.tryToJoin(teamWithCode: string.trimmingBorderedWhitespace)
+                    UserSerialiser().deleteUser(self.userArray[self.selectedIndexPath.row]) { (problematicTeams, errorDescriptor) in
+                        if let teams = problematicTeams
+                        {
+                            self.displayProblematicTeams(with: teams)
+                        }
+                        else if let error = errorDescriptor
+                        {
+                            hideHUD(delay: 0.5) { AlertKit().errorAlertController(title: nil,
+                                                                                  message: error,
+                                                                                  dismissButtonTitle: nil,
+                                                                                  additionalSelectors: nil,
+                                                                                  preferredAdditionalSelector: nil,
+                                                                                  canFileReport: true,
+                                                                                  extraInfo: error,
+                                                                                  metadata: [#file, #function, #line],
+                                                                                  networkDependent: true) }
+                        }
+                        else
+                        {
+                            hideHUD(delay: 0.5) {
+                                AlertKit().optionAlertController(title: "Operation Completed Successfully", message: "Succesfully deleted user.\n\nPlease manually remove the user's record from the Firebase Authentication console at your earliest convenience.", cancelButtonTitle: "OK", additionalButtons: nil, preferredActionIndex: nil, networkDependent: false) { (selectedIndex) in
+                                    if let index = selectedIndex, index == -1
+                                    {
+                                        self.activityIndicator.alpha = 1
+                                        self.reloadData()
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-                else
-                {
-                    AlertKit().errorAlertController(title: "Nothing Entered",
-                                                    message: "No text was entered. Please try again.",
-                                                    dismissButtonTitle: "Cancel",
-                                                    additionalSelectors: ["Try Again": #selector(ViewUsersController.addToTeamAction)],
-                                                    preferredAdditionalSelector: 0,
-                                                    canFileReport: false,
-                                                    extraInfo: nil,
-                                                    metadata: [#file, #function, #line],
-                                                    networkDependent: true)
-                }
+                else { self.reSelectRow() }
             }
         }
     }
@@ -161,62 +218,11 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
                     else { teamString = teamString + "\n\(team.name!)" }
                 }
                 
-                hideHUD(delay: 0.5) {
-                    AlertKit().errorAlertController(title: "Delete Teams First", message: "Please delete the following teams before deleting this user. Otherwise, they will be left with no participants.\n\n\(teamString)", dismissButtonTitle: nil, additionalSelectors: nil, preferredAdditionalSelector: nil, canFileReport: true, extraInfo: teamString, metadata: [#file, #function, #line], networkDependent: true)
-                }
+                hideHUD(delay: 0.5) { AlertKit().errorAlertController(title: "Delete Teams First", message: "Please delete the following teams before deleting this user. Otherwise, they will be left with no participants.\n\n\(teamString)", dismissButtonTitle: nil, additionalSelectors: nil, preferredAdditionalSelector: nil, canFileReport: true, extraInfo: teamString, metadata: [#file, #function, #line], networkDependent: true) }
             }
             else if let errors = errorDescriptors
             {
                 report(errors.joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-            }
-        }
-    }
-    
-    func deleteUserAction()
-    {
-        AlertKit().confirmationAlertController(title: "Are You Sure?",
-                                               message: "Please confirm that you would like to delete the user account for \(self.userArray[self.selectedIndexPath.row].firstName!) \(self.userArray[self.selectedIndexPath.row].lastName!).",
-                                               cancelConfirmTitles: ["confirm":"Delete User"],
-                                               confirmationDestructive: true,
-                                               confirmationPreferred: false,
-                                               networkDepedent: true) { (didConfirm) in
-            if let confirmed = didConfirm, confirmed
-            {
-                showProgressHUD(text: "Deleting user...", delay: nil)
-                
-                UserSerialiser().deleteUser(self.userArray[self.selectedIndexPath.row]) { (problematicTeams, errorDescriptor) in
-                    if let teams = problematicTeams
-                    {
-                        self.displayProblematicTeams(with: teams)
-                    }
-                    else if let error = errorDescriptor
-                    {
-                        hideHUD(delay: 0.5) {
-                            AlertKit().errorAlertController(title: nil,
-                                                            message: error,
-                                                            dismissButtonTitle: nil,
-                                                            additionalSelectors: nil,
-                                                            preferredAdditionalSelector: nil,
-                                                            canFileReport: true,
-                                                            extraInfo: error,
-                                                            metadata: [#file, #function, #line],
-                                                            networkDependent: true)
-                        }
-                    }
-                    else
-                    {
-                        hideHUD(delay: 0.5) {
-                            AlertKit().optionAlertController(title: "Operation Completed Successfully", message: "Succesfully deleted user.\n\nPlease manually remove the user's record from the Firebase Authentication console at your earliest convenience.", cancelButtonTitle: "OK", additionalButtons: nil, preferredActionIndex: nil, networkDependent: false) { (selectedIndex) in
-                                if let index = selectedIndex, index == -1
-                                {
-                                    showProgressHUD(text: "Reloading data...", delay: nil)
-                                    
-                                    self.reloadData()
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -236,10 +242,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
                                                 metadata: [#file, #function, #line],
                                                 networkDependent: true)
             }
-            else
-            {
-                HUD.flash(.success)
-            }
+            else { self.showSuccessAndReload() }
         }
     }
     
@@ -289,9 +292,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
             userArray[selectedIndexPath.row].deSerialiseAssociatedTeams { (returnedTeams, errorDescriptor) in
                 if returnedTeams != nil
                 {
-                    hideHUD(delay: 1) {
-                        self.viewTeamMembershipAction()
-                    }
+                    hideHUD(delay: 1) { self.viewTeamMembershipAction() }
                 }
                 else
                 {
@@ -427,9 +428,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     {
         tableView.isUserInteractionEnabled = false
         
-        UIView.animate(withDuration: 0.2) {
-            self.tableView.alpha = 0
-        } completion: { (_) in
+        UIView.animate(withDuration: 0.2) { self.tableView.alpha = 0 } completion: { (_) in
             UserSerialiser().getAllUsers { (returnedUsers, errorDescriptor) in
                 if let users = returnedUsers
                 {
@@ -445,15 +444,28 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
                     
                     self.tableView.reloadData()
                     
-                    hideHUD(delay: 1.5) {
-                        UIView.animate(withDuration: 0.2) {
-                            self.tableView.alpha = 0.6
-                        } completion: { (_) in
-                            self.tableView.isUserInteractionEnabled = true
-                        }
-                    }
+                    UIView.animate(withDuration: 0.2, delay: 1) {
+                        self.activityIndicator.alpha = 0
+                        self.tableView.alpha = 0.6
+                    } completion: { (_) in self.tableView.isUserInteractionEnabled = true }
                 }
                 else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
+            }
+        }
+    }
+    
+    func reSelectRow()
+    {
+        self.tableView.selectRow(at: self.selectedIndexPath, animated: true, scrollPosition: .none)
+        self.tableView.delegate?.tableView!(self.tableView, didSelectRowAt: self.selectedIndexPath)
+    }
+    
+    func showSuccessAndReload()
+    {
+        hideHUD(delay: 0.5) {
+            flashSuccessHUD(text: nil, for: 1.2, delay: 0) {
+                self.activityIndicator.alpha = 1
+                self.reloadData()
             }
         }
     }
@@ -478,17 +490,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
                         
                         report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
                     }
-                    else
-                    {
-                        PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: "Successfully added to team.")
-                        PKHUD.sharedHUD.show()
-                        
-                        hideHUD(delay: 1) {
-                            showProgressHUD(text: "Reloading data...", delay: nil)
-                            
-                            self.reloadData()
-                        }
-                    }
+                    else { self.showSuccessAndReload() }
                 }
             }
             else if let error = errorDescriptor
@@ -571,7 +573,7 @@ extension ViewUsersController: UITableViewDataSource, UITableViewDelegate
         
         let teamCount = userArray[indexPath.row].associatedTeams?.count ?? 0
         let challengeCount = userArray[indexPath.row].allCompletedChallenges()?.count ?? 0
-        let registeredString = "Has\(userArray[indexPath.row].pushTokens == nil ? " NOT" : " ") registered for push notifications."
+        let registeredString = "Has\(userArray[indexPath.row].pushTokens == nil ? " NOT" : "") registered for push notifications."
         
         let message = "Member of \(teamCount) team\(teamCount == 1 ? "" : "s").\n\nCompleted \(challengeCount) challenge\(challengeCount == 1 ? "" : "s").\n\n\(registeredString)"
         

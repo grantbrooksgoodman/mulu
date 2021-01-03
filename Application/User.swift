@@ -140,10 +140,7 @@ class User
                     }
                 }
             }
-            else
-            {
-                completion(nil, "Unable to deserialise snapshot.")
-            }
+            else { completion(nil, "Unable to deserialise snapshot.") }
         }
     }
     
@@ -174,10 +171,7 @@ class User
                     {
                         team.completedChallenges![index].metadata.append((self, Date()))
                     }
-                    else
-                    {
-                        team.completedChallenges!.append((challenge, [(self, Date())]))
-                    }
+                    else { team.completedChallenges!.append((challenge, [(self, Date())])) }
                 }
                 else { team.completedChallenges = [(challenge, [(self, Date())])] }
                 
@@ -185,10 +179,7 @@ class User
                 {
                     newCompletedChallenges[withIdentifier]!.append(serialisedData)
                 }
-                else
-                {
-                    newCompletedChallenges[withIdentifier] = [serialisedData]
-                }
+                else { newCompletedChallenges[withIdentifier] = [serialisedData] }
                 
                 GenericSerialiser().updateValue(onKey: "/allTeams/\(team.associatedIdentifier!)/", withData: ["completedChallenges": newCompletedChallenges]) { (returnedError) in
                     if let error = returnedError
@@ -261,10 +252,7 @@ class User
                 }
             }
         }
-        else
-        {
-            completion(nil, "This User is not a member of any Team.")
-        }
+        else { completion(nil, "This User is not a member of any Team.") }
     }
     
     #warning("Tagged for deletion pending investigation of future use cases.")
@@ -329,10 +317,7 @@ class User
                 }
             }
         }
-        else
-        {
-            report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        }
+        else { report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
     }
     
     /**

@@ -639,12 +639,7 @@ extension UIView
             if indivdualSubview.tag == withTag || indivdualSubview.tag == aTagFor("BLUR_INDICATOR")
             {
                 UIView.animate(withDuration: 0.2, animations: { indivdualSubview.alpha = 0 })
-                { (didComplete) in
-                    if didComplete
-                    {
-                        indivdualSubview.removeFromSuperview()
-                    }
-                }
+                    { (_) in indivdualSubview.removeFromSuperview() }
             }
         }
     }
@@ -663,12 +658,7 @@ extension UIView
                 DispatchQueue.main.async {
                     if animated
                     {
-                        UIView.animate(withDuration: 0.2, animations: { individualSubview.alpha = 0 }) { (didComplete) in
-                            if didComplete
-                            {
-                                individualSubview.removeFromSuperview()
-                            }
-                        }
+                        UIView.animate(withDuration: 0.2, animations: { individualSubview.alpha = 0 }) { (_) in individualSubview.removeFromSuperview() }
                     }
                     else { individualSubview.removeFromSuperview() }
                 }

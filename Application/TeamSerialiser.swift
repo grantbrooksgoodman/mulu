@@ -43,10 +43,7 @@ class TeamSerialiser
             {
                 completion(errorInfo(error))
             }
-            else
-            {
-                completion(nil)
-            }
+            else { completion(nil) }
         }
     }
     
@@ -519,10 +516,7 @@ class TeamSerialiser
                     else { completion(nil, "An unknown error occurred.") }
                 }
             }
-            else
-            {
-                completion(nil, "Unable to deserialise snapshot.")
-            }
+            else { completion(nil, "Unable to deserialise snapshot.") }
         }
     }
     
@@ -564,10 +558,7 @@ class TeamSerialiser
                     }
                 }
             }
-            else
-            {
-                completion(nil, "Unable to deserialise snapshot.")
-            }
+            else { completion(nil, "Unable to deserialise snapshot.") }
         }
     }
     
@@ -607,10 +598,7 @@ class TeamSerialiser
                     }
                 }
             }
-            else
-            {
-                completion(nil, "Unable to deserialise snapshot.")
-            }
+            else { completion(nil, "Unable to deserialise snapshot.") }
         }
     }
     
@@ -652,10 +640,7 @@ class TeamSerialiser
                         
                         completion(team, nil)
                     }
-                    else
-                    {
-                        completion(nil, "An unknown error occurred.")
-                    }
+                    else { completion(nil, "An unknown error occurred.") }
                 }
             }
             else { completion(nil, "No Team exists with the identifier \"\(withIdentifier)\".") }
@@ -718,10 +703,7 @@ class TeamSerialiser
                 }
             }
         }
-        else
-        {
-            completion(nil, ["No identifiers passed!"])
-        }
+        else { completion(nil, ["No identifiers passed!"]) }
     }
     
     //==================================================//
@@ -991,10 +973,7 @@ class TeamSerialiser
                                     }
                                 }
                             }
-                            else
-                            {
-                                completion(nil, "An unknown error occurred while getting a User for a Challenge.")
-                            }
+                            else { completion(nil, "An unknown error occurred while getting a User for a Challenge.") }
                         }
                     }
                 }

@@ -75,10 +75,7 @@ class Tournament
                     
                     completion(teams, nil)
                 }
-                else
-                {
-                    completion(nil, "No returned Teams, but no error either.")
-                }
+                else { completion(nil, "No returned Teams, but no error either.") }
             }
         }
     }

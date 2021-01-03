@@ -126,10 +126,7 @@ class Challenge
         {
             serialisedMedia = "\(serialisedMedia) – \(mediaPath) – \(media.link.absoluteString)"
         }
-        else
-        {
-            serialisedMedia = "\(serialisedMedia) – \(media.link.absoluteString)"
-        }
+        else { serialisedMedia = "\(serialisedMedia) – \(media.link.absoluteString)" }
         
         GenericSerialiser().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/media", withData: serialisedMedia) { (returnedError) in
             if let error = returnedError
