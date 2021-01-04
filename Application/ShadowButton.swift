@@ -11,97 +11,97 @@ import UIKit
 class ShadowButton: UIButton
 {
     //==================================================//
-    
+
     /* MARK: Class-level Variable Declarations */
-    
+
     //Booleans
     override var isEnabled:      Bool {
         didSet
         {
-            layer.shadowColor     = isEnabled ? enabledShadowColour     : disabledShadowColour.cgColor
-            layer.borderColor     = isEnabled ? enabledShadowColour     : disabledShadowColour.cgColor
-            backgroundColor       = isEnabled ? enabledBackgroundColour : disabledBackgroundColour
+            layer.ShadowColor     = isEnabled ? enabledShadowColor     : disabledShadowColor.cgColor
+            layer.borderColor     = isEnabled ? enabledShadowColor     : disabledShadowColor.cgColor
+            BackgroundColor       = isEnabled ? enabledBackgroundColor : disabledBackgroundColor
         }
     }
     private var animateTouches:  Bool!
-    
+
     //UIColors
-    private var enabledBackgroundColour: UIColor!
-    
-    var disabledBackgroundColour = UIColor.gray
-    var disabledShadowColour     = UIColor.darkGray
-    
+    private var enabledBackgroundColor: UIColor!
+
+    var disabledBackgroundColor = UIColor.gray
+    var disabledShadowColor     = UIColor.darkGray
+
     //Other Declarations
-    private var enabledShadowColour: CGColor!
-    
+    private var enabledShadowColor: CGColor!
+
     var fontSize: CGFloat!
-    
+
     //==================================================//
-    
+
     /* MARK: Class Declaration */
-    
+
     class func buttonWithType(_ buttonType: UIButton.ButtonType?) -> AnyObject
     {
         let currentButton = buttonWithType(buttonType) as! ShadowButton
-        
+
         return currentButton
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Overridden Functions */
-    
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         super.touchesBegan(touches, with: event)
-        
+
         if animateTouches
         {
             layer.shadowOffset = CGSize(width: 0, height: 0)
-            
+
             frame.origin.y = frame.origin.y + 3
         }
     }
-    
+
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         super.touchesEnded(touches, with: event)
-        
+
         if animateTouches
         {
             layer.shadowOffset = CGSize(width: 0, height: 4)
-            
+
             frame.origin.y = frame.origin.y - 3
         }
     }
-    
+
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         super.touchesMoved(touches, with: event)
     }
-    
+
     //==================================================//
-    
-    /* MARK: Initialiser Function */
-    
-    func initialiseLayer(animateTouches:     Bool,
-                         backgroundColour:   UIColor,
-                         customBorderFrame:  CGRect?,
+
+    /* MARK: Initializer Function */
+
+    func initializeLayer(animateTouches:     Bool,
+                         BackgroundColor:   UIColor,
+                         customBorderFrame _:  CGRect?,
                          customCornerRadius: CGFloat?,
-                         shadowColour:       CGColor)
+                         ShadowColor _:       CGColor)
     {
         self.animateTouches = animateTouches
-        
-        enabledBackgroundColour = backgroundColour
-        enabledShadowColour = shadowColour
-        
-        backgroundColor = isEnabled ? enabledBackgroundColour : disabledBackgroundColour
-        
-        layer.borderColor = isEnabled ? enabledShadowColour : disabledShadowColour.cgColor
+
+        enabledBackgroundColor = backgroundColor
+        enabledShadowColor = shadowColor
+
+        BackgroundColor = isEnabled ? enabledBackgroundColor : disabledBackgroundColor
+
+        layer.borderColor = isEnabled ? enabledShadowColor : disabledShadowColor.cgColor
         layer.borderWidth = 2
         layer.cornerRadius = customCornerRadius ?? 10
         layer.masksToBounds = false
-        layer.shadowColor = isEnabled ? enabledShadowColour : disabledShadowColour.cgColor
+        layer.shadowColor = isEnabled ? enabledShadowColor : disabledShadowColor.cgColor
         layer.shadowOffset = CGSize(width: 0, height: 4)
         layer.shadowOpacity = 1
     }

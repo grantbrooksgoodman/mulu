@@ -1,5 +1,5 @@
 //
-//  TournamentSerialiser.swift
+//  TournamentSerializer.swift
 //  Mulu Party
 //
 //  Created by Grant Brooks Goodman on 14/12/2020.
@@ -12,24 +12,24 @@ import UIKit
 /* Third-party Frameworks */
 import FirebaseDatabase
 
-class TournamentSerialiser
+class TournamentSerializer
 {
     //==================================================//
-    
+
     /* MARK: Creation Functions */
-    
+
     /**
      Creates a **Tournament** on the server.
-     
+
      - Parameter name: The name of this **Tournament.**
      - Parameter startDate: The **Tournament's** start date.
      - Parameter endDate: The **Tournament's** end date.
      - Parameter teamIdentifiers: An array containing the identifiers of the **Teams** participating in this **Tournament.**
-     
+
      - Parameter completion: Upon success, returns with the identifier of the newly created **Tournament.** Upon failure, a string describing the error(s) encountered.
-     
+
      - Note: Completion variables are *mutually exclusive.*
-     
+
      ~~~
      completion(returnedIdentifier, errorDescriptor)
      ~~~
@@ -38,26 +38,26 @@ class TournamentSerialiser
                           startDate: Date,
                           endDate: Date,
                           teamIdentifiers: [String],
-                          completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
+                          completion: @escaping (_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
     {
-        var dataBundle: [String:Any] = [:]
-        
+        var dataBundle: [String: Any] = [:]
+
         dataBundle["name"] = name
         dataBundle["startDate"] = secondaryDateFormatter.string(from: startDate)
         dataBundle["endDate"] = secondaryDateFormatter.string(from: endDate)
         dataBundle["teamIdentifiers"] = teamIdentifiers.unique()
-        
+
         //Generate a key for the new Challenge.
         if let generatedKey = Database.database().reference().child("/allTournaments/").childByAutoId().key
         {
-            GenericSerialiser().updateValue(onKey: "/allTournaments/\(generatedKey)", withData: dataBundle) { (returnedError) in
+            GenericSerializer().updateValue(onKey: "/allTournaments/\(generatedKey)", withData: dataBundle) { returnedError in
                 if let error = returnedError
                 {
                     completion(nil, errorInfo(error))
                 }
                 else
                 {
-                    TeamSerialiser().addTeams(teamIdentifiers.unique(), toTournament: generatedKey) { (errorDescriptor) in
+                    TeamSerializer().addTeams(teamIdentifiers.unique(), toTournament: generatedKey) { errorDescriptor in
                         if let error = errorDescriptor
                         {
                             completion(nil, error)
@@ -69,29 +69,29 @@ class TournamentSerialiser
         }
         else { completion(nil, "Unable to create key in database.") }
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Getter Functions */
-    
+
     /**
-     Retrieves and deserialises all existing **Tournaments** on the server.
-     
-     - Parameter completion: Upon success, returns an array of deserialised **Tournament** objects. Upon failure, a string describing the error(s) encountered.
-     
+     Retrieves and deserializes all existing **Tournaments** on the server.
+
+     - Parameter completion: Upon success, returns an array of deserialized **Tournament** objects. Upon failure, a string describing the error(s) encountered.
+
      - Note: Completion variables are *mutually exclusive.*
-     
+
      ~~~
      completion(returnedTournaments, errorDescriptor)
      ~~~
      */
-    func getAllTournaments(completion: @escaping(_ returnedTournaments: [Tournament]?, _ errorDescriptor: String?) -> Void)
+    func getAllTournaments(completion: @escaping (_ returnedTournaments: [Tournament]?, _ errorDescriptor: String?) -> Void)
     {
-        Database.database().reference().child("allTournaments").observeSingleEvent(of: .value) { (returnedSnapshot) in
+        Database.database().reference().child("allTournaments").observeSingleEvent(of: .value) { returnedSnapshot in
             if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary,
                let tournamentIdentifiers = returnedSnapshotAsDictionary.allKeys as? [String]
             {
-                self.getTournaments(withIdentifiers: tournamentIdentifiers) { (returnedTournaments, errorDescriptors) in
+                self.getTournaments(withIdentifiers: tournamentIdentifiers) { returnedTournaments, errorDescriptors in
                     if let tournaments = returnedTournaments
                     {
                         completion(tournaments, nil)
@@ -103,86 +103,86 @@ class TournamentSerialiser
                     else { completion(nil, "An unknown error occurred.") }
                 }
             }
-            else { completion(nil, "Unable to deserialise snapshot.") }
+            else { completion(nil, "Unable to deserialize snapshot.") }
         }
     }
-    
+
     /**
-     Gets and deserialises multiple **Tournament** objects from a given array of identifier strings.
-     
+     Gets and deserializes multiple **Tournament** objects from a given array of identifier strings.
+
      - Parameter withIdentifiers: The identifiers to query for.
-     - Parameter completion: Upon success, returns an array of deserialised **Tournament** objects. Upon failure, an array of strings describing the error(s) encountered.
-     
+     - Parameter completion: Upon success, returns an array of deserialized **Tournament** objects. Upon failure, an array of strings describing the error(s) encountered.
+
      - Note: Completion variables are *mutually exclusive.*
-     
+
      ~~~
      completion(returnedTournaments, errorDescriptors)
      ~~~
      */
-    func getTournaments(withIdentifiers: [String], completion: @escaping(_ returnedTournaments: [Tournament]?, _ errorDescriptors: [String]?) -> Void)
+    func getTournaments(withIdentifiers: [String], completion: @escaping (_ returnedTournaments: [Tournament]?, _ errorDescriptors: [String]?) -> Void)
     {
-        var tournamentArray: [Tournament]! = []
-        var errorDescriptorArray: [String]! = []
-        
-        if withIdentifiers.count > 0
+        var tournamentArray = [Tournament]()
+        var errorDescriptorArray = [String]()
+
+        if !withIdentifiers.isEmpty
         {
             let dispatchGroup = DispatchGroup()
-            
+
             for individualIdentifier in withIdentifiers
             {
                 if verboseFunctionExposure { print("entered group") }
                 dispatchGroup.enter()
-                
-                getTournament(withIdentifier: individualIdentifier) { (returnedTournament, errorDescriptor) in
+
+                getTournament(withIdentifier: individualIdentifier) { returnedTournament, errorDescriptor in
                     if let tournament = returnedTournament
                     {
                         tournamentArray.append(tournament)
-                        
+
                         if verboseFunctionExposure { print("left group") }
                         dispatchGroup.leave()
                     }
                     else
                     {
                         errorDescriptorArray.append(errorDescriptor!)
-                        
+
                         if verboseFunctionExposure { print("left group") }
                         dispatchGroup.leave()
                     }
                 }
             }
-            
+
             dispatchGroup.notify(queue: .main) {
                 if tournamentArray.count + errorDescriptorArray.count == withIdentifiers.count
                 {
-                    completion(tournamentArray.count == 0 ? nil : tournamentArray, errorDescriptorArray.count == 0 ? nil : errorDescriptorArray)
+                    completion(tournamentArray.isEmpty ? nil : tournamentArray, errorDescriptorArray.isEmpty ? nil : errorDescriptorArray)
                 }
             }
         }
         else { completion(nil, ["No identifiers passed!"]) }
     }
-    
+
     /**
-     Gets and deserialises a **Tournament** from a given identifier string.
-     
+     Gets and deserializes a **Tournament** from a given identifier string.
+
      - Parameter withIdentifier: The identifier of the requested **Tournament.**
-     - Parameter completion: Upon success, returns a deserialised **Tournament** object. Upon failure, a string describing the error(s) encountered.
-     
+     - Parameter completion: Upon success, returns a deserialized **Tournament** object. Upon failure, a string describing the error(s) encountered.
+
      - Note: Completion variables are *mutually exclusive.*
-     
+
      ~~~
      completion(returnedTournament, errorDescriptor)
      ~~~
      */
-    func getTournament(withIdentifier: String, completion: @escaping(_ returnedTournament: Tournament?, _ errorDescriptor: String?) -> Void)
+    func getTournament(withIdentifier: String, completion: @escaping (_ returnedTournament: Tournament?, _ errorDescriptor: String?) -> Void)
     {
-        Database.database().reference().child("allTournaments").child(withIdentifier).observeSingleEvent(of: .value, with: { (returnedSnapshot) in
-            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary, let asDataBundle = returnedSnapshotAsDictionary as? [String:Any]
+        Database.database().reference().child("allTournaments").child(withIdentifier).observeSingleEvent(of: .value, with: { returnedSnapshot in
+            if let returnedSnapshotAsDictionary = returnedSnapshot.value as? NSDictionary, let asDataBundle = returnedSnapshotAsDictionary as? [String: Any]
             {
                 var mutableDataBundle = asDataBundle
-                
+
                 mutableDataBundle["associatedIdentifier"] = withIdentifier
-                
-                self.deSerialiseTournament(from: mutableDataBundle) { (returnedTournament, errorDescriptor) in
+
+                self.deSerialiseTournament(from: mutableDataBundle) { returnedTournament, errorDescriptor in
                     if let tournament = returnedTournament
                     {
                         completion(tournament, nil)
@@ -192,39 +192,39 @@ class TournamentSerialiser
             }
             else { completion(nil, "No Tournament exists with the identifier \"\(withIdentifier)\".") }
         })
-        { (returnedError) in
-            
-            completion(nil, "Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
-        }
+            { returnedError in
+
+                completion(nil, "Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
+            }
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Removal Functions */
-    
+
     /**
      Deletes the **Tournament** with the specified identifier from the server.
-     
+
      - Parameter identifier: The identifier of the **Tournament** to be deleted.
      - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
-     
+
      ~~~
      completion(errorDescriptor)
      ~~~
      */
-    func deleteTournament(_ identifier: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    func deleteTournament(_ identifier: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
-        getTournament(withIdentifier: identifier) { (returnedTournament, errorDescriptor) in
+        getTournament(withIdentifier: identifier) { returnedTournament, errorDescriptor in
             if let tournament = returnedTournament
             {
-                self.removeTeams(tournament.teamIdentifiers, fromTournament: identifier) { (errorDescriptor) in
+                self.removeTeams(tournament.teamIdentifiers, fromTournament: identifier) { errorDescriptor in
                     if let error = errorDescriptor
                     {
                         completion(error)
                     }
                     else
                     {
-                        GenericSerialiser().setValue(onKey: "/allTournaments/\(identifier)", withData: NSNull()) { (returnedError) in
+                        GenericSerializer().setValue(onKey: "/allTournaments/\(identifier)", withData: NSNull()) { returnedError in
                             if let error = returnedError
                             {
                                 completion(errorInfo(error))
@@ -237,44 +237,44 @@ class TournamentSerialiser
             else { completion(errorDescriptor!) }
         }
     }
-    
+
     /**
      Removes a **Team** from a **Tournament.**
-     
+
      - Parameter withIdentifier: The identifier of the **Team** to remove from the **Tournament.**
      - Parameter fromTournament: The identifier of the **Tournament** to remove the **Team** from.
      - Parameter deleting: A Boolean describing whether the **Tournament** is being deleted or not.
-     
+
      - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
-     
+
      - Requires: If the **Tournament** is not being deleted, for the **Tournament** to have more participants than just the specified **Team.**
-     
+
      ~~~
      completion(errorDescriptor)
      ~~~
      */
-    func removeTeam(_ withIdentifier: String, fromTournament: String, deleting: Bool, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    func removeTeam(_ withIdentifier: String, fromTournament: String, deleting: Bool, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
-        getTournament(withIdentifier: fromTournament) { (returnedTournament, errorDescriptor) in
+        getTournament(withIdentifier: fromTournament) { returnedTournament, errorDescriptor in
             if let tournament = returnedTournament
             {
-                var newTeamIdentifiers = tournament.teamIdentifiers.filter({$0 != withIdentifier})
+                var newTeamIdentifiers = tournament.teamIdentifiers.filter { $0 != withIdentifier }
                 newTeamIdentifiers = newTeamIdentifiers.count == 0 ? ["!"] : newTeamIdentifiers
-                
+
                 if newTeamIdentifiers == ["!"] && !deleting
                 {
                     completion("Removing this Team leaves the Tournament with no participants; delete the Tournament.")
                 }
                 else
                 {
-                    GenericSerialiser().setValue(onKey: "/allTeams/\(withIdentifier)/associatedTournament", withData: "!") { (returnedError) in
+                    GenericSerializer().setValue(onKey: "/allTeams/\(withIdentifier)/associatedTournament", withData: "!") { returnedError in
                         if let error = returnedError
                         {
                             completion(errorInfo(error))
                         }
                         else
                         {
-                            GenericSerialiser().setValue(onKey: "/allTournaments/\(fromTournament)/teamIdentifiers", withData: newTeamIdentifiers) { (returnedError) in
+                            GenericSerializer().setValue(onKey: "/allTournaments/\(fromTournament)/teamIdentifiers", withData: newTeamIdentifiers) { returnedError in
                                 if let error = returnedError
                                 {
                                     completion(errorInfo(error))
@@ -288,75 +288,75 @@ class TournamentSerialiser
             else { completion(errorDescriptor!) }
         }
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Private Functions */
-    
+
     /**
-     Deserialises a **Tournament** from a given data bundle.
-     
-     - Parameter from: The data bundle from which to deserialise the **Tournament.**
-     - Parameter completion: Upon success, returns a deserialised **Tournament** object. Upon failure, a string describing the error(s) encountered.
-     
+     Deserializes a **Tournament** from a given data bundle.
+
+     - Parameter from: The data bundle from which to deserialize the **Tournament.**
+     - Parameter completion: Upon success, returns a deserialized **Tournament** object. Upon failure, a string describing the error(s) encountered.
+
      - Note: Completion variables are *mutually exclusive.*
      - Requires: A well-formed bundle of **Tournament** metadata.
-     
+
      ~~~
-     completion(deSerialisedTournament, errorDescriptor)
+     completion(deSerializedTournament, errorDescriptor)
      ~~~
      */
-    private func deSerialiseTournament(from dataBundle: [String:Any], completion: @escaping(_ deSerialisedTournament: Tournament?, _ errorDescriptor: String?) -> Void)
+    private func deSerialiseTournament(from dataBundle: [String: Any], completion: @escaping (_ deSerializedTournament: Tournament?, _ errorDescriptor: String?) -> Void)
     {
         guard let associatedIdentifier = dataBundle["associatedIdentifier"] as? String else
-        { completion(nil, "Unable to deserialise «associatedIdentifier»."); return }
-        
+        { completion(nil, "Unable to deserialize «associatedIdentifier»."); return }
+
         guard let name = dataBundle["name"] as? String else
-        { completion(nil, "Unable to deserialise «name»."); return }
-        
+        { completion(nil, "Unable to deserialize «name»."); return }
+
         guard let startDateString = dataBundle["startDate"] as? String,
               let startDate = secondaryDateFormatter.date(from: startDateString) else
-        { completion(nil, "Unable to deserialise «startDate»."); return }
-        
+        { completion(nil, "Unable to deserialize «startDate»."); return }
+
         guard let endDateString = dataBundle["endDate"] as? String,
               let endDate = secondaryDateFormatter.date(from: endDateString) else
-        { completion(nil, "Unable to deserialise «endDate»."); return }
-        
+        { completion(nil, "Unable to deserialize «endDate»."); return }
+
         guard let teamIdentifiers = dataBundle["teamIdentifiers"] as? [String] else
-        { completion(nil, "Unable to deserialise «teamIdentifiers»."); return }
-        
-        let deSerialisedTournament = Tournament(associatedIdentifier: associatedIdentifier,
+        { completion(nil, "Unable to deserialize «teamIdentifiers»."); return }
+
+        let deSerializedTournament = Tournament(associatedIdentifier: associatedIdentifier,
                                                 name:                 name,
                                                 startDate:            startDate,
                                                 endDate:              endDate,
                                                 teamIdentifiers:      teamIdentifiers)
-        
-        completion(deSerialisedTournament, nil)
+
+        completion(deSerializedTournament, nil)
     }
-    
+
     /**
      Removes an array of **Teams** from a **Tournament.**
-     
+
      - Parameter teams: An array of **Team** identifiers to be removed from the specified **Tournament.**
      - Parameter fromTournament: The identifier of the **Tournament** from which to remove the specified **Teams.**
-     
+
      - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
-     
+
      ~~~
      completion(errorDescriptor)
      ~~~
      */
-    private func removeTeams(_ teams: [String], fromTournament: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    private func removeTeams(_ teams: [String], fromTournament: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
-        var errors: [String] = []
-        
+        var errors = [String]()
+
         for (index, team) in teams.enumerated()
         {
-            removeTeam(team, fromTournament: fromTournament, deleting: true) { (errorDescriptor) in
+            removeTeam(team, fromTournament: fromTournament, deleting: true) { errorDescriptor in
                 if let error = errorDescriptor
                 {
                     errors.append(error)
-                    
+
                     if index == teams.count - 1
                     {
                         completion(errors.joined(separator: "\n"))
@@ -366,7 +366,7 @@ class TournamentSerialiser
                 {
                     if index == teams.count - 1
                     {
-                        completion(errors.count == 0 ? nil : errors.joined(separator: "\n"))
+                        completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
                     }
                 }
             }

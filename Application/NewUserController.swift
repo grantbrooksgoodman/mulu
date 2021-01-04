@@ -16,132 +16,130 @@ import FirebaseAuth
 class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
-    
+
     /* MARK: Interface Builder UI Elements */
-    
+
     //UIBarButtonItems
-    @IBOutlet weak var backButton:   UIBarButtonItem!
-    @IBOutlet weak var cancelButton: UIBarButtonItem!
-    @IBOutlet weak var nextButton:   UIBarButtonItem!
-    
+    @IBOutlet var backButton:   UIBarButtonItem!
+    @IBOutlet var cancelButton: UIBarButtonItem!
+    @IBOutlet var nextButton:   UIBarButtonItem!
+
     //UILabels
-    @IBOutlet weak var promptLabel: UILabel!
-    @IBOutlet weak var titleLabel:  UILabel!
-    
+    @IBOutlet var promptLabel: UILabel!
+    @IBOutlet var titleLabel:  UILabel!
+
     //Other Elements
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var largeTextField: UITextField!
-    @IBOutlet weak var progressView: UIProgressView!
-    @IBOutlet weak var stepTextView: UITextView!
-    @IBOutlet weak var tableView: UITableView!
-    
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet var largeTextField: UITextField!
+    @IBOutlet var progressView: UIProgressView!
+    @IBOutlet var stepTextView: UITextView!
+    @IBOutlet var tableView: UITableView!
+
     //==================================================//
-    
+
     /* MARK: Class-level Variable Declarations */
-    
+
     //Arrays
-    var selectedTeams: [String] = []
+    var selectedTeams = [String]()
     var teamArray:     [Team]?
-    
+
     //Booleans
     var isGoingBack = false
     var isWorking   = false
-    
+
     //Strings
     var fullName:     String?
     var emailAddress: String?
     var stepText = "🔴 Set name\n🔴 Set e-mail address\n🔴 Add to teams"
-    
+
     //Other Declarations
     var buildInstance: Build!
     var controllerReference: CreateController!
     var currentStep = Step.name
-    var stepAttributes: [NSAttributedString.Key:Any]!
-    
+    var stepAttributes: [NSAttributedString.Key: Any]!
+
     //==================================================//
-    
+
     /* MARK: Enumerated Type Declarations */
-    
+
     enum Step
     {
         case name
         case email
         case teams
     }
-    
+
     //==================================================//
-    
-    /* MARK: Initialiser Function */
-    
-    func initialiseController()
+
+    /* MARK: Initializer Function */
+
+    func initializeController()
     {
-        lastInitialisedController = self
+        lastInitializedController = self
         buildInstance = Build(self)
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Overridden Functions */
-    
+
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
+
         navigationController?.presentationController?.delegate = self
-        
+
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 8
-        
+
         stepAttributes = [.font: UIFont(name: "SFUIText-Medium", size: 11)!,
                           .paragraphStyle: paragraphStyle]
-        
+
         stepTextView.attributedText = NSAttributedString(string: stepText, attributes: stepAttributes)
-        
-        let navigationButtonAttributes: [NSAttributedString.Key:Any] = [.font: UIFont.boldSystemFont(ofSize: 17)]
-        
+
+        let navigationButtonAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.boldSystemFont(ofSize: 17)]
+
         backButton.setTitleTextAttributes(navigationButtonAttributes, for: .normal)
         backButton.setTitleTextAttributes(navigationButtonAttributes, for: .highlighted)
         backButton.setTitleTextAttributes(navigationButtonAttributes, for: .disabled)
-        
+
         nextButton.setTitleTextAttributes(navigationButtonAttributes, for: .normal)
         nextButton.setTitleTextAttributes(navigationButtonAttributes, for: .highlighted)
         nextButton.setTitleTextAttributes(navigationButtonAttributes, for: .disabled)
-        
+
         largeTextField.delegate = self
         tableView.backgroundColor = .black
-        
+
         forwardToName()
     }
-    
+
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
-        
-        initialiseController()
-        
+
+        initializeController()
+
         currentFile = #file
         buildInfoController?.view.isHidden = true
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
-    {
-        
-    }
-    
+
+    override func prepare(for _: UIStoryboardSegue, sender _: Any?)
+    {}
+
     override func viewWillDisappear(_ animated: Bool)
     {
         super.viewWillDisappear(animated)
-        
-        lastInitialisedController = controllerReference
+
+        lastInitializedController = controllerReference
         buildInstance = Build(controllerReference)
         buildInfoController?.view.isHidden = !preReleaseApplication
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Interface Builder Actions */
-    
-    @IBAction func backButton(_ sender: Any)
+
+    @IBAction func backButton(_: Any)
     {
         switch currentStep
         {
@@ -156,17 +154,17 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
             forwardToTeams()
         }
     }
-    
-    @IBAction func cancelButton(_ sender: Any)
+
+    @IBAction func cancelButton(_: Any)
     {
         confirmCancellation()
     }
-    
-    @IBAction func nextButton(_ sender: Any)
+
+    @IBAction func nextButton(_: Any)
     {
         nextButton.isEnabled = false
         backButton.isEnabled = false
-        
+
         switch currentStep
         {
         case .name:
@@ -211,33 +209,33 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
             forwardToFinish()
         }
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Other Functions */
-    
+
     func animateTeamTableViewAppearance()
     {
-        UIView.animate(withDuration: 0.2) { self.largeTextField.alpha = 0 } completion: { (_) in
+        UIView.animate(withDuration: 0.2) { self.largeTextField.alpha = 0 } completion: { _ in
             self.tableView.dataSource = self
             self.tableView.delegate = self
             self.tableView.reloadData()
-            
+
             roundCorners(forViews: [self.tableView], withCornerType: 0)
-            
+
             UIView.animate(withDuration: 0.2, delay: 0.5) {
                 self.tableView.alpha = 0.6
                 self.promptLabel.alpha = 1
-            } completion: { (_) in
+            } completion: { _ in
                 self.nextButton.isEnabled = true
                 self.backButton.isEnabled = true
             }
         }
-        
-        self.currentStep = .teams
-        self.nextButton.title = "Finish"
+
+        currentStep = .teams
+        nextButton.title = "Finish"
     }
-    
+
     func confirmCancellation()
     {
         AlertKit().confirmationAlertController(title: "Are You Sure?",
@@ -245,30 +243,30 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
                                                cancelConfirmTitles: ["cancel": "No", "confirm": "Yes"],
                                                confirmationDestructive: true,
                                                confirmationPreferred: false,
-                                               networkDepedent: false) { (didConfirm) in
+                                               networkDepedent: false) { didConfirm in
             if didConfirm!
             {
                 self.navigationController?.dismiss(animated: true, completion: nil)
             }
         }
     }
-    
+
     func createUser()
     {
         guard let fullName = fullName else
         { report("Name was not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
-        
+
         let nameComponents = fullName.components(separatedBy: " ")
         let firstName = String(nameComponents[0])
-        let lastName = String(nameComponents[1...nameComponents.count - 1].joined(separator: " "))
-        
+        let lastName = String(nameComponents[1 ... nameComponents.count - 1].joined(separator: " "))
+
         guard let emailAddress = emailAddress else
         { report("E-mail address was not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
-        
-        UserSerialiser().createAccount(associatedTeams: selectedTeams.count == 0 ? nil : selectedTeams, emailAddress: emailAddress, firstName: firstName, lastName: lastName, password: "123456", profileImageData: nil, pushTokens: nil) { (returnedUser, errorDescriptor) in
+
+        UserSerializer().createAccount(associatedTeams: selectedTeams.isEmpty ? nil : selectedTeams, emailAddress: emailAddress, firstName: firstName, lastName: lastName, password: "123456", profileImageData: nil, pushTokens: nil) { returnedUser, errorDescriptor in
             if returnedUser != nil
             {
-                Auth.auth().sendPasswordReset(withEmail: emailAddress) { (returnedError) in
+                Auth.auth().sendPasswordReset(withEmail: emailAddress) { returnedError in
                     if let error = returnedError
                     {
                         AlertKit().errorAlertController(title: "Succeeded With Errors",
@@ -305,97 +303,97 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
             }
         }
     }
-    
+
     func forwardToName()
     {
         findAndResignFirstResponder()
         largeTextField.autocapitalizationType = .words
         largeTextField.keyboardType = .default
         largeTextField.textContentType = .name
-        
+
         if isGoingBack
         {
             stepProgress(forwardDirection: false)
             isGoingBack = false
         }
-        
+
         stepText = "🟡 Set name\n🔴 Set e-mail address\n🔴 Add to teams"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
-        
+
         UIView.transition(with: largeTextField, duration: 0.35, options: .transitionCrossDissolve) {
             self.largeTextField.placeholder = "Enter the user's full name"
             self.largeTextField.text = self.fullName ?? nil
-        } completion: { (_) in
-            UIView.animate(withDuration: 0.2) { self.largeTextField.alpha = 1 } completion: { (_) in
+        } completion: { _ in
+            UIView.animate(withDuration: 0.2) { self.largeTextField.alpha = 1 } completion: { _ in
                 self.largeTextField.becomeFirstResponder()
-                
+
                 self.nextButton.isEnabled = true
             }
         }
-        
+
         currentStep = .name
     }
-    
+
     func forwardToEmail()
     {
         findAndResignFirstResponder()
         largeTextField.autocapitalizationType = .none
         largeTextField.keyboardType = .emailAddress
         largeTextField.textContentType = .emailAddress
-        
+
         stepProgress(forwardDirection: !isGoingBack)
-        
+
         isGoingBack = false
-        
+
         stepText = "🟢 Set name\n🟡 Set e-mail address\n🔴 Add to teams"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
-        
+
         UIView.transition(with: largeTextField, duration: 0.35, options: .transitionCrossDissolve) {
             self.largeTextField.placeholder = "Enter the user's e-mail address"
             self.largeTextField.text = self.emailAddress ?? nil
-        } completion: { (_) in
-            UIView.animate(withDuration: 0.2) { self.largeTextField.alpha = 1 } completion: { (_) in
+        } completion: { _ in
+            UIView.animate(withDuration: 0.2) { self.largeTextField.alpha = 1 } completion: { _ in
                 self.largeTextField.becomeFirstResponder()
-                
+
                 self.backButton.isEnabled = true
                 self.nextButton.isEnabled = true
             }
         }
-        
+
         currentStep = .email
         nextButton.title = "Next"
     }
-    
+
     func forwardToTeams()
     {
         findAndResignFirstResponder()
         stepProgress(forwardDirection: !isGoingBack)
-        
+
         isGoingBack = false
-        
+
         stepText = "🟢 Set name\n🟢 Set e-mail address\n🟡 Add to teams"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
-        
+
         promptLabel.textAlignment = .left
         promptLabel.text = "SELECT TEAMS TO ADD THIS USER TO:"
-        
+
         if teamArray != nil
         {
             animateTeamTableViewAppearance()
         }
         else
         {
-            TeamSerialiser().getAllTeams { (returnedTeams, errorDescriptor) in
+            TeamSerializer().getAllTeams { returnedTeams, errorDescriptor in
                 if let teams = returnedTeams
                 {
-                    self.teamArray = teams.sorted(by: {$0.name < $1.name})
-                    
+                    self.teamArray = teams.sorted(by: { $0.name < $1.name })
+
                     self.animateTeamTableViewAppearance()
                 }
                 else if let error = errorDescriptor
@@ -405,45 +403,45 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
             }
         }
     }
-    
+
     func forwardToFinish()
     {
         nextButton.isEnabled = false
         backButton.isEnabled = false
         cancelButton.isEnabled = false
-        
+
         stepProgress(forwardDirection: true)
-        
+
         stepText = "🟢 Set name\n🟢 Set e-mail address\n🟢 Add to teams"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
-        
+
         UIView.animate(withDuration: 0.2) {
             self.tableView.alpha = 0
             self.promptLabel.alpha = 0
-        } completion: { (_) in
+        } completion: { _ in
             self.promptLabel.textAlignment = .center
             self.promptLabel.text = "WORKING..."
             self.isWorking = true
-            
+
             UIView.animate(withDuration: 0.2, delay: 0.5) {
                 self.promptLabel.alpha = 1
                 self.activityIndicator.alpha = 1
-            } completion: { (_) in
+            } completion: { _ in
                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2500)) { self.createUser() }
             }
         }
     }
-    
+
     func goBack()
     {
         isWorking = false
         isGoingBack = true
-        
+
         nextButton.isEnabled = false
         backButton.isEnabled = false
-        
+
         UIView.animate(withDuration: 0.2) {
             for subview in self.view.subviews
             {
@@ -454,24 +452,24 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
             }
         }
     }
-    
+
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
     }
-    
+
     func stepProgress(forwardDirection: Bool)
     {
-        UIView.animate(withDuration: 0.2) { self.progressView.setProgress(self.progressView.progress + (forwardDirection ? 1/3 : -(1/3)), animated: true) }
+        UIView.animate(withDuration: 0.2) { self.progressView.setProgress(self.progressView.progress + (forwardDirection ? 1 / 3 : -(1 / 3)), animated: true) }
     }
-    
+
     func verifyName() -> Bool
     {
         if largeTextField.text!.components(separatedBy: " ").count > 1
         {
             return true
         }
-        
+
         return false
     }
 }
@@ -485,15 +483,15 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
 /* MARK: UIAdaptivePresentationControllerDelegate */
 extension NewUserController: UIAdaptivePresentationControllerDelegate
 {
-    func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController)
+    func presentationControllerDidAttemptToDismiss(_: UIPresentationController)
     {
         if !isWorking
         {
             confirmCancellation()
         }
     }
-    
-    func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool
+
+    func presentationControllerShouldDismiss(_: UIPresentationController) -> Bool
     {
         return false
     }
@@ -507,20 +505,20 @@ extension NewUserController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let currentCell = tableView.dequeueReusableCell(withIdentifier: "TeamCell") as! TeamCell
-        
+
         currentCell.teamLabel.text = teamArray![indexPath.row].name
         currentCell.memberLabel.text = "\(teamArray![indexPath.row].participantIdentifiers.count) members"
-        
+
         if selectedTeams.contains(teamArray![indexPath.row].associatedIdentifier)
         {
             currentCell.radioButton.isSelected = true
         }
-        
+
         currentCell.selectionStyle = .none
-        
+
         return currentCell
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         if let currentCell = tableView.cellForRow(at: indexPath) as? TeamCell
@@ -534,12 +532,12 @@ extension NewUserController: UITableViewDataSource, UITableViewDelegate
             {
                 selectedTeams.append(teamArray![indexPath.row].associatedIdentifier)
             }
-            
+
             currentCell.radioButton.isSelected = !currentCell.radioButton.isSelected
         }
     }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+
+    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int
     {
         return teamArray!.count
     }
@@ -550,7 +548,7 @@ extension NewUserController: UITableViewDataSource, UITableViewDelegate
 /* MARK: UITextFieldDelegate */
 extension NewUserController: UITextFieldDelegate
 {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool
+    func textFieldShouldReturn(_: UITextField) -> Bool
     {
         nextButton(nextButton!)
         return true

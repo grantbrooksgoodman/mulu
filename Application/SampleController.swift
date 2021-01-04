@@ -13,57 +13,55 @@ import UIKit
 class SampleController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
-    
+
     /* MARK: Interface Builder UI Elements */
-    
+
     //==================================================//
-    
+
     /* MARK: Class-level Variable Declarations */
-    
+
     var buildInstance: Build!
-    
+
     //==================================================//
-    
-    /* MARK: Initialiser Function */
-    
-    func initialiseController()
+
+    /* MARK: Initializer Function */
+
+    func initializeController()
     {
-        lastInitialisedController = self
+        lastInitializedController = self
         buildInstance = Build(self)
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Overridden Functions */
-    
+
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        initialiseController()
+
+        initializeController()
     }
-    
+
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
-        
+
         currentFile = #file
         buildInfoController?.view.isHidden = !preReleaseApplication
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
-    {
-        
-    }
-    
+
+    override func prepare(for _: UIStoryboardSegue, sender _: Any?)
+    {}
+
     //==================================================//
-    
+
     /* MARK: Interface Builder Actions */
-    
+
     //==================================================//
-    
+
     /* MARK: Other Functions */
-    
+
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)

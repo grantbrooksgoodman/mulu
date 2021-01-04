@@ -1,0 +1,19 @@
+--disable          \
+    andOperator,        \
+    blankLinesAroundMark,        \
+    blankLinesBetweenScopes,        \
+    braces,        \
+    consecutiveSpaces,        \
+    elseOnSameLine,        \
+    fileHeader,        \
+    linebreakAtEndOfFile,        \
+    linebreaks,        \
+    markTypes,        \
+    organizeDeclarations,        \
+    preferKeyPath,        \
+    sortedSwitchCases,        \
+    spaceInsideComments
+--enable isEmpty 
+--self init-only 
+--wrapparameters after-first
+--swiftversion 5

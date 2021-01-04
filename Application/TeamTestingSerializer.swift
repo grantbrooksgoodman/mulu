@@ -1,5 +1,5 @@
 //
-//  TeamTestingSerialiser.swift
+//  TeamTestingSerializer.swift
 //  Mulu Party
 //
 //  Created by Grant Brooks Goodman on 12/12/2020.
@@ -9,38 +9,38 @@
 /* First-party Frameworks */
 import UIKit
 
-class TeamTestingSerialiser
+class TeamTestingSerializer
 {
     //==================================================//
-    
+
     /* MARK: Public Functions */
-    
+
     /**
      Creates a random **Team** on the server.
-     
+
      - Parameter with: The identifier of the **Users** to populate this **Team** with.
      - Parameter completedChallenges: The randomly generated completed **Challenges** to add to this **Team.**
-     
+
      - Parameter completion: Upon success, returns with the identifier of the newly created **Team.** Upon failure, a string describing the error(s) encountered.
-     
+
      - Note: Completion variables are *mutually exclusive.*
-     
+
      ~~~
      completion(returnedIdentifier, errorDescriptor)
      ~~~
      */
-    func createRandomTeam(with users: [User], completedChallenges: [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])], completion: @escaping(_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
+    func createRandomTeam(with users: [User], completedChallenges: [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])], completion: @escaping (_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
     {
         let universityNames = ["Princeton", "Harvard", "Columbia", "MIT", "Yale", "Stanford", "UChicago", "UPenn", "Caltech", "Johns Hopkins", "Northwestern", "Duke", "Dartmouth", "Brown", "Vanderbilt", "Rice", "WashU St. Louis", "Cornell", "Notre Dame", "UCLA", "Emory", "UC Berkeley", "Georgetown", "UMich", "USC", "UVA", "UNC Chapel Hill", "Wake Forest", "NYU", "Tufts", "UCSB"]
-        
-        TeamSerialiser().createTeam(name: "Team \(universityNames.randomElement()!)", participantIdentifiers: users.identifiers()) { (returnedMetadata, errorDescriptor) in
+
+        TeamSerializer().createTeam(name: "Team \(universityNames.randomElement()!)", participantIdentifiers: users.identifiers()) { returnedMetadata, errorDescriptor in
             if let error = errorDescriptor
             {
                 completion(nil, error)
             }
             else if let metadata = returnedMetadata
             {
-                TeamSerialiser().addCompletedChallenges(completedChallenges, toTeam: metadata.identifier, overwrite: true) { (errorDescriptor) in
+                TeamSerializer().addCompletedChallenges(completedChallenges, toTeam: metadata.identifier, overwrite: true) { errorDescriptor in
                     if let error = errorDescriptor
                     {
                         completion(nil, error)
@@ -50,45 +50,45 @@ class TeamTestingSerialiser
             }
         }
     }
-    
+
     /**
      Creates multiple random **Teams** on the server.
-     
+
      - Parameter with: The identifier of the **Users** to populate these **Teams** with.
      - Parameter completedChallenges: The randomly generated completed **Challenges** to add to these **Teams.**
      - Parameter amount: The amount of **Teams** to create.
-     
+
      - Parameter completion: Upon success, returns with an array of the identifiers of the newly created **Teams.** Upon failure, a string describing the error(s) encountered.
-     
+
      - Note: Completion variables are *mutually exclusive.*
      - Requires: The `users` array length to be equal to the `completedChallenges` array length.
-     
+
      ~~~
      completion(returnedIdentifiers, errorDescriptor)
      ~~~
      */
-    func createRandomTeams(with users: [[User]], completedChallenges: [[(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]], amount: Int, completion: @escaping(_ returnedIdentifiers: [String]?, _ errorDescriptor: String?) -> Void)
+    func createRandomTeams(with users: [[User]], completedChallenges: [[(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]], amount: Int, completion: @escaping (_ returnedIdentifiers: [String]?, _ errorDescriptor: String?) -> Void)
     {
         guard users.count == completedChallenges.count else
         { completion(nil, "Unequal ratio of Users to completed Challenges."); return }
-        
+
         let universityNames = ["Princeton", "Harvard", "Columbia", "MIT", "Yale", "Stanford", "UChicago", "UPenn", "Caltech", "Johns Hopkins", "Northwestern", "Duke", "Dartmouth", "Brown", "Vanderbilt", "Rice", "WashU St. Louis", "Cornell", "Notre Dame", "UCLA", "Emory", "UC Berkeley", "Georgetown", "UMich", "USC", "UVA", "UNC Chapel Hill", "Wake Forest", "NYU", "Tufts", "UCSB"]
-        
-        var returnedIdentifiers: [String] = []
-        
-        for i in 0..<amount
+
+        var returnedIdentifiers = [String]()
+
+        for i in 0 ..< amount
         {
             guard i < completedChallenges.count else
             { completion(nil, "Not enough completed Challenges!"); return }
-            
-            TeamSerialiser().createTeam(name: "Team \(universityNames.randomElement()!)", participantIdentifiers: users[i].identifiers()) { (returnedMetadata, errorDescriptor) in
+
+            TeamSerializer().createTeam(name: "Team \(universityNames.randomElement()!)", participantIdentifiers: users[i].identifiers()) { returnedMetadata, errorDescriptor in
                 if let error = errorDescriptor
                 {
                     completion(nil, error)
                 }
                 else if let metadata = returnedMetadata
                 {
-                    TeamSerialiser().addCompletedChallenges(completedChallenges[i], toTeam: metadata.identifier, overwrite: true) { (errorDescriptor) in
+                    TeamSerializer().addCompletedChallenges(completedChallenges[i], toTeam: metadata.identifier, overwrite: true) { errorDescriptor in
                         if let error = errorDescriptor
                         {
                             completion(nil, error)
@@ -96,11 +96,11 @@ class TeamTestingSerialiser
                         else
                         {
                             returnedIdentifiers.append(metadata.identifier)
-                            
+
                             if i == amount - 1
                             {
                                 generatedJoinCode = metadata.joinCode
-                                
+
                                 completion(returnedIdentifiers, nil)
                             }
                         }

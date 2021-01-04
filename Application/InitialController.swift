@@ -14,34 +14,34 @@ import UIKit
 class InitialController: UIViewController
 {
     //==================================================//
-    
+
     /* MARK: Interface Builder UI Elements */
-    
-    @IBOutlet weak var imageView: UIImageView!
-    
+
+    @IBOutlet var imageView: UIImageView!
+
     //==================================================//
-    
+
     /* MARK: Class-level Variable Declarations */
-    
+
     //Other Declarations
     let applicationDelegate = UIApplication.shared.delegate! as! AppDelegate
     override var prefersStatusBarHidden: Bool
     {
         return true
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Overridden Functions */
-    
+
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
+
         setNeedsStatusBarAppearanceUpdate()
-        
+
         imageView.alpha = 0
-        
+
         UIView.animate(withDuration: 0.5 /*2*/, delay: 0.3, options: UIView.AnimationOptions(), animations: { () -> Void in
             self.applicationDelegate.currentlyAnimating = true
             self.imageView.alpha = 1
@@ -49,30 +49,30 @@ class InitialController: UIViewController
             if finishedAnimating
             {
                 self.applicationDelegate.currentlyAnimating = false
-                
-                //                GenericTestingSerialiser().trashDatabase()
+
+                //                GenericTestingSerializer().trashDatabase()
                 //
-                //                GenericTestingSerialiser().createRandomDatabase(numberOfUsers: 4, numberOfChallenges: 5, numberOfTeams: 2) { (errorDescriptor) in
+                //                GenericTestingSerializer().createRandomDatabase(numberOfUsers: 4, numberOfChallenges: 5, numberOfTeams: 2) { (errorDescriptor) in
                 //                    if let error = errorDescriptor
                 //                    {
                 //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
                 //                    }
                 //                    else { report("Successfully created database.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
                 //                }
-                
+
                 self.performSegue(withIdentifier: "SignInSegue" /*"initialSegue"*/, sender: self)
             }
         })
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Interface Builder Actions */
-    
-    @IBAction func skipButton(_ sender: Any)
+
+    @IBAction func skipButton(_: Any)
     {
         //applicationDelegate.currentlyAnimating = false
-        
+
         //self.performSegue(withIdentifier: "initialSegue", sender: self)
     }
 }

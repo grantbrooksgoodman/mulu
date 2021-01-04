@@ -13,39 +13,39 @@ import UIKit
 class AnnouncementsController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
-    
+
     /* MARK: Interface Builder UI Elements */
-    
-    @IBOutlet weak var textView: UITextView!
-    
+
+    @IBOutlet var textView: UITextView!
+
     //==================================================//
-    
+
     /* MARK: Class-level Variable Declarations */
-    
+
     var buildInstance: Build!
-    
+
     //==================================================//
-    
-    /* MARK: Initialiser Function */
-    
-    func initialiseController()
+
+    /* MARK: Initializer Function */
+
+    func initializeController()
     {
-        lastInitialisedController = self
+        lastInitializedController = self
         buildInstance = Build(self)
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Overridden Functions */
-    
+
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        initialiseController()
-        
+
+        initializeController()
+
         view.setBackground(withImageNamed: "Gradient.png")
-        
+
         //        let titleAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Gotham-Black", size: 19)!]
         let suibtitleAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBold", size: 18)!]
         //
@@ -54,12 +54,12 @@ class AnnouncementsController: UIViewController, MFMailComposeViewControllerDele
         //
         //        let howItWorks = NSAttributedString(string: "HOW IT WORKS\n\n", attributes: titleAttributes)
         //        let howItWorksSubtitle = NSAttributedString(string: "– INSERT HOW IT WORKS\n– INSERT HOW IT WORKS\n– INSERT HOW IT WORKS\n\nQUESTIONS?\nHELLO@GETMULU.COM", attributes: suibtitleAttributes)
-        
+
         //        schedule.append(scheduleSubtitle)
         //        schedule.append(howItWorks)
         //        schedule.append(howItWorksSubtitle)
-        
-        GenericSerialiser().getValues(atPath: "/globalAnnouncement") { (returnedString) in
+
+        GenericSerializer().getValues(atPath: "/globalAnnouncement") { returnedString in
             if let string = returnedString as? String
             {
                 self.textView.attributedText = NSAttributedString(string: string, attributes: suibtitleAttributes)
@@ -67,28 +67,26 @@ class AnnouncementsController: UIViewController, MFMailComposeViewControllerDele
             else { self.textView.text = "Failed to get announcements." }
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
-        
+
         currentFile = #file
         buildInfoController?.view.isHidden = !preReleaseApplication
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
-    {
-        
-    }
-    
+
+    override func prepare(for _: UIStoryboardSegue, sender _: Any?)
+    {}
+
     //==================================================//
-    
+
     /* MARK: Interface Builder Actions */
-    
+
     //==================================================//
-    
+
     /* MARK: Other Functions */
-    
+
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)

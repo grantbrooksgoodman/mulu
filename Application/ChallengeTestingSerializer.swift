@@ -1,5 +1,5 @@
 //
-//  ChallengeTestingSerialiser.swift
+//  ChallengeTestingSerializer.swift
 //  Mulu Party
 //
 //  Created by Grant Brooks Goodman on 12/12/2020.
@@ -9,12 +9,12 @@
 /* First-party Frameworks */
 import UIKit
 
-class ChallengeTestingSerialiser
+class ChallengeTestingSerializer
 {
     //==================================================//
-    
+
     /* MARK: Class-level Variable Declarations */
-    
+
     let sampleChallenges = ["Commandos": "- Up and down on both arms counts as 1 rep\n- Keep your core activated so your hips don't sway\n- Works arms, abs, and triceps",
                             "Star jumps": "- Start in a quarter squat position with feet together, back flat, and arms down touching your lower legs\n- Works quadriceps, glutes, hamstrings, calves, deltoids",
                             "Cupid shuffle": "- Learn this short fitness routine and send your best attempt to hello@getmulu.com to get your points!",
@@ -35,44 +35,44 @@ class ChallengeTestingSerialiser
                             "Plank waks": "- Complete 3 minutes of plank walks (45 second plank walk, 15 second break)\n- Keep your core tight and your body in a straight line throughout\n- Works your core, shoulders, chest, and arms",
                             "Russian twists": "- Do 48 Russian Twist reps where going left then right counts as 1\n- Keep your core tight throughout\n- Works your core, obliques, and spine",
                             "Hot and Dangerous 🔥": "- Learn this short fitness routine and send your best attempt to hello@getmulu.com to get your points!"]
-    
+
     //==================================================//
-    
+
     /* MARK: Public Functions */
-    
+
     /**
      Creates a specified number of random **Challenges** on the server.
-     
+
      - Parameter amountToCreate: The amount of **Challenges** to create. *Defaults to 1.*
      - Parameter completion: Upon success, returns with an array **Challenge** objects. Upon failure, a string describing the error(s) encountered.
-     
+
      - Note: Completion variables are **NOT** *mutually exclusive.*
      - Requires: `amountToCreate` to be more than 0, and less than or equal to the count of `sampleChallenges`.
-     
+
      ~~~
      completion(returnedChallenges, errorDescriptor)
      ~~~
      */
-    func createRandomChallenges(amountToCreate: Int?, completion: @escaping(_ returnedChallenges: [Challenge]?, _ errorDescriptor: String?) -> Void)
+    func createRandomChallenges(amountToCreate: Int?, completion: @escaping (_ returnedChallenges: [Challenge]?, _ errorDescriptor: String?) -> Void)
     {
         let amount = amountToCreate ?? 1
-        
+
         guard amount != 0 else
         { completion(nil, "Can't create 0 random Challenges."); return }
-        
+
         guard amount <= sampleChallenges.count else
         { completion(nil, "Requested more than amount of challenge data."); return }
-        
+
         let group = DispatchGroup()
-        
-        var challenges: [Challenge] = []
-        var errors: [String] = []
-        
-        for _ in 0..<amount
+
+        var challenges = [Challenge]()
+        var errors = [String]()
+
+        for _ in 0 ..< amount
         {
             group.enter()
-            
-            createRandomChallenge(excludingTitles: challenges.titles()) { (returnedChallenge, errorDescriptor) in
+
+            createRandomChallenge(excludingTitles: challenges.titles()) { returnedChallenge, errorDescriptor in
                 if let error = errorDescriptor
                 {
                     errors.append(error)
@@ -85,113 +85,113 @@ class ChallengeTestingSerialiser
                 }
             }
         }
-        
+
         group.notify(queue: .main) {
-            completion(challenges, errors.count > 0 ? errors.joined(separator: "\n") : nil)
+            completion(challenges, !errors.isEmpty ? errors.joined(separator: "\n") : nil)
         }
     }
-    
+
     /**
      Generates an random array of completed **Challenges** from an array of provided **Challenges.**
-     
+
      - Parameter fromChallenges: The **Challenge** objects from which to create the array.
      - Parameter withUsers: The **Users** objects from which to generate random metadata.
-     
+
      - Returns: An array of completed **Challenges.**
      */
     func randomCompletedChallenges(fromChallenges challenges: [Challenge], withUsers users: [User]) -> [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]
     {
-        var completedChallenges: [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])] = []
-        
+        var completedChallenges = [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]()
+
         for challenge in challenges
         {
-            var metadata: [(user: User, dateCompleted: Date)] = []
-            
+            var metadata = [(user: User, dateCompleted: Date)]()
+
             var metadataFillNumber = Int().random(min: 1, max: 3)
-            
+
             while metadataFillNumber > 0
             {
                 let randomUser = users.randomElement()!
-                
+
                 let todayStartTime = Date().comparator
                 let datePostedStartTime = challenge.datePosted.comparator
-                
+
                 let differenceBetweenDates = todayStartTime.distance(to: datePostedStartTime)
-                
+
                 if differenceBetweenDates < 0
                 {
                     let randomTimeOfCompletion = Int().random(min: Int(datePostedStartTime.timeIntervalSince1970), max: Int(todayStartTime.timeIntervalSince1970))
-                    
+
                     metadata.append((randomUser, Date(timeIntervalSince1970: TimeInterval(randomTimeOfCompletion))))
                 }
-                
+
                 metadataFillNumber -= 1
             }
-            
-            let cleanedMetadata = self.cleanMetadata(metadata)
+
+            let cleanedMetadata = cleanMetadata(metadata)
             completedChallenges.append((challenge, cleanedMetadata))
         }
-        
+
         return completedChallenges
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Private Functions */
-    
+
     /**
      Returns an array of unique metadata from an array of provided completed **Challenge** metadata.
-     
+
      - Parameter metadata: The metadata tuples to clean.
-     
+
      - Returns: An array of `(User, Date)` tuples.
      */
     private func cleanMetadata(_ metadata: [(user: User, dateCompleted: Date)]) -> [(user: User, dateCompleted: Date)]
     {
-        var cleanedMetadata: [(user: User, dateCompleted: Date)] = []
-        
+        var cleanedMetadata = [(user: User, dateCompleted: Date)]()
+
         for datum in metadata
         {
-            if !cleanedMetadata.contains(where: {$0.user.associatedIdentifier == datum.user.associatedIdentifier})
+            if !cleanedMetadata.contains(where: { $0.user.associatedIdentifier == datum.user.associatedIdentifier })
             {
                 cleanedMetadata.append((datum.user, datum.dateCompleted))
             }
         }
-        
+
         return cleanedMetadata
     }
-    
+
     /**
      Creates a random **Challenge** on the server.
-     
+
      - Parameter excludingTitles: An optional array providing title strings to exclude when generating a random title.
      - Parameter completion: Upon success, returns with a **Challenge** object. Upon failure, a string describing the error(s) encountered.
-     
+
      - Note: Completion variables are *mutually exclusive.*
-     
+
      ~~~
      completion(returnedChallenge, errorDescriptor)
      ~~~
      */
-    private func createRandomChallenge(excludingTitles: [String]?, completion: @escaping(_ returnedChallenge: Challenge?, _ errorDescriptor: String?) -> Void)
+    private func createRandomChallenge(excludingTitles: [String]?, completion: @escaping (_ returnedChallenge: Challenge?, _ errorDescriptor: String?) -> Void)
     {
         let randomDate = masterDateFormatter.date(from: "2020-12-\(Int().random(min: 1, max: Calendar.current.component(.day, from: Date())))")!
-        
-        let randomChallengeTitle = excludingTitles == nil ? Array(sampleChallenges.keys).randomElement()! : Array(sampleChallenges.keys).filter({!excludingTitles!.contains($0)}).randomElement()!
+
+        let randomChallengeTitle = excludingTitles == nil ? Array(sampleChallenges.keys).randomElement()! : Array(sampleChallenges.keys).filter { !excludingTitles!.contains($0) }.randomElement()!
         let randomChallengePrompt = sampleChallenges[randomChallengeTitle]!
-        
-        ChallengeSerialiser().createChallenge(title: randomChallengeTitle,
+
+        ChallengeSerializer().createChallenge(title: randomChallengeTitle,
                                               prompt: randomChallengePrompt,
                                               datePosted: randomDate,
                                               pointValue: Int().random(min: 10, max: 500),
-                                              media: nil) { (returnedIdentifier, errorDescriptor) in
+                                              media: nil) { returnedIdentifier, errorDescriptor in
             if let error = errorDescriptor
             {
                 completion(nil, error)
             }
             else if let identifier = returnedIdentifier
             {
-                ChallengeSerialiser().getChallenge(withIdentifier: identifier) { (returnedChallenge, errorDescriptor) in
+                ChallengeSerializer().getChallenge(withIdentifier: identifier) { returnedChallenge, errorDescriptor in
                     if let error = errorDescriptor
                     {
                         completion(nil, error)
@@ -199,7 +199,6 @@ class ChallengeTestingSerialiser
                     else if let challenge = returnedChallenge
                     {
                         completion(challenge, nil)
-                        
                     }
                     else { completion(nil, "Unable to retrieve created Challenge.") }
                 }

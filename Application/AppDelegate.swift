@@ -42,7 +42,7 @@ var pushAPIKey = ""
 
 //UIViewControllers
 var buildInfoController:       BuildInfoController?
-var lastInitialisedController: UIViewController! = MainController()
+var lastInitializedController: UIViewController! = MainController()
 
 //Other Declarations
 var appStoreReleaseVersion = 0
@@ -50,7 +50,7 @@ var buildType: Build.BuildType = .alpha
 var currentTeam: Team!
 var currentUser: User!
 var dataStorage: StorageReference!
-var informationDictionary: [String:String]!
+var informationDictionary: [String: String]!
 var touchTimer: Timer?
 
 //==================================================//
@@ -58,135 +58,129 @@ var touchTimer: Timer?
 @UIApplicationMain class AppDelegate: UIResponder, MessagingDelegate, MFMailComposeViewControllerDelegate, UIApplicationDelegate, UIGestureRecognizerDelegate, UNUserNotificationCenterDelegate
 {
     //==================================================//
-    
+
     /* MARK: Class-level Variable Declarations */
-    
+
     //Boolean Declarations
     var currentlyAnimating = false
     var hasResigned        = false
-    
+
     //Other Declarations
     let screenSize = UIScreen.main.bounds
-    
-    var informationDictionary: [String:String] = [:]
+
+    var informationDictionary: [String: String] = [:]
     var restrictRotation: UIInterfaceOrientationMask = .portrait
     var window: UIWindow?
-    
+
     //==================================================//
-    
+
     /* MARK: Required Functions */
-    
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
         let tapGesture = UITapGestureRecognizer(target: self, action: nil)
         tapGesture.delegate = self
         window?.addGestureRecognizer(tapGesture)
-        
+
         masterDateFormatter.dateFormat = "yyyy-MM-dd"
         masterDateFormatter.locale = Locale(identifier: "en_GB")
-        
+
         secondaryDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss zzz"
         secondaryDateFormatter.locale = Locale(identifier: "en_GB")
-        
+
         //Set the array of information.
         Build(nil)
-        
+
         FirebaseConfiguration.shared.setLoggerLevel(.min)
         FirebaseApp.configure()
-        
+
         dataStorage = Storage.storage().reference()
-        
+
         if #available(iOS 10.0, *)
         {
             // For iOS 10 display notification (sent via APNS)
             UNUserNotificationCenter.current().delegate = self
-            
+
             let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-            
-            UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: {_, _ in })
+
+            UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: { _, _ in })
         }
         else
         {
-            let settings: UIUserNotificationSettings = UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-            
+            let settings = UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+
             application.registerUserNotificationSettings(settings)
         }
-        
+
         application.registerForRemoteNotifications()
-        
+
         Messaging.messaging().delegate = self
-        
+
         return true
     }
-    
-    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask
+
+    func application(_: UIApplication, supportedInterfaceOrientationsFor _: UIWindow?) -> UIInterfaceOrientationMask
     {
-        return self.restrictRotation
+        return restrictRotation
     }
-    
-    func applicationDidBecomeActive(_ application: UIApplication)
+
+    func applicationDidBecomeActive(_: UIApplication)
     {
         if currentlyAnimating && hasResigned
         {
-            lastInitialisedController.performSegue(withIdentifier: "initialSegue", sender: self)
+            lastInitializedController.performSegue(withIdentifier: "initialSegue", sender: self)
             currentlyAnimating = false
         }
     }
-    
-    func applicationDidEnterBackground(_ application: UIApplication)
-    {
-        
-    }
-    
-    func applicationWillEnterForeground(_ application: UIApplication)
-    {
-        
-    }
-    
-    func applicationWillResignActive(_ application: UIApplication)
+
+    func applicationDidEnterBackground(_: UIApplication)
+    {}
+
+    func applicationWillEnterForeground(_: UIApplication)
+    {}
+
+    func applicationWillResignActive(_: UIApplication)
     {
         hasResigned = true
     }
-    
-    func applicationWillTerminate(_ application: UIApplication)
-    {
-        
-    }
-    
+
+    func applicationWillTerminate(_: UIApplication)
+    {}
+
     //==================================================//
-    
+
     /* MARK: Other Functions */
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool
+
+    func gestureRecognizer(_: UIGestureRecognizer, shouldReceive _: UITouch) -> Bool
     {
         touchTimer?.invalidate()
         touchTimer = nil
-        
-        UIView.animate(withDuration: 0.2, animations: { buildInfoController?.view.alpha = 0.35 }) { (_) in
+
+        UIView.animate(withDuration: 0.2, animations: { buildInfoController?.view.alpha = 0.35 }) { _ in
             if touchTimer == nil
             {
                 touchTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.touchTimerAction), userInfo: nil, repeats: true)
             }
         }
-        
+
         return false
     }
-    
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String)
+
+    func messaging(_: Messaging, didReceiveRegistrationToken fcmToken: String)
     {
         //        let dataDict: [String:String] = ["token": fcmToken]
         //        NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)
-        
+
         pushToken = fcmToken
     }
-    
+
     @objc func touchTimerAction()
     {
         UIView.animate(withDuration: 0.2, animations: {
             if touchTimer != nil
             {
                 buildInfoController?.view.alpha = 1
-                
+
                 touchTimer?.invalidate()
                 touchTimer = nil
             }
@@ -203,24 +197,24 @@ var touchTimer: Timer?
 /* MARK: Error Processing Functions */
 /**
  Converts an instance of `Error` to a formatted string.
- 
+
  - Parameter for: The `Error` whose information will be extracted.
- 
- - Returns: A string with the error's localised description and code.
+
+ - Returns: A string with the error's localized description and code.
  */
 func errorInfo(_ for: Error) -> String
 {
     let asNSError = `for` as NSError
-    
+
     return "\(asNSError.localizedDescription) (\(asNSError.code))"
 }
 
 /**
  Converts an instance of `NSError` to a formatted string.
- 
+
  - Parameter for: The `NSError` whose information will be extracted.
- 
- - Returns: A string with the error's localised description and code.
+
+ - Returns: A string with the error's localized description and code.
  */
 func errorInfo(_ for: NSError) -> String
 {
@@ -251,7 +245,7 @@ func fallbackReport(_ text: String, errorCode: Int?, isFatal: Bool)
         print("\n--------------------------------------------------\n[IMPROPERLY FORMATTED METADATA]\n\(text) (\(unwrappedErrorCode))\n--------------------------------------------------\n")
     }
     else { print("\n--------------------------------------------------\n[IMPROPERLY FORMATTED METADATA]\n\(text)\n--------------------------------------------------\n") }
-    
+
     if isFatal
     {
         AlertKit().fatalErrorController()
@@ -273,7 +267,7 @@ func openStream(forFile: String, forFunction: String, forLine: Int?, withMessage
     if verboseFunctionExposure
     {
         let functionTitle = forFunction.components(separatedBy: "(")[0]
-        
+
         if let firstEntry = withMessage
         {
             print("\n*------------------------STREAM OPENED------------------------*\n\(AlertKit().retrieveFileName(forFile: forFile)): \(functionTitle)()\n[\(forLine!)]: \(firstEntry)")
@@ -285,10 +279,10 @@ func openStream(forFile: String, forFunction: String, forLine: Int?, withMessage
 
 /**
  Prints a formatted event report to the console. Also supports displaying a fatal error alert.
- 
+
  - Parameter text: The content of the message to print.
  - Parameter errorCode: An optional error code to include in the report.
- 
+
  - Parameter isFatal: A Boolean representing whether or not to display a fatal error alert along with the event report.
  - Parameter metadata: The metadata Array. Must contain the **file name, function name, and line number** in that order.
  */
@@ -296,18 +290,18 @@ func report(_ text: String, errorCode: Int?, isFatal: Bool, metadata: [Any])
 {
     guard validateMetadata(metadata) else
     { fallbackReport(text, errorCode: errorCode, isFatal: isFatal); return }
-    
+
     let unformattedFileName = metadata[0] as! String
     let unformattedFunctionName = metadata[1] as! String
     let lineNumber = metadata[2] as! Int
-    
+
     let fileName = AlertKit().retrieveFileName(forFile: unformattedFileName)
     let functionName = unformattedFunctionName.components(separatedBy: "(")[0]
-    
+
     if let unwrappedErrorCode = errorCode
     {
         print("\n--------------------------------------------------\n\(fileName): \(functionName)() [\(lineNumber)]\n\(text) (\(unwrappedErrorCode))\n--------------------------------------------------\n")
-        
+
         if isFatal
         {
             AlertKit().fatalErrorController(extraInfo: "\(text) (\(unwrappedErrorCode))", metadata: [fileName, functionName, lineNumber])
@@ -316,7 +310,7 @@ func report(_ text: String, errorCode: Int?, isFatal: Bool, metadata: [Any])
     else
     {
         print("\n--------------------------------------------------\n\(fileName): \(functionName)() [\(lineNumber)]\n\(text)\n--------------------------------------------------\n")
-        
+
         if isFatal
         {
             AlertKit().fatalErrorController(extraInfo: text, metadata: [fileName, functionName, lineNumber])
@@ -328,16 +322,16 @@ func validateMetadata(_ metadata: [Any]) -> Bool
 {
     guard metadata.count == 3 else
     { return false }
-    
+
     guard metadata[0] is String else
     { return false }
-    
+
     guard metadata[1] is String else
     { return false }
-    
+
     guard metadata[2] is Int else
     { return false }
-    
+
     return true
 }
 
@@ -349,7 +343,7 @@ func validateMetadata(_ metadata: [Any]) -> Bool
 func findAndResignFirstResponder()
 {
     DispatchQueue.main.async {
-        if let unwrappedFirstResponder = findFirstResponder(inView: lastInitialisedController.view)
+        if let unwrappedFirstResponder = findFirstResponder(inView: lastInitializedController.view)
         {
             unwrappedFirstResponder.resignFirstResponder()
         }
@@ -365,13 +359,13 @@ func findFirstResponder(inView view: UIView) -> UIView?
         {
             return individualSubview
         }
-        
+
         if let recursiveSubview = findFirstResponder(inView: individualSubview)
         {
             return recursiveSubview
         }
     }
-    
+
     return nil
 }
 
@@ -395,7 +389,7 @@ func hideHUD(delay: Double?)
     if let delay = delay
     {
         let millisecondDelay = Int(delay * 1000)
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
             if PKHUD.sharedHUD.isVisible
             {
@@ -414,16 +408,16 @@ func hideHUD(delay: Double?)
     }
 }
 
-func hideHUD(delay: Double?, completion: @escaping() -> Void)
+func hideHUD(delay: Double?, completion: @escaping () -> Void)
 {
     if let delay = delay
     {
         let millisecondDelay = Int(delay * 1000)
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
             if PKHUD.sharedHUD.isVisible
             {
-                PKHUD.sharedHUD.hide(animated: true) { (_) in
+                PKHUD.sharedHUD.hide(animated: true) { _ in
                     completion()
                 }
             }
@@ -435,7 +429,7 @@ func hideHUD(delay: Double?, completion: @escaping() -> Void)
         DispatchQueue.main.async {
             if PKHUD.sharedHUD.isVisible
             {
-                PKHUD.sharedHUD.hide(true) { (_) in
+                PKHUD.sharedHUD.hide(true) { _ in
                     completion()
                 }
             }
@@ -444,17 +438,17 @@ func hideHUD(delay: Double?, completion: @escaping() -> Void)
     }
 }
 
-func flashSuccessHUD(text: String?, for: Double, delay: Double?, completion: @escaping() -> Void)
+func flashSuccessHUD(text: String?, for: Double, delay: Double?, completion: @escaping () -> Void)
 {
     if let delay = delay
     {
         let millisecondDelay = Int(delay * 1000)
-        
+
         if !PKHUD.sharedHUD.isVisible
         {
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
                 PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: text)
-                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+                PKHUD.sharedHUD.show(onView: lastInitializedController.view)
             }
         }
         else { completion() }
@@ -464,13 +458,13 @@ func flashSuccessHUD(text: String?, for: Double, delay: Double?, completion: @es
         if !PKHUD.sharedHUD.isVisible
         {
             PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: text)
-            PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+            PKHUD.sharedHUD.show(onView: lastInitializedController.view)
         }
         else { completion() }
     }
-    
+
     let flashTime = Int(`for` * 1000)
-    
+
     DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(flashTime)) {
         hideHUD(delay: 0) {
             completion()
@@ -485,7 +479,7 @@ func showProgressHUD()
         if !PKHUD.sharedHUD.isVisible
         {
             PKHUD.sharedHUD.contentView = PKHUDProgressView()
-            PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+            PKHUD.sharedHUD.show(onView: lastInitializedController.view)
         }
     }
 }
@@ -495,12 +489,12 @@ func showProgressHUD(text: String?, delay: Double?)
     if let delay = delay
     {
         let millisecondDelay = Int(delay * 1000)
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
             if !PKHUD.sharedHUD.isVisible
             {
                 PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: text)
-                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+                PKHUD.sharedHUD.show(onView: lastInitializedController.view)
             }
         }
     }
@@ -510,7 +504,7 @@ func showProgressHUD(text: String?, delay: Double?)
             if !PKHUD.sharedHUD.isVisible
             {
                 PKHUD.sharedHUD.contentView = PKHUDProgressView(title: nil, subtitle: text)
-                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+                PKHUD.sharedHUD.show(onView: lastInitializedController.view)
             }
         }
     }
@@ -521,12 +515,12 @@ func showSuccessHUD(text: String?, delay: Double?)
     if let delay = delay
     {
         let millisecondDelay = Int(delay * 1000)
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
             if !PKHUD.sharedHUD.isVisible
             {
                 PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: text)
-                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+                PKHUD.sharedHUD.show(onView: lastInitializedController.view)
             }
         }
     }
@@ -536,7 +530,7 @@ func showSuccessHUD(text: String?, delay: Double?)
             if !PKHUD.sharedHUD.isVisible
             {
                 PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: text)
-                PKHUD.sharedHUD.show(onView: lastInitialisedController.view)
+                PKHUD.sharedHUD.show(onView: lastInitializedController.view)
             }
         }
     }
@@ -550,12 +544,12 @@ func showSuccessHUD(text: String?, delay: Double?)
 func aTagFor(_ theViewNamed: String) -> Int
 {
     var finalValue: Float = 1.0
-    
+
     for individualCharacter in String(theViewNamed.unicodeScalars.filter(CharacterSet.letters.contains)).stringCharacters
     {
         finalValue += (finalValue / Float(individualCharacter.alphabeticalPosition))
     }
-    
+
     return Int(String(finalValue).replacingOccurrences(of: ".", with: "")) ?? Int().random(min: 5, max: 10)
 }
 
@@ -580,15 +574,15 @@ func buildTypeAsString(short: Bool) -> String
 func composeMessage(withMessage: String, withRecipients: [String], withSubject: String, isHtmlMessage: Bool)
 {
     hideHUD(delay: nil)
-    
+
     if MFMailComposeViewController.canSendMail()
     {
         let composeController = MFMailComposeViewController()
-        composeController.mailComposeDelegate = lastInitialisedController as! MFMailComposeViewControllerDelegate?
+        composeController.mailComposeDelegate = lastInitializedController as! MFMailComposeViewControllerDelegate?
         composeController.setToRecipients(withRecipients)
         composeController.setMessageBody(withMessage, isHTML: isHtmlMessage)
         composeController.setSubject(withSubject)
-        
+
         politelyPresent(viewController: composeController)
     }
     else { AlertKit().errorAlertController(title:                       "Cannot Send Mail",
@@ -607,28 +601,28 @@ func hasConnectivity() -> Bool
 {
     let connectionReachability = try! Reachability()
     let networkStatus = connectionReachability.connection.description
-    
+
     return (networkStatus != "No Connection")
 }
 
-func notifyAllUsers(title: String, body: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+func notifyAllUsers(title: String, body: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
 {
-    UserSerialiser().getAllUsers { (returnedUsers, errorDescriptor) in
+    UserSerializer().getAllUsers { returnedUsers, errorDescriptor in
         if let users = returnedUsers
         {
-            var errors: [String] = []
-            
+            var errors = [String]()
+
             for (index, user) in users.enumerated()
             {
                 if let pushTokens = user.pushTokens
                 {
                     for token in pushTokens
                     {
-                        pushNotification(to: token, title: title, body: body) { (errorDescriptor) in
+                        pushNotification(to: token, title: title, body: body) { errorDescriptor in
                             if let error = errorDescriptor
                             {
                                 errors.append(error)
-                                
+
                                 if index == users.count - 1
                                 {
                                     completion(errors.joined(separator: "\n"))
@@ -638,7 +632,7 @@ func notifyAllUsers(title: String, body: String, completion: @escaping(_ errorDe
                             {
                                 if index == users.count - 1
                                 {
-                                    completion(errors.count == 0 ? nil : errors.joined(separator: "\n"))
+                                    completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
                                 }
                             }
                         }
@@ -646,7 +640,7 @@ func notifyAllUsers(title: String, body: String, completion: @escaping(_ errorDe
                 }
                 else if index == users.count - 1
                 {
-                    completion(errors.count == 0 ? nil : errors.joined(separator: "\n"))
+                    completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
                 }
             }
         }
@@ -658,27 +652,27 @@ func notifyAllUsers(title: String, body: String, completion: @escaping(_ errorDe
 func politelyPresent(viewController: UIViewController)
 {
     hideHUD(delay: nil)
-    
+
     if viewController as? MFMailComposeViewController != nil
     {
         isPresentingMailComposeViewController = true
         buildInfoController?.view.isHidden = true
     }
-    
-    let keyWindow = UIApplication.shared.windows.filter{$0.isKeyWindow}.first
-    
+
+    let keyWindow = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
+
     if var topController = keyWindow?.rootViewController
     {
         while let presentedViewController = topController.presentedViewController
         {
             topController = presentedViewController
         }
-        
+
         if topController.presentedViewController == nil && !topController.isKind(of: UIAlertController.self)
         {
             #warning("Something changed in iOS 14 that broke the above code.")
-            topController = lastInitialisedController
-            
+            topController = lastInitializedController
+
             if !Thread.isMainThread
             {
                 DispatchQueue.main.sync { topController.present(viewController, animated: true) }
@@ -687,26 +681,26 @@ func politelyPresent(viewController: UIViewController)
         }
         else
         {
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: { politelyPresent(viewController: viewController) })
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { politelyPresent(viewController: viewController) }
         }
     }
 }
 
-func pushNotification(to token: String, title: String, body: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+func pushNotification(to token: String, title: String, body: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
 {
-    let jsonParameters: [String:Any] = ["to":           token,
-                                        "notification": ["title": title, "body": body],
-                                        "data":         ["user": "test_id"]]
-    
+    let jsonParameters: [String: Any] = ["to":           token,
+                                         "notification": ["title": title, "body": body],
+                                         "data":         ["user": "test_id"]]
+
     let urlRequest = NSMutableURLRequest(url: URL(string: "https://fcm.googleapis.com/fcm/send")!)
-    
+
     urlRequest.httpBody = try? JSONSerialization.data(withJSONObject: jsonParameters, options: [.prettyPrinted])
     urlRequest.httpMethod = "POST"
-    
+
     urlRequest.setValue("application/json",    forHTTPHeaderField: "Content-Type")
     urlRequest.setValue("key=\(pushAPIKey)", forHTTPHeaderField: "Authorization")
-    
-    let dataTask = URLSession.shared.dataTask(with: urlRequest as URLRequest)  { (returnedData, returnedResponse, returnedError) in
+
+    let dataTask = URLSession.shared.dataTask(with: urlRequest as URLRequest)  { _, _, returnedError in
         do {
             if let error = returnedError
             {
@@ -715,7 +709,7 @@ func pushNotification(to token: String, title: String, body: String, completion:
             else { completion(nil) }
         }
     }
-    
+
     dataTask.resume()
 }
 
@@ -726,7 +720,7 @@ func roundCorners(forViews: [UIView], withCornerType: Int!)
     for individualView in forViews
     {
         var cornersToRound: UIRectCorner!
-        
+
         if withCornerType == 0
         {
             //All corners.
@@ -752,16 +746,16 @@ func roundCorners(forViews: [UIView], withCornerType: Int!)
             //Bottom corners.
             cornersToRound = UIRectCorner.bottomLeft.union(UIRectCorner.bottomRight)
         }
-        
-        let maskPathForView: UIBezierPath = UIBezierPath(roundedRect: individualView.bounds,
-                                                         byRoundingCorners: cornersToRound,
-                                                         cornerRadii: CGSize(width: 10, height: 10))
-        
-        let maskLayerForView: CAShapeLayer = CAShapeLayer()
-        
+
+        let maskPathForView = UIBezierPath(roundedRect: individualView.bounds,
+                                           byRoundingCorners: cornersToRound,
+                                           cornerRadii: CGSize(width: 10, height: 10))
+
+        let maskLayerForView = CAShapeLayer()
+
         maskLayerForView.frame = individualView.bounds
         maskLayerForView.path = maskPathForView.cgPath
-        
+
         individualView.layer.mask = maskLayerForView
         individualView.layer.masksToBounds = false
         individualView.clipsToBounds = true

@@ -13,95 +13,93 @@ import UIKit
 class NotifyController: UIViewController, MFMailComposeViewControllerDelegate, UIGestureRecognizerDelegate
 {
     //==================================================//
-    
+
     /* MARK: Interface Builder UI Elements */
-    
+
     //UITextFields
-    @IBOutlet weak var titleTextField:   UITextField!
-    @IBOutlet weak var messageTextField: UITextField!
-    
+    @IBOutlet var titleTextField:   UITextField!
+    @IBOutlet var messageTextField: UITextField!
+
     //Other Elements
-    @IBOutlet weak var sendButton: ShadowButton!
-    
+    @IBOutlet var sendButton: ShadowButton!
+
     //==================================================//
-    
+
     /* MARK: Class-level Variable Declarations */
-    
+
     var buildInstance: Build!
-    
+
     //==================================================//
-    
-    /* MARK: Initialiser Function */
-    
-    func initialiseController()
+
+    /* MARK: Initializer Function */
+
+    func initializeController()
     {
-        lastInitialisedController = self
+        lastInitializedController = self
         buildInstance = Build(self)
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Overridden Functions */
-    
+
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        sendButton.initialiseLayer(animateTouches:     true,
-                                   backgroundColour:   UIColor(hex: 0x60C129),
+
+        sendButton.initializeLayer(animateTouches:     true,
+                                   backgroundColor:   UIColor(hex: 0x60C129),
                                    customBorderFrame:  nil,
                                    customCornerRadius: nil,
-                                   shadowColour:       UIColor(hex: 0x3B9A1B).cgColor)
-        
+                                   shadowColor:       UIColor(hex: 0x3B9A1B).cgColor)
+
         titleTextField.tag   = aTagFor("titleTextField")
         messageTextField.tag = aTagFor("messageTextField")
-        
+
         titleTextField.delegate   = self
         messageTextField.delegate = self
-        
+
         setTextFieldAttributes()
-        
-        NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: titleTextField, queue: .main) { (notification) -> Void in
+
+        NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: titleTextField, queue: .main) { (_) -> Void in
             self.titleTextField.text = "  \(self.titleTextField.text!.leadingWhitespaceRemoved)"
         }
-        
-        NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: messageTextField, queue: .main) { (notification) -> Void in
+
+        NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: messageTextField, queue: .main) { (_) -> Void in
             self.messageTextField.text = "  \(self.messageTextField.text!.leadingWhitespaceRemoved)"
         }
-        
-        let tapRecogniser = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
-        tapRecogniser.delegate = self
-        tapRecogniser.numberOfTapsRequired = 1
-        
-        view.addGestureRecognizer(tapRecogniser)
+
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapRecognizer.delegate = self
+        tapRecognizer.numberOfTapsRequired = 1
+
+        view.addGestureRecognizer(tapRecognizer)
     }
-    
+
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
-        
-        initialiseController()
-        
+
+        initializeController()
+
         currentFile = #file
         buildInfoController?.view.isHidden = !preReleaseApplication
-        
+
         let screenHeight = UIScreen.main.bounds.height
         buildInfoController?.customYOffset = (screenHeight <= 736 ? 40 : 70)
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
-    {
-        
-    }
-    
+
+    override func prepare(for _: UIStoryboardSegue, sender _: Any?)
+    {}
+
     //==================================================//
-    
+
     /* MARK: Interface Builder Actions */
-    
-    @IBAction func sendButton(_ sender: Any)
+
+    @IBAction func sendButton(_: Any)
     {
         findAndResignFirstResponder()
-        
+
         guard titleTextField.text!.lowercasedTrimmingWhitespace != "" && messageTextField.text!.lowercasedTrimmingWhitespace != "" else
         {
             AlertKit().errorAlertController(title:                       "Evaluate All Fields",
@@ -114,10 +112,10 @@ class NotifyController: UIViewController, MFMailComposeViewControllerDelegate, U
                                             metadata:                    [#file, #function, #line],
                                             networkDependent:            false); return
         }
-        
+
         showProgressHUD(text: "Sending notification...", delay: 0)
-        
-        notifyAllUsers(title: titleTextField.text!.leadingWhitespaceRemoved, body: messageTextField.text!.leadingWhitespaceRemoved) { (errorDescriptor) in
+
+        notifyAllUsers(title: titleTextField.text!.leadingWhitespaceRemoved, body: messageTextField.text!.leadingWhitespaceRemoved) { errorDescriptor in
             if let error = errorDescriptor
             {
                 hideHUD(delay: 0.5) {
@@ -143,22 +141,22 @@ class NotifyController: UIViewController, MFMailComposeViewControllerDelegate, U
             }
         }
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Other Functions */
-    
+
     @objc func dismissKeyboard()
     {
-        self.titleTextField.resignFirstResponder()
-        self.messageTextField.resignFirstResponder()
+        titleTextField.resignFirstResponder()
+        messageTextField.resignFirstResponder()
     }
-    
+
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
     }
-    
+
     func setTextFieldAttributes()
     {
         for textField in [titleTextField, messageTextField]
@@ -168,7 +166,7 @@ class NotifyController: UIViewController, MFMailComposeViewControllerDelegate, U
             textField!.layer.borderColor   = UIColor(hex: 0xE1E0E1).cgColor
             textField!.clipsToBounds       = true
             textField!.layer.masksToBounds = true
-            
+
             textField!.text = "  "
         }
     }
@@ -187,7 +185,7 @@ extension NotifyController: UITextFieldDelegate
             messageTextField.becomeFirstResponder()
         }
         else { messageTextField.resignFirstResponder() }
-        
+
         return true
     }
 }

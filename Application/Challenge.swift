@@ -12,23 +12,23 @@ import UIKit
 class Challenge
 {
     //==================================================//
-    
+
     /* MARK: Class-level Variable Declarations */
-    
+
     //Strings
     var associatedIdentifier: String!
     var prompt:               String!
     var title:                String!
-    
+
     //Other Declarations
     var datePosted: Date!
     var media: (link: URL, path: String?, type: MediaType)?
     var pointValue: Int!
-    
+
     //==================================================//
-    
+
     /* MARK: Enumerated Type Declarations */
-    
+
     enum MediaType
     {
         case autoPlayVideo
@@ -36,11 +36,11 @@ class Challenge
         case linkedVideo
         case staticImage
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Constructor Function */
-    
+
     init(associatedIdentifier: String,
          title:                String,
          prompt:               String,
@@ -55,34 +55,34 @@ class Challenge
         self.pointValue = pointValue
         self.media = media
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Removal Functions */
-    
+
     /**
      Removes the **Challenge's** media.
-     
+
      - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
-     
+
      ~~~
      completion(errorDescriptor)
      ~~~
      */
-    func removeMedia(completion: @escaping(_ errorDescriptor: String?) -> Void)
+    func removeMedia(completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
         if let mediaPath = media?.path
         {
             let mediaReference = dataStorage.child(mediaPath)
-            
-            mediaReference.delete { (returnedError) in
+
+            mediaReference.delete { returnedError in
                 if let error = returnedError
                 {
                     completion(errorInfo(error))
                 }
                 else
                 {
-                    GenericSerialiser().setValue(onKey: "/allChallenges/\(self.associatedIdentifier!)/media", withData: "!") { (returnedError) in
+                    GenericSerializer().setValue(onKey: "/allChallenges/\(self.associatedIdentifier!)/media", withData: "!") { returnedError in
                         if let error = returnedError
                         {
                             completion(errorInfo(error))
@@ -94,7 +94,7 @@ class Challenge
         }
         else
         {
-            GenericSerialiser().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/media", withData: "!") { (returnedError) in
+            GenericSerializer().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/media", withData: "!") { returnedError in
                 if let error = returnedError
                 {
                     completion(errorInfo(error))
@@ -103,32 +103,32 @@ class Challenge
             }
         }
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Update Functions */
-    
+
     /**
      Updates the **Challenge's** media.
-     
+
      - Parameter media: A tuple representing the new media link and type for this **Challenge.**
      - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
-     
+
      ~~~
      completion(errorDescriptor)
      ~~~
      */
-    func updateMedia(_ media: (link: URL, path: String?, type: MediaType), completion: @escaping(_ errorDescriptor: String?) -> Void)
+    func updateMedia(_ media: (link: URL, path: String?, type: MediaType), completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
-        var serialisedMedia = "\(media.type.uploadString())"
-        
+        var serializedMedia = "\(media.type.uploadString())"
+
         if let mediaPath = media.path
         {
-            serialisedMedia = "\(serialisedMedia) – \(mediaPath) – \(media.link.absoluteString)"
+            serializedMedia = "\(serializedMedia) – \(mediaPath) – \(media.link.absoluteString)"
         }
-        else { serialisedMedia = "\(serialisedMedia) – \(media.link.absoluteString)" }
-        
-        GenericSerialiser().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/media", withData: serialisedMedia) { (returnedError) in
+        else { serializedMedia = "\(serializedMedia) – \(media.link.absoluteString)" }
+
+        GenericSerializer().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/media", withData: serializedMedia) { returnedError in
             if let error = returnedError
             {
                 completion(errorInfo(error))
@@ -136,20 +136,20 @@ class Challenge
             else { completion(nil) }
         }
     }
-    
+
     /**
      Updates the **Challenge's** point value.
-     
+
      - Parameter pointValue: The new point value for this **Challenge.**
      - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
-     
+
      ~~~
      completion(errorDescriptor)
      ~~~
      */
-    func updatePointValue(_ pointValue: Int, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    func updatePointValue(_ pointValue: Int, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
-        GenericSerialiser().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/pointValue", withData: pointValue) { (returnedError) in
+        GenericSerializer().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/pointValue", withData: pointValue) { returnedError in
             if let error = returnedError
             {
                 completion(errorInfo(error))
@@ -157,20 +157,20 @@ class Challenge
             else { completion(nil) }
         }
     }
-    
+
     /**
      Updates the **Challenge's** prompt.
-     
+
      - Parameter prompt: The new prompt for this **Challenge.**
      - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
-     
+
      ~~~
      completion(errorDescriptor)
      ~~~
      */
-    func updatePrompt(_ prompt: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    func updatePrompt(_ prompt: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
-        GenericSerialiser().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/prompt", withData: prompt) { (returnedError) in
+        GenericSerializer().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/prompt", withData: prompt) { returnedError in
             if let error = returnedError
             {
                 completion(errorInfo(error))
@@ -178,20 +178,20 @@ class Challenge
             else { completion(nil) }
         }
     }
-    
+
     /**
      Updates the **Challenge's** title.
-     
+
      - Parameter prompt: The new title for this **Challenge.**
      - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
-     
+
      ~~~
      completion(errorDescriptor)
      ~~~
      */
-    func updateTitle(_ title: String, completion: @escaping(_ errorDescriptor: String?) -> Void)
+    func updateTitle(_ title: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
-        GenericSerialiser().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/title", withData: title) { (returnedError) in
+        GenericSerializer().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/title", withData: title) { returnedError in
             if let error = returnedError
             {
                 completion(errorInfo(error))
@@ -221,7 +221,7 @@ extension Challenge.MediaType
             return "Static image"
         }
     }
-    
+
     func uploadString() -> String
     {
         switch self

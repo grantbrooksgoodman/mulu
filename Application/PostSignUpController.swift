@@ -16,69 +16,69 @@ import FirebaseAnalytics
 class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegate
 {
     //==================================================//
-    
+
     /* MARK: Interface Builder UI Elements */
-    
+
     //UIButtons
-    @IBOutlet weak var contactUsButton:         UIButton!
-    @IBOutlet weak var goButton:                UIButton!
-    @IBOutlet weak var inviteYourFriendsButton: UIButton!
-    
+    @IBOutlet var contactUsButton:         UIButton!
+    @IBOutlet var goButton:                UIButton!
+    @IBOutlet var inviteYourFriendsButton: UIButton!
+
     //Other Elements
-    @IBOutlet weak var teamCodeTextField: UITextField!
-    
+    @IBOutlet var teamCodeTextField: UITextField!
+
     //==================================================//
-    
+
     /* MARK: Class-level Variable Declarations */
-    
+
     var buildInstance: Build!
     var userIdentifier: String?
-    
+
     //==================================================//
-    
-    /* MARK: Initialiser Function */
-    
-    func initialiseController()
+
+    /* MARK: Initializer Function */
+
+    func initializeController()
     {
-        lastInitialisedController = self
+        lastInitializedController = self
         buildInstance = Build(self)
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Overridden Functions */
-    
+
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        initialiseController()
-        
+
+        initializeController()
+
         view.setBackground(withImageNamed: "Gradient.png")
-        
+
         contactUsButton.layer.cornerRadius = 5
         inviteYourFriendsButton.layer.cornerRadius = 5
-        
+
         for view in view.subviews
         {
             view.alpha = 0
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
-        
+
         currentFile = #file
         buildInfoController?.view.isHidden = !preReleaseApplication
     }
-    
+
     override func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(animated)
-        
+
         teamCodeTextField.addGreyUnderline()
-        
+
         UIView.animate(withDuration: 0.15) {
             for view in self.view.subviews
             {
@@ -86,24 +86,22 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
             }
         }
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
-    {
-        
-    }
-    
+
+    override func prepare(for _: UIStoryboardSegue, sender _: Any?)
+    {}
+
     //==================================================//
-    
+
     /* MARK: Interface Builder Actions */
-    
-    @IBAction func goButton(_ sender: Any)
+
+    @IBAction func goButton(_: Any)
     {
         teamCodeTextField.resignFirstResponder()
-        
+
         guard teamCodeTextField.text!.trimmingBorderedWhitespace.components(separatedBy: " ").count == 2 else
         {
             let message = "Join codes consist of 2 words. Please try again."
-            
+
             AlertKit().errorAlertController(title:                       "Invalid Code",
                                             message:                     message,
                                             dismissButtonTitle:          "OK",
@@ -113,10 +111,10 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
                                             extraInfo:                   nil,
                                             metadata:                    [#file, #function, #line],
                                             networkDependent:            false)
-            
+
             report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
         }
-        
+
         guard let userIdentifier = userIdentifier else
         {
             AlertKit().errorAlertController(title:                       nil,
@@ -128,14 +126,14 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
                                             extraInfo:                   nil,
                                             metadata:                    [#file, #function, #line],
                                             networkDependent:            false)
-            
+
             report("No User identifier passed!", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
         }
-        
-        TeamSerialiser().getTeam(byJoinCode: teamCodeTextField.text!.trimmingBorderedWhitespace) { (returnedIdentifier, errorDescriptor) in
+
+        TeamSerializer().getTeam(byJoinCode: teamCodeTextField.text!.trimmingBorderedWhitespace) { returnedIdentifier, errorDescriptor in
             if let identifier = returnedIdentifier
             {
-                TeamSerialiser().addUser(userIdentifier, toTeam: identifier) { (errorDescriptor) in
+                TeamSerializer().addUser(userIdentifier, toTeam: identifier) { errorDescriptor in
                     if let error = errorDescriptor
                     {
                         AlertKit().errorAlertController(title:                       "Couldn't Add To Team",
@@ -147,7 +145,7 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
                                                         extraInfo:                   nil,
                                                         metadata:                    [#file, #function, #line],
                                                         networkDependent:            false)
-                        
+
                         report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
                     }
                     else
@@ -167,35 +165,35 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
                                                 extraInfo:                   nil,
                                                 metadata:                    [#file, #function, #line],
                                                 networkDependent:            false)
-                
+
                 report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
             }
         }
     }
-    
-    @IBAction func contactUsButton(_ sender: Any)
+
+    @IBAction func contactUsButton(_: Any)
     {
         Analytics.logEvent("contact_us", parameters: nil)
-        
+
         let url = URL(string: "mailto:hello@getmulu.com")!
-        
+
         UIApplication.shared.open(url, options: [:]) { _ in }
     }
-    
-    @IBAction func inviteYourFriendsButton(_ sender: Any)
+
+    @IBAction func inviteYourFriendsButton(_: Any)
     {
         Analytics.logEvent("invite_your_friends", parameters: nil)
     }
-    
+
     @IBAction func linkButton(_ sender: Any)
     {
         guard let button = sender as? UIButton else
         { report("Invalid link sender.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return }
-        
+
         if button.titleLabel!.text == "www.getmulu.com"
         {
             let url = URL(string: "https://www.getmulu.com/")!
-            
+
             UIApplication.shared.open(url, options: [:]) { _ in }
         }
         else
@@ -205,22 +203,22 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
                                              cancelButtonTitle:    nil,
                                              additionalButtons:    [("Instagram", false), ("Twitter", false)],
                                              preferredActionIndex: nil,
-                                             networkDependent:     true) { (selectedIndex) in
+                                             networkDependent:     true) { selectedIndex in
                 if let index = selectedIndex, index != -1
                 {
                     let urlString = index == 0 ? "https://www.instagram.com/mulufitness/" : "https://twitter.com/mulufitness"
                     let url = URL(string: urlString)!
-                    
+
                     UIApplication.shared.open(url, options: [:]) { _ in }
                 }
             }
         }
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Other Functions */
-    
+
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
