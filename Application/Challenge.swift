@@ -49,11 +49,11 @@ class Challenge
          media:                (URL, String?, MediaType)?)
     {
         self.associatedIdentifier = associatedIdentifier
-        self.title = title
-        self.prompt = prompt
-        self.datePosted = datePosted
-        self.pointValue = pointValue
-        self.media = media
+        self.title                = title
+        self.prompt               = prompt
+        self.datePosted           = datePosted
+        self.pointValue           = pointValue
+        self.media                = media
     }
 
     //==================================================//

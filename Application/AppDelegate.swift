@@ -553,6 +553,23 @@ func aTagFor(_ theViewNamed: String) -> Int
     return Int(String(finalValue).replacingOccurrences(of: ".", with: "")) ?? Int().random(min: 5, max: 10)
 }
 
+func attributedString(_ with:                  String,
+                      mainAttributes:          [NSAttributedString.Key: Any],
+                      alternateAttributes:     [NSAttributedString.Key: Any],
+                      alternateAttributeRange: [String]) -> NSAttributedString
+{
+    let attributedString = NSMutableAttributedString(string: with, attributes: mainAttributes)
+
+    for string in alternateAttributeRange
+    {
+        let currentRange = (with as NSString).range(of: (string as NSString) as String)
+
+        attributedString.addAttributes(alternateAttributes, range: currentRange)
+    }
+
+    return attributedString
+}
+
 func buildTypeAsString(short: Bool) -> String
 {
     switch buildType

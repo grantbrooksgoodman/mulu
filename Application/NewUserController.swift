@@ -504,10 +504,10 @@ extension NewUserController: UITableViewDataSource, UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let currentCell = tableView.dequeueReusableCell(withIdentifier: "TeamCell") as! TeamCell
+        let currentCell = tableView.dequeueReusableCell(withIdentifier: "SelectionCell") as! SelectionCell
 
-        currentCell.teamLabel.text = teamArray![indexPath.row].name
-        currentCell.memberLabel.text = "\(teamArray![indexPath.row].participantIdentifiers.count) members"
+        currentCell.titleLabel.text = teamArray![indexPath.row].name
+        currentCell.subtitleLabel.text = "\(teamArray![indexPath.row].participantIdentifiers.count) members"
 
         if selectedTeams.contains(teamArray![indexPath.row].associatedIdentifier)
         {
@@ -521,7 +521,7 @@ extension NewUserController: UITableViewDataSource, UITableViewDelegate
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        if let currentCell = tableView.cellForRow(at: indexPath) as? TeamCell
+        if let currentCell = tableView.cellForRow(at: indexPath) as? SelectionCell
         {
             if currentCell.radioButton.isSelected,
                let index = selectedTeams.firstIndex(of: teamArray![indexPath.row].associatedIdentifier)

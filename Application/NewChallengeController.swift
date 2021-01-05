@@ -131,7 +131,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         forwardToTitle()
 
         mediaPicker.sourceType = .photoLibrary
-        mediaPicker.delegate = self
+        mediaPicker.delegate   = self
         mediaPicker.mediaTypes = ["public.image", "public.movie"]
     }
 
@@ -542,7 +542,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             mediaTextField.text = "https://"
         }
 
-        stepTitleLabel.text = "ADD MEDIA"
+        stepTitleLabel.text          = "ADD MEDIA"
         stepTitleLabel.textAlignment = .left
 
         findAndResignFirstResponder()
@@ -605,8 +605,8 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
 
     func forwardToFinish()
     {
-        nextButton.isEnabled = false
-        backButton.isEnabled = false
+        nextButton.isEnabled   = false
+        backButton.isEnabled   = false
         cancelButton.isEnabled = false
 
         findAndResignFirstResponder()

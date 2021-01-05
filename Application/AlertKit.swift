@@ -875,7 +875,7 @@ class AlertKit
 
     private func strippedDescriptor(for: String) -> String
     {
-        let stripWords = ["a", "is", "that", "the", "this"]
+        let stripWords = ["a", "is", "that", "the", "this", "was"]
 
         var resultantString = ""
 
@@ -883,7 +883,7 @@ class AlertKit
         {
             if !stripWords.contains(word.lowercased())
             {
-                resultantString.append("\(word) ")
+                resultantString.append("\(word)\(word.lowercased() == "not" ? "" : " ")")
             }
         }
 

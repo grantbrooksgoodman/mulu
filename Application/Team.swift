@@ -18,8 +18,8 @@ class Team
     //Arrays
     private(set) var DSParticipants: [User]?
 
-    var completedChallenges:         [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]?
-    var participantIdentifiers:      [String]!
+    var completedChallenges:    [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]?
+    var participantIdentifiers: [String]!
 
     //Strings
     var associatedIdentifier: String!
@@ -40,11 +40,11 @@ class Team
          name:                   String,
          participantIdentifiers: [String])
     {
-        self.associatedIdentifier = associatedIdentifier
-        self.associatedTournament = associatedTournament
-        self.completedChallenges = completedChallenges
-        self.joinCode = joinCode
-        self.name = name
+        self.associatedIdentifier   = associatedIdentifier
+        self.associatedTournament   = associatedTournament
+        self.completedChallenges    = completedChallenges
+        self.joinCode               = joinCode
+        self.name                   = name
         self.participantIdentifiers = participantIdentifiers
     }
 
@@ -98,13 +98,13 @@ class Team
 
      - Parameter completion: Upon success, returns an an array of deserialized **User** objects. Upon failure, returns a string describing the error(s) encountered.
 
-     - Note: Completion is *mutually exclusive.*
+     - Note: Completion variables are *mutually exclusive.*
 
      ~~~
      completion(returnedUsers, errorDescriptor)
      ~~~
      */
-    func deSerialiseParticipants(completion: @escaping (_ returnedUsers: [User]?, _ errorDescriptor: String?) -> Void)
+    func deSerializeParticipants(completion: @escaping (_ returnedUsers: [User]?, _ errorDescriptor: String?) -> Void)
     {
         if let DSParticipants = DSParticipants
         {
@@ -137,7 +137,7 @@ class Team
 
      - Parameter completion: Upon success, returns an integer describing **Team's** rank. Upon failure, returns a string describing the error(s) encountered.
 
-     - Note: Completion is *mutually exclusive.*
+     - Note: Completion variables are *mutually exclusive.*
      - Requires: The **Team** to be participating in a **Tournament.**
 
      ~~~
@@ -206,7 +206,7 @@ class Team
                 self.name = team.name
                 self.participantIdentifiers = team.participantIdentifiers
 
-                team.deSerialiseParticipants { returnedUsers, errorDescriptor in
+                team.deSerializeParticipants { returnedUsers, errorDescriptor in
                     if let users = returnedUsers
                     {
                         self.DSParticipants = users

@@ -32,13 +32,17 @@ class Tournament
 
     /* MARK: Constructor Function */
 
-    init(associatedIdentifier: String, name: String, startDate: Date, endDate: Date, teamIdentifiers: [String])
+    init(associatedIdentifier: String,
+         name:                 String,
+         startDate:            Date,
+         endDate:              Date,
+         teamIdentifiers:      [String])
     {
         self.associatedIdentifier = associatedIdentifier
-        self.name = name
-        self.startDate = startDate
-        self.endDate = endDate
-        self.teamIdentifiers = teamIdentifiers
+        self.name                 = name
+        self.startDate            = startDate
+        self.endDate              = endDate
+        self.teamIdentifiers      = teamIdentifiers
     }
 
     //==================================================//

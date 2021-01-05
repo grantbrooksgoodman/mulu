@@ -291,11 +291,11 @@ class ChallengeSerializer
                     {
                         var newCompletedChallenges = [(Challenge, [(User, Date)])]()
 
-                        for challengeBundle in challenges
+                        for challengeTuple in challenges
                         {
-                            if challengeBundle.challenge.associatedIdentifier != identifier
+                            if challengeTuple.challenge.associatedIdentifier != identifier
                             {
-                                newCompletedChallenges.append(challengeBundle)
+                                newCompletedChallenges.append(challengeTuple)
                             }
                         }
 

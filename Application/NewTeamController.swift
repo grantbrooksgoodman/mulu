@@ -217,7 +217,7 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
     {
         for cell in tableView.visibleCells
         {
-            if let cell = cell as? TeamCell
+            if let cell = cell as? SelectionCell
             {
                 cell.radioButton.isSelected = false
             }
@@ -229,7 +229,7 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
         deselectAllCells()
 
         tableView.dataSource = self
-        tableView.delegate = self
+        tableView.delegate   = self
         tableView.reloadData()
 
         UIView.animate(withDuration: 0.2) {
@@ -249,7 +249,7 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
             self.deselectAllCells()
 
             self.tableView.dataSource = self
-            self.tableView.delegate = self
+            self.tableView.delegate   = self
             self.tableView.reloadData()
 
             roundCorners(forViews: [self.tableView], withCornerType: 0)
@@ -352,8 +352,8 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
     {
         findAndResignFirstResponder()
         largeTextField.autocapitalizationType = .words
-        largeTextField.keyboardType = .default
-        largeTextField.textContentType = .name
+        largeTextField.keyboardType           = .default
+        largeTextField.textContentType        = .name
 
         if isGoingBack
         {
@@ -432,10 +432,10 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
 
         UIView.animate(withDuration: 0.2) {
             self.promptLabel.alpha = 0
-            self.tableView.alpha = 0
+            self.tableView.alpha   = 0
         } completion: { _ in
             self.promptLabel.textAlignment = .left
-            self.promptLabel.text = "SELECT A TOURNAMENT TO ADD THIS TEAM TO:"
+            self.promptLabel.text          = "SELECT A TOURNAMENT TO ADD THIS TEAM TO:"
 
             self.currentStep = .tournament
 
@@ -551,17 +551,17 @@ extension NewTeamController: UITableViewDataSource, UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let currentCell = tableView.dequeueReusableCell(withIdentifier: "TeamCell") as! TeamCell
+        let currentCell = tableView.dequeueReusableCell(withIdentifier: "SelectionCell") as! SelectionCell
 
         if currentStep == .users
         {
-            currentCell.teamLabel.text = "\(userArray![indexPath.row].firstName!) \(userArray![indexPath.row].lastName!)"
+            currentCell.titleLabel.text = "\(userArray![indexPath.row].firstName!) \(userArray![indexPath.row].lastName!)"
 
             if let teams = userArray![indexPath.row].associatedTeams
             {
-                currentCell.memberLabel.text = "on \(teams.count) team\(teams.count == 1 ? "" : "s")"
+                currentCell.subtitleLabel.text = "on \(teams.count) team\(teams.count == 1 ? "" : "s")"
             }
-            else { currentCell.memberLabel.text = "on 0 teams" }
+            else { currentCell.subtitleLabel.text = "on 0 teams" }
 
             if selectedUsers.contains(userArray![indexPath.row].associatedIdentifier)
             {
@@ -570,8 +570,8 @@ extension NewTeamController: UITableViewDataSource, UITableViewDelegate
         }
         else
         {
-            currentCell.teamLabel.text = tournamentArray![indexPath.row].name!
-            currentCell.memberLabel.text = "\(tournamentArray![indexPath.row].teamIdentifiers.count) teams"
+            currentCell.titleLabel.text = tournamentArray![indexPath.row].name!
+            currentCell.subtitleLabel.text = "\(tournamentArray![indexPath.row].teamIdentifiers.count) teams"
 
             if selectedTournament == tournamentArray![indexPath.row].associatedIdentifier
             {
@@ -588,7 +588,7 @@ extension NewTeamController: UITableViewDataSource, UITableViewDelegate
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        if let currentCell = tableView.cellForRow(at: indexPath) as? TeamCell
+        if let currentCell = tableView.cellForRow(at: indexPath) as? SelectionCell
         {
             if currentStep == .users
             {
@@ -621,7 +621,7 @@ extension NewTeamController: UITableViewDataSource, UITableViewDelegate
 
                 for cell in tableView.visibleCells
                 {
-                    if let cell = cell as? TeamCell, cell.tag != indexPath.row
+                    if let cell = cell as? SelectionCell, cell.tag != indexPath.row
                     {
                         cell.radioButton.isSelected = false
                     }

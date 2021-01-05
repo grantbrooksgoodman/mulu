@@ -36,7 +36,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
 
     /* MARK: Initializer Function */
 
-    func initialiseController()
+    func initializeController()
     {
         lastInitializedController = self
         buildInstance = Build(self)
@@ -60,7 +60,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     {
         super.viewWillAppear(animated)
 
-        initialiseController()
+        initializeController()
 
         currentFile = #file
         buildInfoController?.view.isHidden = !preReleaseApplication
@@ -338,32 +338,15 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
 
     /* MARK: Other Functions */
 
-    func attributedString(_ with:                  String,
-                          mainAttributes:          [NSAttributedString.Key: Any],
-                          alternateAttributes:     [NSAttributedString.Key: Any],
-                          alternateAttributeRange: [String]) -> NSAttributedString
-    {
-        let attributedString = NSMutableAttributedString(string: with, attributes: mainAttributes)
-
-        for string in alternateAttributeRange
-        {
-            let currentRange = (with as NSString).range(of: (string as NSString) as String)
-
-            attributedString.addAttributes(alternateAttributes, range: currentRange)
-        }
-
-        return attributedString
-    }
-
     func challengeTitles() -> [String]
     {
         var titleArray: [String] = []
 
         let sortedChallenges = userArray[selectedIndexPath.row].allCompletedChallenges()!.sorted(by: { $0.challenge.title < $1.challenge.title })
 
-        for challengeBundle in sortedChallenges
+        for challengeTuple in sortedChallenges
         {
-            titleArray.append(challengeBundle.challenge.title!)
+            titleArray.append(challengeTuple.challenge.title!)
         }
 
         return titleArray

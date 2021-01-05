@@ -124,7 +124,7 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
         var rankArray = [(user: User, points: Int)]()
 
-        currentTeam.deSerialiseParticipants { returnedUsers, errorDescriptor in
+        currentTeam.deSerializeParticipants { returnedUsers, errorDescriptor in
             if let users = returnedUsers
             {
                 for user in users

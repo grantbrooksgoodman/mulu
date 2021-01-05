@@ -72,7 +72,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                                    shadowColor:       UIColor(hex: 0x3B9A1B).cgColor)
 
         mediaPicker.sourceType = .photoLibrary
-        mediaPicker.delegate = self
+        mediaPicker.delegate   = self
         mediaPicker.mediaTypes = ["public.image", "public.movie"]
 
         tableView.backgroundColor = .black
@@ -462,23 +462,6 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     //==================================================//
 
     /* MARK: Other Functions */
-
-    func attributedString(_ with:                  String,
-                          mainAttributes:          [NSAttributedString.Key: Any],
-                          alternateAttributes:     [NSAttributedString.Key: Any],
-                          alternateAttributeRange: [String]) -> NSAttributedString
-    {
-        let attributedString = NSMutableAttributedString(string: with, attributes: mainAttributes)
-
-        for string in alternateAttributeRange
-        {
-            let currentRange = (with as NSString).range(of: (string as NSString) as String)
-
-            attributedString.addAttributes(alternateAttributes, range: currentRange)
-        }
-
-        return attributedString
-    }
 
     func formatDateString(_ string: String) -> String
     {

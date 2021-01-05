@@ -18,9 +18,9 @@ class ShadowButton: UIButton
     override var isEnabled:      Bool {
         didSet
         {
-            layer.ShadowColor     = isEnabled ? enabledShadowColor     : disabledShadowColor.cgColor
+            layer.shadowColor     = isEnabled ? enabledShadowColor     : disabledShadowColor.cgColor
             layer.borderColor     = isEnabled ? enabledShadowColor     : disabledShadowColor.cgColor
-            BackgroundColor       = isEnabled ? enabledBackgroundColor : disabledBackgroundColor
+            backgroundColor       = isEnabled ? enabledBackgroundColor : disabledBackgroundColor
         }
     }
     private var animateTouches:  Bool!
@@ -85,24 +85,24 @@ class ShadowButton: UIButton
     /* MARK: Initializer Function */
 
     func initializeLayer(animateTouches:     Bool,
-                         BackgroundColor:   UIColor,
+                         backgroundColor:   UIColor,
                          customBorderFrame _:  CGRect?,
                          customCornerRadius: CGFloat?,
-                         ShadowColor _:       CGColor)
+                         shadowColor:       CGColor)
     {
         self.animateTouches = animateTouches
 
         enabledBackgroundColor = backgroundColor
-        enabledShadowColor = shadowColor
+        enabledShadowColor     = shadowColor
 
-        BackgroundColor = isEnabled ? enabledBackgroundColor : disabledBackgroundColor
+        self.backgroundColor = isEnabled ? enabledBackgroundColor : disabledBackgroundColor
 
-        layer.borderColor = isEnabled ? enabledShadowColor : disabledShadowColor.cgColor
-        layer.borderWidth = 2
-        layer.cornerRadius = customCornerRadius ?? 10
+        layer.borderColor   = isEnabled ? enabledShadowColor : disabledShadowColor.cgColor
+        layer.borderWidth   = 2
+        layer.cornerRadius  = customCornerRadius ?? 10
         layer.masksToBounds = false
-        layer.shadowColor = isEnabled ? enabledShadowColor : disabledShadowColor.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowColor   = isEnabled ? enabledShadowColor : disabledShadowColor.cgColor
+        layer.shadowOffset  = CGSize(width: 0, height: 4)
         layer.shadowOpacity = 1
     }
 }

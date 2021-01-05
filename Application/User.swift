@@ -44,12 +44,12 @@ class User
          pushTokens:           [String]?)
     {
         self.associatedIdentifier = associatedIdentifier
-        self.associatedTeams = associatedTeams
-        self.emailAddress = emailAddress
-        self.firstName = firstName
-        self.lastName = lastName
-        self.profileImageData = profileImageData
-        self.pushTokens = pushTokens
+        self.associatedTeams      = associatedTeams
+        self.emailAddress         = emailAddress
+        self.firstName            = firstName
+        self.lastName             = lastName
+        self.profileImageData     = profileImageData
+        self.pushTokens           = pushTokens
     }
 
     //==================================================//

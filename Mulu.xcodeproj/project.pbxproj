@@ -61,11 +61,12 @@
 		A236BE2A259AD5D900162A8B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A236BE29259AD5D900162A8B /* ViewController.swift */; };
 		A24A232E257DB9900063FE87 /* TeamSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24A232D257DB9900063FE87 /* TeamSerializer.swift */; };
 		A24A2331257DC1AA0063FE87 /* UserSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24A2330257DC1AA0063FE87 /* UserSerializer.swift */; };
+		A266157525A3AB4800B471F6 /* ViewTeamsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A266157425A3AB4700B471F6 /* ViewTeamsController.swift */; };
 		A26738A325A11DC800E02949 /* NotifyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26738A225A11DC800E02949 /* NotifyController.swift */; };
 		A26738A625A12A5D00E02949 /* AnnounceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26738A525A12A5D00E02949 /* AnnounceController.swift */; };
 		A26961F522376F4600812759 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A26961F322376F4600812759 /* Main.storyboard */; };
 		A278AFA5259A8E4A00EA3443 /* NewUserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278AFA4259A8E4A00EA3443 /* NewUserController.swift */; };
-		A278AFA9259A920800EA3443 /* TeamCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278AFA8259A920800EA3443 /* TeamCell.swift */; };
+		A278AFA9259A920800EA3443 /* SelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278AFA8259A920800EA3443 /* SelectionCell.swift */; };
 		A278D31A25858A52008D22D1 /* UserTestingSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278D31925858A52008D22D1 /* UserTestingSerializer.swift */; };
 		A278D31F2585A036008D22D1 /* ChallengeTestingSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278D31E2585A036008D22D1 /* ChallengeTestingSerializer.swift */; };
 		A278D3222585A0AC008D22D1 /* TeamTestingSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278D3212585A0AC008D22D1 /* TeamTestingSerializer.swift */; };
@@ -189,11 +190,12 @@
 		A236BE29259AD5D900162A8B /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A24A232D257DB9900063FE87 /* TeamSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamSerializer.swift; sourceTree = "<group>"; };
 		A24A2330257DC1AA0063FE87 /* UserSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSerializer.swift; sourceTree = "<group>"; };
+		A266157425A3AB4700B471F6 /* ViewTeamsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewTeamsController.swift; sourceTree = "<group>"; };
 		A26738A225A11DC800E02949 /* NotifyController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotifyController.swift; sourceTree = "<group>"; };
 		A26738A525A12A5D00E02949 /* AnnounceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnounceController.swift; sourceTree = "<group>"; };
 		A26961F422376F4600812759 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A278AFA4259A8E4A00EA3443 /* NewUserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewUserController.swift; sourceTree = "<group>"; };
-		A278AFA8259A920800EA3443 /* TeamCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamCell.swift; sourceTree = "<group>"; };
+		A278AFA8259A920800EA3443 /* SelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionCell.swift; sourceTree = "<group>"; };
 		A278D31925858A52008D22D1 /* UserTestingSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTestingSerializer.swift; sourceTree = "<group>"; };
 		A278D31E2585A036008D22D1 /* ChallengeTestingSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeTestingSerializer.swift; sourceTree = "<group>"; };
 		A278D3212585A0AC008D22D1 /* TeamTestingSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamTestingSerializer.swift; sourceTree = "<group>"; };
@@ -294,7 +296,7 @@
 			children = (
 				6874044A1CB1AB4400BD2632 /* AppDelegate.swift */,
 				A23B4E2125781B0800A9750F /* Buttons */,
-				A2AEDD48257BDE0F0074CA11 /* Serialisation Layer */,
+				A2AEDD48257BDE0F0074CA11 /* Serialization Layer */,
 				682A9B1E1C8E64CE00014EA5 /* Storyboard Files */,
 				682A9B211C8E64FC00014EA5 /* Supporting Files */,
 				682A9B201C8E64F700014EA5 /* View Controllers */,
@@ -358,7 +360,7 @@
 				A202DE33259522DA0053DA6F /* MediaAnalyser.swift */,
 				A288D1FF25844F55002AFB51 /* ScrollerCell.swift */,
 				A28FF91F259AD834000FC656 /* SubtitleCell.swift */,
-				A278AFA8259A920800EA3443 /* TeamCell.swift */,
+				A278AFA8259A920800EA3443 /* SelectionCell.swift */,
 				687404491CB1AB4400BD2632 /* Info.plist */,
 				A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */,
 				A2962CFC2594FC2A00399F50 /* words.txt */,
@@ -463,6 +465,7 @@
 			children = (
 				A20E80C5259E701C00D1EB0B /* ViewChallengesController.swift */,
 				A236BE29259AD5D900162A8B /* ViewController.swift */,
+				A266157425A3AB4700B471F6 /* ViewTeamsController.swift */,
 				A28FF91B259AD69E000FC656 /* ViewUsersController.swift */,
 			);
 			name = View;
@@ -489,7 +492,7 @@
 			name = "CMS Controllers";
 			sourceTree = "<group>";
 		};
-		A2AEDD48257BDE0F0074CA11 /* Serialisation Layer */ = {
+		A2AEDD48257BDE0F0074CA11 /* Serialization Layer */ = {
 			isa = PBXGroup;
 			children = (
 				A2AEDD52257BE61E0074CA11 /* Challenge.swift */,
@@ -506,7 +509,7 @@
 				A24A2330257DC1AA0063FE87 /* UserSerializer.swift */,
 				A278D31925858A52008D22D1 /* UserTestingSerializer.swift */,
 			);
-			name = "Serialisation Layer";
+			name = "Serialization Layer";
 			sourceTree = "<group>";
 		};
 		A2CA2CAC257977550012DB17 /* San Francisco */ = {
@@ -769,7 +772,7 @@
 				A26738A625A12A5D00E02949 /* AnnounceController.swift in Sources */,
 				A2AEDD53257BE61E0074CA11 /* Challenge.swift in Sources */,
 				A278D3222585A0AC008D22D1 /* TeamTestingSerializer.swift in Sources */,
-				A278AFA9259A920800EA3443 /* TeamCell.swift in Sources */,
+				A278AFA9259A920800EA3443 /* SelectionCell.swift in Sources */,
 				A28797ED258D663400C48A74 /* PostSignUpController.swift in Sources */,
 				A20700002581C2C9004E70A6 /* TeamController.swift in Sources */,
 				A236BE2A259AD5D900162A8B /* ViewController.swift in Sources */,
@@ -780,6 +783,7 @@
 				687404481CB1AB3400BD2632 /* MainController.swift in Sources */,
 				A278D3252585A19C008D22D1 /* GenericTestingSerializer.swift in Sources */,
 				A2DA693324D74929000CD116 /* AlertKit.swift in Sources */,
+				A266157525A3AB4800B471F6 /* ViewTeamsController.swift in Sources */,
 				A2A554962577FFBF006D3B3E /* Extensions.swift in Sources */,
 				A278AFA5259A8E4A00EA3443 /* NewUserController.swift in Sources */,
 				A2AEDD57257BE77D0074CA11 /* ChallengeSerializer.swift in Sources */,

@@ -786,13 +786,13 @@ class TeamSerializer
         {
             var filteredChallenges = [(Challenge, [(User, Date)])]()
 
-            for challengeBundle in completedChallenges
+            for challengeTuple in completedChallenges
             {
-                let filteredMetadata = challengeBundle.metadata.filteringOut(user: forUser)
+                let filteredMetadata = challengeTuple.metadata.filteringOut(user: forUser)
 
                 if !filteredMetadata.isEmpty
                 {
-                    filteredChallenges.append((challengeBundle.challenge, filteredMetadata))
+                    filteredChallenges.append((challengeTuple.challenge, filteredMetadata))
                 }
             }
 
