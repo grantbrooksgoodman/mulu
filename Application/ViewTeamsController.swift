@@ -216,6 +216,8 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
                         }; return
                     }
 
+                    self.promptLabel.text = "SELECT USERS TO ADD:"
+
                     self.selectionTableView.dataSource = self
                     self.selectionTableView.delegate = self
 
@@ -261,6 +263,8 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
                 {
                     guard !self.tournamentArray.isEmpty else
                     { report("Tournament array was not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
+
+                    self.promptLabel.text = "SELECT A TOURNAMENT:"
 
                     self.selectionTableView.dataSource = self
                     self.selectionTableView.delegate = self

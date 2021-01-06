@@ -13,7 +13,7 @@ import UIKit
 /* Third-party Frameworks */
 import FirebaseAnalytics
 
-class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegate
+class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegate, UIGestureRecognizerDelegate
 {
     //==================================================//
 
@@ -63,6 +63,12 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
         {
             view.alpha = 0
         }
+
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapRecognizer.delegate = self
+        tapRecognizer.numberOfTapsRequired = 1
+
+        view.addGestureRecognizer(tapRecognizer)
     }
 
     override func viewWillAppear(_ animated: Bool)
@@ -183,6 +189,12 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     @IBAction func inviteYourFriendsButton(_: Any)
     {
         Analytics.logEvent("invite_your_friends", parameters: nil)
+
+        let shareItems = ["Hey! You should get Mulu Party.", URL(string: "https://www.getmulu.com")!] as [Any]
+        let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = view
+
+        present(activityViewController, animated: true, completion: nil)
     }
 
     @IBAction func linkButton(_ sender: Any)
@@ -218,6 +230,11 @@ class PostSignUpController: UIViewController, MFMailComposeViewControllerDelegat
     //==================================================//
 
     /* MARK: Other Functions */
+
+    @objc func dismissKeyboard()
+    {
+        teamCodeTextField.resignFirstResponder()
+    }
 
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
