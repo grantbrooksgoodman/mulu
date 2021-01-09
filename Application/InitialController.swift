@@ -30,6 +30,8 @@ class InitialController: UIViewController
         return true
     }
 
+    var goingBackFromCMS = false
+
     //==================================================//
 
     /* MARK: Overridden Functions */
@@ -50,19 +52,28 @@ class InitialController: UIViewController
             {
                 self.applicationDelegate.currentlyAnimating = false
 
-                //                GenericTestingSerializer().trashDatabase()
+                //                                GenericTestingSerializer().trashDatabase()
                 //
-                //                GenericTestingSerializer().createRandomDatabase(numberOfUsers: 4, numberOfChallenges: 5, numberOfTeams: 2) { (errorDescriptor) in
-                //                    if let error = errorDescriptor
-                //                    {
-                //                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                //                    }
-                //                    else { report("Successfully created database.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
-                //                }
+                //                                GenericTestingSerializer().createRandomDatabase(numberOfUsers: 4, numberOfChallenges: 5, numberOfTeams: 2) { (errorDescriptor) in
+                //                                    if let error = errorDescriptor
+                //                                    {
+                //                                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                //                                    }
+                //                                    else { report("Successfully created database.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+                //                                }
 
                 self.performSegue(withIdentifier: "SignInSegue" /*"initialSegue"*/, sender: self)
             }
         })
+    }
+
+    override func viewDidAppear(_: Bool)
+    {
+        if goingBackFromCMS
+        {
+            performSegue(withIdentifier: "SignInSegue", sender: self)
+            goingBackFromCMS = false
+        }
     }
 
     //==================================================//

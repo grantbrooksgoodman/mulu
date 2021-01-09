@@ -19,7 +19,7 @@ class Team
     private(set) var DSParticipants: [User]?
 
     var completedChallenges:    [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]?
-    var participantIdentifiers: [String]!
+    var participantIdentifiers: [String: Int]! //["userID – 10"]
 
     //Strings
     var associatedIdentifier: String!
@@ -27,6 +27,7 @@ class Team
     var name:                 String!
 
     //Other Declarations
+    var additionalPoints: Int!
     var associatedTournament:  Tournament?
 
     //==================================================//
@@ -34,13 +35,15 @@ class Team
     /* MARK: Constructor Function */
 
     init(associatedIdentifier:   String,
+         additionalPoints:       Int,
          associatedTournament:   Tournament?,
          completedChallenges:    [(challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])]?,
          joinCode:               String,
          name:                   String,
-         participantIdentifiers: [String])
+         participantIdentifiers: [String: Int])
     {
         self.associatedIdentifier   = associatedIdentifier
+        self.additionalPoints       = additionalPoints
         self.associatedTournament   = associatedTournament
         self.completedChallenges    = completedChallenges
         self.joinCode               = joinCode
@@ -61,7 +64,7 @@ class Team
      */
     func accruedPoints(for userIdentifier: String) -> Int
     {
-        guard participantIdentifiers.contains(userIdentifier) else
+        guard Array(participantIdentifiers.keys).contains(userIdentifier) else
         {
             if verboseFunctionExposure { report("This User isn't on that Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
 
@@ -112,7 +115,7 @@ class Team
         }
         else if let participantIdentifiers = participantIdentifiers
         {
-            UserSerializer().getUsers(withIdentifiers: participantIdentifiers) { returnedUsers, errorDescriptors in
+            UserSerializer().getUsers(withIdentifiers: Array(participantIdentifiers.keys)) { returnedUsers, errorDescriptors in
                 if let errors = errorDescriptors
                 {
                     completion(nil, errors.joined(separator: "\n"))
@@ -156,6 +159,9 @@ class Team
 
                 for team in teams
                 {
+                    guard team.DSParticipants != nil else
+                    { completion(nil, "Participants haven't been deserialized."); return }
+
                     totalPoints.append(team.getTotalPoints())
                 }
 
@@ -182,7 +188,12 @@ class Team
             }
         }
 
-        return total
+        for user in Array(participantIdentifiers.keys)
+        {
+            total += participantIdentifiers[user]!
+        }
+
+        return total + additionalPoints
     }
 
     /**
@@ -199,11 +210,12 @@ class Team
         TeamSerializer().getTeam(withIdentifier: associatedIdentifier) { returnedTeam, errorDescriptor in
             if let team = returnedTeam
             {
-                self.associatedIdentifier = team.associatedIdentifier
-                self.associatedTournament = team.associatedTournament
-                self.completedChallenges = team.completedChallenges
-                self.joinCode = team.joinCode
-                self.name = team.name
+                self.associatedIdentifier   = team.associatedIdentifier
+                self.additionalPoints       = team.additionalPoints
+                self.associatedTournament   = team.associatedTournament
+                self.completedChallenges    = team.completedChallenges
+                self.joinCode               = team.joinCode
+                self.name                   = team.name
                 self.participantIdentifiers = team.participantIdentifiers
 
                 team.deSerializeParticipants { returnedUsers, errorDescriptor in
@@ -250,6 +262,37 @@ class Team
     }
 
     /**
+     Sets the **Team's** *additionalPoints.*
+
+     - Parameter points: The points to set for this **Team.**
+     - Parameter completion: Upon failure, returns a string describing the error(s) encountered.
+
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
+    func setAdditionalPoints(_ points: Int, completion: @escaping (_ errorDescriptor: String?) -> Void)
+    {
+        GenericSerializer().setValue(onKey: "/allTeams/\(associatedIdentifier!)/additionalPoints", withData: points) { returnedError in
+            if let error = returnedError
+            {
+                completion(errorInfo(error))
+            }
+            else
+            {
+                #warning("Considering the use cases, is this really necessary?")
+                self.reloadData { errorDescriptor in
+                    if let error = errorDescriptor
+                    {
+                        completion(error)
+                    }
+                    else { completion(nil) }
+                }
+            }
+        }
+    }
+
+    /**
      Sets the *DSParticipants* value on the **Team.**
 
      - Warning: Dumps errors to console.
@@ -262,7 +305,7 @@ class Team
         }
         else if let participantIdentifiers = participantIdentifiers
         {
-            UserSerializer().getUsers(withIdentifiers: participantIdentifiers) { returnedUsers, errorDescriptors in
+            UserSerializer().getUsers(withIdentifiers: Array(participantIdentifiers.keys)) { returnedUsers, errorDescriptors in
                 if let errors = errorDescriptors
                 {
                     report(errors.joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
@@ -277,5 +320,45 @@ class Team
             }
         }
         else { report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+    }
+
+    #warning("Would it be better to have this in TeamSerializer? (Probably not...)")
+    /**
+     Sets a **User's** additional points for this **Team.**
+
+     - Parameter points: The points to set for the **User** on this **Team.**
+     - Parameter forUser: The identifier of the **User** whose additional points will be set.
+
+     - Parameter completion: Upon failure, returns a string describing the error(s) encountered.
+
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
+    func setPoints(_ points: Int, forUser: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
+    {
+        guard Array(participantIdentifiers.keys).contains(forUser) else
+        { completion("The specified User is not a member of this Team."); return }
+
+        var newParticipantIdentifiers = participantIdentifiers!
+        newParticipantIdentifiers[forUser] = points
+
+        GenericSerializer().setValue(onKey: "/allTeams/\(associatedIdentifier!)/participantIdentifiers", withData: newParticipantIdentifiers.delimitedArray()) { returnedError in
+            if let error = returnedError
+            {
+                completion(errorInfo(error))
+            }
+            else
+            {
+                #warning("Considering the use cases, is this really necessary?")
+                self.reloadData { errorDescriptor in
+                    if let error = errorDescriptor
+                    {
+                        completion(error)
+                    }
+                    else { completion(nil) }
+                }
+            }
+        }
     }
 }

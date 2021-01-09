@@ -70,7 +70,7 @@ class UserSerializer
                     if let identifier = returnedIdentifier
                     {
                         let newUser = User(associatedIdentifier: identifier,
-                                           associatedTeams:      associatedTeams,
+                                           associatedTeams:      associatedTeams == nil ? nil : associatedTeams,
                                            emailAddress:         emailAddress,
                                            firstName:            firstName,
                                            lastName:             lastName,
@@ -276,7 +276,7 @@ class UserSerializer
 
                 mutableDataBundle["associatedIdentifier"] = withIdentifier
 
-                let deSerialisationResult = self.deSerialiseUser(from: mutableDataBundle)
+                let deSerialisationResult = self.deSerializeUser(from: mutableDataBundle)
 
                 if let deSerializedUser = deSerialisationResult.deSerializedUser
                 {
@@ -454,7 +454,7 @@ class UserSerializer
      - Note: Returned variables are *mutually exclusive.*
      - Returns: Upon success, a deserialized **User** object. Upon failure, a string describing the error(s) encountered.
      */
-    private func deSerialiseUser(from dataBundle: [String: Any]) -> (deSerializedUser: User?, errorDescriptor: String?)
+    private func deSerializeUser(from dataBundle: [String: Any]) -> (deSerializedUser: User?, errorDescriptor: String?)
     {
         guard let associatedIdentifier = dataBundle["associatedIdentifier"] as? String else
         { return (nil, "Unable to deserialize «associatedIdentifier».") }
@@ -517,7 +517,7 @@ class UserSerializer
                 {
                     var errors = [String]()
 
-                    for (index, teamIdentifier) in teams.enumerated()
+                    for (index, teamIdentifier) in Array(teams).enumerated()
                     {
                         TeamSerializer().removeUser(user.associatedIdentifier, fromTeam: teamIdentifier, deleting: false) { errorDescriptor in
                             if let error = errorDescriptor
@@ -558,14 +558,14 @@ class UserSerializer
     {
         if forUser.associatedTeams != nil
         {
-            forUser.deSerialiseAssociatedTeams { returnedTeams, errorDescriptor in
+            forUser.deSerializeAssociatedTeams { returnedTeams, errorDescriptor in
                 if let teams = returnedTeams
                 {
                     var problematicTeams = [String]()
 
                     for (index, team) in teams.enumerated()
                     {
-                        if team.participantIdentifiers.filter({ $0 != forUser.associatedIdentifier }).isEmpty
+                        if team.participantIdentifiers.filter({ $0.key != forUser.associatedIdentifier }).isEmpty
                         {
                             problematicTeams.append(team.associatedIdentifier)
                         }

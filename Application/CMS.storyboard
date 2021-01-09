@@ -23,6 +23,14 @@
         </array>
     </customFonts>
     <scenes>
+        <!--Main-->
+        <scene sceneID="fuf-Bb-kaX">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Main" id="sZn-dj-5rc" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="b7Y-LN-256" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="203" y="240"/>
+        </scene>
         <!--Create Controller-->
         <scene sceneID="skQ-Bu-eWR">
             <objects>
@@ -127,11 +135,12 @@
                         <segue destination="XTi-hW-bXg" kind="show" identifier="NewChallengeFromCreateSegue" id="1Iq-hZ-9ya"/>
                         <segue destination="WVu-Dj-l6s" kind="show" identifier="NewTeamFromCreateSegue" id="iVv-Gs-mRe"/>
                         <segue destination="CdI-yX-cyf" kind="show" identifier="NewUserFromCreateSegue" id="PJL-GS-2M4"/>
+                        <segue destination="sZn-dj-5rc" kind="presentation" identifier="MainSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="dkn-qj-iyJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fls-s4-7IY" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="656.52173913043487" y="531.69642857142856"/>
+            <point key="canvasLocation" x="655" y="531"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="T6B-op-wN3">
@@ -911,9 +920,9 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <connections>
-                                            <outlet property="memberLabel" destination="Pxw-7D-74g" id="Nkm-YN-0XX"/>
                                             <outlet property="radioButton" destination="ClT-4s-ebc" id="qPs-QV-FcL"/>
-                                            <outlet property="teamLabel" destination="FtK-c7-WCi" id="bbN-oA-hFC"/>
+                                            <outlet property="subtitleLabel" destination="Pxw-7D-74g" id="GhU-bS-XRr"/>
+                                            <outlet property="titleLabel" destination="FtK-c7-WCi" id="ydT-kW-oHC"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>

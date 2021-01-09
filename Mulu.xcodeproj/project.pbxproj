@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -65,9 +65,6 @@
 		A26738A325A11DC800E02949 /* NotifyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26738A225A11DC800E02949 /* NotifyController.swift */; };
 		A26738A625A12A5D00E02949 /* AnnounceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26738A525A12A5D00E02949 /* AnnounceController.swift */; };
 		A267CC3025A3ED6700764F87 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A267CC2F25A3ED6600764F87 /* TabBarController.swift */; };
-		A267CC3425A62AAC00764F87 /* AirtableKit in Frameworks */ = {isa = PBXBuildFile; productRef = A267CC3325A62AAC00764F87 /* AirtableKit */; };
-		A267CC3725A63D8200764F87 /* AirtableSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A267CC3625A63D8200764F87 /* AirtableSerializer.swift */; };
-		A267CC3B25A65D1200764F87 /* AirtableChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A267CC3A25A65D1200764F87 /* AirtableChallenge.swift */; };
 		A26961F522376F4600812759 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A26961F322376F4600812759 /* Main.storyboard */; };
 		A278AFA5259A8E4A00EA3443 /* NewUserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278AFA4259A8E4A00EA3443 /* NewUserController.swift */; };
 		A278AFA9259A920800EA3443 /* SelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278AFA8259A920800EA3443 /* SelectionCell.swift */; };
@@ -198,8 +195,6 @@
 		A26738A225A11DC800E02949 /* NotifyController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotifyController.swift; sourceTree = "<group>"; };
 		A26738A525A12A5D00E02949 /* AnnounceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnounceController.swift; sourceTree = "<group>"; };
 		A267CC2F25A3ED6600764F87 /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
-		A267CC3625A63D8200764F87 /* AirtableSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirtableSerializer.swift; sourceTree = "<group>"; };
-		A267CC3A25A65D1200764F87 /* AirtableChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirtableChallenge.swift; sourceTree = "<group>"; };
 		A26961F422376F4600812759 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A278AFA4259A8E4A00EA3443 /* NewUserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewUserController.swift; sourceTree = "<group>"; };
 		A278AFA8259A920800EA3443 /* SelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionCell.swift; sourceTree = "<group>"; };
@@ -264,7 +259,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				97B9D4C94E9E4901E93B5772 /* Pods_Mulu.framework in Frameworks */,
-				A267CC3425A62AAC00764F87 /* AirtableKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,7 +498,6 @@
 		A2AEDD48257BDE0F0074CA11 /* Serialization Layer */ = {
 			isa = PBXGroup;
 			children = (
-				A2DFBB7525A67FEA0063631D /* Airtable */,
 				A2AEDD52257BE61E0074CA11 /* Challenge.swift */,
 				A2AEDD56257BE77D0074CA11 /* ChallengeSerializer.swift */,
 				A278D31E2585A036008D22D1 /* ChallengeTestingSerializer.swift */,
@@ -550,15 +543,6 @@
 			name = "Radio Button";
 			sourceTree = "<group>";
 		};
-		A2DFBB7525A67FEA0063631D /* Airtable */ = {
-			isa = PBXGroup;
-			children = (
-				A267CC3A25A65D1200764F87 /* AirtableChallenge.swift */,
-				A267CC3625A63D8200764F87 /* AirtableSerializer.swift */,
-			);
-			name = Airtable;
-			sourceTree = "<group>";
-		};
 		A2ECF96C24C9DA4400862AF0 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -590,7 +574,6 @@
 			);
 			name = Mulu;
 			packageProductDependencies = (
-				A267CC3325A62AAC00764F87 /* AirtableKit */,
 			);
 			productName = POP;
 			productReference = 682A9AFD1C8E63E900014EA5 /* Mulu.app */;
@@ -628,7 +611,6 @@
 			);
 			mainGroup = 682A9AF41C8E63E900014EA5;
 			packageReferences = (
-				A267CC3225A62AAC00764F87 /* XCRemoteSwiftPackageReference "AirtableKit" */,
 			);
 			productRefGroup = 682A9AFE1C8E63E900014EA5 /* Products */;
 			projectDirPath = "";
@@ -814,7 +796,6 @@
 				A2AEDD57257BE77D0074CA11 /* ChallengeSerializer.swift in Sources */,
 				68E73D321DEFB296008CD686 /* RoundedButton.swift in Sources */,
 				A24A232E257DB9900063FE87 /* TeamSerializer.swift in Sources */,
-				A267CC3B25A65D1200764F87 /* AirtableChallenge.swift in Sources */,
 				6881EA4C1E29CD360007D873 /* SystemInformation.swift in Sources */,
 				A2EFF34325835A590070B320 /* DateCell.swift in Sources */,
 				68D29A131DD79C8A00BFF4D5 /* InitialController.swift in Sources */,
@@ -827,7 +808,6 @@
 				A267CC3025A3ED6700764F87 /* TabBarController.swift in Sources */,
 				A2A58FCA259156BF004DAFE0 /* ChallengeCell.swift in Sources */,
 				A2C3F39825910A130020A6B2 /* AnnouncementsController.swift in Sources */,
-				A267CC3725A63D8200764F87 /* AirtableSerializer.swift in Sources */,
 				A278D31F2585A036008D22D1 /* ChallengeTestingSerializer.swift in Sources */,
 				A2CD9668258D366D00A174D0 /* SignInController.swift in Sources */,
 				A2054DF6259D1DF9008CBD4F /* NewTeamController.swift in Sources */,
@@ -956,8 +936,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -969,15 +948,12 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Application Icon";
 				CODE_SIGN_ENTITLEMENTS = Mulu.entitlements;
-				CURRENT_PROJECT_VERSION = 0;
+				CURRENT_PROJECT_VERSION = 3084;
 				DEVELOPMENT_TEAM = 7R4R2FSWH9;
 				EXCLUDED_ARCHS = "";
 				INFOPLIST_FILE = Application/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 0.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = us.neotechnica.mulu;
 				PRODUCT_NAME = Mulu;
@@ -994,15 +970,12 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Application Icon";
 				CODE_SIGN_ENTITLEMENTS = Mulu.entitlements;
-				CURRENT_PROJECT_VERSION = 0;
+				CURRENT_PROJECT_VERSION = 3084;
 				DEVELOPMENT_TEAM = 7R4R2FSWH9;
 				EXCLUDED_ARCHS = "";
 				INFOPLIST_FILE = Application/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 0.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = us.neotechnica.mulu;
 				PRODUCT_NAME = Mulu;
@@ -1034,25 +1007,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		A267CC3225A62AAC00764F87 /* XCRemoteSwiftPackageReference "AirtableKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "http://github.com/appledeveloperacademypucrs/AirtableKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		A267CC3325A62AAC00764F87 /* AirtableKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A267CC3225A62AAC00764F87 /* XCRemoteSwiftPackageReference "AirtableKit" */;
-			productName = AirtableKit;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 682A9AF51C8E63E900014EA5 /* Project object */;
 }

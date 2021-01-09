@@ -28,9 +28,18 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
 
     /* MARK: Class-level Variable Declarations */
 
+    //Dictionaries
+    var subtitleAttributes: [NSAttributedString.Key: Any]!
+    var titleAttributes:    [NSAttributedString.Key: Any]!
+
+    //Other Declarations
+    let paragraphStyle = NSMutableParagraphStyle()
+
     var buildInstance: Build!
     var selectedIndexPath: IndexPath!
     var userArray = [User]()
+
+    var selectedTeam: Team?
 
     //==================================================//
 
@@ -49,6 +58,19 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     override func viewDidLoad()
     {
         super.viewDidLoad()
+
+        paragraphStyle.lineSpacing = 0
+        paragraphStyle.alignment = .justified
+
+        titleAttributes = [.baselineOffset: NSNumber(value: 0),
+                           .font: UIFont(name: "SFUIText-Semibold", size: 14)!,
+                           .foregroundColor: UIColor.darkGray,
+                           .paragraphStyle: paragraphStyle]
+
+        subtitleAttributes = [.baselineOffset: NSNumber(value: 0),
+                              .font: UIFont(name: "SFUIText-Regular", size: 14)!,
+                              .foregroundColor: UIColor.darkGray,
+                              .paragraphStyle: paragraphStyle]
 
         tableView.backgroundColor = .black
         tableView.alpha = 0
@@ -225,6 +247,85 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
         }
     }
 
+    func editPointsAction()
+    {
+        let actionSheet = UIAlertController(title: "Select Team", message: "Select the team you would like this user's points to count for.", preferredStyle: .actionSheet)
+
+        for team in userArray[selectedIndexPath.row].DSAssociatedTeams!.sorted(by: { $0.name < $1.name })
+        {
+            let teamAction = UIAlertAction(title: team.name!, style: .default) { _ in
+                self.selectedTeam = team
+                self.editPointsAlert()
+            }
+
+            actionSheet.addAction(teamAction)
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in self.reSelectRow() }
+
+        actionSheet.addAction(cancelAction)
+
+        present(actionSheet, animated: true)
+    }
+
+    @objc func editPointsAlert()
+    {
+        guard let team = selectedTeam else
+        { report("Selected Team not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
+
+        guard let currentlyAddedPoints = team.participantIdentifiers[userArray[selectedIndexPath.row].associatedIdentifier] else
+        { report("Current points not found!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
+
+        let textFieldAttributes: [AlertKit.AlertControllerTextFieldAttribute: Any] =
+            [.capitalisationType: UITextAutocapitalizationType.none,
+             .correctionType:      UITextAutocorrectionType.no,
+             .editingMode:         UITextField.ViewMode.whileEditing,
+             .keyboardType:        UIKeyboardType.numberPad,
+             .placeholderText:     "",
+             .sampleText:          "\(currentlyAddedPoints)",
+             .textAlignment:       NSTextAlignment.center]
+
+        AlertKit().textAlertController(title: "Editing Points",
+                                       message: "Enter the amount of points you would like to set for \(userArray[selectedIndexPath.row].firstName!) \(userArray[selectedIndexPath.row].lastName!) on \(team.name!).",
+                                       cancelButtonTitle: nil,
+                                       additionalButtons: [("Done", false)],
+                                       preferredActionIndex: 0,
+                                       textFieldAttributes: textFieldAttributes,
+                                       networkDependent: true) { returnedString, selectedIndex in
+            if let index = selectedIndex, index == 0
+            {
+                if let string = returnedString,
+                   let points = Int(string),
+                   points > -1
+                {
+                    showProgressHUD(text: "Setting points...", delay: nil)
+
+                    team.setPoints(points, forUser: self.userArray[self.selectedIndexPath.row].associatedIdentifier) { errorDescriptor in
+                        if let error = errorDescriptor
+                        {
+                            hideHUD(delay: 1) {
+                                self.errorAlert(title: "Couldn't Set Points", message: error)
+                            }
+                        }
+                        else { self.showSuccessAndReload() }
+                    }
+                }
+                else
+                {
+                    AlertKit().errorAlertController(title:                       "Invalid Point Value",
+                                                    message:                     "Be sure to enter only (positive) numbers and that they do not exceed the integer ceiling.",
+                                                    dismissButtonTitle:          "Cancel",
+                                                    additionalSelectors:         ["Try Again": #selector(ViewUsersController.editPointsAlert)],
+                                                    preferredAdditionalSelector: 0,
+                                                    canFileReport:               false,
+                                                    extraInfo:                   nil,
+                                                    metadata:                    [#file, #function, #line],
+                                                    networkDependent:            false)
+                }
+            }
+        }
+    }
+
     func resetPasswordAction()
     {
         Auth.auth().sendPasswordReset(withEmail: userArray[selectedIndexPath.row].emailAddress) { returnedError in
@@ -248,30 +349,13 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 0
-        paragraphStyle.alignment = .justified
-
-        let titleAttributes: [NSAttributedString.Key: Any] = [.baselineOffset: NSNumber(value: 0),
-                                                              .font: UIFont(name: "SFUIText-Semibold", size: 14)!,
-                                                              .foregroundColor: UIColor.darkGray,
-                                                              .paragraphStyle: paragraphStyle]
-
-        let subtitleAttributes: [NSAttributedString.Key: Any] = [.baselineOffset: NSNumber(value: 0),
-                                                                 .font: UIFont(name: "SFUIText-Regular", size: 14)!,
-                                                                 .foregroundColor: UIColor.darkGray,
-                                                                 .paragraphStyle: paragraphStyle]
-
         let boldedString = "\(userArray[selectedIndexPath.row].firstName!) has completed:\n\n\(generateChallengesString())"
 
         let unboldedRange = challengeTitles()
 
         actionSheet.setValue(attributedString(boldedString, mainAttributes: titleAttributes, alternateAttributes: subtitleAttributes, alternateAttributeRange: unboldedRange), forKey: "attributedMessage")
 
-        let backAction = UIAlertAction(title: "Back", style: .default, handler: { _ in
-            self.tableView.selectRow(at: self.selectedIndexPath, animated: true, scrollPosition: .none)
-            self.tableView.delegate?.tableView!(self.tableView, didSelectRowAt: self.selectedIndexPath)
-        })
+        let backAction = UIAlertAction(title: "Back", style: .default, handler: { _ in self.reSelectRow() })
 
         let dismissAction = UIAlertAction(title: "Dismiss", style: .cancel)
 
@@ -287,7 +371,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
         {
             showProgressHUD(text: "Gathering user information...", delay: nil)
 
-            userArray[selectedIndexPath.row].deSerialiseAssociatedTeams { returnedTeams, errorDescriptor in
+            userArray[selectedIndexPath.row].deSerializeAssociatedTeams { returnedTeams, errorDescriptor in
                 if returnedTeams != nil
                 {
                     hideHUD(delay: 1) { self.viewTeamMembershipAction() }
@@ -301,30 +385,13 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
 
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 0
-        paragraphStyle.alignment = .justified
+        let boldedString = "\(userArray[selectedIndexPath.row].firstName!) is a member of:\n\n\(generateTeamStrings().teamsString)"
 
-        let titleAttributes: [NSAttributedString.Key: Any] = [.baselineOffset: NSNumber(value: 0),
-                                                              .font: UIFont(name: "SFUIText-Semibold", size: 14)!,
-                                                              .foregroundColor: UIColor.darkGray,
-                                                              .paragraphStyle: paragraphStyle]
-
-        let subtitleAttributes: [NSAttributedString.Key: Any] = [.baselineOffset: NSNumber(value: 0),
-                                                                 .font: UIFont(name: "SFUIText-Regular", size: 14)!,
-                                                                 .foregroundColor: UIColor.darkGray,
-                                                                 .paragraphStyle: paragraphStyle]
-
-        let boldedString = "\(userArray[selectedIndexPath.row].firstName!) is a member of:\n\n\(generateTeamsString())"
-
-        let unboldedRange = [generateTeamsString()]
+        let unboldedRange = generateTeamStrings().additionalPoints
 
         actionSheet.setValue(attributedString(boldedString, mainAttributes: titleAttributes, alternateAttributes: subtitleAttributes, alternateAttributeRange: unboldedRange), forKey: "attributedMessage")
 
-        let backAction = UIAlertAction(title: "Back", style: .default, handler: { _ in
-            self.tableView.selectRow(at: self.selectedIndexPath, animated: true, scrollPosition: .none)
-            self.tableView.delegate?.tableView!(self.tableView, didSelectRowAt: self.selectedIndexPath)
-        })
+        let backAction = UIAlertAction(title: "Back", style: .default, handler: { _ in self.reSelectRow() })
 
         let dismissAction = UIAlertAction(title: "Dismiss", style: .cancel)
 
@@ -350,6 +417,19 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
         }
 
         return titleArray
+    }
+
+    func errorAlert(title: String, message: String)
+    {
+        AlertKit().errorAlertController(title:                       title,
+                                        message:                     message,
+                                        dismissButtonTitle:          nil,
+                                        additionalSelectors:         nil,
+                                        preferredAdditionalSelector: nil,
+                                        canFileReport:               true,
+                                        extraInfo:                   message,
+                                        metadata:                    [#file, #function, #line],
+                                        networkDependent:            true)
     }
 
     func generateChallengesString() -> String
@@ -382,22 +462,28 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
         return challengesString
     }
 
-    func generateTeamsString() -> String
+    func generateTeamStrings() -> (teamsString: String, additionalPoints: [String])
     {
         var teamsString = ""
+        var additionalPointArray = [String]()
 
         let sortedTeams = userArray[selectedIndexPath.row].DSAssociatedTeams!.sorted(by: { $0.name < $1.name })
 
         for team in sortedTeams
         {
+            let additionalPoints = team.participantIdentifiers[userArray[selectedIndexPath.row].associatedIdentifier] ?? -1
+
+            let additionalPointString = "\(additionalPoints) additional points"
+            additionalPointArray.append(additionalPointString)
+
             if teamsString == ""
             {
-                teamsString.append("• \(team.name!)")
+                teamsString.append("• \(team.name!) – \(additionalPointString)")
             }
-            else { teamsString.append("\n• \(team.name!)") }
+            else { teamsString.append("\n• \(team.name!) – \(additionalPointString)") }
         }
 
-        return teamsString
+        return (teamsString, additionalPointArray)
     }
 
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
@@ -532,10 +618,6 @@ extension ViewUsersController: UITableViewDataSource, UITableViewDelegate
 
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 0
-        paragraphStyle.alignment = .justified
-
         let titleAttributes: [NSAttributedString.Key: Any] = [.baselineOffset: NSNumber(value: -3),
                                                               .font: UIFont(name: "SFUIText-Semibold", size: 20)!,
                                                               .foregroundColor: UIColor.darkGray]
@@ -568,6 +650,13 @@ extension ViewUsersController: UITableViewDataSource, UITableViewDelegate
             tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
 
             self.addToTeamAction()
+        }
+
+        let addManualPointsAction = UIAlertAction(title: "Edit Allotted Points", style: .default) { _ in
+            tableView.deselectRow(at: indexPath, animated: true)
+            tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
+
+            self.editPointsAction()
         }
 
         let resetPasswordAction = UIAlertAction(title: "Send Password Reset Instructions", style: .default) { _ in
@@ -604,6 +693,12 @@ extension ViewUsersController: UITableViewDataSource, UITableViewDelegate
         }
 
         actionSheet.addAction(addToTeamAction)
+
+        if userArray[indexPath.row].associatedTeams != nil
+        {
+            actionSheet.addAction(addManualPointsAction)
+        }
+
         actionSheet.addAction(resetPasswordAction)
 
         if userArray[indexPath.row].allCompletedChallenges() != nil

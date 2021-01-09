@@ -19,7 +19,7 @@ class User
     /* MARK: Class-level Variable Declarations */
 
     //Arrays
-    var associatedTeams: [String]? //String = team ID
+    var associatedTeams: [String]?
     var pushTokens:      [String]?
 
     //Strings
@@ -227,7 +227,7 @@ class User
 
      - Note: Completion variables are *mutually exclusive.*
      */
-    func deSerialiseAssociatedTeams(completion: @escaping (_ returnedTeams: [Team]?, _ errorDescriptor: String?) -> Void)
+    func deSerializeAssociatedTeams(completion: @escaping (_ returnedTeams: [Team]?, _ errorDescriptor: String?) -> Void)
     {
         if let DSAssociatedTeams = DSAssociatedTeams
         {
@@ -255,7 +255,6 @@ class User
         else { completion(nil, "This User is not a member of any Team.") }
     }
 
-    #warning("Tagged for deletion pending investigation of future use cases.")
     /**
      Updates the **User's** metadata from the server.
 
@@ -277,7 +276,7 @@ class User
                 self.profileImageData = user.profileImageData
                 self.pushTokens = user.pushTokens
 
-                self.deSerialiseAssociatedTeams { returnedTeams, errorDescriptor in
+                self.deSerializeAssociatedTeams { returnedTeams, errorDescriptor in
                     if let teams = returnedTeams
                     {
                         self.DSAssociatedTeams = teams

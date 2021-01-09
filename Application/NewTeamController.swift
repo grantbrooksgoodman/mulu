@@ -286,7 +286,14 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
         guard let teamName = teamName else
         { report("Team name was not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
 
-        TeamSerializer().createTeam(name: teamName, participantIdentifiers: selectedUsers) { returnedMetadata, errorDescriptor in
+        var selectedUserDictionary = [String: Int]()
+
+        for user in selectedUsers
+        {
+            selectedUserDictionary[user] = 0
+        }
+
+        TeamSerializer().createTeam(name: teamName, participantIdentifiers: selectedUserDictionary) { returnedMetadata, errorDescriptor in
             if let metadata = returnedMetadata
             {
                 if let tournament = self.selectedTournament

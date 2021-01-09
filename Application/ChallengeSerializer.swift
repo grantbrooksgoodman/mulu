@@ -227,7 +227,7 @@ class ChallengeSerializer
 
                 mutableDataBundle["associatedIdentifier"] = withIdentifier
 
-                let deSerialisationResult = self.deSerialiseChallenge(from: mutableDataBundle)
+                let deSerialisationResult = self.deSerializeChallenge(from: mutableDataBundle)
 
                 if let deSerializedChallenge = deSerialisationResult.deSerializedChallenge
                 {
@@ -343,7 +343,7 @@ class ChallengeSerializer
      - Note: Returned variables are *mutually exclusive.*
      - Returns: Upon success, returns a deserialized **Challenge** object. Upon failure, a string describing the error(s) encountered.
      */
-    private func deSerialiseChallenge(from dataBundle: [String: Any]) -> (deSerializedChallenge: Challenge?, errorDescriptor: String?)
+    private func deSerializeChallenge(from dataBundle: [String: Any]) -> (deSerializedChallenge: Challenge?, errorDescriptor: String?)
     {
         guard let associatedIdentifier = dataBundle["associatedIdentifier"] as? String else
         { return (nil, "Unable to deserialize «associatedIdentifier».") }

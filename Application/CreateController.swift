@@ -28,6 +28,10 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
 
     var buildInstance: Build!
 
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+
     //==================================================//
 
     /* MARK: Initializer Function */
@@ -45,6 +49,8 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
     override func viewDidLoad()
     {
         super.viewDidLoad()
+
+        becomeFirstResponder()
     }
 
     override func viewWillAppear(_ animated: Bool)
@@ -58,6 +64,19 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
 
         let screenHeight = UIScreen.main.bounds.height
         buildInfoController?.customYOffset = (screenHeight <= 736 ? 40 : 70)
+    }
+
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with _: UIEvent?)
+    {
+        if motion == .motionShake
+        {
+            AlertKit().confirmationAlertController(title: "Sign Out", message: "Would you like to sign out?", cancelConfirmTitles: [:], confirmationDestructive: false, confirmationPreferred: true, networkDepedent: true) { didConfirm in
+                if let confirmed = didConfirm, confirmed
+                {
+                    self.performSegue(withIdentifier: "MainSegue", sender: self)
+                }
+            }
+        }
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender _: Any?)
@@ -76,6 +95,11 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
                 let desintation = segue.destination.children[0] as? NewUserController
         {
             desintation.controllerReference = self
+        }
+        else if segue.identifier == "MainSegue",
+                let desintation = segue.destination as? InitialController
+        {
+            desintation.goingBackFromCMS = true
         }
     }
 

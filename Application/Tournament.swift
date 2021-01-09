@@ -60,7 +60,7 @@ class Tournament
      completion(returnedTeams, errorDescriptor)
      ~~~
      */
-    func deSerialiseTeams(completion: @escaping (_ returnedTeams: [Team]?, _ errorDescriptor: String?) -> Void)
+    func deSerializeTeams(completion: @escaping (_ returnedTeams: [Team]?, _ errorDescriptor: String?) -> Void)
     {
         if let DSTeams = DSTeams
         {
@@ -92,7 +92,8 @@ class Tournament
      */
     func leaderboard() -> [(team: Team, points: Int)]?
     {
-        guard let DSTeams = DSTeams else { report("Teams haven't been deserialized.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
+        guard let DSTeams = DSTeams else
+        { report("Teams haven't been deserialized.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return nil }
 
         var leaderboard = [(Team, Int)]()
 

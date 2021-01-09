@@ -12,7 +12,6 @@ import MessageUI
 import UIKit
 
 /* Third-party Frameworks */
-import AirtableKit
 import Firebase
 import FirebaseStorage
 import PKHUD
@@ -780,22 +779,4 @@ func roundCorners(forViews: [UIView], withCornerType: Int!)
         individualView.layer.masksToBounds = false
         individualView.clipsToBounds = true
     }
-}
-
-#warning("I am completely baffled as to why this doesn't work in AirtableSerializer.")
-func updateStatus(for airtableChallenge: AirtableChallenge, completion: @escaping (_ errorDescriptor: String?) -> Void)
-{
-    let record = Record(fields: airtableChallenge.updatedAirtableValue(), id: airtableChallenge.recordID)
-
-    AirtableSerializer().base.update(tableName: "Challenges", record: record).sink { completionEvent in
-        switch completionEvent
-        {
-        case .finished:
-            print("Updated record.")
-        case let .failure(error):
-            completion(errorInfo(error))
-        }
-    } receiveValue: { _ in
-        completion(nil)
-    }.store(in: &updateRecords)
 }

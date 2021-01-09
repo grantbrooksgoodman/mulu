@@ -276,7 +276,8 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                 {
                     if let string = returnedString, string.lowercasedTrimmingWhitespace != ""
                     {
-                        if let pointValue = Int(string)
+                        if let pointValue = Int(string),
+                           pointValue > 0
                         {
                             if pointValue != self.challengeArray[self.selectedIndexPath.row].pointValue
                             {
@@ -295,7 +296,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                         else
                         {
                             AlertKit().errorAlertController(title:                       "Invalid Point Value",
-                                                            message:                     "Be sure to enter only numbers and that they do not exceed the integer ceiling.",
+                                                            message:                     "Be sure to enter only (positive) numbers and that they do not exceed the integer ceiling.",
                                                             dismissButtonTitle:          "Cancel",
                                                             additionalSelectors:         ["Try Again": #selector(ViewChallengesController.editPointValueAction)],
                                                             preferredAdditionalSelector: 0,

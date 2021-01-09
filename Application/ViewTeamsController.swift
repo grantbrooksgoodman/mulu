@@ -340,6 +340,58 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
         }
     }
 
+    @objc func editAdditionalPointsAction()
+    {
+        let textFieldAttributes: [AlertKit.AlertControllerTextFieldAttribute: Any] =
+            [.capitalisationType: UITextAutocapitalizationType.none,
+             .correctionType:      UITextAutocorrectionType.no,
+             .editingMode:         UITextField.ViewMode.whileEditing,
+             .keyboardType:        UIKeyboardType.numberPad,
+             .placeholderText:     "",
+             .sampleText:          "\(teamArray[selectedIndexPath.row].additionalPoints!)",
+             .textAlignment:       NSTextAlignment.center]
+
+        AlertKit().textAlertController(title: "Editing Points",
+                                       message: "Enter the amount of additional points you would like to set for \(teamArray[selectedIndexPath.row].name!).",
+                                       cancelButtonTitle: nil,
+                                       additionalButtons: [("Done", false)],
+                                       preferredActionIndex: 0,
+                                       textFieldAttributes: textFieldAttributes,
+                                       networkDependent: true) { returnedString, selectedIndex in
+            if let index = selectedIndex, index == 0
+            {
+                if let string = returnedString,
+                   let points = Int(string),
+                   points > -1
+                {
+                    showProgressHUD(text: "Setting points...", delay: nil)
+
+                    self.teamArray[self.selectedIndexPath.row].setAdditionalPoints(points) { errorDescriptor in
+                        if let error = errorDescriptor
+                        {
+                            hideHUD(delay: 1) {
+                                self.errorAlert(title: "Couldn't Set Points", message: error)
+                            }
+                        }
+                        else { self.showSuccessAndReload() }
+                    }
+                }
+                else
+                {
+                    AlertKit().errorAlertController(title:                       "Invalid Point Value",
+                                                    message:                     "Be sure to enter only (positive) numbers and that they do not exceed the integer ceiling.",
+                                                    dismissButtonTitle:          "Cancel",
+                                                    additionalSelectors:         ["Try Again": #selector(ViewTeamsController.editAdditionalPointsAction)],
+                                                    preferredAdditionalSelector: 0,
+                                                    canFileReport:               false,
+                                                    extraInfo:                   nil,
+                                                    metadata:                    [#file, #function, #line],
+                                                    networkDependent:            false)
+                }
+            }
+        }
+    }
+
     func viewMembersAction()
     {
         hideHUD(delay: 1)
@@ -506,6 +558,19 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
         }
     }
 
+    func errorAlert(title: String, message: String)
+    {
+        AlertKit().errorAlertController(title:                       title,
+                                        message:                     message,
+                                        dismissButtonTitle:          nil,
+                                        additionalSelectors:         nil,
+                                        preferredAdditionalSelector: nil,
+                                        canFileReport:               true,
+                                        extraInfo:                   message,
+                                        metadata:                    [#file, #function, #line],
+                                        networkDependent:            true)
+    }
+
     func generateChallengeStrings() -> (challengesString: String, titles: [String])
     {
         var challengesString = ""
@@ -545,7 +610,7 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
         {
             showProgressHUD(text: "Getting tournament information...", delay: nil)
 
-            tournament.deSerialiseTeams { returnedTeams, errorDescriptor in
+            tournament.deSerializeTeams { returnedTeams, errorDescriptor in
                 if returnedTeams != nil
                 {
                     hideHUD(delay: 1) {
@@ -880,7 +945,7 @@ extension ViewTeamsController: UITableViewDataSource, UITableViewDelegate
             completedChallengesString = String(challenges.count)
         }
 
-        let message = "Associated Tournament: \(teamArray[indexPath.row].associatedTournament?.name! ?? "None")\n\nCompleted Challenges: \(completedChallengesString)\n\nMembers: \(membersString)\n\nTotal Accrued Points: \(teamArray[indexPath.row].getTotalPoints())\n\nJoin Code: «\(teamArray[indexPath.row].joinCode!)»"
+        let message = "Associated Tournament: \(teamArray[indexPath.row].associatedTournament?.name! ?? "None")\n\nCompleted Challenges: \(completedChallengesString)\n\nMembers: \(membersString)\n\nTotal Accrued Points: \(teamArray[indexPath.row].getTotalPoints()) (\(teamArray[indexPath.row].additionalPoints!) added manually)\n\nJoin Code: «\(teamArray[indexPath.row].joinCode!)»"
 
         let boldedRange = ["Associated Tournament:",
                            "Completed Challenges:",
@@ -909,6 +974,13 @@ extension ViewTeamsController: UITableViewDataSource, UITableViewDelegate
             tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
 
             self.copyJoinCodeAction()
+        }
+
+        let editAdditionalPointsAction = UIAlertAction(title: "Edit Additional Points", style: .default) { _ in
+            tableView.deselectRow(at: indexPath, animated: true)
+            tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
+
+            self.editAdditionalPointsAction()
         }
 
         let viewCompletedChallengesAction = UIAlertAction(title: "View Completed Challenges", style: .default) { _ in
@@ -952,6 +1024,7 @@ extension ViewTeamsController: UITableViewDataSource, UITableViewDelegate
         }
 
         actionSheet.addAction(copyJoinCodeAction)
+        actionSheet.addAction(editAdditionalPointsAction)
 
         if let completedChallenges = teamArray[indexPath.row].completedChallenges,
            !completedChallenges.isEmpty

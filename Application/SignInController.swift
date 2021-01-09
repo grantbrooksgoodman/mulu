@@ -85,6 +85,9 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
             view.alpha = 0
         }
 
+        usernameTextField.text = "john.appleseed@mulu.app"
+        passwordTextField.text = "123456"
+
         #warning("DEBUG ONLY!")
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) { self.signInButton(self.signInButton!) }
     }
@@ -206,7 +209,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                             }
                         }
 
-                        currentUser!.deSerialiseAssociatedTeams { returnedTeams, errorDescriptor in
+                        currentUser!.deSerializeAssociatedTeams { returnedTeams, errorDescriptor in
                             if let teams = returnedTeams
                             {
                                 hideHUD(delay: nil)
@@ -264,9 +267,9 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
 
                                         #warning("DEBUG ONLY!")
                                         AlertKit().optionAlertController(title: "Select User Type",
-                                                                         message: "Which type of user are you?",
+                                                                         message: "Please select the console you would like to sign-in to.\n\nNote: This feature is currently enabled for testing purposes only.",
                                                                          cancelButtonTitle: nil,
-                                                                         additionalButtons: [("Administrator", false), ("Layman", false)],
+                                                                         additionalButtons: [("Administrator", false), ("Layman User", false)],
                                                                          preferredActionIndex: nil,
                                                                          networkDependent: true) { selectedIndex in
                                             if let index = selectedIndex
@@ -447,7 +450,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                         print("Signing in as \(user.firstName!) \(user.lastName!).")
                         print("Identifier: \(user.associatedIdentifier!)")
 
-                        currentUser!.deSerialiseAssociatedTeams { returnedTeams, errorDescriptor in
+                        currentUser!.deSerializeAssociatedTeams { returnedTeams, errorDescriptor in
                             if let teams = returnedTeams
                             {
                                 hideHUD(delay: nil)

@@ -33,7 +33,7 @@ class TeamTestingSerializer
     {
         let universityNames = ["Princeton", "Harvard", "Columbia", "MIT", "Yale", "Stanford", "UChicago", "UPenn", "Caltech", "Johns Hopkins", "Northwestern", "Duke", "Dartmouth", "Brown", "Vanderbilt", "Rice", "WashU St. Louis", "Cornell", "Notre Dame", "UCLA", "Emory", "UC Berkeley", "Georgetown", "UMich", "USC", "UVA", "UNC Chapel Hill", "Wake Forest", "NYU", "Tufts", "UCSB"]
 
-        TeamSerializer().createTeam(name: "Team \(universityNames.randomElement()!)", participantIdentifiers: users.identifiers()) { returnedMetadata, errorDescriptor in
+        TeamSerializer().createTeam(name: "Team \(universityNames.randomElement()!)", participantIdentifiers: users.instantiateIdentifierDictionary()) { returnedMetadata, errorDescriptor in
             if let error = errorDescriptor
             {
                 completion(nil, error)
@@ -81,7 +81,7 @@ class TeamTestingSerializer
             guard i < completedChallenges.count else
             { completion(nil, "Not enough completed Challenges!"); return }
 
-            TeamSerializer().createTeam(name: "Team \(universityNames.randomElement()!)", participantIdentifiers: users[i].identifiers()) { returnedMetadata, errorDescriptor in
+            TeamSerializer().createTeam(name: "Team \(universityNames.randomElement()!)", participantIdentifiers: users[i].instantiateIdentifierDictionary()) { returnedMetadata, errorDescriptor in
                 if let error = errorDescriptor
                 {
                     completion(nil, error)

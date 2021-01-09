@@ -69,8 +69,14 @@ class TeamSerializer
         {
             group.enter()
 
-            var newAssociatedTeams = user.associatedTeams ?? []
-            newAssociatedTeams.append(toTeam.associatedIdentifier)
+            var newAssociatedTeams = [String]()
+
+            if let associatedTeams = user.associatedTeams
+            {
+                newAssociatedTeams = associatedTeams
+            }
+
+            newAssociatedTeams.append("\(toTeam.associatedIdentifier!)")
 
             GenericSerializer().updateValue(onKey: "/allUsers/\(user.associatedIdentifier!)", withData: ["associatedTeams": newAssociatedTeams]) { returnedError in
                 if let error = returnedError
@@ -84,9 +90,9 @@ class TeamSerializer
 
         group.notify(queue: .main) {
             var newParticipantIdentifiers = toTeam.participantIdentifiers!
-            newParticipantIdentifiers.append(contentsOf: users.identifiers())
+            newParticipantIdentifiers = newParticipantIdentifiers.merge(with: users.instantiateIdentifierDictionary())
 
-            GenericSerializer().updateValue(onKey: "/allTeams/\(toTeam.associatedIdentifier!)", withData: ["participantIdentifiers": newParticipantIdentifiers]) { returnedError in
+            GenericSerializer().updateValue(onKey: "/allTeams/\(toTeam.associatedIdentifier!)", withData: ["participantIdentifiers": newParticipantIdentifiers.delimitedArray()]) { returnedError in
                 if let error = returnedError
                 {
                     completion(!errors.isEmpty ? "\(errors.joined(separator: "\n"))\n\(errorInfo(error))" : nil)
@@ -286,11 +292,11 @@ class TeamSerializer
 
                 newUserList = (mutableDataBundle["participantIdentifiers"] as! [String])
 
-                if newUserList! == ["!"]
+                if newUserList! == ["! – 0"]
                 {
-                    newUserList = [withIdentifier]
+                    newUserList = ["\(withIdentifier) – 0"]
                 }
-                else { newUserList!.append(withIdentifier) }
+                else { newUserList!.append("\(withIdentifier) – 0") }
 
                 group.leave()
             }
@@ -416,7 +422,7 @@ class TeamSerializer
      Creates a new **Team** on the server.
 
      - Parameter name: The name of this **Team.**
-     - Parameter participantIdentifiers: An array containing the identifiers of the **Users** on this **Team.**
+     - Parameter participantIdentifiers: A dictionary where the keys represent identifiers of the **Users** on this **Team,** and the values represent any additional points associated with that **User.**
 
      - Parameter completion: Upon success, returns with a tuple containing the identifier of the newly created **Team** and its join code. May also return with a string describing the error(s) encountered.
 
@@ -426,14 +432,15 @@ class TeamSerializer
      completion(returnedMetadata, errorDescriptor)
      ~~~
      */
-    func createTeam(name: String, participantIdentifiers: [String], completion: @escaping (_ returnedMetadata: (identifier: String, joinCode: String)?, _ errorDescriptor: String?) -> Void)
+    func createTeam(name: String, participantIdentifiers: [String: Int], completion: @escaping (_ returnedMetadata: (identifier: String, joinCode: String)?, _ errorDescriptor: String?) -> Void)
     {
         var dataBundle: [String: Any] = [:]
 
-        dataBundle["associatedTournament"] = "!"
-        dataBundle["completedChallenges"] = ["!": ["!"]]
-        dataBundle["name"] = name
-        dataBundle["participantIdentifiers"] = participantIdentifiers
+        dataBundle["associatedTournament"]   = "!"
+        dataBundle["additionalPoints"]       = 0
+        dataBundle["completedChallenges"]    = ["!": ["!"]]
+        dataBundle["name"]                   = name
+        dataBundle["participantIdentifiers"] = participantIdentifiers.delimitedArray()
 
         generateJoinCode { returnedCode, returnedError in
             if let code = returnedCode
@@ -452,7 +459,7 @@ class TeamSerializer
                         {
                             var errors = [String]()
 
-                            for (index, user) in participantIdentifiers.enumerated()
+                            for (index, user) in Array(participantIdentifiers.keys).enumerated()
                             {
                                 TeamSerializer().addUser(user, toTeam: generatedKey) { errorDescriptor in
                                     if let error = errorDescriptor
@@ -626,7 +633,7 @@ class TeamSerializer
 
                 mutableDataBundle["associatedIdentifier"] = withIdentifier
 
-                self.deSerialiseTeam(from: mutableDataBundle) { returnedTeam, errorDescriptor in
+                self.deSerializeTeam(from: mutableDataBundle) { returnedTeam, errorDescriptor in
                     if let error = errorDescriptor
                     {
                         if verboseFunctionExposure { print("failed to deserialize team") }
@@ -742,7 +749,7 @@ class TeamSerializer
                             }
                             else
                             {
-                                self.finishDeletingTeam(identifier, withParticipants: team.participantIdentifiers) { errorDescriptor in
+                                self.finishDeletingTeam(identifier, withParticipants: Array(team.participantIdentifiers.keys)) { errorDescriptor in
                                     if let error = errorDescriptor
                                     {
                                         completion(error)
@@ -754,7 +761,7 @@ class TeamSerializer
                     }
                     else
                     {
-                        self.finishDeletingTeam(identifier, withParticipants: team.participantIdentifiers) { errorDescriptor in
+                        self.finishDeletingTeam(identifier, withParticipants: Array(team.participantIdentifiers.keys)) { errorDescriptor in
                             if let error = errorDescriptor
                             {
                                 completion(error)
@@ -834,11 +841,11 @@ class TeamSerializer
      */
     func removeUser(withIdentifier: String, fromParticipantsOn team: Team, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
-        team.participantIdentifiers = team.participantIdentifiers.filter { $0 != withIdentifier }
+        team.participantIdentifiers = team.participantIdentifiers.filter { $0.key != withIdentifier }
 
-        let newParticipants = team.participantIdentifiers.count == 0 ? ["!"] : team.participantIdentifiers
+        let newParticipants = team.participantIdentifiers.count == 0 ? ["!": 0] : team.participantIdentifiers
 
-        GenericSerializer().setValue(onKey: "/allTeams/\(team.associatedIdentifier!)/participantIdentifiers", withData: newParticipants!) { returnedError in
+        GenericSerializer().setValue(onKey: "/allTeams/\(team.associatedIdentifier!)/participantIdentifiers", withData: newParticipants!.delimitedArray()) { returnedError in
             if let error = returnedError
             {
                 completion(errorInfo(error))
@@ -867,7 +874,7 @@ class TeamSerializer
         getTeam(withIdentifier: fromTeam) { returnedTeam, errorDescriptor in
             if let team = returnedTeam
             {
-                if team.participantIdentifiers.filter({ $0 != withIdentifier }).isEmpty && !deleting
+                if team.participantIdentifiers.filter({ $0.key != withIdentifier }).isEmpty && !deleting
                 {
                     completion("Removing this User leaves the Team with no participants; delete the Team.")
                 }
@@ -920,7 +927,7 @@ class TeamSerializer
      completion(completedChallenges, errorDescriptor)
      ~~~
      */
-    private func deSerialiseCompletedChallenges(with challenges: [String: [String]], completion: @escaping (_ completedChallenges: [(Challenge, [(user: User, dateCompleted: Date)])]?, _ errorDescriptor: String?) -> Void)
+    private func deSerializeCompletedChallenges(with challenges: [String: [String]], completion: @escaping (_ completedChallenges: [(Challenge, [(user: User, dateCompleted: Date)])]?, _ errorDescriptor: String?) -> Void)
     {
         if verboseFunctionExposure { print("deserialising completed challenges") }
         var deSerializedCompletedChallenges = [(Challenge, [(user: User, dateCompleted: Date)])]()
@@ -994,19 +1001,22 @@ class TeamSerializer
      completion(deSerializedTeam, errorDescriptor)
      ~~~
      */
-    private func deSerialiseTeam(from dataBundle: [String: Any], completion: @escaping (_ deSerializedTeam: Team?, _ errorDescriptor: String?) -> Void)
+    private func deSerializeTeam(from dataBundle: [String: Any], completion: @escaping (_ deSerializedTeam: Team?, _ errorDescriptor: String?) -> Void)
     {
         if verboseFunctionExposure { print("deserialising team") }
 
         guard validateTeamMetadata(dataBundle) == true else
         { completion(nil, "Improperly formatted metadata."); return }
 
-        let associatedIdentifier = dataBundle["associatedIdentifier"] as! String
-        let associatedTournament = dataBundle["associatedTournament"] as! String
-        let completedChallenges = dataBundle["completedChallenges"] as! [String: [String]]
-        let joinCode = dataBundle["joinCode"] as! String
-        let name = dataBundle["name"] as! String
-        let participantIdentifiers = dataBundle["participantIdentifiers"] as! [String]
+        let associatedIdentifier       = dataBundle["associatedIdentifier"] as! String
+        let additionalPoints           = dataBundle["additionalPoints"] as! Int
+        let associatedTournament       = dataBundle["associatedTournament"] as! String
+        let completedChallenges        = dataBundle["completedChallenges"] as! [String: [String]]
+        let joinCode                   = dataBundle["joinCode"] as! String
+        let name                       = dataBundle["name"] as! String
+        let participantIdentifierArray = dataBundle["participantIdentifiers"] as! [String]
+
+        let participantIdentifiers = participantIdentifierArray.dictionary()
 
         var deSerializedCompletedChallenges: [(Challenge, [(user: User, dateCompleted: Date)])]?
 
@@ -1016,7 +1026,7 @@ class TeamSerializer
 
         if completedChallenges.keys.first != "!"
         {
-            deSerialiseCompletedChallenges(with: completedChallenges) { completedChallenges, errorDescriptor in
+            deSerializeCompletedChallenges(with: completedChallenges) { completedChallenges, errorDescriptor in
                 if let error = errorDescriptor
                 {
                     if verboseFunctionExposure { print("failed to deserialize completed challenges") }
@@ -1058,6 +1068,7 @@ class TeamSerializer
                     if let tournament = returnedTournament
                     {
                         let deSerializedTeam = Team(associatedIdentifier:   associatedIdentifier,
+                                                    additionalPoints:       additionalPoints,
                                                     associatedTournament:   tournament,
                                                     completedChallenges:    completedChallenges,
                                                     joinCode:               joinCode,
@@ -1079,6 +1090,7 @@ class TeamSerializer
             else
             {
                 let deSerializedTeam = Team(associatedIdentifier:   associatedIdentifier,
+                                            additionalPoints:       additionalPoints,
                                             associatedTournament:   nil,
                                             completedChallenges:    completedChallenges,
                                             joinCode:               joinCode,
@@ -1248,6 +1260,9 @@ class TeamSerializer
         guard withDataBundle["associatedIdentifier"] as? String != nil else
         { report("Malformed «associatedIdentifier».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
 
+        guard withDataBundle["additionalPoints"] as? Int != nil else
+        { report("Malformed «additionalPoints».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
+
         guard withDataBundle["associatedTournament"] as? String != nil else
         { report("Malformed «associatedTournament».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
 
@@ -1260,8 +1275,11 @@ class TeamSerializer
         guard withDataBundle["name"] as? String != nil else
         { report("Malformed «name».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
 
-        guard withDataBundle["participantIdentifiers"] as? [String] != nil else
-        { report("Malformed «participantIdentifiers».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
+        guard let participantIdentifierArray = withDataBundle["participantIdentifiers"] as? [String] else
+        { report("Malformed «participantIdentifierArray».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false }
+
+        guard !participantIdentifierArray.dictionary().isEmpty else
+        { report("Malformed «participantIdentifiers».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return false  }
 
         return true
     }
@@ -1270,6 +1288,31 @@ class TeamSerializer
 //==================================================//
 
 /* MARK: Extensions */
+
+extension Array where Element == String
+{
+    func dictionary() -> [String: Int]
+    {
+        var dictionary = [String: Int]()
+
+        for element in self
+        {
+            let components = element.components(separatedBy: " – ")
+
+            guard components.count == 2 else
+            { return dictionary }
+
+            let teamIdentifier = components[0]
+
+            guard let manuallyAddedPoints = Int(components[1]) else
+            { return dictionary }
+
+            dictionary[teamIdentifier] = manuallyAddedPoints
+        }
+
+        return dictionary
+    }
+}
 
 extension Array where Element == (user: User, dateCompleted: Date)
 {
@@ -1286,5 +1329,32 @@ extension Array where Element == (user: User, dateCompleted: Date)
         }
 
         return filteredMetadata
+    }
+}
+
+extension Dictionary where Key == String, Value == Int
+{
+    func delimitedArray() -> [String]
+    {
+        var array = [String]()
+
+        for key in Array(keys)
+        {
+            array.append("\(key) – \(self[key]!)")
+        }
+
+        return array.sorted()
+    }
+
+    func merge(with: [String: Int]) -> [String: Int]
+    {
+        var merged = self
+
+        for key in Array(with.keys)
+        {
+            merged[key] = with[key]
+        }
+
+        return merged
     }
 }

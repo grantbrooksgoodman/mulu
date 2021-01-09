@@ -161,4 +161,16 @@ extension Array where Element == User
 
         return identifiers
     }
+
+    func instantiateIdentifierDictionary() -> [String: Int]
+    {
+        var dictionary = [String: Int]()
+
+        for user in self
+        {
+            dictionary[user.associatedIdentifier] = 0
+        }
+
+        return dictionary
+    }
 }

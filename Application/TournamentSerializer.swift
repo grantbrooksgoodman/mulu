@@ -182,7 +182,7 @@ class TournamentSerializer
 
                 mutableDataBundle["associatedIdentifier"] = withIdentifier
 
-                self.deSerialiseTournament(from: mutableDataBundle) { returnedTournament, errorDescriptor in
+                self.deSerializeTournament(from: mutableDataBundle) { returnedTournament, errorDescriptor in
                     if let tournament = returnedTournament
                     {
                         completion(tournament, nil)
@@ -306,7 +306,7 @@ class TournamentSerializer
      completion(deSerializedTournament, errorDescriptor)
      ~~~
      */
-    private func deSerialiseTournament(from dataBundle: [String: Any], completion: @escaping (_ deSerializedTournament: Tournament?, _ errorDescriptor: String?) -> Void)
+    private func deSerializeTournament(from dataBundle: [String: Any], completion: @escaping (_ deSerializedTournament: Tournament?, _ errorDescriptor: String?) -> Void)
     {
         guard let associatedIdentifier = dataBundle["associatedIdentifier"] as? String else
         { completion(nil, "Unable to deserialize «associatedIdentifier»."); return }

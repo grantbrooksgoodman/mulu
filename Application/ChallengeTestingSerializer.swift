@@ -175,7 +175,7 @@ class ChallengeTestingSerializer
      */
     private func createRandomChallenge(excludingTitles: [String]?, completion: @escaping (_ returnedChallenge: Challenge?, _ errorDescriptor: String?) -> Void)
     {
-        let randomDate = masterDateFormatter.date(from: "2020-12-\(Int().random(min: 1, max: Calendar.current.component(.day, from: Date())))")!
+        let randomDate = masterDateFormatter.date(from: "2021-01-\(Int().random(min: 1, max: Calendar.current.component(.day, from: Date())))")!
 
         let randomChallengeTitle = excludingTitles == nil ? Array(sampleChallenges.keys).randomElement()! : Array(sampleChallenges.keys).filter { !excludingTitles!.contains($0) }.randomElement()!
         let randomChallengePrompt = sampleChallenges[randomChallengeTitle]!
