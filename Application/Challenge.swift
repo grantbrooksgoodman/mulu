@@ -207,21 +207,6 @@ class Challenge
 
 extension Challenge.MediaType
 {
-    func userFacingString() -> String
-    {
-        switch self
-        {
-        case .autoPlayVideo:
-            return "Auto-play video"
-        case .gif:
-            return "GIF"
-        case .linkedVideo:
-            return "Linked video"
-        case .staticImage:
-            return "Static image"
-        }
-    }
-
     func uploadString() -> String
     {
         switch self
@@ -234,6 +219,21 @@ extension Challenge.MediaType
             return "linkedVideo"
         case .staticImage:
             return "staticImage"
+        }
+    }
+
+    func userFacingString() -> String
+    {
+        switch self
+        {
+        case .autoPlayVideo:
+            return "Auto-play video"
+        case .gif:
+            return "GIF"
+        case .linkedVideo:
+            return "Linked video"
+        case .staticImage:
+            return "Static image"
         }
     }
 }

@@ -179,7 +179,7 @@ class GenericTestingSerializer
                             let randomStartDate = Date().addingTimeInterval(TimeInterval(Int("-\(Int().random(min: 86400, max: 604_800))")!))
                             let randomEndDate = Date().addingTimeInterval(TimeInterval(Int().random(min: 604_800, max: 1_209_600)))
 
-                            TournamentSerializer().createTournament(name: randomName, startDate: randomStartDate, endDate: randomEndDate, teamIdentifiers: chunk) { returnedIdentifier, tournamentErrorDescriptor in
+                            TournamentSerializer().createTournament(name: randomName, startDate: randomStartDate, endDate: randomEndDate, associatedChallenges: Array(randomChallenges.shuffled()[0 ... Int().random(min: 1, max: randomChallenges.count - 1)]), teamIdentifiers: chunk) { returnedIdentifier, tournamentErrorDescriptor in
                                 if let identifier = returnedIdentifier
                                 {
                                     report("\(randomName): \(identifier)", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])

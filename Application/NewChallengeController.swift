@@ -34,18 +34,24 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
 
     //Other Elements
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet var alertSwitch: UISwitch!
+    @IBOutlet var datePicker: UIDatePicker!
     @IBOutlet var mediaSegmentedControl: UISegmentedControl!
     @IBOutlet var progressView: UIProgressView!
     @IBOutlet var stepTitleLabel: UILabel!
+    @IBOutlet var tableView: UITableView!
     @IBOutlet var uploadButton: UIButton!
 
     //==================================================//
 
     /* MARK: Class-level Variable Declarations */
 
+    //Arrays
+    var selectedTournaments = [String]()
+    var tournamentArray: [Tournament]?
+
     //Booleans
     var currentlyUploading = false
+    var isGoingBack        = false
     var isWorking          = false
 
     //Data
@@ -54,7 +60,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
 
     //Strings
     var challengeTitle:    String?
-    var stepText = "🔴 Set title\n🔴 Set prompt\n🔴 Set point value\n🔴 Add media\n🔴 Toggle alerts"
+    var stepText = "🔴 Set title, prompt, point value\n🔴 Add media\n🔴 Set appearance date\n🔴 Add to tournaments"
     var uploadedMediaPath: String?
 
     //Other Declarations
@@ -78,7 +84,8 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         case prompt
         case pointValue
         case media
-        case alert
+        case appearanceDate
+        case tournament
     }
 
     //==================================================//
@@ -128,11 +135,16 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         mediaTextField.delegate = self
         largeTextField.delegate = self
 
+        tableView.backgroundColor = .black
+
         forwardToTitle()
 
         mediaPicker.sourceType = .photoLibrary
         mediaPicker.delegate   = self
         mediaPicker.mediaTypes = ["public.image", "public.movie"]
+
+        datePicker.minimumDate = Date()
+        datePicker.maximumDate = Calendar.current.date(byAdding: .year, value: 1, to: Date())
     }
 
     override func viewWillAppear(_ animated: Bool)
@@ -171,9 +183,12 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         case .media:
             goBack()
             forwardToPointValue()
-        case .alert:
+        case .appearanceDate:
             goBack()
             forwardToMedia()
+        case .tournament:
+            goBack()
+            forwardToDate()
         default:
             goBack()
             forwardToTitle()
@@ -276,7 +291,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         case .media:
             if mediaSegmentedControl.selectedSegmentIndex == 2
             {
-                forwardToAlert()
+                forwardToDate()
             }
             else
             {
@@ -303,22 +318,22 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                         case .autoPlayVideo:
                             self.mediaType = .autoPlayVideo
 
-                            self.forwardToAlert()
+                            self.forwardToDate()
                         case .gif:
                             self.mediaType = .gif
                             self.mediaLink = self.mediaLink == nil ? URL(string: self.mediaTextField.text!)! : self.mediaLink
 
-                            self.forwardToAlert()
+                            self.forwardToDate()
                         case .image:
                             self.mediaType = .staticImage
                             self.mediaLink = self.mediaLink == nil ? URL(string: self.mediaTextField.text!)! : self.mediaLink
 
-                            self.forwardToAlert()
+                            self.forwardToDate()
                         case .linkedVideo:
                             self.mediaType = .linkedVideo
                             self.mediaLink = MediaAnalyser().convertToEmbedded(linkString: self.mediaTextField.text!) ?? URL(string: self.mediaTextField.text!)!
 
-                            self.forwardToAlert()
+                            self.forwardToDate()
                         case .other:
                             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(750)) {
                                 AlertKit().successAlertController(withTitle:             "Error",
@@ -353,8 +368,28 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                     }
                 }
             }
+        case .appearanceDate:
+            forwardToTournament()
         default:
-            forwardToFinish()
+            if !selectedTournaments.isEmpty
+            {
+                forwardToFinish()
+            }
+            else
+            {
+                AlertKit().errorAlertController(title:                       "No Tournament Selected",
+                                                message:                     "You must select at least one tournament to add this challenge to.",
+                                                dismissButtonTitle:          "OK",
+                                                additionalSelectors:         nil,
+                                                preferredAdditionalSelector: nil,
+                                                canFileReport:               false,
+                                                extraInfo:                   nil,
+                                                metadata:                    [#file, #function, #line],
+                                                networkDependent:            false)
+
+                nextButton.isEnabled = true
+                backButton.isEnabled = true
+            }
         }
     }
 
@@ -369,6 +404,30 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
     //==================================================//
 
     /* MARK: Other Functions */
+
+    func animateTableViewAppearance()
+    {
+        UIView.animate(withDuration: 0.2) {
+            self.datePicker.alpha = 0
+            self.stepTitleLabel.alpha = 0
+        } completion: { _ in
+            self.tableView.dataSource = self
+            self.tableView.delegate = self
+            self.tableView.reloadData()
+
+            roundCorners(forViews: [self.tableView], withCornerType: 0)
+
+            UIView.animate(withDuration: 0.2, delay: 0.5) {
+                self.tableView.alpha = 0.6
+            } completion: { _ in
+                self.nextButton.isEnabled = true
+                self.backButton.isEnabled = true
+            }
+        }
+
+        currentStep = .tournament
+        nextButton.title = "Finish"
+    }
 
     func confirmCancellation()
     {
@@ -407,29 +466,30 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             media = (link, uploadedMediaPath, type)
         }
 
-        ChallengeSerializer().createChallenge(title: challengeTitle!, prompt: promptTextView.text!, datePosted: Date(), pointValue: pointValue!, media: media) { returnedIdentifier, errorDescriptor in
-            if returnedIdentifier != nil
+        ChallengeSerializer().createChallenge(title: challengeTitle!, prompt: promptTextView.text!, datePosted: datePicker.date.comparator, pointValue: pointValue!, media: media) { returnedIdentifier, errorDescriptor in
+            if let identifier = returnedIdentifier
             {
-                flashSuccessHUD(text: "Successfully created challenge.", for: 1, delay: nil) {
-                    if self.alertSwitch.isOn
+                TournamentSerializer().addChallenges([identifier], toTournaments: self.selectedTournaments) { errorDescriptor in
+                    if let error = errorDescriptor
                     {
-                        notifyAllUsers(title: "New Challenge Posted", body: self.challengeTitle!) { errorDescriptor in
-                            if let error = errorDescriptor
-                            {
-                                AlertKit().errorAlertController(title:                       "Unable to Notify",
-                                                                message:                     error,
-                                                                dismissButtonTitle:          nil,
-                                                                additionalSelectors:         nil,
-                                                                preferredAdditionalSelector: nil,
-                                                                canFileReport:               true,
-                                                                extraInfo:                   error,
-                                                                metadata:                    [#file, #function, #line],
-                                                                networkDependent:            true)
-                            }
+                        AlertKit().errorAlertController(title: "Succeeded with Errors",
+                                                        message: "The challenge was created successfully, but it couldn't be added to the selected tournaments. File a report for more information.",
+                                                        dismissButtonTitle: nil,
+                                                        additionalSelectors: nil,
+                                                        preferredAdditionalSelector: nil,
+                                                        canFileReport: true,
+                                                        extraInfo: error,
+                                                        metadata: [#file, #function, #line],
+                                                        networkDependent: true) {
+                            self.navigationController?.dismiss(animated: true, completion: nil)
                         }
                     }
-
-                    self.navigationController?.dismiss(animated: true, completion: nil)
+                    else
+                    {
+                        flashSuccessHUD(text: "Successfully created challenge.", for: 1, delay: nil) {
+                            self.navigationController?.dismiss(animated: true, completion: nil)
+                        }
+                    }
                 }
             }
             else
@@ -455,7 +515,13 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         largeTextField.placeholder = "Enter a title"
         largeTextField.text = challengeTitle ?? nil
 
-        stepText = "🟡 Set title\n🔴 Set prompt\n🔴 Set point value\n🔴 Add media\n🔴 Toggle alerts"
+        if isGoingBack
+        {
+            stepProgress(forwardDirection: false)
+            isGoingBack = false
+        }
+
+        stepText = "🟡 Set title, prompt, point value\n🔴 Add media\n🔴 Set appearance date\n🔴 Add to tournaments"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
@@ -473,14 +539,11 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
 
     func forwardToPrompt()
     {
-        stepTitleLabel.text = "CHALLENGE PROMPT"
+        stepTitleLabel.text = "CHALLENGE PROMPT:"
         findAndResignFirstResponder()
-        stepProgress(forwardDirection: true)
 
-        stepText = "🟢 Set title\n🟡 Set prompt\n🔴 Set point value\n🔴 Add media\n🔴 Toggle alerts"
-        UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
-            self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
-        })
+        stepProgress(forwardDirection: !isGoingBack)
+        isGoingBack = false
 
         UIView.animate(withDuration: 0.2) {
             self.largeTextField.alpha = 0
@@ -511,9 +574,11 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         else { largeTextField.text = nil }
 
         findAndResignFirstResponder()
-        stepProgress(forwardDirection: true)
 
-        stepText = "🟢 Set title\n🟢 Set prompt\n🟡 Set point value\n🔴 Add media\n🔴 Toggle alerts"
+        stepProgress(forwardDirection: !isGoingBack)
+        isGoingBack = false
+
+        stepText = "🟡 Set title, prompt, point value\n🔴 Add media\n🔴 Set appearance date\n🔴 Add to tournaments"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
@@ -542,13 +607,15 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             mediaTextField.text = "https://"
         }
 
-        stepTitleLabel.text          = "ADD MEDIA"
+        stepTitleLabel.text          = "ADD MEDIA:"
         stepTitleLabel.textAlignment = .left
 
         findAndResignFirstResponder()
-        stepProgress(forwardDirection: true)
 
-        stepText = "🟢 Set title\n🟢 Set prompt\n🟢 Set point value\n🟡 Add media\n🔴 Toggle alerts"
+        stepProgress(forwardDirection: !isGoingBack)
+        isGoingBack = false
+
+        stepText = "🟢 Set title, prompt, point value\n🟡 Add media\n🔴 Set appearance date\n🔴 Add to tournaments"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
@@ -571,12 +638,14 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         nextButton.title = "Next"
     }
 
-    func forwardToAlert()
+    func forwardToDate()
     {
         findAndResignFirstResponder()
-        stepProgress(forwardDirection: true)
 
-        stepText = "🟢 Set title\n🟢 Set prompt\n🟢 Set point value\n🟢 Add media\n🟡 Toggle alerts"
+        stepProgress(forwardDirection: !isGoingBack)
+        isGoingBack = false
+
+        stepText = "🟢 Set title, prompt, point value\n🟢 Add media\n🟡 Set appearance date\n🔴 Add to tournaments"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
@@ -587,20 +656,53 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             self.stepTitleLabel.alpha = 0
             self.uploadButton.alpha = 0
         } completion: { _ in
-            self.stepTitleLabel.text = "ALERT USERS?"
-            self.stepTitleLabel.textAlignment = .center
+            self.stepTitleLabel.text = "SELECT APPEARANCE DATE:"
+            self.stepTitleLabel.textAlignment = .left
 
             UIView.animate(withDuration: 0.2, delay: 0.5) {
                 self.stepTitleLabel.alpha = 1
-                self.alertSwitch.alpha = 1
+                self.datePicker.alpha = 1
             }  completion: { _ in
                 self.nextButton.isEnabled = true
                 self.backButton.isEnabled = true
             }
         }
 
-        currentStep = .alert
-        nextButton.title = "Finish"
+        currentStep = .appearanceDate
+        nextButton.title = "Next"
+    }
+
+    func forwardToTournament()
+    {
+        findAndResignFirstResponder()
+
+        stepProgress(forwardDirection: !isGoingBack)
+        isGoingBack = false
+
+        stepText = "🟢 Set title, prompt, point value\n🟢 Add media\n🟢 Set appearance date\n🟡 Add to tournaments"
+        UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
+            self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
+        })
+
+        if tournamentArray != nil
+        {
+            animateTableViewAppearance()
+        }
+        else
+        {
+            TournamentSerializer().getAllTournaments { returnedTournaments, errorDescriptor in
+                if let tournaments = returnedTournaments
+                {
+                    self.tournamentArray = tournaments.sorted(by: { $0.name < $1.name })
+
+                    self.animateTableViewAppearance()
+                }
+                else if let error = errorDescriptor
+                {
+                    report(error, errorCode: nil, isFatal: true, metadata: [#file, #function, #line])
+                }
+            }
+        }
     }
 
     func forwardToFinish()
@@ -612,16 +714,15 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
         findAndResignFirstResponder()
         stepProgress(forwardDirection: true)
 
-        stepText = "🟢 Set title\n🟢 Set prompt\n🟢 Set point value\n🟢 Add media\n🟢 Toggle alerts"
+        stepText = "🟢 Set title, prompt, point value\n🟢 Add media\n🟢 Set appearance date\n🟢 Add to tournaments"
         UIView.transition(with: stepTextView, duration: 0.35, options: .transitionCrossDissolve, animations: {
             self.stepTextView.attributedText = NSAttributedString(string: self.stepText, attributes: self.stepAttributes)
         })
 
-        UIView.animate(withDuration: 0.2) {
-            self.alertSwitch.alpha = 0
-            self.stepTitleLabel.alpha = 0
-        } completion: { _ in
+        UIView.animate(withDuration: 0.2) { self.tableView.alpha = 0 } completion: { _ in
             self.stepTitleLabel.text = "WORKING..."
+            self.stepTitleLabel.textAlignment = .center
+
             self.isWorking = true
 
             UIView.animate(withDuration: 0.2, delay: 0.5) {
@@ -635,13 +736,18 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
 
     func goBack()
     {
+        isGoingBack = true
         isWorking = false
 
         nextButton.isEnabled = false
         backButton.isEnabled = false
 
         findAndResignFirstResponder()
-        stepProgress(forwardDirection: false)
+
+        if currentStep != .prompt && currentStep != .pointValue && currentStep != .media
+        {
+            stepProgress(forwardDirection: false)
+        }
 
         UIView.animate(withDuration: 0.2) {
             for subview in self.view.subviews
@@ -661,7 +767,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
 
     func stepProgress(forwardDirection: Bool)
     {
-        UIView.animate(withDuration: 0.2) { self.progressView.setProgress(self.progressView.progress + (forwardDirection ? 0.2 : -0.2), animated: true) }
+        UIView.animate(withDuration: 0.2) { self.progressView.setProgress(self.progressView.progress + (forwardDirection ? 0.1666666667 : -0.1666666667), animated: true) }
     }
 
     func verifyTitle() -> Bool
@@ -880,6 +986,52 @@ extension NewChallengeController: UIImagePickerControllerDelegate
                 }
             }
         }
+    }
+}
+
+//--------------------------------------------------//
+
+/* MARK: UITableViewDataSource, UITableViewDelegate */
+extension NewChallengeController: UITableViewDataSource, UITableViewDelegate
+{
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    {
+        let currentCell = tableView.dequeueReusableCell(withIdentifier: "SelectionCell") as! SelectionCell
+
+        currentCell.titleLabel.text = tournamentArray![indexPath.row].name
+        currentCell.subtitleLabel.text = "\(tournamentArray![indexPath.row].teamIdentifiers.count) teams"
+
+        if selectedTournaments.contains(tournamentArray![indexPath.row].associatedIdentifier)
+        {
+            currentCell.radioButton.isSelected = true
+        }
+
+        currentCell.selectionStyle = .none
+
+        return currentCell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        if let currentCell = tableView.cellForRow(at: indexPath) as? SelectionCell
+        {
+            if currentCell.radioButton.isSelected,
+               let index = selectedTournaments.firstIndex(of: tournamentArray![indexPath.row].associatedIdentifier)
+            {
+                selectedTournaments.remove(at: index)
+            }
+            else if !currentCell.radioButton.isSelected
+            {
+                selectedTournaments.append(tournamentArray![indexPath.row].associatedIdentifier)
+            }
+
+            currentCell.radioButton.isSelected = !currentCell.radioButton.isSelected
+        }
+    }
+
+    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int
+    {
+        return tournamentArray!.count
     }
 }
 

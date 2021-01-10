@@ -145,43 +145,27 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         return false
     }
 
-    func incompleteChallengesForToday(completion: @escaping (_ returnedChallenge: [Challenge]?, _ errorDescriptor: String?) -> Void)
+    func incompleteChallengesForToday(completion: @escaping (_ returnedChallenges: [Challenge]?, _ errorDescriptor: String?) -> Void)
     {
-        ChallengeSerializer().getChallenges(forDate: Date()) { returnedIdentifiers, errorDescriptor in
-            if let identifiers = returnedIdentifiers
+        guard let tournament = currentTeam.associatedTournament else
+        { completion(nil, "This Team is not currently participating in a Tournament."); return }
+
+        ChallengeSerializer().getChallenges(forTournament: tournament.associatedIdentifier, forDate: Date()) { returnedChallenges, errorDescriptor in
+            if let challenges = returnedChallenges
             {
-                if identifiers.isEmpty
-                {
-                    completion([], nil)
-                }
-                else
-                {
-                    ChallengeSerializer().getChallenges(withIdentifiers: identifiers) { returnedChallenges, errorDescriptors in
-                        if let challenges = returnedChallenges
-                        {
-                            var filteredChallenges = [Challenge]()
+                var filteredChallenges = [Challenge]()
 
-                            for challenge in challenges
-                            {
-                                if !self.didCompleteChallenge(withIdentifier: challenge.associatedIdentifier) && !self.didSkipChallenge(withIdentifier: challenge.associatedIdentifier)
-                                {
-                                    filteredChallenges.append(challenge)
-                                }
-                            }
-
-                            completion(filteredChallenges, nil)
-                        }
-                        else if let errors = errorDescriptors
-                        {
-                            completion(nil, errors.joined(separator: "\n"))
-                        }
+                for challenge in challenges
+                {
+                    if !self.didCompleteChallenge(withIdentifier: challenge.associatedIdentifier) && !self.didSkipChallenge(withIdentifier: challenge.associatedIdentifier)
+                    {
+                        filteredChallenges.append(challenge)
                     }
                 }
+
+                completion(filteredChallenges, nil)
             }
-            else if let error = errorDescriptor
-            {
-                completion(nil, error)
-            }
+            else { completion(nil, errorDescriptor!) }
         }
     }
 
@@ -213,7 +197,14 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
                     }
                     else if let error = errorDescriptor
                     {
-                        report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                        if error == "This Tournament has no Challenges associated with it." || error == "No Challenges for this Tournament on the specified date."
+                        {
+                            self.collectionView.dataSource = self
+                            self.collectionView.delegate = self
+
+                            self.collectionView.reloadData()
+                        }
+                        else { report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
                     }
                 }
             }

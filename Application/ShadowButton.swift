@@ -82,7 +82,7 @@ class ShadowButton: UIButton
 
     //==================================================//
 
-    /* MARK: Initializer Function */
+    /* MARK: Initialiser Function */
 
     func initializeLayer(animateTouches:     Bool,
                          backgroundColor:   UIColor,
@@ -93,16 +93,16 @@ class ShadowButton: UIButton
         self.animateTouches = animateTouches
 
         enabledBackgroundColor = backgroundColor
-        enabledShadowColor     = shadowColor
+        enabledShadowColor = shadowColor
 
         self.backgroundColor = isEnabled ? enabledBackgroundColor : disabledBackgroundColor
 
-        layer.borderColor   = isEnabled ? enabledShadowColor : disabledShadowColor.cgColor
-        layer.borderWidth   = 2
-        layer.cornerRadius  = customCornerRadius ?? 10
+        layer.borderColor = isEnabled ? enabledShadowColor : disabledShadowColor.cgColor
+        layer.borderWidth = 2
+        layer.cornerRadius = customCornerRadius ?? 10
         layer.masksToBounds = false
-        layer.shadowColor   = isEnabled ? enabledShadowColor : disabledShadowColor.cgColor
-        layer.shadowOffset  = CGSize(width: 0, height: 4)
+        layer.shadowColor = isEnabled ? enabledShadowColor : disabledShadowColor.cgColor
+        layer.shadowOffset = CGSize(width: 0, height: 4)
         layer.shadowOpacity = 1
     }
 }

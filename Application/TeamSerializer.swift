@@ -69,14 +69,8 @@ class TeamSerializer
         {
             group.enter()
 
-            var newAssociatedTeams = [String]()
-
-            if let associatedTeams = user.associatedTeams
-            {
-                newAssociatedTeams = associatedTeams
-            }
-
-            newAssociatedTeams.append("\(toTeam.associatedIdentifier!)")
+            var newAssociatedTeams = user.associatedTeams ?? []
+            newAssociatedTeams.append(toTeam.associatedIdentifier)
 
             GenericSerializer().updateValue(onKey: "/allUsers/\(user.associatedIdentifier!)", withData: ["associatedTeams": newAssociatedTeams]) { returnedError in
                 if let error = returnedError

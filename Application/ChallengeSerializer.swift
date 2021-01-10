@@ -153,6 +153,47 @@ class ChallengeSerializer
     }
 
     /**
+     Retrieves and deserializes all **Challenges** associated with the specified **Tournament** for display on the specified date.
+
+     - Parameter forTournament: The identifier of the **Tournament** to find **Challenges** for.
+     - Parameter forDate: The date to query for **Challenges** by.
+
+     - Parameter completion: Upon success, returns an array of deserialized **Challenge** objects. Upon failure, a string describing the error(s) encountered.
+
+     - Note: Completion variables are *mutually exclusive.*
+
+     ~~~
+     completion(returnedChallenges, errorDescriptor)
+     ~~~
+     */
+    func getChallenges(forTournament: String, forDate: Date, completion: @escaping (_ returnedChallenges: [Challenge]?, _ errorDescriptor: String?) -> Void)
+    {
+        TournamentSerializer().getTournament(withIdentifier: forTournament) { returnedTournament, errorDescriptor in
+            if let tournament = returnedTournament
+            {
+                var challengesForDate = [Challenge]()
+
+                guard let challenges = tournament.associatedChallenges else
+                { completion(nil, "This Tournament has no Challenges associated with it."); return }
+
+                for challenge in challenges
+                {
+                    if challenge.datePosted.comparator == forDate.comparator
+                    {
+                        challengesForDate.append(challenge)
+                    }
+                }
+
+                guard !challengesForDate.isEmpty else
+                { completion(nil, "No Challenges for this Tournament on the specified date."); return }
+
+                completion(challengesForDate, nil)
+            }
+            else { completion(nil, errorDescriptor!) }
+        }
+    }
+
+    /**
      Gets and deserializes multiple **Challenge** objects from a given array of identifier strings.
 
      - Parameter withIdentifiers: The identifiers to query for.
@@ -243,6 +284,20 @@ class ChallengeSerializer
         }
     }
 
+    //==================================================//
+
+    /* MARK: Removal Functions */
+
+    /**
+     Deletes the **Challenge** with the specified identifier from the server.
+
+     - Parameter identifier: The identifier of the **Team** to be deleted.
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
+
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
     func deleteChallenge(_ identifier: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
         removeChallengeFromAllTeams(identifier) { errorDescriptor in
@@ -278,6 +333,16 @@ class ChallengeSerializer
         }
     }
 
+    /**
+     Removes the **Challenge** with the specified identifier from all **Teams** which have completed it.
+
+     - Parameter identifier: The identifier of the **Challenge** to remove from all **Teams.**
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
+
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
     func removeChallengeFromAllTeams(_ identifier: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
         TeamSerializer().getAllTeams { returnedTeams, errorDescriptor in

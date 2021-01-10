@@ -15,6 +15,12 @@ class Tournament
 
     /* MARK: Class-level Variable Declarations */
 
+    //Arrays
+    private(set) var DSTeams: [Team]?
+
+    var associatedChallenges: [Challenge]?
+    var teamIdentifiers:      [String]!
+
     //Dates
     var startDate: Date!
     var endDate:   Date!
@@ -22,11 +28,6 @@ class Tournament
     //Strings
     var associatedIdentifier: String!
     var name:                 String!
-
-    //Other Declarations
-    var teamIdentifiers: [String]!
-
-    private(set) var DSTeams: [Team]?
 
     //==================================================//
 
@@ -36,12 +37,14 @@ class Tournament
          name:                 String,
          startDate:            Date,
          endDate:              Date,
+         associatedChallenges: [Challenge]?,
          teamIdentifiers:      [String])
     {
         self.associatedIdentifier = associatedIdentifier
         self.name                 = name
         self.startDate            = startDate
         self.endDate              = endDate
+        self.associatedChallenges = associatedChallenges
         self.teamIdentifiers      = teamIdentifiers
     }
 

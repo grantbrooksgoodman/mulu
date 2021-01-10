@@ -269,7 +269,7 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
                 Auth.auth().sendPasswordReset(withEmail: emailAddress) { returnedError in
                     if let error = returnedError
                     {
-                        AlertKit().errorAlertController(title: "Succeeded With Errors",
+                        AlertKit().errorAlertController(title: "Succeeded with Errors",
                                                         message: "The user was successfully created, but the password reset e-mail could not be sent.",
                                                         dismissButtonTitle: nil,
                                                         additionalSelectors: nil,
@@ -344,7 +344,6 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
         largeTextField.textContentType = .emailAddress
 
         stepProgress(forwardDirection: !isGoingBack)
-
         isGoingBack = false
 
         stepText = "🟢 Set name\n🟡 Set e-mail address\n🔴 Add to teams"
@@ -371,8 +370,8 @@ class NewUserController: UIViewController, MFMailComposeViewControllerDelegate
     func forwardToTeams()
     {
         findAndResignFirstResponder()
-        stepProgress(forwardDirection: !isGoingBack)
 
+        stepProgress(forwardDirection: !isGoingBack)
         isGoingBack = false
 
         stepText = "🟢 Set name\n🟢 Set e-mail address\n🟡 Add to teams"

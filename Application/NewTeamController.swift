@@ -301,7 +301,7 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
                     TeamSerializer().addTeam(metadata.identifier, toTournament: tournament) { errorDescriptor in
                         if let error = errorDescriptor
                         {
-                            AlertKit().errorAlertController(title: "Succeeded With Errors",
+                            AlertKit().errorAlertController(title: "Succeeded with Errors",
                                                             message: "The team was created, but couldn't be added to the specified tournament. File a report for more information.",
                                                             dismissButtonTitle: nil,
                                                             additionalSelectors: nil,
