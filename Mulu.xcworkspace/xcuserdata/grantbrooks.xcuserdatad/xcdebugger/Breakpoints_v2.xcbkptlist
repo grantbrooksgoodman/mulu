@@ -7,54 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8B772C19-9870-4184-9686-A28728134665"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Application/NewTeamController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "297"
-            endingLineNumber = "297"
-            landmarkName = "createTeam()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "8B772C19-9870-4184-9686-A28728134665 - eb45800ab8e91668"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Mulu.NewTeamController.createTeam() -&gt; ()"
-                  moduleName = "Mulu"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/grantbrooks/Documents/Projects/mulu/Application/NewTeamController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "291"
-                  endingLineNumber = "291"
-                  offsetFromSymbolStart = "161">
-               </Location>
-               <Location
-                  uuid = "8B772C19-9870-4184-9686-A28728134665 - 28b8fdddfb71730c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Optional&lt;(identifier: Swift.String, joinCode: Swift.String)&gt;, Swift.Optional&lt;Swift.String&gt;) -&gt; () in Mulu.NewTeamController.createTeam() -&gt; ()"
-                  moduleName = "Mulu"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/grantbrooks/Documents/Projects/mulu/Application/NewTeamController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "292"
-                  endingLineNumber = "292"
-                  offsetFromSymbolStart = "397">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "BC3864E0-D837-4CFD-B3CE-FCFF810A463F"
             shouldBeEnabled = "No"
             ignoreCount = "0"

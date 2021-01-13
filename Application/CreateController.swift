@@ -26,11 +26,12 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
 
     /* MARK: Class-level Variable Declarations */
 
-    var buildInstance: Build!
-
     override var canBecomeFirstResponder: Bool {
         return true
     }
+
+    var buildInstance: Build!
+    var filteredTeams = [Team]()
 
     //==================================================//
 
@@ -91,6 +92,12 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
         {
             destination.controllerReference = self
         }
+        else if segue.identifier == "NewTournamentFromCreateSegue",
+                let destination = segue.destination.children[0] as? NewTournamentController
+        {
+            destination.controllerReference = self
+            destination.teamArray = filteredTeams.sorted(by: { $0.name < $1.name })
+        }
         else if segue.identifier == "NewUserFromCreateSegue",
                 let desintation = segue.destination.children[0] as? NewUserController
         {
@@ -119,41 +126,37 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
 
     @IBAction func tournamentButton(_: Any)
     {
-        #warning("For testing purposes only.")
-        AlertKit().optionAlertController(title: "Choose", message: nil, cancelButtonTitle: nil, additionalButtons: [("Delete Tournament", false), ("Delete Team", false), ("Remove Team from Tournament", false)], preferredActionIndex: nil, networkDependent: true) { selectedIndex in
-            if let index = selectedIndex
+        showProgressHUD(text: "Getting teams...", delay: nil)
+
+        TeamSerializer().getAllTeams { returnedTeams, errorDescriptor in
+            if let teams = returnedTeams
             {
-                if index == 0
+                for team in teams
                 {
-                    TournamentSerializer().deleteTournament("-MPr2-_Lc72yX-r0SIkW") { errorDescriptor in
-                        if let error = errorDescriptor
-                        {
-                            report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                        }
-                        else { print("SUCCESS!!!") }
+                    if team.associatedTournament == nil
+                    {
+                        self.filteredTeams.append(team)
                     }
                 }
-                else if index == 1
-                {
-                    TeamSerializer().deleteTeam("-MPr2-Wzrbk17mJUvWEE") { errorDescriptor in
-                        if let error = errorDescriptor
-                        {
-                            report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                        }
-                        else { print("SUCCESS!!") }
+
+                hideHUD(delay: 1) {
+                    guard !self.filteredTeams.isEmpty else
+                    {
+                        AlertKit().errorAlertController(title: "Error",
+                                                        message: "There are no teams currently without a tournament.\n\nEither create a new team first or remove a team from a tournament.",
+                                                        dismissButtonTitle: "OK",
+                                                        additionalSelectors: nil,
+                                                        preferredAdditionalSelector: nil,
+                                                        canFileReport: true,
+                                                        extraInfo: "Filtered teams empty.",
+                                                        metadata: [#file, #function, #line],
+                                                        networkDependent: true); return
                     }
-                }
-                else if index == 2
-                {
-                    TournamentSerializer().removeTeam("-MPr2-Wzrbk17mJUvWEE", fromTournament: "-MPr2-_Lc72yX-r0SIkW", deleting: false) { errorDescriptor in
-                        if let error = errorDescriptor
-                        {
-                            report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                        }
-                        else { print("SUCCESS!") }
-                    }
+
+                    self.performSegue(withIdentifier: "NewTournamentFromCreateSegue", sender: self)
                 }
             }
+            else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
         }
     }
 

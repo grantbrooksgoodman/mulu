@@ -156,17 +156,17 @@ class TournamentSerializer
     func createTournament(name: String,
                           startDate: Date,
                           endDate: Date,
-                          associatedChallenges: [Challenge]?,
+                          associatedChallenges: [String]?,
                           teamIdentifiers: [String],
                           completion: @escaping (_ returnedIdentifier: String?, _ errorDescriptor: String?) -> Void)
     {
         var dataBundle: [String: Any] = [:]
 
-        dataBundle["name"] = name
-        dataBundle["startDate"] = secondaryDateFormatter.string(from: startDate)
-        dataBundle["endDate"] = secondaryDateFormatter.string(from: endDate)
-        dataBundle["associatedChallenges"] = associatedChallenges == nil ? ["!"] : associatedChallenges!.identifiers()
-        dataBundle["teamIdentifiers"] = teamIdentifiers.unique()
+        dataBundle["name"]                 = name
+        dataBundle["startDate"]            = secondaryDateFormatter.string(from: startDate)
+        dataBundle["endDate"]              = secondaryDateFormatter.string(from: endDate)
+        dataBundle["associatedChallenges"] = associatedChallenges == nil ? ["!"] : associatedChallenges
+        dataBundle["teamIdentifiers"]      = teamIdentifiers.unique()
 
         //Generate a key for the new Challenge.
         if let generatedKey = Database.database().reference().child("/allTournaments/").childByAutoId().key

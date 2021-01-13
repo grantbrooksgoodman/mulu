@@ -39,6 +39,7 @@
 		A207FFFC2581B714004E70A6 /* Montserrat-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A207FFEA2581B714004E70A6 /* Montserrat-SemiBoldItalic.ttf */; };
 		A207FFFD2581B714004E70A6 /* Montserrat-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A207FFEB2581B714004E70A6 /* Montserrat-ExtraBoldItalic.ttf */; };
 		A20E80C6259E701C00D1EB0B /* ViewChallengesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20E80C5259E701C00D1EB0B /* ViewChallengesController.swift */; };
+		A21C9D3325AE343D00E9D0CB /* NewTournamentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A21C9D3225AE343D00E9D0CB /* NewTournamentController.swift */; };
 		A22169D2258A611D001C036D /* Gotham-XLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C0258A611D001C036D /* Gotham-XLight.otf */; };
 		A22169D3258A611D001C036D /* Gotham-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C1258A611D001C036D /* Gotham-Thin.otf */; };
 		A22169D4258A611D001C036D /* Gotham-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = A22169C2258A611D001C036D /* Gotham-Black.otf */; };
@@ -168,6 +169,7 @@
 		A207FFEB2581B714004E70A6 /* Montserrat-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		A207FFFF2581C2C9004E70A6 /* TeamController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamController.swift; sourceTree = "<group>"; };
 		A20E80C5259E701C00D1EB0B /* ViewChallengesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewChallengesController.swift; sourceTree = "<group>"; };
+		A21C9D3225AE343D00E9D0CB /* NewTournamentController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewTournamentController.swift; sourceTree = "<group>"; };
 		A22169C0258A611D001C036D /* Gotham-XLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-XLight.otf"; sourceTree = "<group>"; };
 		A22169C1258A611D001C036D /* Gotham-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Thin.otf"; sourceTree = "<group>"; };
 		A22169C2258A611D001C036D /* Gotham-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Black.otf"; sourceTree = "<group>"; };
@@ -458,6 +460,7 @@
 				A28928002593B5A700610E48 /* CreateController.swift */,
 				A289281D2593B8AD00610E48 /* NewChallengeController.swift */,
 				A2054DF5259D1DF9008CBD4F /* NewTeamController.swift */,
+				A21C9D3225AE343D00E9D0CB /* NewTournamentController.swift */,
 				A278AFA4259A8E4A00EA3443 /* NewUserController.swift */,
 			);
 			name = Creation;
@@ -794,6 +797,7 @@
 				A2A554962577FFBF006D3B3E /* Extensions.swift in Sources */,
 				A278AFA5259A8E4A00EA3443 /* NewUserController.swift in Sources */,
 				A2AEDD57257BE77D0074CA11 /* ChallengeSerializer.swift in Sources */,
+				A21C9D3325AE343D00E9D0CB /* NewTournamentController.swift in Sources */,
 				68E73D321DEFB296008CD686 /* RoundedButton.swift in Sources */,
 				A24A232E257DB9900063FE87 /* TeamSerializer.swift in Sources */,
 				6881EA4C1E29CD360007D873 /* SystemInformation.swift in Sources */,
