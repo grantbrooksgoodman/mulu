@@ -37,9 +37,8 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
 
     var buildInstance: Build!
     var selectedIndexPath: IndexPath!
-    var userArray = [User]()
-
     var selectedTeam: Team?
+    var userArray = [User]()
 
     //==================================================//
 
@@ -499,7 +498,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
             UserSerializer().getAllUsers { returnedUsers, errorDescriptor in
                 if let users = returnedUsers
                 {
-                    self.userArray = users
+                    self.userArray = users.sorted(by: { $0.firstName < $1.firstName })
 
                     for user in users
                     {

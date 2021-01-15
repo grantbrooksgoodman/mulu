@@ -35,6 +35,10 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     /* MARK: Class-level Variable Declarations */
 
     //Other Declarations
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+
     var buildInstance: Build!
     var currentChallenge: Challenge?
     var incompleteChallenges = [Challenge]()
@@ -102,6 +106,19 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
         currentFile = #file
         buildInfoController?.view.isHidden = !preReleaseApplication
+    }
+
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with _: UIEvent?)
+    {
+        if motion == .motionShake
+        {
+            AlertKit().confirmationAlertController(title: "Sign Out", message: "Would you like to sign out?", cancelConfirmTitles: [:], confirmationDestructive: false, confirmationPreferred: true, networkDepedent: true) { didConfirm in
+                if let confirmed = didConfirm, confirmed
+                {
+                    self.performSegue(withIdentifier: "SignInFromHomeSegue", sender: self)
+                }
+            }
+        }
     }
 
     override func prepare(for _: UIStoryboardSegue, sender _: Any?)
@@ -371,6 +388,18 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
 /* MARK: Array Extensions */
 extension Array where Element == (challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])
 {
+    func challengeIdentifiers() -> [String]
+    {
+        var challengeIdentifiers = [String]()
+
+        for challengeTuple in self
+        {
+            challengeIdentifiers.append(challengeTuple.challenge.associatedIdentifier)
+        }
+
+        return challengeIdentifiers
+    }
+
     func users() -> [User]
     {
         var users = [User]()

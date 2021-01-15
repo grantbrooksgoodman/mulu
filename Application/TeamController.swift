@@ -276,7 +276,7 @@ extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
             let leaderboardLabel = UILabel(frame: CGRect(x: scrollerCell.center.x, y: 20, width: scrollerCell.frame.width, height: 30))
             leaderboardLabel.font = UIFont(name: "SFUIText-Bold", size: 30)
 
-            leaderboardLabel.text = "LEADERBOARD"
+            leaderboardLabel.text = "TEAMS TO BEAT"
             leaderboardLabel.textAlignment = .center
             leaderboardLabel.textColor = .white
 
@@ -330,6 +330,7 @@ extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
 //--------------------------------------------------//
 
 /* MARK: Array Extensions */
+
 extension Array where Element == (Challenge, [(User, Date)])
 {
     func dates() -> [Date]

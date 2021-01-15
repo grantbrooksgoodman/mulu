@@ -43,9 +43,11 @@ class ChallengeSerializer
     {
         var dataBundle: [String: Any] = [:]
 
+        let twoWeeksFromNow = Calendar.current.date(byAdding: .day, value: 14, to: Date())!.comparator
+
         dataBundle["title"] = title
         dataBundle["prompt"] = prompt
-        dataBundle["datePosted"] = secondaryDateFormatter.string(from: datePosted == nil ? Date() : datePosted!)
+        dataBundle["datePosted"] = secondaryDateFormatter.string(from: datePosted == nil ? twoWeeksFromNow : datePosted!)
         dataBundle["pointValue"] = pointValue
 
         if let media = media

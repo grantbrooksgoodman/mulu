@@ -113,8 +113,6 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
     override func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(animated)
-
-        roundCorners(forViews: [selectionTableView, teamTableView], withCornerType: 0)
     }
 
     override func prepare(for _: UIStoryboardSegue, sender _: Any?)
@@ -223,6 +221,8 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
 
                     self.selectionTableView.reloadData()
 
+                    self.selectionTableView.layer.cornerRadius = 10
+
                     UIView.animate(withDuration: 0.2) {
                         self.activityIndicator.alpha  = 0
                         self.doneButton.alpha         = 1
@@ -270,6 +270,8 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
                     self.selectionTableView.delegate = self
 
                     self.selectionTableView.reloadData()
+
+                    self.selectionTableView.layer.cornerRadius = 10
 
                     UIView.animate(withDuration: 0.2) {
                         self.activityIndicator.alpha  = 0
@@ -657,7 +659,7 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
     {
         var usersString = ""
 
-        guard let participants = teamArray[selectedIndexPath.row].DSParticipants?.sorted(by: { $0.lastName < $1.lastName }) else
+        guard let participants = teamArray[selectedIndexPath.row].DSParticipants?.sorted(by: { $0.firstName < $1.firstName }) else
         {
             showProgressHUD(text: "Getting users...", delay: nil)
 
@@ -741,6 +743,8 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
 
                     self.teamTableView.reloadData()
 
+                    self.teamTableView.layer.cornerRadius = 10
+
                     UIView.animate(withDuration: 0.2, delay: 1) {
                         self.activityIndicator.alpha = 0
                         self.teamTableView.alpha = 0.6
@@ -792,7 +796,7 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
                     else { filteredUsers.append(user) }
                 }
 
-                self.userArray = filteredUsers.sorted(by: { $0.lastName < $1.lastName })
+                self.userArray = filteredUsers.sorted(by: { $0.firstName < $1.firstName })
                 completion(nil)
             }
             else { completion(errorDescriptor!) }

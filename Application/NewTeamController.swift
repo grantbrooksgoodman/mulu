@@ -413,7 +413,7 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
             UserSerializer().getAllUsers { returnedUsers, errorDescriptor in
                 if let users = returnedUsers
                 {
-                    self.userArray = users.sorted(by: { $0.lastName < $1.lastName })
+                    self.userArray = users.sorted(by: { $0.firstName < $1.firstName })
 
                     self.animateUserTableViewAppearance()
                 }

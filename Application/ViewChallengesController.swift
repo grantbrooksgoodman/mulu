@@ -20,7 +20,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     /* MARK: Interface Builder UI Elements */
 
     //ShadowButtons
-    @IBOutlet var doneButton: ShadowButton!
+    @IBOutlet var doneButton:   ShadowButton!
     @IBOutlet var cancelButton: ShadowButton!
 
     //Other Elements
@@ -35,6 +35,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     /* MARK: Class-level Variable Declarations */
 
     let mediaPicker = UIImagePickerController()
+    let mediumDateFormatter = DateFormatter()
 
     var buildInstance: Build!
     var currentlyUploading = false
@@ -75,6 +76,8 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
         mediaPicker.delegate   = self
         mediaPicker.mediaTypes = ["public.image", "public.movie"]
 
+        mediumDateFormatter.dateStyle = .medium
+
         tableView.backgroundColor = .black
         tableView.alpha = 0
 
@@ -102,8 +105,6 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     override func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(animated)
-
-        roundCorners(forViews: [tableView], withCornerType: 0)
     }
 
     override func prepare(for _: UIStoryboardSegue, sender _: Any?)
@@ -221,6 +222,104 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                     }
                 }
                 else { self.reSelectRow() }
+            }
+        }
+    }
+
+    func editAppearanceDateAction()
+    {
+        showProgressHUD(text: "Loading data...", delay: nil)
+
+        hasBeenCompleted(challengeArray[selectedIndexPath.row]) { completed, errorDescriptor in
+            if let completed = completed
+            {
+                if completed
+                {
+                    hideHUD(delay: 1) { self.errorAlert(title: "Cannot Edit Appearance Date", message: "There are users who have already completed this challenge.\n\nEditing its appearance date at this point would cause the server data to become out of sync.") }
+                }
+                else
+                {
+                    hideHUD(delay: 1) { self.editAppearanceDateAlert() }
+                }
+            }
+            else
+            {
+                hideHUD(delay: 1) { self.errorAlert(title: "Cannot Edit Appearance Date", message: errorDescriptor!) }
+            }
+        }
+    }
+
+    @objc func editAppearanceDateAlert()
+    {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy"
+
+        let selectedChallenge = challengeArray[selectedIndexPath.row]
+
+        let textFieldAttributes: [AlertKit.AlertControllerTextFieldAttribute: Any] =
+            [.capitalisationType:  UITextAutocapitalizationType.none,
+             .correctionType:      UITextAutocorrectionType.no,
+             .editingMode:         UITextField.ViewMode.whileEditing,
+             .keyboardType:        UIKeyboardType.numbersAndPunctuation,
+             .placeholderText:     "",
+             .sampleText:          dateFormatter.string(from: selectedChallenge.datePosted),
+             .textAlignment:       NSTextAlignment.center]
+
+        AlertKit().textAlertController(title: "Editing \(selectedChallenge.title!)",
+                                       message: "Enter a new appearance date for \(selectedChallenge.title!) in the DD.MM.YYYY format.",
+                                       cancelButtonTitle: nil,
+                                       additionalButtons: [("Done", false)],
+                                       preferredActionIndex: 0,
+                                       textFieldAttributes: textFieldAttributes,
+                                       networkDependent: true) { returnedString, selectedIndex in
+            if let index = selectedIndex
+            {
+                if index == 0
+                {
+                    if let dateString = returnedString,
+                       let newDate = dateFormatter.date(from: dateString)
+                    {
+                        if selectedChallenge.datePosted.comparator == newDate.comparator
+                        {
+                            hideHUD(delay: 0.5) {
+                                flashSuccessHUD(text: "No changes made.", for: 1.2, delay: 0) {
+                                    self.activityIndicator.alpha = 1
+                                    self.reloadData()
+                                }
+                            }
+                        }
+                        else
+                        {
+                            showProgressHUD(text: "Setting appearance date...", delay: nil)
+
+                            selectedChallenge.updateAppearanceDate(newDate.comparator) { errorDescriptor in
+                                if let error = errorDescriptor
+                                {
+                                    hideHUD(delay: 1) {
+                                        self.errorAlert(title: "Couldn't Set Appearance Date", message: error)
+                                    }
+                                }
+                                else { self.showSuccessAndReload() }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        AlertKit().errorAlertController(title:                       "Invalid Date",
+                                                        message:                     "The provided date was invalid. Please follow the DD.MM.YYYY format.",
+                                                        dismissButtonTitle:          "Cancel",
+                                                        additionalSelectors:         ["Try Again": #selector(ViewChallengesController.editAppearanceDateAlert)],
+                                                        preferredAdditionalSelector: 0,
+                                                        canFileReport:               false,
+                                                        extraInfo:                   nil,
+                                                        metadata:                    [#file, #function, #line],
+                                                        networkDependent:            false)
+                    }
+                }
+                else if index == -1
+                {
+                    self.reSelectRow()
+                }
             }
         }
     }
@@ -407,127 +506,6 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
         }
     }
 
-    //==================================================//
-
-    /* MARK: Status Functions */
-
-    func errorAlert(title: String, message: String)
-    {
-        AlertKit().errorAlertController(title:                       title,
-                                        message:                     message,
-                                        dismissButtonTitle:          nil,
-                                        additionalSelectors:         nil,
-                                        preferredAdditionalSelector: nil,
-                                        canFileReport:               true,
-                                        extraInfo:                   message,
-                                        metadata:                    [#file, #function, #line],
-                                        networkDependent:            true)
-    }
-
-    func noTextAlert(_ selector: Selector)
-    {
-        AlertKit().errorAlertController(title:                       "Nothing Entered",
-                                        message:                     "No text was entered. Please try again.",
-                                        dismissButtonTitle:          "Cancel",
-                                        additionalSelectors:         ["Try Again": selector],
-                                        preferredAdditionalSelector: 0,
-                                        canFileReport:               false,
-                                        extraInfo:                   nil,
-                                        metadata:                    [#file, #function, #line],
-                                        networkDependent:            false)
-    }
-
-    func sameInputAlert(_ selector: Selector)
-    {
-        AlertKit().errorAlertController(title:                       "Same Value",
-                                        message:                     "The value entered was unchanged.",
-                                        dismissButtonTitle:          "Cancel",
-                                        additionalSelectors:         ["Try Again": selector],
-                                        preferredAdditionalSelector: 0,
-                                        canFileReport:               false,
-                                        extraInfo:                   nil,
-                                        metadata:                    [#file, #function, #line],
-                                        networkDependent:            false)
-    }
-
-    func showSuccessAndReload()
-    {
-        hideHUD(delay: 0.5) {
-            flashSuccessHUD(text: nil, for: 1.2, delay: 0) {
-                self.activityIndicator.alpha = 1
-                self.reloadData()
-            }
-        }
-    }
-
-    //==================================================//
-
-    /* MARK: Other Functions */
-
-    func formatDateString(_ string: String) -> String
-    {
-        if string.contains(":")
-        {
-            return "Today at \(string)"
-        }
-        else if string.hasPrefix("mon") || string.hasPrefix("tue") || string.hasPrefix("wed") || string.hasPrefix("thu") || string.hasPrefix("fri") || string.hasPrefix("sat") || string.hasPrefix("sun")
-        {
-            return string.capitalized
-        }
-
-        return string
-    }
-
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
-    {
-        buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
-    }
-
-    @objc func reloadData()
-    {
-        tableView.isUserInteractionEnabled = false
-
-        UIView.animate(withDuration: 0.2) { self.tableView.alpha = 0 } completion: { _ in
-            ChallengeSerializer().getAllChallenges { returnedChallenges, errorDescriptor in
-                if let challenges = returnedChallenges
-                {
-                    self.challengeArray = challenges
-
-                    self.tableView.dataSource = self
-                    self.tableView.delegate = self
-
-                    self.tableView.reloadData()
-
-                    UIView.animate(withDuration: 0.2, delay: 1) {
-                        self.activityIndicator.alpha = 0
-                        self.tableView.alpha = 0.6
-                    } completion: { _ in self.tableView.isUserInteractionEnabled = true }
-                }
-                else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
-            }
-        }
-    }
-
-    func reSelectRow()
-    {
-        tableView.selectRow(at: selectedIndexPath, animated: true, scrollPosition: .none)
-        tableView.delegate?.tableView!(tableView, didSelectRowAt: selectedIndexPath)
-    }
-
-    func updateChallengeMedia(_ media: (link: URL, path: String?, type: Challenge.MediaType))
-    {
-        challengeArray[selectedIndexPath.row].updateMedia(media) { errorDescriptor in
-            if let error = errorDescriptor
-            {
-                self.errorAlert(title: "Failed to Update Media", message: error)
-            }
-            else
-            {
-                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { self.showSuccessAndReload() }
-            }
-        }
-    }
-
     @objc func webLinkMediaAlert()
     {
         let textFieldAttributes: [AlertKit.AlertControllerTextFieldAttribute: Any] =
@@ -599,6 +577,140 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                 {
                     self.reSelectRow()
                 }
+            }
+        }
+    }
+
+    //==================================================//
+
+    /* MARK: Status Functions */
+
+    func errorAlert(title: String, message: String)
+    {
+        AlertKit().errorAlertController(title:                       title,
+                                        message:                     message,
+                                        dismissButtonTitle:          nil,
+                                        additionalSelectors:         nil,
+                                        preferredAdditionalSelector: nil,
+                                        canFileReport:               true,
+                                        extraInfo:                   message,
+                                        metadata:                    [#file, #function, #line],
+                                        networkDependent:            true)
+    }
+
+    func noTextAlert(_ selector: Selector)
+    {
+        AlertKit().errorAlertController(title:                       "Nothing Entered",
+                                        message:                     "No text was entered. Please try again.",
+                                        dismissButtonTitle:          "Cancel",
+                                        additionalSelectors:         ["Try Again": selector],
+                                        preferredAdditionalSelector: 0,
+                                        canFileReport:               false,
+                                        extraInfo:                   nil,
+                                        metadata:                    [#file, #function, #line],
+                                        networkDependent:            false)
+    }
+
+    func sameInputAlert(_ selector: Selector)
+    {
+        AlertKit().errorAlertController(title:                       "Same Value",
+                                        message:                     "The value entered was unchanged.",
+                                        dismissButtonTitle:          "Cancel",
+                                        additionalSelectors:         ["Try Again": selector],
+                                        preferredAdditionalSelector: 0,
+                                        canFileReport:               false,
+                                        extraInfo:                   nil,
+                                        metadata:                    [#file, #function, #line],
+                                        networkDependent:            false)
+    }
+
+    func showSuccessAndReload()
+    {
+        hideHUD(delay: 0.5) {
+            flashSuccessHUD(text: nil, for: 1.2, delay: 0) {
+                self.activityIndicator.alpha = 1
+                self.reloadData()
+            }
+        }
+    }
+
+    //==================================================//
+
+    /* MARK: Other Functions */
+
+    func hasBeenCompleted(_ challenge: Challenge, completion: @escaping (_ completed: Bool?, _ errorDescriptor: String?) -> Void)
+    {
+        TeamSerializer().getAllTeams { returnedTeams, errorDescriptor in
+            if let error = errorDescriptor
+            {
+                completion(nil, error)
+            }
+            else if let teams = returnedTeams
+            {
+                var hasBeenCompleted = false
+
+                for team in teams
+                {
+                    if let completedChallenges = team.completedChallenges,
+                       completedChallenges.challengeIdentifiers().contains(challenge.associatedIdentifier)
+                    {
+                        hasBeenCompleted = true; break
+                    }
+                }
+
+                completion(hasBeenCompleted, nil)
+            }
+        }
+    }
+
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
+    {
+        buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
+    }
+
+    @objc func reloadData()
+    {
+        tableView.isUserInteractionEnabled = false
+
+        UIView.animate(withDuration: 0.2) { self.tableView.alpha = 0 } completion: { _ in
+            ChallengeSerializer().getAllChallenges { returnedChallenges, errorDescriptor in
+                if let challenges = returnedChallenges
+                {
+                    self.challengeArray = challenges.sorted(by: { $0.datePosted < $1.datePosted })
+
+                    self.tableView.dataSource = self
+                    self.tableView.delegate = self
+
+                    self.tableView.reloadData()
+
+                    self.tableView.layer.cornerRadius = 10
+
+                    UIView.animate(withDuration: 0.2, delay: 1) {
+                        self.activityIndicator.alpha = 0
+                        self.tableView.alpha = 0.6
+                    } completion: { _ in self.tableView.isUserInteractionEnabled = true }
+                }
+                else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
+            }
+        }
+    }
+
+    func reSelectRow()
+    {
+        tableView.selectRow(at: selectedIndexPath, animated: true, scrollPosition: .none)
+        tableView.delegate?.tableView!(tableView, didSelectRowAt: selectedIndexPath)
+    }
+
+    func updateChallengeMedia(_ media: (link: URL, path: String?, type: Challenge.MediaType))
+    {
+        challengeArray[selectedIndexPath.row].updateMedia(media) { errorDescriptor in
+            if let error = errorDescriptor
+            {
+                self.errorAlert(title: "Failed to Update Media", message: error)
+            }
+            else
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { self.showSuccessAndReload() }
             }
         }
     }
@@ -793,8 +905,16 @@ extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
     {
         let currentCell = tableView.dequeueReusableCell(withIdentifier: "ChallengeCell") as! SubtitleCell
 
+        let challengePostDate: Date! = challengeArray[indexPath.row].datePosted
+        var subtitlePrefix = "posted on"
+
+        if challengePostDate.comparator > Date().comparator
+        {
+            subtitlePrefix = "will be posted on"
+        }
+
         currentCell.titleLabel.text = challengeArray[indexPath.row].title
-        currentCell.subtitleLabel.text = "posted \(formatDateString(challengeArray[indexPath.row].datePosted.formattedString().lowercased()).lowercased())"
+        currentCell.subtitleLabel.text = "\(subtitlePrefix) \(mediumDateFormatter.string(from: challengePostDate))"
 
         return currentCell
     }
@@ -840,14 +960,21 @@ extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
 
         actionSheet.setValue(NSMutableAttributedString(string: challengeArray[indexPath.row].title, attributes: titleAttributes), forKey: "attributedTitle")
 
-        let message = "Point Value: \(String(challengeArray[indexPath.row].pointValue))\n\nPrompt:\n\(challengeArray[indexPath.row].prompt!)\n\nDate Posted: \(formatDateString(challengeArray[indexPath.row].datePosted.formattedString().lowercased()))\n\nAssociated Media: \(challengeArray[indexPath.row].media?.type.userFacingString() ?? "None")"
+        let message = "Appearance Date: \(mediumDateFormatter.string(from: challengeArray[indexPath.row].datePosted))\n\nAssociated Media: \(challengeArray[indexPath.row].media?.type.userFacingString() ?? "None")\n\nPoint Value: \(String(challengeArray[indexPath.row].pointValue))\n\nPrompt:\n\(challengeArray[indexPath.row].prompt!)"
 
-        let boldedRange = ["Point Value:",
-                           "Prompt:",
-                           "Date Posted:",
-                           "Associated Media:"]
+        let boldedRange = ["Appearance Date:",
+                           "Associated Media:",
+                           "Point Value:",
+                           "Prompt:"]
 
         actionSheet.setValue(attributedString(message, mainAttributes: regularMessageAttributes, alternateAttributes: boldedMessageAttributes, alternateAttributeRange: boldedRange), forKey: "attributedMessage")
+
+        let editAppearanceDateAction = UIAlertAction(title: "Edit Appearance Date", style: .default) { _ in
+            tableView.deselectRow(at: indexPath, animated: true)
+            tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
+
+            self.editAppearanceDateAction()
+        }
 
         let editTitleAction = UIAlertAction(title: "Edit Title", style: .default) { _ in
             tableView.deselectRow(at: indexPath, animated: true)
@@ -898,6 +1025,7 @@ extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
             tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
         }
 
+        actionSheet.addAction(editAppearanceDateAction)
         actionSheet.addAction(editTitleAction)
         actionSheet.addAction(editPromptAction)
         actionSheet.addAction(editPointValueAction)

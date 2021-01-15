@@ -506,6 +506,7 @@ Pull to refresh or check back later!</string>
                         <outlet property="collectionView" destination="Vhu-e3-Cpm" id="ato-Je-FCv"/>
                         <outlet property="statisticsTextView" destination="8fF-sy-XEp" id="c7d-Z0-DUh"/>
                         <outlet property="welcomeLabel" destination="GSb-H6-h6A" id="cJa-cL-T4F"/>
+                        <segue destination="X61-tu-xQD" kind="modal" identifier="SignInFromHomeSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="wge-Ow-5FY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VE4-NO-yQy" sceneMemberID="firstResponder"/>

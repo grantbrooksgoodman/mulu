@@ -109,6 +109,27 @@ class Challenge
     /* MARK: Update Functions */
 
     /**
+     Updates the **Challenge's** appearance date.
+
+     - Parameter date: The new appearance date for this **Challenge.**
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
+
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
+    func updateAppearanceDate(_ date: Date, completion: @escaping (_ errorDescriptor: String?) -> Void)
+    {
+        GenericSerializer().setValue(onKey: "/allChallenges/\(associatedIdentifier!)/datePosted", withData: secondaryDateFormatter.string(from: date.comparator)) { returnedError in
+            if let error = returnedError
+            {
+                completion(errorInfo(error))
+            }
+            else { completion(nil) }
+        }
+    }
+
+    /**
      Updates the **Challenge's** media.
 
      - Parameter media: A tuple representing the new media link and type for this **Challenge.**

@@ -490,9 +490,9 @@ class TeamSerializer
     /**
      Retrieves and deserializes all existing **Teams** on the server.
 
-     - Parameter completion: Upon success, returns an array of deserialized **Team** objects. Upon failure, a string describing the error(s) encountered.
+     - Parameter completion: Upon success, returns an array of deserialized **Team** objects. Upon failure, a string describing the error(s) encountered. May return both if only a select number of **Teams** could be deserialized.
 
-     - Note: Completion variables are *mutually exclusive.*
+     - Note: Completion variables are **NOT** *mutually exclusive.*
 
      ~~~
      completion(returnedTeams, errorDescriptor)
@@ -507,13 +507,10 @@ class TeamSerializer
                 self.getTeams(withIdentifiers: teamIdentifiers) { returnedTeams, errorDescriptors in
                     if let teams = returnedTeams
                     {
-                        completion(teams, nil)
+                        completion(teams, errorDescriptors == nil ? nil : errorDescriptors!.joined(separator: "\n"))
                     }
-                    else if let errors = errorDescriptors
-                    {
-                        completion(nil, errors.joined(separator: "\n"))
-                    }
-                    else { completion(nil, "An unknown error occurred.") }
+                    else
+                    { completion(nil, errorDescriptors == nil ? "An unknown error occurred." : errorDescriptors!.joined(separator: "\n")) }
                 }
             }
             else { completion(nil, "Unable to deserialize snapshot.") }
@@ -670,36 +667,27 @@ class TeamSerializer
 
         if !withIdentifiers.isEmpty
         {
-            let dispatchGroup = DispatchGroup()
-
-            for individualIdentifier in withIdentifiers
+            for identifier in withIdentifiers
             {
-                if verboseFunctionExposure { print("entered group") }
-                dispatchGroup.enter()
-
-                getTeam(withIdentifier: individualIdentifier) { returnedTeam, errorDescriptor in
+                getTeam(withIdentifier: identifier) { returnedTeam, errorDescriptor in
                     if let team = returnedTeam
                     {
                         teamArray.append(team)
 
-                        if verboseFunctionExposure { print("left group") }
-                        dispatchGroup.leave()
+                        if teamArray.count + errorDescriptorArray.count == withIdentifiers.count
+                        {
+                            completion(teamArray, errorDescriptorArray.isEmpty ? nil : errorDescriptorArray)
+                        }
                     }
                     else
                     {
                         errorDescriptorArray.append(errorDescriptor!)
 
-                        #warning("This seems to cause crashes sometimes...")
-                        if verboseFunctionExposure { print("left group") }
-                        dispatchGroup.leave()
+                        if teamArray.count + errorDescriptorArray.count == withIdentifiers.count
+                        {
+                            completion(teamArray.isEmpty ? nil : teamArray, errorDescriptorArray)
+                        }
                     }
-                }
-            }
-
-            dispatchGroup.notify(queue: .main) {
-                if teamArray.count + errorDescriptorArray.count == withIdentifiers.count
-                {
-                    completion(teamArray.isEmpty ? nil : teamArray, errorDescriptorArray.isEmpty ? nil : errorDescriptorArray)
                 }
             }
         }

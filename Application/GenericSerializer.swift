@@ -126,3 +126,91 @@ class GenericSerializer
         }
     }
 }
+
+//==================================================//
+
+/* MARK: Extensions */
+
+extension Array where Element == Challenge
+{
+    func identifiers() -> [String]
+    {
+        var identifiers = [String]()
+
+        for challenge in self
+        {
+            identifiers.append(challenge.associatedIdentifier)
+        }
+
+        return identifiers
+    }
+
+    func titles() -> [String]
+    {
+        var titles = [String]()
+
+        for challenge in self
+        {
+            titles.append(challenge.title)
+        }
+
+        return titles
+    }
+}
+
+extension Array where Element == Team
+{
+    func identifiers() -> [String]
+    {
+        var identifiers = [String]()
+
+        for team in self
+        {
+            identifiers.append(team.associatedIdentifier)
+        }
+
+        return identifiers
+    }
+}
+
+extension Array where Element == Tournament
+{
+    func identifiers() -> [String]
+    {
+        var identifiers = [String]()
+
+        for tournament in self
+        {
+            identifiers.append(tournament.associatedIdentifier)
+        }
+
+        return identifiers
+    }
+}
+
+extension Array where Element == User
+{
+    func identifiers() -> [String]
+    {
+        var identifiers = [String]()
+
+        for user in self
+        {
+            identifiers.append(user.associatedIdentifier)
+        }
+
+        return identifiers
+    }
+
+    func instantiateIdentifierDictionary() -> [String: Int]
+    {
+        var dictionary = [String: Int]()
+
+        for user in self
+        {
+            dictionary[user.associatedIdentifier] = 0
+        }
+
+        return dictionary
+    }
+}

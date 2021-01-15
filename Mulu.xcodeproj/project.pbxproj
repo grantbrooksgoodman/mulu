@@ -111,6 +111,7 @@
 		A2DA693324D74929000CD116 /* AlertKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DA693224D74929000CD116 /* AlertKit.swift */; };
 		A2DD2C2A259A9EE300DFA423 /* RadioButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DD2C28259A9EE300DFA423 /* RadioButton.swift */; };
 		A2DD2C2B259A9EE300DFA423 /* RadioButtonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DD2C29259A9EE300DFA423 /* RadioButtonController.swift */; };
+		A2DD606225AF805C00631C7E /* ViewTournamentsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DD606125AF805B00631C7E /* ViewTournamentsController.swift */; };
 		A2EFF34325835A590070B320 /* DateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EFF34225835A590070B320 /* DateCell.swift */; };
 		A2F32EE5258856E70054C55A /* Tournament.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F32EE4258856E70054C55A /* Tournament.swift */; };
 		A2F32EE8258858830054C55A /* TournamentSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F32EE7258858830054C55A /* TournamentSerializer.swift */; };
@@ -242,6 +243,7 @@
 		A2DA693224D74929000CD116 /* AlertKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertKit.swift; sourceTree = "<group>"; };
 		A2DD2C28259A9EE300DFA423 /* RadioButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadioButton.swift; sourceTree = "<group>"; };
 		A2DD2C29259A9EE300DFA423 /* RadioButtonController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadioButtonController.swift; sourceTree = "<group>"; };
+		A2DD606125AF805B00631C7E /* ViewTournamentsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewTournamentsController.swift; sourceTree = "<group>"; };
 		A2EFF34225835A590070B320 /* DateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateCell.swift; sourceTree = "<group>"; };
 		A2F32EE4258856E70054C55A /* Tournament.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tournament.swift; sourceTree = "<group>"; };
 		A2F32EE7258858830054C55A /* TournamentSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentSerializer.swift; sourceTree = "<group>"; };
@@ -472,6 +474,7 @@
 				A20E80C5259E701C00D1EB0B /* ViewChallengesController.swift */,
 				A236BE29259AD5D900162A8B /* ViewController.swift */,
 				A266157425A3AB4700B471F6 /* ViewTeamsController.swift */,
+				A2DD606125AF805B00631C7E /* ViewTournamentsController.swift */,
 				A28FF91B259AD69E000FC656 /* ViewUsersController.swift */,
 			);
 			name = View;
@@ -814,6 +817,7 @@
 				A2C3F39825910A130020A6B2 /* AnnouncementsController.swift in Sources */,
 				A278D31F2585A036008D22D1 /* ChallengeTestingSerializer.swift in Sources */,
 				A2CD9668258D366D00A174D0 /* SignInController.swift in Sources */,
+				A2DD606225AF805C00631C7E /* ViewTournamentsController.swift in Sources */,
 				A2054DF6259D1DF9008CBD4F /* NewTeamController.swift in Sources */,
 				68EB1C831DD7B7070074737B /* SampleController.swift in Sources */,
 			);

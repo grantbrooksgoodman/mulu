@@ -244,7 +244,6 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                         for team in teams.sorted(by: { $0.name < $1.name })
                                         {
                                             let teamAction = UIAlertAction(title: team.name!, style: .default) { _ in
-
                                                 currentTeam = team
 
                                                 self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
@@ -265,25 +264,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                     {
                                         currentTeam = teams[0]
 
-                                        #warning("DEBUG ONLY!")
-                                        AlertKit().optionAlertController(title: "Select User Type",
-                                                                         message: "Please select the console you would like to sign-in to.\n\nNote: This feature is currently enabled for testing purposes only.",
-                                                                         cancelButtonTitle: nil,
-                                                                         additionalButtons: [("Administrator", false), ("Layman User", false)],
-                                                                         preferredActionIndex: nil,
-                                                                         networkDependent: true) { selectedIndex in
-                                            if let index = selectedIndex
-                                            {
-                                                if index == 0
-                                                {
-                                                    self.performSegue(withIdentifier: "CMSSegue", sender: self)
-                                                }
-                                                else if index == 1
-                                                {
-                                                    self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
-                                                }
-                                            }
-                                        }
+                                        self.presentAdminConsoleAlert()
                                     }
                                 }
                             }
@@ -366,6 +347,29 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                                 networkDependent:            false)
 
                 report("An unknown error occurred.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+        }
+    }
+
+    func presentAdminConsoleAlert()
+    {
+        #warning("DEBUG ONLY!")
+        AlertKit().optionAlertController(title: "Select User Type",
+                                         message: "Please select the console you would like to sign-in to.\n\nNote: This feature is currently enabled for testing purposes only.",
+                                         cancelButtonTitle: nil,
+                                         additionalButtons: [("Administrator", false), ("Layman User", false)],
+                                         preferredActionIndex: nil,
+                                         networkDependent: true) { selectedIndex in
+            if let index = selectedIndex
+            {
+                if index == 0
+                {
+                    self.performSegue(withIdentifier: "CMSSegue", sender: self)
+                }
+                else if index == 1
+                {
+                    self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
+                }
             }
         }
     }

@@ -128,11 +128,11 @@ var updateRecords = [AnyCancellable]()
 
     func applicationDidBecomeActive(_: UIApplication)
     {
-        if currentlyAnimating && hasResigned
-        {
-            lastInitializedController.performSegue(withIdentifier: "initialSegue", sender: self)
-            currentlyAnimating = false
-        }
+        //        if currentlyAnimating && hasResigned
+        //        {
+        //            lastInitializedController.performSegue(withIdentifier: "initialSegue", sender: self)
+        //            currentlyAnimating = false
+        //        }
     }
 
     func applicationDidEnterBackground(_: UIApplication)

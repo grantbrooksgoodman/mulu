@@ -71,54 +71,17 @@ class TournamentSerializer
      */
     func addChallenges(_ withIdentifiers: [String], toTournament: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
-        var errors = [String]()
-
-        for (index, identifier) in withIdentifiers.enumerated()
-        {
-            addChallenge(identifier, toTournament: toTournament) { errorDescriptor in
-                if let error = errorDescriptor
-                {
-                    errors.append(error)
-
-                    if index == withIdentifiers.count - 1
-                    {
-                        completion(errors.joined(separator: "\n"))
-                    }
-                }
-                else
-                {
-                    if index == withIdentifiers.count - 1
-                    {
-                        completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     Adds a **Challenge** with a specified identifier to a **Tournament** with a specified identifier.
-
-     - Parameter withIdentifier: The identifier of the **Challenge** to associate with this **Tournament.**
-     - Parameter toTournament: The identifier of the **Tournament** to add this **Challenge** to.
-
-     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
-
-     ~~~
-     completion(errorDescriptor)
-     ~~~
-     */
-    func addChallenge(_ withIdentifier: String, toTournament: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
-    {
         TournamentSerializer().getTournament(withIdentifier: toTournament) { returnedTournament, errorDescriptor in
             if let tournament = returnedTournament
             {
-                var newAssociatedChallenges = [withIdentifier]
+                var newAssociatedChallenges = withIdentifiers
 
                 if let challenges = tournament.associatedChallenges
                 {
                     newAssociatedChallenges.append(contentsOf: challenges.identifiers())
                 }
+
+                newAssociatedChallenges = newAssociatedChallenges.unique()
 
                 GenericSerializer().setValue(onKey: "/allTournaments/\(toTournament)/associatedChallenges", withData: newAssociatedChallenges) { returnedError in
                     if let error = returnedError
@@ -140,6 +103,7 @@ class TournamentSerializer
      Creates a **Tournament** on the server.
 
      - Parameter name: The name of this **Tournament.**
+     - Parameter announcement: An optional string representing the current announcement for the **Tournament.**
      - Parameter startDate: The **Tournament's** start date.
      - Parameter endDate: The **Tournament's** end date.
      - Parameter associatedChallenges: An optional array containing the **Challenges** associated with this **Tournament.**
@@ -154,6 +118,7 @@ class TournamentSerializer
      ~~~
      */
     func createTournament(name: String,
+                          announcement: String?,
                           startDate: Date,
                           endDate: Date,
                           associatedChallenges: [String]?,
@@ -163,6 +128,7 @@ class TournamentSerializer
         var dataBundle: [String: Any] = [:]
 
         dataBundle["name"]                 = name
+        dataBundle["announcement"]         = announcement ?? "!"
         dataBundle["startDate"]            = secondaryDateFormatter.string(from: startDate)
         dataBundle["endDate"]              = secondaryDateFormatter.string(from: endDate)
         dataBundle["associatedChallenges"] = associatedChallenges == nil ? ["!"] : associatedChallenges
@@ -313,10 +279,10 @@ class TournamentSerializer
             }
             else { completion(nil, "No Tournament exists with the identifier \"\(withIdentifier)\".") }
         })
-        { returnedError in
+            { returnedError in
 
-            completion(nil, "Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
-        }
+                completion(nil, "Unable to retrieve the specified data. (\(returnedError.localizedDescription))")
+            }
     }
 
     //==================================================//
@@ -435,6 +401,9 @@ class TournamentSerializer
         guard let name = dataBundle["name"] as? String else
         { completion(nil, "Unable to deserialize «name»."); return }
 
+        guard let announcement = dataBundle["announcement"] as? String else
+        { completion(nil, "Unable to deserialize «announcement»."); return }
+
         guard let startDateString = dataBundle["startDate"] as? String,
               let startDate = secondaryDateFormatter.date(from: startDateString) else
         { completion(nil, "Unable to deserialize «startDate»."); return }
@@ -453,6 +422,7 @@ class TournamentSerializer
         {
             let deSerializedTournament = Tournament(associatedIdentifier: associatedIdentifier,
                                                     name:                 name,
+                                                    announcement:         announcement == "!" ? nil : announcement,
                                                     startDate:            startDate,
                                                     endDate:              endDate,
                                                     associatedChallenges: nil,
@@ -467,6 +437,7 @@ class TournamentSerializer
                 {
                     let deSerializedTournament = Tournament(associatedIdentifier: associatedIdentifier,
                                                             name:                 name,
+                                                            announcement:         announcement == "!" ? nil : announcement,
                                                             startDate:            startDate,
                                                             endDate:              endDate,
                                                             associatedChallenges: challenges,
@@ -519,24 +490,5 @@ class TournamentSerializer
                 }
             }
         }
-    }
-}
-
-//==================================================//
-
-/* MARK: Extensions */
-
-extension Array where Element == Challenge
-{
-    func identifiers() -> [String]
-    {
-        var identifiers = [String]()
-
-        for challenge in self
-        {
-            identifiers.append(challenge.associatedIdentifier)
-        }
-
-        return identifiers
     }
 }

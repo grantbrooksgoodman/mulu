@@ -28,12 +28,15 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
     @IBOutlet var stepTitleLabel:       UILabel!
     @IBOutlet var tableViewPromptLabel: UILabel!
 
+    //UITextViews
+    @IBOutlet var announcementTextView: UITextView!
+    @IBOutlet var stepTextView:         UITextView!
+
     //Other Elements
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     @IBOutlet var datePicker: UIDatePicker!
     @IBOutlet var largeTextField: UITextField!
     @IBOutlet var progressView: UIProgressView!
-    @IBOutlet var stepTextView: UITextView!
     @IBOutlet var tableView: UITableView!
 
     //==================================================//
@@ -56,7 +59,7 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
 
     //Strings
     var tournamentName: String?
-    var stepText = "🔴 Set name\n🔴 Set start & end date\n🔴 Add teams\n🔴 Add challenges"
+    var stepText = "🔴 Set name\n🔴 Set start & end date\n🔴 Add teams & challenges\n🔴 Add an announcement"
 
     //Other Declarations
     var buildInstance: Build!
@@ -75,6 +78,7 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
         case endDate
         case teams
         case challenges
+        case announcement
     }
 
     //==================================================//
@@ -104,6 +108,12 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
                           .paragraphStyle: paragraphStyle]
 
         stepTextView.attributedText = NSAttributedString(string: stepText, attributes: stepAttributes)
+
+        announcementTextView.layer.borderWidth   = 2
+        announcementTextView.layer.cornerRadius  = 10
+        announcementTextView.layer.borderColor   = UIColor(hex: 0xE1E0E1).cgColor
+        announcementTextView.clipsToBounds       = true
+        announcementTextView.layer.masksToBounds = true
 
         let navigationButtonAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.boldSystemFont(ofSize: 17)]
 
@@ -165,6 +175,9 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
         case .challenges:
             goBack()
             forwardToTeams()
+        case .announcement:
+            goBack()
+            forwardToChallenges()
         default:
             goBack()
             forwardToName()
@@ -242,6 +255,8 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
                 nextButton.isEnabled = true
                 backButton.isEnabled = true
             }
+        case .challenges:
+            forwardToAnnouncement()
         default:
             forwardToFinish()
         }
@@ -320,6 +335,7 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
         { report("Required metadata not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return }
 
         TournamentSerializer().createTournament(name: tournamentName,
+                                                announcement: announcementTextView.text!.lowercasedTrimmingWhitespace == "" ? nil : announcementTextView.text!,
                                                 startDate: startDate,
                                                 endDate: endDate,
                                                 associatedChallenges: selectedChallenges.isEmpty ? nil : selectedChallenges,
@@ -354,11 +370,11 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
 
         if isGoingBack
         {
-            stepProgress(forwardDirection: false)
+            progressView.setProgress(0, animated: true)
             isGoingBack = false
         }
 
-        stepText = "🟡 Set name\n🔴 Set start & end date\n🔴 Add teams\n🔴 Add challenges"
+        stepText = "🟡 Set name\n🔴 Set start & end date\n🔴 Add teams & challenges\n🔴 Add an announcement"
         animateStepChange()
 
         UIView.animate(withDuration: 0.2) {
@@ -376,10 +392,10 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
     {
         findAndResignFirstResponder()
 
-        stepProgress(forwardDirection: !isGoingBack)
+        setProgress(forwards: !isGoingBack, step: 1)
         isGoingBack = false
 
-        stepText = "🟢 Set name\n🟡 Set start & end date\n🔴 Add teams\n🔴 Add challenges"
+        stepText = "🟢 Set name\n🟡 Set start & end date\n🔴 Add teams & challenges\n🔴 Add an announcement"
         animateStepChange()
 
         UIView.animate(withDuration: 0.2) {
@@ -406,10 +422,10 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
 
     func forwardToEndDate()
     {
-        stepProgress(forwardDirection: !isGoingBack)
+        setProgress(forwards: !isGoingBack, step: 2)
         isGoingBack = false
 
-        stepText = "🟢 Set name\n🟡 Set start & end date\n🔴 Add teams\n🔴 Add challenges"
+        stepText = "🟢 Set name\n🟡 Set start & end date\n🔴 Add teams & challenges\n🔴 Add an announcement"
         animateStepChange()
 
         UIView.animate(withDuration: 0.2) {
@@ -439,10 +455,10 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
     {
         findAndResignFirstResponder()
 
-        stepProgress(forwardDirection: !isGoingBack)
+        setProgress(forwards: !isGoingBack, step: 3)
         isGoingBack = false
 
-        stepText = "🟢 Set name\n🟢 Set start & end date\n🟡 Add teams\n🔴 Add challenges"
+        stepText = "🟢 Set name\n🟢 Set start & end date\n🟡 Add teams & challenges\n🔴 Add an announcement"
         animateStepChange()
 
         currentStep = .teams
@@ -454,35 +470,72 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
 
     func forwardToChallenges()
     {
-        stepProgress(forwardDirection: !isGoingBack)
+        setProgress(forwards: !isGoingBack, step: 4)
         isGoingBack = false
 
-        stepText = "🟢 Set name\n🟢 Set start & end date\n🟢 Add teams\n🟡 Add challenges"
+        stepText = "🟢 Set name\n🟢 Set start & end date\n🟡 Add teams & challenges\n🔴 Add an announcement"
         animateStepChange()
 
         currentStep = .challenges
-        nextButton.title = "Finish"
+        nextButton.title = "Next"
         tableView.tag = aTagFor("challengeTableView")
 
-        if challengeArray != nil
-        {
-            animateTableViewAppearance()
-        }
-        else
-        {
-            ChallengeSerializer().getAllChallenges { returnedChallenges, errorDescriptor in
-                if let challenges = returnedChallenges
-                {
-                    self.challengeArray = challenges.sorted(by: { $0.title < $1.title })
+        UIView.animate(withDuration: 0.2) {
+            self.tableViewPromptLabel.alpha = 0
+            self.tableView.alpha = 0
+        } completion: { _ in
+            if self.challengeArray != nil
+            {
+                self.animateTableViewAppearance()
+            }
+            else
+            {
+                ChallengeSerializer().getAllChallenges { returnedChallenges, errorDescriptor in
+                    if let challenges = returnedChallenges
+                    {
+                        self.challengeArray = challenges.sorted(by: { $0.title < $1.title })
 
-                    self.animateTableViewAppearance()
-                }
-                else if let error = errorDescriptor
-                {
-                    report(error, errorCode: nil, isFatal: true, metadata: [#file, #function, #line])
+                        self.animateTableViewAppearance()
+                    }
+                    else if let error = errorDescriptor
+                    {
+                        report(error, errorCode: nil, isFatal: true, metadata: [#file, #function, #line])
+                    }
                 }
             }
         }
+    }
+
+    func forwardToAnnouncement()
+    {
+        findAndResignFirstResponder()
+
+        setProgress(forwards: !isGoingBack, step: 5)
+        isGoingBack = false
+
+        stepText = "🟢 Set name\n🟢 Set start & end date\n🟢 Add teams & challenges\n🟡 Add an announcement"
+        animateStepChange()
+
+        UIView.animate(withDuration: 0.2) {
+            self.tableView.alpha = 0
+            self.tableViewPromptLabel.alpha = 0
+        } completion: { _ in
+            self.stepTitleLabel.text = "SELECT END DATE:"
+            self.stepTitleLabel.textAlignment = .left
+
+            UIView.animate(withDuration: 0.2, delay: 0.5) {
+                self.stepTitleLabel.alpha = 1
+                self.announcementTextView.alpha = 1
+            }  completion: { _ in
+                self.announcementTextView.becomeFirstResponder()
+
+                self.nextButton.isEnabled = true
+                self.backButton.isEnabled = true
+            }
+        }
+
+        currentStep = .announcement
+        nextButton.title = "Finish"
     }
 
     func forwardToFinish()
@@ -491,14 +544,15 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
         backButton.isEnabled   = false
         cancelButton.isEnabled = false
 
-        stepProgress(forwardDirection: true)
+        findAndResignFirstResponder()
+        setProgress(forwards: true, step: 6)
 
-        stepText = "🟢 Set name\n🟢 Set start & end date\n🟢 Add teams\n🟢 Add challenges"
+        stepText = "🟢 Set name\n🟢 Set start & end date\n🟢 Add teams & challenges\n🟢 Add an announcement"
         animateStepChange()
 
         UIView.animate(withDuration: 0.2) {
-            self.tableViewPromptLabel.alpha = 0
-            self.tableView.alpha = 0
+            self.stepTitleLabel.alpha = 0
+            self.announcementTextView.alpha = 0
         } completion: { _ in
             self.stepTitleLabel.text = "WORKING..."
             self.stepTitleLabel.textAlignment = .center
@@ -524,11 +578,6 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
 
         findAndResignFirstResponder()
 
-        if currentStep != .startDate
-        {
-            stepProgress(forwardDirection: false)
-        }
-
         UIView.animate(withDuration: 0.2) {
             for subview in self.view.subviews
             {
@@ -545,9 +594,20 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
     }
 
+    func setProgress(forwards: Bool, step: Float)
+    {
+        UIView.animate(withDuration: 0.2) {
+            if forwards
+            {
+                self.progressView.setProgress(step / 6, animated: true)
+            }
+            else { self.progressView.setProgress(self.progressView.progress - (step / 6), animated: true) }
+        }
+    }
+
     func stepProgress(forwardDirection: Bool)
     {
-        UIView.animate(withDuration: 0.2) { self.progressView.setProgress(self.progressView.progress + (forwardDirection ? 0.2 : -0.2), animated: true) }
+        UIView.animate(withDuration: 0.2) { self.progressView.setProgress(self.progressView.progress + (forwardDirection ? 0.1666666667 : -0.1666666667), animated: true) }
     }
 
     func verifyName() -> Bool
