@@ -102,6 +102,31 @@ class Tournament
     }
 
     /**
+     Updates the **Tournament's** name.
+
+     - Parameter name: The string of the new name for this **Tournament.**
+     - Parameter completion: Upon failure, returns a string describing the error(s) encountered.
+
+     - Requires: The `name` to be different from the **Tournament's** current name.
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
+    func updateName(_ name: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
+    {
+        guard name != self.name else
+        { completion("No changes made."); return }
+
+        GenericSerializer().setValue(onKey: "/allTournaments/\(associatedIdentifier!)/name", withData: name) { returnedError in
+            if let error = returnedError
+            {
+                completion(errorInfo(error))
+            }
+            else { completion(nil) }
+        }
+    }
+
+    /**
      Updates the **Tournament's** *teamIdentifiers* array.
 
      - Parameter teams: An array with the identifiers of the **Teams** to associate with this **Tournament.**

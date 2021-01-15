@@ -520,7 +520,7 @@ class NewTournamentController: UIViewController, MFMailComposeViewControllerDele
             self.tableView.alpha = 0
             self.tableViewPromptLabel.alpha = 0
         } completion: { _ in
-            self.stepTitleLabel.text = "SELECT END DATE:"
+            self.stepTitleLabel.text = "ADD AN ANNOUNCEMENT:"
             self.stepTitleLabel.textAlignment = .left
 
             UIView.animate(withDuration: 0.2, delay: 0.5) {

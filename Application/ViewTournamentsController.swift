@@ -50,6 +50,7 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
     var titleAttributes:    [NSAttributedString.Key: Any]!
 
     //Other Declarations
+    let mediumDateFormatter = DateFormatter()
     let paragraphStyle = NSMutableParagraphStyle()
 
     var buildInstance: Build!
@@ -99,6 +100,8 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
                                            customBorderFrame:  nil,
                                            customCornerRadius: nil,
                                            shadowColor:        UIColor(hex: 0x3B9A1B).cgColor)
+
+        mediumDateFormatter.dateStyle = .medium
 
         textView.delegate = self
 
@@ -168,10 +171,10 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
 
     @IBAction func announceDoneButton(_: Any)
     {
+        textView.resignFirstResponder()
+
         guard textView.text! != previousAnnouncement else
         {
-            textView.resignFirstResponder()
-
             flashSuccessHUD(text: nil, for: 1.5, delay: 0.5) { self.announceCancelButton(self.announceCancelButton!) }; return
         }
 
@@ -222,61 +225,16 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
             else { addSelectedTeamsToTournament() }; return
         }
 
-        addSelectedChallengesToTournament()
+        if selectedChallenges.isEmpty
+        {
+            hideSelectionTableView()
+        }
+        else { addSelectedChallengesToTournament() }
     }
 
     //==================================================//
 
     /* MARK: Action Sheet Functions */
-
-    func addRemoveChallengesAction()
-    {
-        deselectAllCells()
-
-        selectionTableView.tag = aTagFor("challengeTableView")
-        tournamentTableView.isUserInteractionEnabled = false
-
-        UIView.transition(with: titleLabel, duration: 0.35, options: .transitionCrossDissolve, animations: {
-            self.titleLabel.text = self.tournamentArray[self.selectedIndexPath.row].name!
-        })
-
-        UIView.animate(withDuration: 0.2) {
-            self.activityIndicator.alpha = 1
-            self.tournamentTableView.alpha = 0
-        } completion: { _ in
-            self.setChallengeArray { errorDescriptor in
-                if let error = errorDescriptor
-                {
-                    AlertKit().errorAlertController(title:                       "Couldn't Get Challenges",
-                                                    message:                     error,
-                                                    dismissButtonTitle:          nil,
-                                                    additionalSelectors:         nil,
-                                                    preferredAdditionalSelector: nil,
-                                                    canFileReport:               true,
-                                                    extraInfo:                   error,
-                                                    metadata:                    [#file, #function, #line],
-                                                    networkDependent:            true) {
-                        self.reloadData()
-                    }
-                }
-                else
-                {
-                    self.promptLabel.text = "SELECT CHALLENGES TO ASSOCIATE WITH THIS TOURNAMENT:"
-
-                    self.selectionTableView.dataSource = self
-                    self.selectionTableView.delegate = self
-
-                    self.selectionTableView.reloadData()
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) {
-                        self.selectionTableView.scrollToRow(at: IndexPath(row: self.challengeArray.count - 1, section: 0), at: .bottom, animated: false)
-
-                        self.finishSelectionTableViewSetup()
-                    }
-                }
-            }
-        }
-    }
 
     func addRemoveTeamsAction()
     {
@@ -462,13 +420,13 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
             [.capitalisationType:  UITextAutocapitalizationType.none,
              .correctionType:      UITextAutocorrectionType.no,
              .editingMode:         UITextField.ViewMode.whileEditing,
-             .keyboardType:        UIKeyboardType.numbersAndPunctuation,
+             .keyboardType:        UIKeyboardType.asciiCapableNumberPad,
              .placeholderText:     "",
              .sampleText:          sampleDateString,
              .textAlignment:       NSTextAlignment.center]
 
         AlertKit().textAlertController(title: "Editing \(dateReferenceString.capitalized) Date",
-                                       message: "Enter a new \(dateReferenceString) date for \(selectedTournament.name!) in the DD.MM.YYYY format.",
+                                       message: "Enter a new \(dateReferenceString) date for \(selectedTournament.name!) in the day.month.year format.",
                                        cancelButtonTitle: nil,
                                        additionalButtons: [("Done", false)],
                                        preferredActionIndex: 0,
@@ -510,7 +468,7 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
                     else
                     {
                         AlertKit().errorAlertController(title:                       "Invalid Date",
-                                                        message:                     "The provided date was invalid. Please follow the DD.MM.YYYY format.",
+                                                        message:                     "The provided date was invalid. Please follow the 'day.month.year' format.",
                                                         dismissButtonTitle:          "Cancel",
                                                         additionalSelectors:         ["Try Again": #selector(ViewTournamentsController.editDateAction)],
                                                         preferredAdditionalSelector: 0,
@@ -523,6 +481,104 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
                 else if index == -1
                 {
                     self.reSelectRow()
+                }
+            }
+        }
+    }
+
+    @objc func editNameAction()
+    {
+        let selectedTournament = tournamentArray[selectedIndexPath.row]
+
+        let textFieldAttributes: [AlertKit.AlertControllerTextFieldAttribute: Any] =
+            [.capitalisationType: UITextAutocapitalizationType.words,
+             .correctionType:      UITextAutocorrectionType.default,
+             .editingMode:         UITextField.ViewMode.whileEditing,
+             .keyboardType:        UIKeyboardType.default,
+             .placeholderText:     "",
+             .sampleText:          "\(selectedTournament.name!)",
+             .textAlignment:       NSTextAlignment.center]
+
+        AlertKit().textAlertController(title: "Editing Name",
+                                       message: "Enter a new name for this tournament.",
+                                       cancelButtonTitle: nil,
+                                       additionalButtons: [("Done", false)],
+                                       preferredActionIndex: 0,
+                                       textFieldAttributes: textFieldAttributes,
+                                       networkDependent: true) { returnedString, selectedIndex in
+            if let index = selectedIndex
+            {
+                if index == 0
+                {
+                    if let newName = returnedString,
+                       newName.lowercasedTrimmingWhitespace != ""
+                    {
+                        showProgressHUD(text: "Setting name...", delay: nil)
+
+                        selectedTournament.updateName(newName) { errorDescriptor in
+                            if let error = errorDescriptor
+                            {
+                                hideHUD(delay: 1) {
+                                    self.errorAlert(title: "Couldn't Set Name", message: error)
+                                }
+                            }
+                            else { self.showSuccessAndReload() }
+                        }
+                    }
+                    else { self.sameInputAlert(#selector(self.editNameAction)) }
+                }
+                else if selectedIndex == 1
+                {
+                    self.reSelectRow()
+                }
+            }
+        }
+    }
+
+    func manageChallengesAction()
+    {
+        deselectAllCells()
+
+        selectionTableView.tag = aTagFor("challengeTableView")
+        tournamentTableView.isUserInteractionEnabled = false
+
+        UIView.transition(with: titleLabel, duration: 0.35, options: .transitionCrossDissolve, animations: {
+            self.titleLabel.text = self.tournamentArray[self.selectedIndexPath.row].name!
+        })
+
+        UIView.animate(withDuration: 0.2) {
+            self.activityIndicator.alpha = 1
+            self.tournamentTableView.alpha = 0
+        } completion: { _ in
+            self.setChallengeArray { errorDescriptor in
+                if let error = errorDescriptor
+                {
+                    AlertKit().errorAlertController(title:                       "Couldn't Get Challenges",
+                                                    message:                     error,
+                                                    dismissButtonTitle:          nil,
+                                                    additionalSelectors:         nil,
+                                                    preferredAdditionalSelector: nil,
+                                                    canFileReport:               true,
+                                                    extraInfo:                   error,
+                                                    metadata:                    [#file, #function, #line],
+                                                    networkDependent:            true) {
+                        self.reloadData()
+                    }
+                }
+                else
+                {
+                    self.promptLabel.text = "SELECT CHALLENGES TO ASSOCIATE WITH THIS TOURNAMENT:"
+
+                    self.selectionTableView.dataSource = self
+                    self.selectionTableView.delegate = self
+
+                    self.selectionTableView.reloadData()
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) {
+                        self.selectionTableView.scrollToRow(at: IndexPath(row: self.challengeArray.count - 1, section: 0), at: .bottom, animated: false)
+
+                        self.finishSelectionTableViewSetup()
+                    }
                 }
             }
         }
@@ -572,6 +628,49 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
         actionSheet.addAction(dismissAction)
 
         present(actionSheet, animated: true)
+    }
+
+    //==================================================//
+
+    /* MARK: Status Alert Functions */
+
+    func errorAlert(title: String, message: String)
+    {
+        AlertKit().errorAlertController(title:                       title,
+                                        message:                     message,
+                                        dismissButtonTitle:          nil,
+                                        additionalSelectors:         nil,
+                                        preferredAdditionalSelector: nil,
+                                        canFileReport:               true,
+                                        extraInfo:                   message,
+                                        metadata:                    [#file, #function, #line],
+                                        networkDependent:            true)
+    }
+
+    func noTextAlert(_ selector: Selector)
+    {
+        AlertKit().errorAlertController(title:                       "Nothing Entered",
+                                        message:                     "No text was entered. Please try again.",
+                                        dismissButtonTitle:          "Cancel",
+                                        additionalSelectors:         ["Try Again": selector],
+                                        preferredAdditionalSelector: 0,
+                                        canFileReport:               false,
+                                        extraInfo:                   nil,
+                                        metadata:                    [#file, #function, #line],
+                                        networkDependent:            false)
+    }
+
+    func sameInputAlert(_ selector: Selector)
+    {
+        AlertKit().errorAlertController(title:                       "Same Value",
+                                        message:                     "The value entered was unchanged.",
+                                        dismissButtonTitle:          "Cancel",
+                                        additionalSelectors:         ["Try Again": selector],
+                                        preferredAdditionalSelector: 0,
+                                        canFileReport:               false,
+                                        extraInfo:                   nil,
+                                        metadata:                    [#file, #function, #line],
+                                        networkDependent:            false)
     }
 
     //==================================================//
@@ -682,19 +781,6 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
         }
     }
 
-    func errorAlert(title: String, message: String)
-    {
-        AlertKit().errorAlertController(title:                       title,
-                                        message:                     message,
-                                        dismissButtonTitle:          nil,
-                                        additionalSelectors:         nil,
-                                        preferredAdditionalSelector: nil,
-                                        canFileReport:               true,
-                                        extraInfo:                   message,
-                                        metadata:                    [#file, #function, #line],
-                                        networkDependent:            true)
-    }
-
     func finishSelectionTableViewSetup()
     {
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) {
@@ -738,9 +824,12 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
 
     func generateChallengesString() -> String
     {
+        guard let associatedChallenges = tournamentArray[selectedIndexPath.row].associatedChallenges else
+        { report("No associated Challenges!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return "" }
+
         var challengesString = ""
 
-        let sortedChallenges = tournamentArray[selectedIndexPath.row].associatedChallenges!.sorted(by: { $0.title < $1.title })
+        let sortedChallenges = associatedChallenges.sorted(by: { $0.title < $1.title })
 
         for challenge in sortedChallenges
         {
@@ -924,7 +1013,7 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
                         }
                     }
 
-                    filteredChallenges.sort(by: { $0.title < $1.title })
+                    filteredChallenges.sort(by: { $0.datePosted.comparator.days(from: Date().comparator) > $1.datePosted.comparator.days(from: Date()) })
                     self.selectedChallenges = filteredChallenges.identifiers()
 
                     var sortedUnselectedChallenges = [Challenge]()
@@ -937,7 +1026,7 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
                         }
                     }
 
-                    filteredChallenges.append(contentsOf: sortedUnselectedChallenges.sorted(by: { $0.title < $1.title }))
+                    filteredChallenges.append(contentsOf: sortedUnselectedChallenges.sorted(by: { $0.datePosted.comparator.days(from: Date().comparator) > $1.datePosted.comparator.days(from: Date()) }))
 
                     self.challengeArray = filteredChallenges
                     completion(nil)
@@ -1044,7 +1133,24 @@ extension ViewTournamentsController: UITableViewDataSource, UITableViewDelegate
         }
 
         selectionCell.titleLabel.text = challengeArray[indexPath.row].title!
-        selectionCell.subtitleLabel.text = ""
+
+        let challengePostDate = challengeArray[indexPath.row].datePosted!
+        let mediumDateString = mediumDateFormatter.string(from: challengePostDate)
+
+        if challengePostDate.comparator > Date().comparator
+        {
+            if challengePostDate.comparator.days(from: Date().comparator) == 1
+            {
+                selectionCell.subtitleLabel.text = "will be posted tomorrow"
+            }
+            else
+            { selectionCell.subtitleLabel.text = "will be posted on \(challengePostDate.formattedString())" }
+        }
+        else if challengePostDate.comparator == Date().comparator
+        {
+            selectionCell.subtitleLabel.text = "posted today"
+        }
+        else { selectionCell.subtitleLabel.text = "posted on \(mediumDateString)" }
 
         if let challenges = tournamentArray[selectedIndexPath.row].associatedChallenges
         {
@@ -1172,18 +1278,18 @@ extension ViewTournamentsController: UITableViewDataSource, UITableViewDelegate
             self.addRemoveTeamsAction()
         }
 
-        let addRemoveChallengesAction = UIAlertAction(title: "Add/Remove Challenges", style: .default) { _ in
-            tableView.deselectRow(at: indexPath, animated: true)
-            tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
-
-            self.addRemoveChallengesAction()
-        }
-
         let editAnnouncementAction = UIAlertAction(title: "Edit Announcement", style: .default) { _ in
             tableView.deselectRow(at: indexPath, animated: true)
             tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
 
             self.editAnnouncementAction()
+        }
+
+        let editNameAction = UIAlertAction(title: "Edit Name", style: .default) { _ in
+            tableView.deselectRow(at: indexPath, animated: true)
+            tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
+
+            self.editNameAction()
         }
 
         let editStartEndDateAction = UIAlertAction(title: "Edit Start/End Date", style: .default) { _ in
@@ -1195,12 +1301,19 @@ extension ViewTournamentsController: UITableViewDataSource, UITableViewDelegate
             self.editDateActionAlert()
         }
 
-        let viewChallengesAction = UIAlertAction(title: "View Associated Challenges", style: .default) { _ in
+        let manageChallengesAction = UIAlertAction(title: "Manage Challenges", style: .default) { _ in
             tableView.deselectRow(at: indexPath, animated: true)
             tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
 
-            self.viewChallengesAction()
+            self.manageChallengesAction()
         }
+
+        //        let viewChallengesAction = UIAlertAction(title: "View Associated Challenges", style: .default) { _ in
+        //            tableView.deselectRow(at: indexPath, animated: true)
+        //            tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
+        //
+        //            self.viewChallengesAction()
+        //        }
 
         let viewRankingsAction = UIAlertAction(title: "View Rankings", style: .default) { _ in
             tableView.deselectRow(at: indexPath, animated: true)
@@ -1222,12 +1335,12 @@ extension ViewTournamentsController: UITableViewDataSource, UITableViewDelegate
         }
 
         actionSheet.addAction(addRemoveTeamsAction)
-        actionSheet.addAction(addRemoveChallengesAction)
 
         actionSheet.addAction(editAnnouncementAction)
+        actionSheet.addAction(editNameAction)
         actionSheet.addAction(editStartEndDateAction)
 
-        actionSheet.addAction(viewChallengesAction)
+        actionSheet.addAction(manageChallengesAction) /*actionSheet.addAction(viewChallengesAction)*/
         actionSheet.addAction(viewRankingsAction)
 
         actionSheet.addAction(deleteTournamentAction)

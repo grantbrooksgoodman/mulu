@@ -134,7 +134,7 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
             if selectedUsers.isEmpty
             {
                 AlertKit().confirmationAlertController(title:                   "Nothing Selected",
-                                                       message:                 "You have not selected any users. Would you like to cancel?",
+                                                       message:                 "You have not selected any users. Teams must be associated with at least one user.\n\nWould you like to cancel?",
                                                        cancelConfirmTitles:     ["cancel": "No", "confirm": "Yes, cancel"],
                                                        confirmationDestructive: true,
                                                        confirmationPreferred:   true,
@@ -145,7 +145,45 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
                     }
                 }
             }
-            else { addSelectedUsersToTeam() }; return
+            else
+            {
+                let selectedTeam = teamArray[selectedIndexPath.row]
+
+                let usersToRemove = Array(teamArray[selectedIndexPath.row].participantIdentifiers.keys).filter { !selectedUsers.identifiers().contains($0) }
+
+                var userList = ""
+
+                for identifier in usersToRemove
+                {
+                    let matchingUser = selectedTeam.DSParticipants!.filter { $0.associatedIdentifier == identifier }[0]
+
+                    if userList == ""
+                    {
+                        userList = "– \(matchingUser.firstName!) \(matchingUser.lastName!)"
+                    }
+                    else
+                    {
+                        userList = "\(userList)\n– \(matchingUser.firstName!) \(matchingUser.lastName!)"
+                    }
+                }
+
+                if !usersToRemove.isEmpty
+                {
+                    AlertKit().confirmationAlertController(title:                   "Will Remove Users",
+                                                           message:                 "The following users will be removed from \(selectedTeam.name!):\n\n\(userList)\n\nPlease confirm this operation.",
+                                                           cancelConfirmTitles:     [:],
+                                                           confirmationDestructive: true,
+                                                           confirmationPreferred:   true,
+                                                           networkDepedent:         false) { didConfirm in
+                        if didConfirm!
+                        {
+                            self.updateTeamParticipants()
+                        }
+                    }
+                }
+                else { updateTeamParticipants() }
+
+            }; return
         }
 
         if selectedTournament != nil
@@ -172,11 +210,15 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
 
     /* MARK: Action Sheet Functions */
 
-    func addMembersAction()
+    func addRemoveUsersAction()
     {
         deselectAllCells()
 
         teamTableView.isUserInteractionEnabled = false
+
+        UIView.transition(with: titleLabel, duration: 0.35, options: .transitionCrossDissolve, animations: {
+            self.titleLabel.text = self.teamArray[self.selectedIndexPath.row].name!
+        })
 
         UIView.animate(withDuration: 0.2) {
             self.activityIndicator.alpha = 1
@@ -214,7 +256,7 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
                         }; return
                     }
 
-                    self.promptLabel.text = "SELECT USERS TO ADD:"
+                    self.promptLabel.text = "SELECT USERS FOR THIS TEAM:"
 
                     self.selectionTableView.dataSource = self
                     self.selectionTableView.delegate = self
@@ -223,11 +265,12 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
 
                     self.selectionTableView.layer.cornerRadius = 10
 
-                    UIView.animate(withDuration: 0.2) {
-                        self.activityIndicator.alpha  = 0
-                        self.doneButton.alpha         = 1
-                        self.promptLabel.alpha        = 1
-                        self.selectionTableView.alpha = 0.6
+                    self.deselectAllCells()
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) {
+                        self.selectionTableView.scrollToRow(at: IndexPath(row: self.userArray.count - 1, section: 0), at: .bottom, animated: false)
+
+                        self.finishSelectionTableViewSetup()
                     }
                 }
             }
@@ -360,35 +403,91 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
                                        preferredActionIndex: 0,
                                        textFieldAttributes: textFieldAttributes,
                                        networkDependent: true) { returnedString, selectedIndex in
-            if let index = selectedIndex, index == 0
+            if let index = selectedIndex
             {
-                if let string = returnedString,
-                   let points = Int(string),
-                   points > -1
+                if index == 0
                 {
-                    showProgressHUD(text: "Setting points...", delay: nil)
+                    if let string = returnedString,
+                       let points = Int(string),
+                       points > -1
+                    {
+                        showProgressHUD(text: "Setting points...", delay: nil)
 
-                    self.teamArray[self.selectedIndexPath.row].setAdditionalPoints(points) { errorDescriptor in
-                        if let error = errorDescriptor
-                        {
-                            hideHUD(delay: 1) {
-                                self.errorAlert(title: "Couldn't Set Points", message: error)
+                        self.teamArray[self.selectedIndexPath.row].updateAdditionalPoints(points) { errorDescriptor in
+                            if let error = errorDescriptor
+                            {
+                                hideHUD(delay: 1) {
+                                    self.errorAlert(title: "Couldn't Set Points", message: error)
+                                }
                             }
+                            else { self.showSuccessAndReload() }
                         }
-                        else { self.showSuccessAndReload() }
+                    }
+                    else
+                    {
+                        AlertKit().errorAlertController(title:                       "Invalid Point Value",
+                                                        message:                     "Be sure to enter only (positive) numbers and that they do not exceed the integer ceiling.",
+                                                        dismissButtonTitle:          "Cancel",
+                                                        additionalSelectors:         ["Try Again": #selector(ViewTeamsController.editAdditionalPointsAction)],
+                                                        preferredAdditionalSelector: 0,
+                                                        canFileReport:               false,
+                                                        extraInfo:                   nil,
+                                                        metadata:                    [#file, #function, #line],
+                                                        networkDependent:            false)
                     }
                 }
-                else
+                else if index == -1
                 {
-                    AlertKit().errorAlertController(title:                       "Invalid Point Value",
-                                                    message:                     "Be sure to enter only (positive) numbers and that they do not exceed the integer ceiling.",
-                                                    dismissButtonTitle:          "Cancel",
-                                                    additionalSelectors:         ["Try Again": #selector(ViewTeamsController.editAdditionalPointsAction)],
-                                                    preferredAdditionalSelector: 0,
-                                                    canFileReport:               false,
-                                                    extraInfo:                   nil,
-                                                    metadata:                    [#file, #function, #line],
-                                                    networkDependent:            false)
+                    self.reSelectRow()
+                }
+            }
+        }
+    }
+
+    @objc func editNameAction()
+    {
+        let selectedTeam = teamArray[selectedIndexPath.row]
+
+        let textFieldAttributes: [AlertKit.AlertControllerTextFieldAttribute: Any] =
+            [.capitalisationType: UITextAutocapitalizationType.words,
+             .correctionType:      UITextAutocorrectionType.default,
+             .editingMode:         UITextField.ViewMode.whileEditing,
+             .keyboardType:        UIKeyboardType.default,
+             .placeholderText:     "",
+             .sampleText:          "\(selectedTeam.name!)",
+             .textAlignment:       NSTextAlignment.center]
+
+        AlertKit().textAlertController(title: "Editing Name",
+                                       message: "Enter a new name for this team.",
+                                       cancelButtonTitle: nil,
+                                       additionalButtons: [("Done", false)],
+                                       preferredActionIndex: 0,
+                                       textFieldAttributes: textFieldAttributes,
+                                       networkDependent: true) { returnedString, selectedIndex in
+            if let index = selectedIndex
+            {
+                if index == 0
+                {
+                    if let newName = returnedString,
+                       newName.lowercasedTrimmingWhitespace != ""
+                    {
+                        showProgressHUD(text: "Setting name...", delay: nil)
+
+                        selectedTeam.updateName(newName) { errorDescriptor in
+                            if let error = errorDescriptor
+                            {
+                                hideHUD(delay: 1) {
+                                    self.errorAlert(title: "Couldn't Set Name", message: error)
+                                }
+                            }
+                            else { self.showSuccessAndReload() }
+                        }
+                    }
+                    else { self.sameInputAlert(#selector(self.editNameAction)) }
+                }
+                else if selectedIndex == 1
+                {
+                    self.reSelectRow()
                 }
             }
         }
@@ -471,6 +570,49 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
 
     //==================================================//
 
+    /* MARK: Status Alert Functions */
+
+    func errorAlert(title: String, message: String)
+    {
+        AlertKit().errorAlertController(title:                       title,
+                                        message:                     message,
+                                        dismissButtonTitle:          nil,
+                                        additionalSelectors:         nil,
+                                        preferredAdditionalSelector: nil,
+                                        canFileReport:               true,
+                                        extraInfo:                   message,
+                                        metadata:                    [#file, #function, #line],
+                                        networkDependent:            true)
+    }
+
+    func noTextAlert(_ selector: Selector)
+    {
+        AlertKit().errorAlertController(title:                       "Nothing Entered",
+                                        message:                     "No text was entered. Please try again.",
+                                        dismissButtonTitle:          "Cancel",
+                                        additionalSelectors:         ["Try Again": selector],
+                                        preferredAdditionalSelector: 0,
+                                        canFileReport:               false,
+                                        extraInfo:                   nil,
+                                        metadata:                    [#file, #function, #line],
+                                        networkDependent:            false)
+    }
+
+    func sameInputAlert(_ selector: Selector)
+    {
+        AlertKit().errorAlertController(title:                       "Same Value",
+                                        message:                     "The value entered was unchanged.",
+                                        dismissButtonTitle:          "Cancel",
+                                        additionalSelectors:         ["Try Again": selector],
+                                        preferredAdditionalSelector: 0,
+                                        canFileReport:               false,
+                                        extraInfo:                   nil,
+                                        metadata:                    [#file, #function, #line],
+                                        networkDependent:            false)
+    }
+
+    //==================================================//
+
     /* MARK: Other Functions */
 
     func addSelectedTeamToTournament()
@@ -508,32 +650,62 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
         }
     }
 
-    func addSelectedUsersToTeam()
+    func updateTeamParticipants()
     {
-        showProgressHUD(text: "Adding users...", delay: nil)
+        var newIdentifiers = selectedUsers.instantiateIdentifierDictionary()
 
-        TeamSerializer().addUsers(selectedUsers, toTeam: teamArray[selectedIndexPath.row]) { errorDescriptor in
-            if let error = errorDescriptor
+        for identifier in Array(teamArray[selectedIndexPath.row].participantIdentifiers.keys)
+        {
+            if Array(newIdentifiers.keys).contains(identifier)
             {
-                hideHUD(delay: 1) {
-                    AlertKit().errorAlertController(title:                       "Couldn't Add Users",
-                                                    message:                     error,
-                                                    dismissButtonTitle:          nil,
-                                                    additionalSelectors:         nil,
-                                                    preferredAdditionalSelector: nil,
-                                                    canFileReport:               true,
-                                                    extraInfo:                   error,
-                                                    metadata:                    [#file, #function, #line],
-                                                    networkDependent:            true) {
-                        self.hideSelectionTableView()
+                newIdentifiers[identifier] = teamArray[selectedIndexPath.row].participantIdentifiers[identifier]
+            }
+        }
+
+        if teamArray[selectedIndexPath.row].participantIdentifiers.keys.sorted() == newIdentifiers.keys.sorted()
+        {
+            flashSuccessHUD(text: "No changes made.", for: 1.5, delay: 0) {
+                self.hideSelectionTableView()
+            }
+        }
+        else
+        {
+            showProgressHUD(text: "Setting users...", delay: nil)
+
+            teamArray[selectedIndexPath.row].updateParticipantIdentifiers(newIdentifiers) { errorDescriptor in
+                if let error = errorDescriptor
+                {
+                    if error != "No changes made."
+                    {
+                        hideHUD(delay: 1) {
+                            AlertKit().errorAlertController(title:                       "Couldn't Set Users",
+                                                            message:                     error,
+                                                            dismissButtonTitle:          nil,
+                                                            additionalSelectors:         nil,
+                                                            preferredAdditionalSelector: nil,
+                                                            canFileReport:               true,
+                                                            extraInfo:                   error,
+                                                            metadata:                    [#file, #function, #line],
+                                                            networkDependent:            true) {
+                                self.hideSelectionTableView()
+                            }
+                        }
+                    }
+                    else
+                    {
+                        hideHUD(delay: 1) {
+                            flashSuccessHUD(text: error, for: 1.5, delay: 0) {
+                                self.hideSelectionTableView()
+                            }
+                        }
                     }
                 }
-            }
-            else
-            {
-                hideHUD(delay: 1) {
-                    flashSuccessHUD(text: nil, for: 1.5, delay: 0) {
-                        self.hideSelectionTableView()
+                else
+                {
+                    hideHUD(delay: 1) {
+                        flashSuccessHUD(text: nil, for: 1.5, delay: 0) {
+                            self.hideSelectionTableView()
+                        }
                     }
                 }
             }
@@ -558,19 +730,6 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
                 cell.radioButton.isSelected = false
             }
         }
-    }
-
-    func errorAlert(title: String, message: String)
-    {
-        AlertKit().errorAlertController(title:                       title,
-                                        message:                     message,
-                                        dismissButtonTitle:          nil,
-                                        additionalSelectors:         nil,
-                                        preferredAdditionalSelector: nil,
-                                        canFileReport:               true,
-                                        extraInfo:                   message,
-                                        metadata:                    [#file, #function, #line],
-                                        networkDependent:            true)
     }
 
     func generateChallengeStrings() -> (challengesString: String, titles: [String])
@@ -703,6 +862,10 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
     {
         clearSelection()
 
+        UIView.transition(with: titleLabel, duration: 0.35, options: .transitionCrossDissolve, animations: {
+            self.titleLabel.text = "All Teams"
+        })
+
         UIView.animate(withDuration: 0.2) {
             self.activityIndicator.alpha  = 1
             self.doneButton.alpha         = 0
@@ -755,6 +918,36 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
         }
     }
 
+    func finishSelectionTableViewSetup()
+    {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) {
+            self.selectionTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
+                self.selectionTableView.layer.cornerRadius = 10
+
+                if self.selectionTableView.tag == aTagFor("selectionTableView") && self.tournamentArray.isEmpty
+                {
+                    for user in self.selectedUsers
+                    {
+                        if let index = self.userArray.firstIndex(where: { $0.associatedIdentifier == user.associatedIdentifier }),
+                           let cell = self.selectionTableView.cellForRow(at: IndexPath(row: index, section: 0)) as? SelectionCell
+                        {
+                            cell.radioButton.isSelected = true
+                        }
+                    }
+                }
+
+                UIView.animate(withDuration: 0.2) {
+                    self.activityIndicator.alpha  = 0
+                    self.doneButton.alpha         = 1
+                    self.promptLabel.alpha        = 1
+                    self.selectionTableView.alpha = 0.6
+                }
+            }
+        }
+    }
+
     func reSelectRow()
     {
         teamTableView.selectRow(at: selectedIndexPath, animated: true, scrollPosition: .none)
@@ -788,15 +981,34 @@ class ViewTeamsController: UIViewController, MFMailComposeViewControllerDelegate
                 {
                     if let teamIdentifiers = user.associatedTeams
                     {
-                        if !teamIdentifiers.contains(self.teamArray[self.selectedIndexPath.row].associatedIdentifier)
+                        if teamIdentifiers.contains(self.teamArray[self.selectedIndexPath.row].associatedIdentifier)
                         {
                             filteredUsers.append(user)
                         }
                     }
-                    else { filteredUsers.append(user) }
+                    //else { filteredUsers.append(user) }
                 }
 
-                self.userArray = filteredUsers.sorted(by: { $0.firstName < $1.firstName })
+                self.selectedUsers = filteredUsers
+                self.selectedUsers.sort(by: { $0.firstName < $1.firstName })
+
+                var sortedUnselectedUsers = [User]()
+
+                for user in users
+                {
+                    if let teamIdentifiers = user.associatedTeams
+                    {
+                        if !teamIdentifiers.contains(self.teamArray[self.selectedIndexPath.row].associatedIdentifier)
+                        {
+                            sortedUnselectedUsers.append(user)
+                        }
+                    }
+                    else { sortedUnselectedUsers.append(user) }
+                }
+
+                filteredUsers.append(contentsOf: sortedUnselectedUsers.sorted(by: { $0.firstName < $1.firstName }))
+
+                self.userArray = filteredUsers
                 completion(nil)
             }
             else { completion(errorDescriptor!) }
@@ -846,6 +1058,22 @@ extension ViewTeamsController: UITableViewDataSource, UITableViewDelegate
                 selectionCell.subtitleLabel.text = "on \(teams.count) team\(teams.count == 1 ? "" : "s")"
             }
             else { selectionCell.subtitleLabel.text = "on 0 teams" }
+
+            //            for identifier in selectedUsers.identifiers()
+            //            {
+            //                let index = selectedUsers.firstIndex(where: {$0.associatedIdentifier == identifier})!
+            //
+            //                if userArray[indexPath.row].associatedIdentifier == identifier
+            //                {
+            //                    print("Selecting \(selectedUsers[index].firstName!) \(selectedUsers[index].lastName!)")
+            //                    selectionCell.radioButton.isSelected = true
+            //                }
+            //                else
+            //                {
+            //                    print("NOT Selecting \(selectedUsers[index].firstName!) \(selectedUsers[index].lastName!)")
+            //                    selectionCell.radioButton.isSelected = false
+            //                }
+            //            }
 
             selectionCell.selectionStyle = .none
             selectionCell.tag = 0; return selectionCell
@@ -959,11 +1187,11 @@ extension ViewTeamsController: UITableViewDataSource, UITableViewDelegate
 
         actionSheet.setValue(attributedString(message, mainAttributes: regularMessageAttributes, alternateAttributes: boldedMessageAttributes, alternateAttributeRange: boldedRange), forKey: "attributedMessage")
 
-        let addMembersAction = UIAlertAction(title: "Add Members", style: .default) { _ in
+        let addRemoveUsersAction = UIAlertAction(title: "Add/Remove Users", style: .default) { _ in
             tableView.deselectRow(at: indexPath, animated: true)
             tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
 
-            self.addMembersAction()
+            self.addRemoveUsersAction()
         }
 
         let addToTournamentAction = UIAlertAction(title: "Add to Tournament", style: .default) { _ in
@@ -985,6 +1213,13 @@ extension ViewTeamsController: UITableViewDataSource, UITableViewDelegate
             tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
 
             self.editAdditionalPointsAction()
+        }
+
+        let editNameAction = UIAlertAction(title: "Edit Name", style: .default) { _ in
+            tableView.deselectRow(at: indexPath, animated: true)
+            tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
+
+            self.editNameAction()
         }
 
         let viewCompletedChallengesAction = UIAlertAction(title: "View Completed Challenges", style: .default) { _ in
@@ -1020,7 +1255,7 @@ extension ViewTeamsController: UITableViewDataSource, UITableViewDelegate
             tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
         }
 
-        actionSheet.addAction(addMembersAction)
+        actionSheet.addAction(addRemoveUsersAction)
 
         if teamArray[indexPath.row].associatedTournament == nil
         {
@@ -1029,6 +1264,7 @@ extension ViewTeamsController: UITableViewDataSource, UITableViewDelegate
 
         actionSheet.addAction(copyJoinCodeAction)
         actionSheet.addAction(editAdditionalPointsAction)
+        actionSheet.addAction(editNameAction)
 
         if let completedChallenges = teamArray[indexPath.row].completedChallenges,
            !completedChallenges.isEmpty

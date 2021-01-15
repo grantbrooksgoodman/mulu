@@ -129,7 +129,7 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
             {
                 for user in users
                 {
-                    var points = currentTeam.accruedPoints(for: user.associatedIdentifier)
+                    var points = currentTeam.getAccruedPoints(for: user.associatedIdentifier)
 
                     points = points == -1 ? 0 : points
 

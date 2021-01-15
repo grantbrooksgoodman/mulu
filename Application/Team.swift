@@ -53,7 +53,7 @@ class Team
 
     //==================================================//
 
-    /* MARK: Public Functions */
+    /* MARK: Getter Functions */
 
     /**
      Gets the total accrued points of a specific **User** on the **Team.**
@@ -62,7 +62,7 @@ class Team
 
      - Returns: An integer describing the specified **User's** total accrued points on the **Team.**
      */
-    func accruedPoints(for userIdentifier: String) -> Int
+    func getAccruedPoints(for userIdentifier: String) -> Int
     {
         guard Array(participantIdentifiers.keys).contains(userIdentifier) else
         {
@@ -94,45 +94,6 @@ class Team
         }
 
         return totalValue
-    }
-
-    /**
-     Gets and deserializes all of the **Users** in the **Team's** *participantIdentifiers* array.
-
-     - Parameter completion: Upon success, returns an an array of deserialized **User** objects. Upon failure, returns a string describing the error(s) encountered.
-
-     - Note: Completion variables are *mutually exclusive.*
-
-     ~~~
-     completion(returnedUsers, errorDescriptor)
-     ~~~
-     */
-    func deSerializeParticipants(completion: @escaping (_ returnedUsers: [User]?, _ errorDescriptor: String?) -> Void)
-    {
-        if let DSParticipants = DSParticipants
-        {
-            completion(DSParticipants, nil)
-        }
-        else if let participantIdentifiers = participantIdentifiers
-        {
-            UserSerializer().getUsers(withIdentifiers: Array(participantIdentifiers.keys)) { returnedUsers, errorDescriptors in
-                if let errors = errorDescriptors
-                {
-                    completion(nil, errors.joined(separator: "\n"))
-                }
-                else if let users = returnedUsers
-                {
-                    self.DSParticipants = users
-
-                    completion(users, nil)
-                }
-                else
-                {
-                    completion(nil, "No returned Users, but no error either.")
-                }
-            }
-        }
-        else { report("This Team does not have any Users.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
     }
 
     /**
@@ -196,6 +157,112 @@ class Team
         return total + additionalPoints
     }
 
+    //==================================================//
+
+    /* MARK: Serialization Functions */
+
+    /**
+     Gets and deserializes all of the **Users** in the **Team's** *participantIdentifiers* array.
+
+     - Parameter completion: Upon success, returns an an array of deserialized **User** objects. Upon failure, returns a string describing the error(s) encountered.
+
+     - Note: Completion variables are *mutually exclusive.*
+
+     ~~~
+     completion(returnedUsers, errorDescriptor)
+     ~~~
+     */
+    func deSerializeParticipants(completion: @escaping (_ returnedUsers: [User]?, _ errorDescriptor: String?) -> Void)
+    {
+        if let DSParticipants = DSParticipants
+        {
+            completion(DSParticipants, nil)
+        }
+        else if let participantIdentifiers = participantIdentifiers
+        {
+            UserSerializer().getUsers(withIdentifiers: Array(participantIdentifiers.keys)) { returnedUsers, errorDescriptors in
+                if let errors = errorDescriptors
+                {
+                    completion(nil, errors.joined(separator: "\n"))
+                }
+                else if let users = returnedUsers
+                {
+                    self.DSParticipants = users
+
+                    completion(users, nil)
+                }
+                else
+                {
+                    completion(nil, "No returned Users, but no error either.")
+                }
+            }
+        }
+        else { report("This Team does not have any Users.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+    }
+
+    /**
+     Serialises the **Team's** completed **Challenges.**
+
+     - Returns: A dictionary describing the **Team's** completed **Challenges.**
+     */
+    func serializeCompletedChallenges() -> [String: [String]]
+    {
+        guard let challenges = completedChallenges else
+        { return [:] }
+
+        var dataBundle: [String: [String]] = [:]
+
+        for bundle in challenges
+        {
+            //["challengeId":["userId – dateString"]]
+            var serializedMetadata = [String]()
+
+            for datum in bundle.metadata
+            {
+                let metadataString = "\(datum.user.associatedIdentifier!) – \(secondaryDateFormatter.string(from: datum.dateCompleted))"
+                serializedMetadata.append(metadataString)
+            }
+
+            dataBundle["\(bundle.challenge.associatedIdentifier!)"] = serializedMetadata
+        }
+
+        return dataBundle
+    }
+
+    /**
+     Sets the *DSParticipants* value on the **Team.**
+
+     - Warning: Dumps errors to console.
+     */
+    func setDSParticipants()
+    {
+        if DSParticipants != nil
+        {
+            report("«DSParticipants» already set.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+        }
+        else if let participantIdentifiers = participantIdentifiers
+        {
+            UserSerializer().getUsers(withIdentifiers: Array(participantIdentifiers.keys)) { returnedUsers, errorDescriptors in
+                if let errors = errorDescriptors
+                {
+                    report(errors.joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                }
+                else if let users = returnedUsers
+                {
+                    self.DSParticipants = users
+
+                    if verboseFunctionExposure { report("Successfully set «DSParticipants».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+                }
+                else { report("No returned Users, but no error either.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+            }
+        }
+        else { report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+    }
+
+    //==================================================//
+
+    /* MARK: Update Functions */
+
     /**
      Updates the **Team's** metadata from the server.
 
@@ -233,36 +300,7 @@ class Team
     }
 
     /**
-     Serialises the **Team's** completed **Challenges.**
-
-     - Returns: A dictionary describing the **Team's** completed **Challenges.**
-     */
-    func serializeCompletedChallenges() -> [String: [String]]
-    {
-        guard let challenges = completedChallenges else
-        { return [:] }
-
-        var dataBundle: [String: [String]] = [:]
-
-        for bundle in challenges
-        {
-            //["challengeId":["userId – dateString"]]
-            var serializedMetadata = [String]()
-
-            for datum in bundle.metadata
-            {
-                let metadataString = "\(datum.user.associatedIdentifier!) – \(secondaryDateFormatter.string(from: datum.dateCompleted))"
-                serializedMetadata.append(metadataString)
-            }
-
-            dataBundle["\(bundle.challenge.associatedIdentifier!)"] = serializedMetadata
-        }
-
-        return dataBundle
-    }
-
-    /**
-     Sets the **Team's** *additionalPoints.*
+     Updates the **Team's** *additionalPoints.*
 
      - Parameter points: The points to set for this **Team.**
      - Parameter completion: Upon failure, returns a string describing the error(s) encountered.
@@ -271,7 +309,7 @@ class Team
      completion(errorDescriptor)
      ~~~
      */
-    func setAdditionalPoints(_ points: Int, completion: @escaping (_ errorDescriptor: String?) -> Void)
+    func updateAdditionalPoints(_ points: Int, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
         GenericSerializer().setValue(onKey: "/allTeams/\(associatedIdentifier!)/additionalPoints", withData: points) { returnedError in
             if let error = returnedError
@@ -293,38 +331,98 @@ class Team
     }
 
     /**
-     Sets the *DSParticipants* value on the **Team.**
+     Updates the **Team's** name.
 
-     - Warning: Dumps errors to console.
+     - Parameter name: The string of the new name for this **Team.**
+     - Parameter completion: Upon failure, returns a string describing the error(s) encountered.
+
+     - Requires: The `name` to be different from the **Team's** current name.
+     ~~~
+     completion(errorDescriptor)
+     ~~~
      */
-    func setDSParticipants()
+    func updateName(_ name: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
-        if DSParticipants != nil
-        {
-            report("«DSParticipants» already set.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-        }
-        else if let participantIdentifiers = participantIdentifiers
-        {
-            UserSerializer().getUsers(withIdentifiers: Array(participantIdentifiers.keys)) { returnedUsers, errorDescriptors in
-                if let errors = errorDescriptors
-                {
-                    report(errors.joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                }
-                else if let users = returnedUsers
-                {
-                    self.DSParticipants = users
+        guard name != self.name else
+        { completion("No changes made."); return }
 
-                    if verboseFunctionExposure { report("Successfully set «DSParticipants».", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+        GenericSerializer().setValue(onKey: "/allTeams/\(associatedIdentifier!)/name", withData: name) { returnedError in
+            if let error = returnedError
+            {
+                completion(errorInfo(error))
+            }
+            else { completion(nil) }
+        }
+    }
+
+    /**
+     Updates the **Tournament's** *teamIdentifiers* array.
+
+     - Parameter teams: An array with the identifiers of the **Teams** to associate with this **Tournament.**
+     - Parameter completion: Upon failure, returns with a string describing the error(s) encountered.
+
+     - Requires: The `teams` array to not be empty.
+
+     ~~~
+     completion(errorDescriptor)
+     ~~~
+     */
+    func updateParticipantIdentifiers(_ newIdentifiers: [String: Int], completion: @escaping (_ errorDescriptor: String?) -> Void)
+    {
+        guard !newIdentifiers.isEmpty else
+        { completion("The participant identifiers array was empty; Teams must be associated with at least one User."); return }
+
+        let usersToRemove = participantIdentifiers.keys.filter { !newIdentifiers.keys.contains($0) }
+        let usersToAdd = newIdentifiers.keys.filter { !participantIdentifiers.keys.contains($0) }
+
+        if !usersToRemove.isEmpty
+        {
+            var errors = [String]()
+
+            for (index, user) in usersToRemove.enumerated()
+            {
+                TeamSerializer().removeUser(user, fromTeam: associatedIdentifier, deleting: true) { errorDescriptor in
+                    if let error = errorDescriptor
+                    {
+                        errors.append(error)
+
+                        if index == usersToRemove.count - 1
+                        {
+                            completion(errors.joined(separator: "\n"))
+                        }
+                    }
+                    else
+                    {
+                        if index == usersToRemove.count - 1
+                        {
+                            if errors.isEmpty
+                            {
+                                if !usersToAdd.isEmpty
+                                {
+                                    self.finishUpdateParticipantIdentifiers(newIdentifiers, usersToAdd) { errorDescriptor in
+                                        completion(errorDescriptor)
+                                    }
+                                }
+                                else { completion(nil) }
+                            }
+                            else { completion(errors.joined(separator: "\n")) }
+                        }
+                    }
                 }
-                else { report("No returned Users, but no error either.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
             }
         }
-        else { report("This User is not a member of any Team.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+        else if !usersToAdd.isEmpty
+        {
+            finishUpdateParticipantIdentifiers(newIdentifiers, usersToAdd) { errorDescriptor in
+                completion(errorDescriptor)
+            }
+        }
+        else { completion("No changes made.") }
     }
 
     #warning("Would it be better to have this in TeamSerializer? (Probably not...)")
     /**
-     Sets a **User's** additional points for this **Team.**
+     Updates a **User's** additional points for this **Team.**
 
      - Parameter points: The points to set for the **User** on this **Team.**
      - Parameter forUser: The identifier of the **User** whose additional points will be set.
@@ -335,7 +433,7 @@ class Team
      completion(errorDescriptor)
      ~~~
      */
-    func setPoints(_ points: Int, forUser: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
+    func updatePoints(_ points: Int, forUser: String, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
         guard Array(participantIdentifiers.keys).contains(forUser) else
         { completion("The specified User is not a member of this Team."); return }
@@ -357,6 +455,50 @@ class Team
                         completion(error)
                     }
                     else { completion(nil) }
+                }
+            }
+        }
+    }
+
+    //==================================================//
+
+    /* MARK: Other Functions */
+
+    //==================================================//
+
+    /* MARK: Private Functions */
+
+    private func finishUpdateParticipantIdentifiers(_ newIdentifiers: [String: Int], _ usersToAdd: [String], completion: @escaping (_ errorDescriptor: String?) -> Void)
+    {
+        GenericSerializer().setValue(onKey: "/allTeams/\(associatedIdentifier!)/participantIdentifiers", withData: newIdentifiers.delimitedArray()) { returnedError in
+            if let error = returnedError
+            {
+                completion(errorInfo(error))
+            }
+            else
+            {
+                var errors = [String]()
+
+                for (index, user) in usersToAdd.enumerated()
+                {
+                    TeamSerializer().addUser(user, toTeam: self.associatedIdentifier) { errorDescriptor in
+                        if let error = errorDescriptor
+                        {
+                            errors.append(error)
+
+                            if index == usersToAdd.count - 1
+                            {
+                                completion(errors.joined(separator: "\n"))
+                            }
+                        }
+                        else
+                        {
+                            if index == usersToAdd.count - 1
+                            {
+                                completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                            }
+                        }
+                    }
                 }
             }
         }

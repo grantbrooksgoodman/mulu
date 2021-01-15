@@ -1122,7 +1122,7 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="john.appleseed@mulu.app" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qor-wi-7dJ">
                                                     <rect key="frame" x="20" y="35" width="348" height="15"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="10"/>
+                                                    <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="12"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -1189,6 +1189,24 @@
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="kSz-fc-oE5">
                                 <rect key="frame" x="195.66666666666666" y="444.66666666666669" width="37" height="37"/>
                             </activityIndicatorView>
+                            <datePicker alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="DRW-FH-5wd">
+                                <rect key="frame" x="54" y="355" width="320" height="216"/>
+                            </datePicker>
+                            <button opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Awo-bT-A0G" customClass="ShadowButton" customModule="Mulu" customModuleProvider="target">
+                                <rect key="frame" x="224" y="584" width="150" height="50"/>
+                                <color key="backgroundColor" red="0.37647058820000001" green="0.75686274509999996" blue="0.16078431369999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="auC-91-E3d"/>
+                                    <constraint firstAttribute="width" constant="150" id="cYu-Wi-hcV"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="SFUIText-Bold" family="SF UI Text" pointSize="24"/>
+                                <state key="normal" title="DONE">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="datePickerDoneButton:" destination="vbb-IO-gxz" eventType="touchUpInside" id="gjb-Wo-Com"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Y17-Go-Lg9"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1204,15 +1222,20 @@
                             <constraint firstItem="Y17-Go-Lg9" firstAttribute="trailing" secondItem="qEt-Dt-XeG" secondAttribute="trailing" priority="750" constant="348" id="KVT-6W-KnY"/>
                             <constraint firstItem="V5O-4u-SZc" firstAttribute="leading" secondItem="Y17-Go-Lg9" secondAttribute="leading" constant="20" id="PZg-xX-dMv"/>
                             <constraint firstItem="MUb-mT-JOf" firstAttribute="top" relation="lessThanOrEqual" secondItem="dQ8-Yg-fxK" secondAttribute="bottom" priority="750" constant="8" symbolic="YES" id="Qce-qA-D4R"/>
+                            <constraint firstItem="DRW-FH-5wd" firstAttribute="centerX" secondItem="hOU-5o-HfU" secondAttribute="centerX" id="RM2-H6-nNs"/>
                             <constraint firstItem="dQ8-Yg-fxK" firstAttribute="leading" secondItem="Y17-Go-Lg9" secondAttribute="leading" constant="20" id="ZOD-JB-9mH"/>
                             <constraint firstItem="Y17-Go-Lg9" firstAttribute="trailing" secondItem="100-dI-hdK" secondAttribute="trailing" constant="20" id="dS8-dU-3CE"/>
+                            <constraint firstItem="Awo-bT-A0G" firstAttribute="leading" secondItem="Y17-Go-Lg9" secondAttribute="leading" constant="224" id="ej4-RQ-fw2"/>
+                            <constraint firstItem="DRW-FH-5wd" firstAttribute="centerY" secondItem="hOU-5o-HfU" secondAttribute="centerY" id="gVi-EC-2DB"/>
                             <constraint firstItem="kSz-fc-oE5" firstAttribute="centerY" secondItem="hOU-5o-HfU" secondAttribute="centerY" id="gkf-fC-aRV"/>
+                            <constraint firstItem="Y17-Go-Lg9" firstAttribute="trailing" secondItem="Awo-bT-A0G" secondAttribute="trailing" constant="54" id="idl-fn-7Bl"/>
                             <constraint firstItem="Y17-Go-Lg9" firstAttribute="trailing" secondItem="V5O-4u-SZc" secondAttribute="trailing" constant="20" id="nJY-R4-aG7"/>
                             <constraint firstItem="498-eL-Kxg" firstAttribute="centerY" secondItem="dQ8-Yg-fxK" secondAttribute="centerY" id="q5T-vy-AGr"/>
                             <constraint firstItem="Y17-Go-Lg9" firstAttribute="trailing" secondItem="u4y-er-Iwu" secondAttribute="trailing" constant="20" id="qQM-gr-PNf"/>
                             <constraint firstItem="u4y-er-Iwu" firstAttribute="leading" secondItem="Y17-Go-Lg9" secondAttribute="leading" constant="20" id="qiJ-kR-c8d"/>
                             <constraint firstItem="Y17-Go-Lg9" firstAttribute="bottom" secondItem="qEt-Dt-XeG" secondAttribute="bottom" constant="8" id="s53-Ce-qMq"/>
                             <constraint firstItem="498-eL-Kxg" firstAttribute="top" secondItem="100-dI-hdK" secondAttribute="bottom" constant="8" symbolic="YES" id="vnE-Rm-ped"/>
+                            <constraint firstItem="Awo-bT-A0G" firstAttribute="top" secondItem="DRW-FH-5wd" secondAttribute="bottom" constant="13" id="w9N-5z-VAi"/>
                             <constraint firstItem="V5O-4u-SZc" firstAttribute="top" secondItem="Y17-Go-Lg9" secondAttribute="top" id="yaZ-JX-xEd"/>
                         </constraints>
                     </view>
@@ -1223,6 +1246,8 @@
                         <outlet property="activityIndicator" destination="kSz-fc-oE5" id="wiy-bp-3yg"/>
                         <outlet property="backButton" destination="qEt-Dt-XeG" id="cBq-CP-f8C"/>
                         <outlet property="cancelButton" destination="dQ8-Yg-fxK" id="9Hb-tn-qol"/>
+                        <outlet property="datePicker" destination="DRW-FH-5wd" id="lTD-ex-g17"/>
+                        <outlet property="datePickerDoneButton" destination="Awo-bT-A0G" id="LNH-kr-AOd"/>
                         <outlet property="doneButton" destination="498-eL-Kxg" id="T5D-O9-UQq"/>
                         <outlet property="tableView" destination="u4y-er-Iwu" id="I4h-hJ-70I"/>
                         <outlet property="textView" destination="100-dI-hdK" id="NWs-GW-gOK"/>
@@ -1472,7 +1497,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="All Teams" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hlT-fp-ewu">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="All Teams" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999999999998" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hlT-fp-ewu">
                                 <rect key="frame" x="20" y="44" width="388" height="65"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="65" id="ev9-oE-WQx"/>
@@ -1968,7 +1993,7 @@
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="Hba-pH-mF9">
                                 <rect key="frame" x="195.66666666666666" y="444.66666666666669" width="37" height="37"/>
                             </activityIndicatorView>
-                            <tableView clipsSubviews="YES" alpha="0.0" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="N49-bz-qkb">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="N49-bz-qkb">
                                 <rect key="frame" x="21" y="170" width="388" height="644"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
@@ -1995,17 +2020,17 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Berkeley Tournament" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999403953552" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hHr-6i-R6f">
-                                                    <rect key="frame" x="58" y="7" width="202" height="30"/>
+                                                    <rect key="frame" x="58" y="7" width="180" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="SFUIText-Semibold" family="SF UI Text" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="5 teams" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999403953552" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="efq-Um-NDa">
-                                                    <rect key="frame" x="268" y="7" width="100" height="30"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="5 teams" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999999999998" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="efq-Um-NDa">
+                                                    <rect key="frame" x="246" y="7" width="122" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="SFUIText-Light" family="SF UI Text" pointSize="12"/>
-                                                    <color key="textColor" systemColor="systemGrayColor"/>
+                                                    <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="14"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>

@@ -20,6 +20,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     /* MARK: Interface Builder UI Elements */
 
     //ShadowButtons
+    @IBOutlet var datePickerDoneButton: ShadowButton!
     @IBOutlet var doneButton:   ShadowButton!
     @IBOutlet var cancelButton: ShadowButton!
 
@@ -29,6 +30,8 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     @IBOutlet var tableView: UITableView!
     @IBOutlet var textView: UITextView!
     @IBOutlet var titleLabel: UILabel!
+
+    @IBOutlet var datePicker: UIDatePicker!
 
     //==================================================//
 
@@ -41,6 +44,13 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     var currentlyUploading = false
     var selectedIndexPath: IndexPath!
     var challengeArray = [Challenge]()
+
+    var filteredOtherPosts = [Challenge]()
+    var postedThisWeek = [Challenge]()
+    var todaysPosts = [Challenge]()
+    var upcomingThisWeek = [Challenge]()
+
+    var referenceArray = [Challenge]()
 
     //==================================================//
 
@@ -65,6 +75,12 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                                      customBorderFrame:  nil,
                                      customCornerRadius: nil,
                                      shadowColor:       UIColor(hex: 0xD5443B).cgColor)
+
+        datePickerDoneButton.initializeLayer(animateTouches:     true,
+                                             backgroundColor:   UIColor(hex: 0x60C129),
+                                             customBorderFrame:  nil,
+                                             customCornerRadius: nil,
+                                             shadowColor:       UIColor(hex: 0x3B9A1B).cgColor)
 
         doneButton.initializeLayer(animateTouches:     true,
                                    backgroundColor:   UIColor(hex: 0x60C129),
@@ -136,11 +152,54 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
         }
     }
 
+    @IBAction func datePickerDoneButton(_: Any)
+    {
+        let selectedChallenge = referenceArray[selectedIndexPath.row]
+
+        if selectedChallenge.datePosted.comparator == datePicker.date.comparator
+        {
+            flashSuccessHUD(text: "No changes made.", for: 1.2, delay: 0) {
+                UIView.transition(with: self.titleLabel, duration: 0.35, options: .transitionCrossDissolve, animations: { self.titleLabel.text = "All Challenges" })
+
+                UIView.animate(withDuration: 0.2) {
+                    self.activityIndicator.alpha = 1
+                    self.datePicker.alpha = 0
+                    self.datePickerDoneButton.alpha = 0
+                } completion: { _ in self.reloadData() }
+            }
+        }
+        else
+        {
+            //showProgressHUD(text: "Setting appearance date...", delay: nil)
+
+            UIView.animate(withDuration: 0.2) {
+                self.activityIndicator.alpha = 1
+                self.datePicker.alpha = 0
+                self.datePickerDoneButton.alpha = 0
+            }
+
+            selectedChallenge.updateAppearanceDate(datePicker.date.comparator) { errorDescriptor in
+                if let error = errorDescriptor
+                {
+                    //hideHUD(delay: 1) {
+                    self.errorAlert(title: "Couldn't Set Appearance Date", message: error)
+                    //}
+                }
+                else
+                {
+                    flashSuccessHUD(text: nil, for: 1, delay: 0.2) {
+                        self.reloadData()
+                    }
+                }
+            }
+        }
+    }
+
     @IBAction func doneButton(_: Any)
     {
         textView.resignFirstResponder()
 
-        if textView.text == challengeArray[selectedIndexPath.row].prompt
+        if textView.text == referenceArray[selectedIndexPath.row].prompt
         {
             cancelButton(cancelButton!)
         }
@@ -148,7 +207,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
         {
             showProgressHUD(text: "Updating prompt...", delay: nil)
 
-            challengeArray[selectedIndexPath.row].updatePrompt(textView.text!) { errorDescriptor in
+            referenceArray[selectedIndexPath.row].updatePrompt(textView.text!) { errorDescriptor in
                 if let error = errorDescriptor
                 {
                     hideHUD(delay: 1) {
@@ -201,7 +260,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
 
     func deleteChallengeAction()
     {
-        AlertKit().confirmationAlertController(title:                   "Deleting \(challengeArray[selectedIndexPath.row].title!.capitalized)",
+        AlertKit().confirmationAlertController(title:                   "Deleting \(referenceArray[selectedIndexPath.row].title!.capitalized)",
                                                message:                 "If this challenge has already been completed by some users, their total accrued points will decrease.\n\nPlease confirm you would like to delete this challenge.",
                                                cancelConfirmTitles:     ["confirm": "Delete Challenge"],
                                                confirmationDestructive: true,
@@ -213,7 +272,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                 {
                     showProgressHUD(text: "Deleting challenge...", delay: nil)
 
-                    ChallengeSerializer().deleteChallenge(self.challengeArray[self.selectedIndexPath.row].associatedIdentifier) { errorDescriptor in
+                    ChallengeSerializer().deleteChallenge(self.referenceArray[self.selectedIndexPath.row].associatedIdentifier) { errorDescriptor in
                         if let error = errorDescriptor
                         {
                             hideHUD(delay: 0.5) { self.errorAlert(title: "Failed to Delete Challenge", message: error) }
@@ -228,24 +287,54 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
 
     func editAppearanceDateAction()
     {
-        showProgressHUD(text: "Loading data...", delay: nil)
+        datePicker.date = referenceArray[selectedIndexPath.row].datePosted
+        datePicker.maximumDate = Calendar.current.date(byAdding: .year, value: 1, to: Date())
 
-        hasBeenCompleted(challengeArray[selectedIndexPath.row]) { completed, errorDescriptor in
+        //WARN FOR DATE BEFORE TODAY
+
+        //showProgressHUD(text: "Loading data...", delay: nil)
+
+        UIView.animate(withDuration: 0.2) {
+            self.activityIndicator.alpha = 1
+            self.tableView.alpha = 0
+        }
+
+        hasBeenCompleted(referenceArray[selectedIndexPath.row]) { completed, errorDescriptor in
             if let completed = completed
             {
                 if completed
                 {
-                    hideHUD(delay: 1) { self.errorAlert(title: "Cannot Edit Appearance Date", message: "There are users who have already completed this challenge.\n\nEditing its appearance date at this point would cause the server data to become out of sync.") }
+                    AlertKit().errorAlertController(title:                       "Cannot Edit Appearance Date",
+                                                    message:                     "There are users who have already completed this challenge.\n\nEditing its appearance date at this point would cause the server data to become out of sync.",
+                                                    dismissButtonTitle:          nil,
+                                                    additionalSelectors:         nil,
+                                                    preferredAdditionalSelector: nil,
+                                                    canFileReport:               true,
+                                                    extraInfo:                   "There are users who have already completed this challenge.\n\nEditing its appearance date at this point would cause the server data to become out of sync.",
+                                                    metadata:                    [#file, #function, #line],
+                                                    networkDependent:            true) {
+                        UIView.animate(withDuration: 0.2) {
+                            self.activityIndicator.alpha = 0
+                            self.tableView.alpha = 0.6
+                        } completion: { _ in
+                            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) { self.reSelectRow() }
+                        }
+                    }
                 }
                 else
                 {
-                    hideHUD(delay: 1) { self.editAppearanceDateAlert() }
+                    UIView.transition(with: self.titleLabel, duration: 0.35, options: .transitionCrossDissolve, animations: {
+                        self.titleLabel.text = self.referenceArray[self.selectedIndexPath.row].title!
+                    })
+
+                    UIView.animate(withDuration: 0.2) {
+                        self.activityIndicator.alpha = 0
+                        self.datePicker.alpha = 1
+                        self.datePickerDoneButton.alpha = 1
+                    } /*completion: { _ in }*/
                 }
             }
-            else
-            {
-                hideHUD(delay: 1) { self.errorAlert(title: "Cannot Edit Appearance Date", message: errorDescriptor!) }
-            }
+            else { self.errorAlert(title: "Cannot Edit Appearance Date", message: errorDescriptor!) }
         }
     }
 
@@ -254,19 +343,19 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yyyy"
 
-        let selectedChallenge = challengeArray[selectedIndexPath.row]
+        let selectedChallenge = referenceArray[selectedIndexPath.row]
 
         let textFieldAttributes: [AlertKit.AlertControllerTextFieldAttribute: Any] =
             [.capitalisationType:  UITextAutocapitalizationType.none,
              .correctionType:      UITextAutocorrectionType.no,
              .editingMode:         UITextField.ViewMode.whileEditing,
-             .keyboardType:        UIKeyboardType.numbersAndPunctuation,
+             .keyboardType:        UIKeyboardType.asciiCapableNumberPad,
              .placeholderText:     "",
              .sampleText:          dateFormatter.string(from: selectedChallenge.datePosted),
              .textAlignment:       NSTextAlignment.center]
 
         AlertKit().textAlertController(title: "Editing \(selectedChallenge.title!)",
-                                       message: "Enter a new appearance date for \(selectedChallenge.title!) in the DD.MM.YYYY format.",
+                                       message: "Enter a new appearance date for \(selectedChallenge.title!) in the 'day.month.year' format.",
                                        cancelButtonTitle: nil,
                                        additionalButtons: [("Done", false)],
                                        preferredActionIndex: 0,
@@ -290,7 +379,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                         }
                         else
                         {
-                            showProgressHUD(text: "Setting appearance date...", delay: nil)
+                            //showProgressHUD(text: "Setting appearance date...", delay: nil)
 
                             selectedChallenge.updateAppearanceDate(newDate.comparator) { errorDescriptor in
                                 if let error = errorDescriptor
@@ -306,7 +395,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                     else
                     {
                         AlertKit().errorAlertController(title:                       "Invalid Date",
-                                                        message:                     "The provided date was invalid. Please follow the DD.MM.YYYY format.",
+                                                        message:                     "The provided date was invalid. Please follow the 'day.month.year' format.",
                                                         dismissButtonTitle:          "Cancel",
                                                         additionalSelectors:         ["Try Again": #selector(ViewChallengesController.editAppearanceDateAlert)],
                                                         preferredAdditionalSelector: 0,
@@ -326,7 +415,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
 
     func editMediaAction()
     {
-        AlertKit().optionAlertController(title:                "Editing \(challengeArray[selectedIndexPath.row].title!)",
+        AlertKit().optionAlertController(title:                "Editing \(referenceArray[selectedIndexPath.row].title!)",
                                          message:              "Choose the method of upload for this media.",
                                          cancelButtonTitle:    nil,
                                          additionalButtons:    [("Web Link", false), ("Direct Upload", false)],
@@ -358,11 +447,11 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
         let textFieldAttributes: [AlertKit.AlertControllerTextFieldAttribute: Any] =
             [.editingMode:         UITextField.ViewMode.whileEditing,
              .keyboardType:        UIKeyboardType.numberPad,
-             .placeholderText:     String(challengeArray[selectedIndexPath.row].pointValue),
-             .sampleText:          String(challengeArray[selectedIndexPath.row].pointValue),
+             .placeholderText:     String(referenceArray[selectedIndexPath.row].pointValue),
+             .sampleText:          String(referenceArray[selectedIndexPath.row].pointValue),
              .textAlignment:       NSTextAlignment.center]
 
-        AlertKit().textAlertController(title:                "Editing \(challengeArray[selectedIndexPath.row].title!)",
+        AlertKit().textAlertController(title:                "Editing \(referenceArray[selectedIndexPath.row].title!)",
                                        message:              "Enter a new point value for this challenge.",
                                        cancelButtonTitle:    nil,
                                        additionalButtons:    [("Done", false)],
@@ -378,11 +467,11 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                         if let pointValue = Int(string),
                            pointValue > 0
                         {
-                            if pointValue != self.challengeArray[self.selectedIndexPath.row].pointValue
+                            if pointValue != self.referenceArray[self.selectedIndexPath.row].pointValue
                             {
                                 showProgressHUD(text: "Updating point value...", delay: nil)
 
-                                self.challengeArray[self.selectedIndexPath.row].updatePointValue(pointValue) { errorDescriptor in
+                                self.referenceArray[self.selectedIndexPath.row].updatePointValue(pointValue) { errorDescriptor in
                                     if let error = errorDescriptor
                                     {
                                         hideHUD(delay: 0.5) { self.errorAlert(title: "Failed to Update Challenge", message: error) }
@@ -417,10 +506,10 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
 
     @objc func editPromptAction()
     {
-        textView.text = challengeArray[selectedIndexPath.row].prompt!
+        textView.text = referenceArray[selectedIndexPath.row].prompt!
 
         UIView.transition(with: titleLabel, duration: 0.35, options: .transitionCrossDissolve, animations: {
-            self.titleLabel.text = self.challengeArray[self.selectedIndexPath.row].title!
+            self.titleLabel.text = self.referenceArray[self.selectedIndexPath.row].title!
         })
 
         UIView.animate(withDuration: 0.2) {
@@ -435,11 +524,11 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     {
         let textFieldAttributes: [AlertKit.AlertControllerTextFieldAttribute: Any] =
             [.editingMode:         UITextField.ViewMode.whileEditing,
-             .placeholderText:     challengeArray[selectedIndexPath.row].title!,
-             .sampleText:          challengeArray[selectedIndexPath.row].title!,
+             .placeholderText:     referenceArray[selectedIndexPath.row].title!,
+             .sampleText:          referenceArray[selectedIndexPath.row].title!,
              .textAlignment:       NSTextAlignment.center]
 
-        AlertKit().textAlertController(title:                "Editing \(challengeArray[selectedIndexPath.row].title!)",
+        AlertKit().textAlertController(title:                "Editing \(referenceArray[selectedIndexPath.row].title!)",
                                        message:              "Enter a new title for this challenge.",
                                        cancelButtonTitle:    nil,
                                        additionalButtons:    [("Done", false)],
@@ -452,11 +541,11 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                 {
                     if let string = returnedString, string.lowercasedTrimmingWhitespace != ""
                     {
-                        if string != self.challengeArray[self.selectedIndexPath.row].title
+                        if string != self.referenceArray[self.selectedIndexPath.row].title
                         {
                             showProgressHUD(text: "Updating title...", delay: nil)
 
-                            self.challengeArray[self.selectedIndexPath.row].updateTitle(string) { errorDescriptor in
+                            self.referenceArray[self.selectedIndexPath.row].updateTitle(string) { errorDescriptor in
                                 if let error = errorDescriptor
                                 {
                                     hideHUD(delay: 0.5) { self.errorAlert(title: "Failed to Update Title", message: error) }
@@ -478,7 +567,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
 
     func removeMediaAction()
     {
-        AlertKit().optionAlertController(title:                "Editing \(challengeArray[selectedIndexPath.row].title!)",
+        AlertKit().optionAlertController(title:                "Editing \(referenceArray[selectedIndexPath.row].title!)",
                                          message:              "Are you sure you would like to remove the media associated with this challenge?",
                                          cancelButtonTitle:    nil,
                                          additionalButtons:    [("Remove Media", true)],
@@ -490,7 +579,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                 {
                     showProgressHUD(text: "Removing media...", delay: nil)
 
-                    self.challengeArray[self.selectedIndexPath.row].removeMedia { errorDescriptor in
+                    self.referenceArray[self.selectedIndexPath.row].removeMedia { errorDescriptor in
                         if let error = errorDescriptor
                         {
                             hideHUD(delay: 0.5) { self.errorAlert(title: "Failed to Remove Media", message: error) }
@@ -516,7 +605,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
              .placeholderText:     "",
              .sampleText:          "https://"]
 
-        AlertKit().textAlertController(title:                "Editing \(challengeArray[selectedIndexPath.row].title!)",
+        AlertKit().textAlertController(title:                "Editing \(referenceArray[selectedIndexPath.row].title!)",
                                        message:              "Enter the link to the media you would like to upload.",
                                        cancelButtonTitle:    nil,
                                        additionalButtons:    [("Done", false)],
@@ -676,7 +765,20 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
             ChallengeSerializer().getAllChallenges { returnedChallenges, errorDescriptor in
                 if let challenges = returnedChallenges
                 {
-                    self.challengeArray = challenges.sorted(by: { $0.datePosted < $1.datePosted })
+                    self.challengeArray = challenges.sorted(by: { $0.datePosted > $1.datePosted })
+
+                    self.filteredOtherPosts = self.challengeArray.filter { abs($0.datePosted.comparator.days(from: Date().comparator)) > 7 && $0.datePosted.comparator != Date().comparator }
+
+                    self.postedThisWeek = self.challengeArray.filter { abs($0.datePosted.comparator.days(from: Date().comparator)) <= 7 && $0.datePosted.comparator < Date().comparator }
+
+                    self.todaysPosts = self.challengeArray.filter { $0.datePosted.comparator == Date().comparator }
+
+                    self.upcomingThisWeek = self.challengeArray.filter { abs($0.datePosted.comparator.days(from: Date().comparator)) <= 7 && $0.datePosted.comparator > Date().comparator }.sorted(by: { $0.datePosted < $1.datePosted })
+
+                    if let index = self.challengeArray.firstIndex(where: { $0.datePosted.comparator == Date().comparator })
+                    {
+                        self.challengeArray.swapAt(index, 0)
+                    }
 
                     self.tableView.dataSource = self
                     self.tableView.delegate = self
@@ -703,7 +805,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
 
     func updateChallengeMedia(_ media: (link: URL, path: String?, type: Challenge.MediaType))
     {
-        challengeArray[selectedIndexPath.row].updateMedia(media) { errorDescriptor in
+        referenceArray[selectedIndexPath.row].updateMedia(media) { errorDescriptor in
             if let error = errorDescriptor
             {
                 self.errorAlert(title: "Failed to Update Media", message: error)
@@ -793,7 +895,7 @@ extension ViewChallengesController: UIImagePickerControllerDelegate
                             {
                                 let mediaType: Challenge.MediaType = imageExtension == "gif" ? .gif : .staticImage
 
-                                self.challengeArray[self.selectedIndexPath.row].updateMedia((metadata.link, metadata.path, mediaType)) { errorDescriptor in
+                                self.referenceArray[self.selectedIndexPath.row].updateMedia((metadata.link, metadata.path, mediaType)) { errorDescriptor in
                                     if let error = errorDescriptor
                                     {
                                         self.errorAlert(title: "Failed to Upload Media", message: error)
@@ -865,7 +967,7 @@ extension ViewChallengesController: UIImagePickerControllerDelegate
                         GenericSerializer().upload(image: false, withData: videoData, extension: `extension`) { returnedMetadata, errorDescriptor in
                             if let metadata = returnedMetadata
                             {
-                                self.challengeArray[self.selectedIndexPath.row].updateMedia((metadata.link, metadata.path, .autoPlayVideo)) { errorDescriptor in
+                                self.referenceArray[self.selectedIndexPath.row].updateMedia((metadata.link, metadata.path, .autoPlayVideo)) { errorDescriptor in
                                     if let error = errorDescriptor
                                     {
                                         self.errorAlert(title: "Failed to Upload Media", message: error)
@@ -901,20 +1003,81 @@ extension ViewChallengesController: UIImagePickerControllerDelegate
 /* MARK: UITableViewDataSource, UITableViewDelegate */
 extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
 {
+    func numberOfSections(in _: UITableView) -> Int
+    {
+        //today, upcoming this week, posted this week, all time
+
+        //        var sectionCount = 1
+        //
+        //        for array in [postedThisWeek, todaysPosts, upcomingThisWeek]
+        //        {
+        //            if array.count > 0
+        //            {
+        //                sectionCount += 1
+        //            }
+        //        }
+        //
+        return 4
+    }
+
+    func tableView(_: UITableView, titleForHeaderInSection section: Int) -> String?
+    {
+        switch section
+        {
+        case 0:
+            return "Today"
+        case 1:
+            return "Next 7 Days"
+        case 2:
+            return "Past 7 Days"
+        default:
+            return "Other"
+        }
+    }
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let currentCell = tableView.dequeueReusableCell(withIdentifier: "ChallengeCell") as! SubtitleCell
 
-        let challengePostDate: Date! = challengeArray[indexPath.row].datePosted
-        var subtitlePrefix = "posted on"
+        //this is gonna cause array problems
+
+        switch indexPath.section
+        {
+        case 0:
+            referenceArray = todaysPosts
+        case 1:
+            referenceArray = upcomingThisWeek
+        case 2:
+            referenceArray = postedThisWeek
+        default:
+            referenceArray = filteredOtherPosts
+        }
+
+        currentCell.titleLabel.text = referenceArray[indexPath.row].title
+
+        let challengePostDate = referenceArray[indexPath.row].datePosted!
+        let mediumDateString = mediumDateFormatter.string(from: challengePostDate)
 
         if challengePostDate.comparator > Date().comparator
         {
-            subtitlePrefix = "will be posted on"
-        }
+            if challengePostDate.comparator.days(from: Date().comparator) == 1
+            {
+                currentCell.subtitleLabel.text = "will be posted tomorrow"
+            }
+            else
+            {
+                let dateString = indexPath.section == 3 ? mediumDateFormatter.string(from: challengePostDate) : challengePostDate.formattedString()
 
-        currentCell.titleLabel.text = challengeArray[indexPath.row].title
-        currentCell.subtitleLabel.text = "\(subtitlePrefix) \(mediumDateFormatter.string(from: challengePostDate))"
+                currentCell.subtitleLabel.text = "will be posted on \(dateString)"
+            }
+        }
+        else if challengePostDate.comparator == Date().comparator
+        {
+            currentCell.subtitleLabel.text = "posted today"
+        }
+        else { currentCell.subtitleLabel.text = "posted on \(mediumDateString)" }
+
+        currentCell.titleLabel.text = referenceArray[indexPath.row].title
 
         return currentCell
     }
@@ -931,6 +1094,18 @@ extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         selectedIndexPath = indexPath
+
+        switch indexPath.section
+        {
+        case 0:
+            referenceArray = todaysPosts
+        case 1:
+            referenceArray = upcomingThisWeek
+        case 2:
+            referenceArray = postedThisWeek
+        default:
+            referenceArray = filteredOtherPosts
+        }
 
         if let currentCell = tableView.cellForRow(at: indexPath) as? SubtitleCell
         {
@@ -958,9 +1133,9 @@ extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
                                                                       .foregroundColor: UIColor.darkGray,
                                                                       .paragraphStyle: paragraphStyle]
 
-        actionSheet.setValue(NSMutableAttributedString(string: challengeArray[indexPath.row].title, attributes: titleAttributes), forKey: "attributedTitle")
+        actionSheet.setValue(NSMutableAttributedString(string: referenceArray[indexPath.row].title, attributes: titleAttributes), forKey: "attributedTitle")
 
-        let message = "Appearance Date: \(mediumDateFormatter.string(from: challengeArray[indexPath.row].datePosted))\n\nAssociated Media: \(challengeArray[indexPath.row].media?.type.userFacingString() ?? "None")\n\nPoint Value: \(String(challengeArray[indexPath.row].pointValue))\n\nPrompt:\n\(challengeArray[indexPath.row].prompt!)"
+        let message = "Appearance Date: \(mediumDateFormatter.string(from: referenceArray[indexPath.row].datePosted))\n\nAssociated Media: \(referenceArray[indexPath.row].media?.type.userFacingString() ?? "None")\n\nPoint Value: \(String(referenceArray[indexPath.row].pointValue))\n\nPrompt:\n\(referenceArray[indexPath.row].prompt!)"
 
         let boldedRange = ["Appearance Date:",
                            "Associated Media:",
@@ -997,7 +1172,7 @@ extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
             self.editPointValueAction()
         }
 
-        let mediaTitle = challengeArray[indexPath.row].media == nil ? "Add Media" : "Edit Media"
+        let mediaTitle = referenceArray[indexPath.row].media == nil ? "Add Media" : "Edit Media"
 
         let editMediaAction = UIAlertAction(title: mediaTitle, style: .default) { _ in
             tableView.deselectRow(at: indexPath, animated: true)
@@ -1031,7 +1206,7 @@ extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
         actionSheet.addAction(editPointValueAction)
         actionSheet.addAction(editMediaAction)
 
-        if challengeArray[indexPath.row].media != nil
+        if referenceArray[indexPath.row].media != nil
         {
             actionSheet.addAction(removeMediaAction)
         }
@@ -1042,8 +1217,50 @@ extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
         present(actionSheet, animated: true, completion: nil)
     }
 
-    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int
+    func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return challengeArray.count
+        switch section
+        {
+        case 0:
+            return todaysPosts.count
+        case 1:
+            return upcomingThisWeek.count
+        case 2:
+            return postedThisWeek.count
+        default:
+            return filteredOtherPosts.count
+        }
+    }
+}
+
+extension Calendar {
+    private var currentDate: Date { return Date() }
+
+    func isDateInThisWeek(_ date: Date) -> Bool {
+        return isDate(date, equalTo: currentDate, toGranularity: .weekOfYear)
+    }
+
+    func isDateInThisMonth(_ date: Date) -> Bool {
+        return isDate(date, equalTo: currentDate, toGranularity: .month)
+    }
+
+    func isDateInNextWeek(_ date: Date) -> Bool {
+        guard let nextWeek = self.date(byAdding: DateComponents(weekOfYear: 1), to: currentDate) else {
+            return false
+        }
+        return isDate(date, equalTo: nextWeek, toGranularity: .weekOfYear)
+    }
+
+    func isDateInNextMonth(_ date: Date) -> Bool {
+        guard let nextMonth = self.date(byAdding: DateComponents(month: 1), to: currentDate) else {
+            return false
+        }
+        return isDate(date, equalTo: nextMonth, toGranularity: .month)
+    }
+}
+
+extension Date {
+    func days(from date: Date) -> Int {
+        return Calendar.current.dateComponents([.day], from: date, to: self).day!
     }
 }

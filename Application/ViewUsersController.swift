@@ -299,7 +299,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
                 {
                     showProgressHUD(text: "Setting points...", delay: nil)
 
-                    team.setPoints(points, forUser: self.userArray[self.selectedIndexPath.row].associatedIdentifier) { errorDescriptor in
+                    team.updatePoints(points, forUser: self.userArray[self.selectedIndexPath.row].associatedIdentifier) { errorDescriptor in
                         if let error = errorDescriptor
                         {
                             hideHUD(delay: 1) {
