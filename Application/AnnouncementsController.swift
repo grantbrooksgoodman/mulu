@@ -47,8 +47,8 @@ class AnnouncementsController: UIViewController, MFMailComposeViewControllerDele
         view.setBackground(withImageNamed: "Gradient.png")
 
         //        let titleAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Gotham-Black", size: 19)!]
-        let announcementAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBold", size: 18)!]
-        let noAnnouncementAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBoldItalic", size: 18)!]
+        //        let announcementAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBold", size: 18)!]
+        //        let noAnnouncementAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBoldItalic", size: 18)!]
         //
         //        let schedule = NSMutableAttributedString(string: "SCHEDULE\n\n", attributes: titleAttributes)
         //        let scheduleSubtitle = NSAttributedString(string: "– THURSDAY 1/7 12PM PT\n– THURSDAY 1/14 12PM PT\n– THURSDAY 1/21 12PM PT\n– THURSDAY 1/28 12PM PT\n\n", attributes: suibtitleAttributes)
@@ -60,15 +60,7 @@ class AnnouncementsController: UIViewController, MFMailComposeViewControllerDele
         //        schedule.append(howItWorks)
         //        schedule.append(howItWorksSubtitle)
 
-        if let tournament = currentTeam.associatedTournament
-        {
-            if let announcement = tournament.announcement
-            {
-                textView.attributedText = NSAttributedString(string: announcement, attributes: announcementAttributes)
-            }
-            else { textView.attributedText = NSAttributedString(string: "No announcements to display!", attributes: noAnnouncementAttributes) }
-        }
-        else { textView.attributedText = NSAttributedString(string: "No announcements to display!", attributes: noAnnouncementAttributes) }
+        setVisualTeamInformation()
     }
 
     override func viewWillAppear(_ animated: Bool)
@@ -77,6 +69,20 @@ class AnnouncementsController: UIViewController, MFMailComposeViewControllerDele
 
         currentFile = #file
         buildInfoController?.view.isHidden = !preReleaseApplication
+
+        if controllersUpdatedForTeamSwitch > 0
+        {
+            if controllersUpdatedForTeamSwitch == 3
+            {
+                controllersUpdatedForTeamSwitch = 0
+            }
+            else
+            {
+                controllersUpdatedForTeamSwitch += 1
+
+                setVisualTeamInformation()
+            }
+        }
     }
 
     override func prepare(for _: UIStoryboardSegue, sender _: Any?)
@@ -93,5 +99,21 @@ class AnnouncementsController: UIViewController, MFMailComposeViewControllerDele
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
     {
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
+    }
+
+    func setVisualTeamInformation()
+    {
+        let announcementAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBold", size: 18)!]
+        let noAnnouncementAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-SemiBoldItalic", size: 18)!]
+
+        if let tournament = currentTeam.associatedTournament
+        {
+            if let announcement = tournament.announcement
+            {
+                textView.attributedText = NSAttributedString(string: announcement, attributes: announcementAttributes)
+            }
+            else { textView.attributedText = NSAttributedString(string: "No announcements to display!", attributes: noAnnouncementAttributes) }
+        }
+        else { textView.attributedText = NSAttributedString(string: "No announcements to display!", attributes: noAnnouncementAttributes) }
     }
 }

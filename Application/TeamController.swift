@@ -55,39 +55,7 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
         view.setBackground(withImageNamed: "Gradient.png")
 
-        titleLabel.text = currentTeam.name.uppercased()
-
-        calculateTeamStatistics(withRankString: currentTeam.associatedTournament == nil) { statisticsString, errorDescriptor in
-            if let string = statisticsString
-            {
-                if let tournament = currentTeam.associatedTournament,
-                   let leaderboard = tournament.leaderboard(),
-                   let index = leaderboard.firstIndex(where: { $0.team.associatedIdentifier == currentTeam.associatedIdentifier })
-                {
-                    let mainStatisticsAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-Bold", size: 18)!]
-
-                    let rankString = "\((index + 1).ordinalValue.uppercased()) PLACE, \(leaderboard[index].points) PTS\n\n"
-
-                    let statisticsString = NSMutableAttributedString(string: rankString, attributes: mainStatisticsAttributes)
-
-                    statisticsString.append(string)
-
-                    self.statisticsTextView.attributedText = statisticsString
-                    //                    self.statisticsTextView.sizeToFit()
-                    //                    self.statisticsTextView.layoutIfNeeded()
-                }
-                else { self.statisticsTextView.attributedText = string }
-            }
-            else if let error = errorDescriptor
-            {
-                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-            }
-        }
-
-        completedChallenges = currentUser.completedChallenges(on: currentTeam)
-
-        collectionView.dataSource = self
-        collectionView.delegate = self
+        setVisualTeamInformation()
     }
 
     override func viewDidAppear(_ animated: Bool)
@@ -104,6 +72,30 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
         let screenHeight = UIScreen.main.bounds.height
         buildInfoController?.customYOffset = (screenHeight <= 736 ? 35 : 70)
+
+        if controllersUpdatedForTeamSwitch > 0
+        {
+            if controllersUpdatedForTeamSwitch == 3
+            {
+                controllersUpdatedForTeamSwitch = 0
+            }
+            else
+            {
+                controllersUpdatedForTeamSwitch += 1
+
+                if let tournament = currentTeam.associatedTournament
+                {
+                    tournament.deSerializeTeams { returnedTeams, errorDescriptor in
+                        if returnedTeams != nil
+                        {
+                            self.setVisualTeamInformation()
+                        }
+                        else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
+                    }
+                }
+                else { setVisualTeamInformation() }
+            }
+        }
     }
 
     override func prepare(for _: UIStoryboardSegue, sender _: Any?)
@@ -170,17 +162,55 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         }
     }
 
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
-    {
-        buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
-    }
-
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize
     {
         let screenWidth = UIScreen.main.bounds.width
         let width = screenWidth == 375 ? 365 : (screenWidth == 390 ? 380 : 400)
 
         return CGSize(width: width, height: 356)
+    }
+
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
+    {
+        buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
+    }
+
+    func setVisualTeamInformation()
+    {
+        titleLabel.text = currentTeam.name.uppercased()
+
+        calculateTeamStatistics(withRankString: currentTeam.associatedTournament == nil) { statisticsString, errorDescriptor in
+            if let string = statisticsString
+            {
+                if let tournament = currentTeam.associatedTournament,
+                   let leaderboard = tournament.leaderboard(),
+                   let index = leaderboard.firstIndex(where: { $0.team.associatedIdentifier == currentTeam.associatedIdentifier })
+                {
+                    let mainStatisticsAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "Montserrat-Bold", size: 18)!]
+
+                    let rankString = "\((index + 1).ordinalValue.uppercased()) PLACE, \(leaderboard[index].points) PTS\n\n"
+
+                    let statisticsString = NSMutableAttributedString(string: rankString, attributes: mainStatisticsAttributes)
+
+                    statisticsString.append(string)
+
+                    self.statisticsTextView.attributedText = statisticsString
+                    //                    self.statisticsTextView.sizeToFit()
+                    //                    self.statisticsTextView.layoutIfNeeded()
+                }
+                else { self.statisticsTextView.attributedText = string }
+            }
+            else if let error = errorDescriptor
+            {
+                report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+            }
+        }
+
+        completedChallenges = currentUser.completedChallenges(on: currentTeam)
+
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.reloadData()
     }
 }
 

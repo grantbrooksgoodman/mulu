@@ -31,6 +31,10 @@ var verboseFunctionExposure               = false
 let masterDateFormatter    = DateFormatter()
 let secondaryDateFormatter = DateFormatter()
 
+//Ints
+var appStoreReleaseVersion          = 0
+var controllersUpdatedForTeamSwitch = 0
+
 //Strings
 var codeName                  = "Mulu"
 var currentFile               = #file
@@ -46,7 +50,6 @@ var buildInfoController:       BuildInfoController?
 var lastInitializedController: UIViewController! = MainController()
 
 //Other Declarations
-var appStoreReleaseVersion = 0
 var buildType: Build.BuildType = .beta
 var currentTeam: Team!
 var currentUser: User!

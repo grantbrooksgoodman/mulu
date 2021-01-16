@@ -29,6 +29,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
     //Other Elements
     @IBOutlet var collectionView: UICollectionView!
+    @IBOutlet var settingsButton: UIButton!
 
     //==================================================//
 
@@ -86,18 +87,8 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         welcomeLabel.font = UIFont(name: "Gotham-Black", size: 32)!
 
         collectionView.alpha = 0
-        reloadData()
 
-        var statisticsString = "+ \(currentTeam.name!.uppercased())\n"
-
-        if let tournament = currentTeam.associatedTournament
-        {
-            statisticsString = "+ \(tournament.name!.uppercased())\n" + statisticsString
-        }
-
-        let streak = currentUser.streak(on: currentTeam)
-        statisticsString += "+ \(streak == 0 ? "NO" : "\(streak) DAY") STREAK"
-        statisticsTextView.text = statisticsString
+        setVisualTeamInformation()
     }
 
     override func viewWillAppear(_ animated: Bool)
@@ -127,6 +118,49 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     //==================================================//
 
     /* MARK: Interface Builder Actions */
+
+    @IBAction func settingsButton(_: Any)
+    {
+        AlertKit().optionAlertController(title: "Preferences", message: "What would you like to do?", cancelButtonTitle: nil, additionalButtons: [("Sign Out", false), ("Sign In to Different Team", false)], preferredActionIndex: nil, networkDependent: true) { selectedIndex in
+            if let index = selectedIndex
+            {
+                if index == 0
+                {
+                    self.signOut()
+                }
+                else if index == 1
+                {
+                    showProgressHUD()
+
+                    currentUser!.deSerializeAssociatedTeams { returnedTeams, errorDescriptor in
+                        if let teams = returnedTeams
+                        {
+                            if teams.count == 1
+                            {
+                                hideHUD(delay: 0.2) { self.errorAlert(title: "Error", message: "You are currently not a member of any other team.") }
+                            }
+                            else if teams.count > 1
+                            {
+                                hideHUD(delay: 0.2) { self.teamSelectionActionSheet(teams: teams) }
+                            }
+                        }
+                        else
+                        {
+                            hideHUD(delay: 0.2) { AlertKit().errorAlertController(title: "Couldn't Get Teams",
+                                                                                  message: errorDescriptor!,
+                                                                                  dismissButtonTitle: nil,
+                                                                                  additionalSelectors: nil,
+                                                                                  preferredAdditionalSelector: nil,
+                                                                                  canFileReport: true,
+                                                                                  extraInfo: errorDescriptor!,
+                                                                                  metadata: [#file, #function, #line],
+                                                                                  networkDependent: true) }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     //==================================================//
 
@@ -160,6 +194,19 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         }
 
         return false
+    }
+
+    func errorAlert(title: String, message: String)
+    {
+        AlertKit().errorAlertController(title:                       title,
+                                        message:                     message,
+                                        dismissButtonTitle:          nil,
+                                        additionalSelectors:         nil,
+                                        preferredAdditionalSelector: nil,
+                                        canFileReport:               true,
+                                        extraInfo:                   message,
+                                        metadata:                    [#file, #function, #line],
+                                        networkDependent:            true)
     }
 
     func incompleteChallengesForToday(completion: @escaping (_ returnedChallenges: [Challenge]?, _ errorDescriptor: String?) -> Void)
@@ -226,6 +273,99 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
                 }
             }
         }
+    }
+
+    func setVisualTeamInformation()
+    {
+        reloadData()
+
+        var statisticsString = "+ \(currentTeam.name!.uppercased())\n"
+
+        if let tournament = currentTeam.associatedTournament
+        {
+            statisticsString = "+ \(tournament.name!.uppercased())\n" + statisticsString
+        }
+
+        let streak = currentUser.streak(on: currentTeam)
+        statisticsString += "+ \(streak == 0 ? "NO" : "\(streak) DAY") STREAK"
+        statisticsTextView.text = statisticsString
+    }
+
+    func signOut()
+    {
+        AlertKit().confirmationAlertController(title: "Sign Out?", message: "Are you sure you would like to sign out?", cancelConfirmTitles: [:], confirmationDestructive: false, confirmationPreferred: true, networkDepedent: true) { didConfirm in
+            if let confirmed = didConfirm,
+               confirmed
+            {
+                do {
+                    try Auth.auth().signOut()
+
+                    currentUser = nil
+                    currentTeam = nil
+
+                    self.performSegue(withIdentifier: "SignInFromHomeSegue", sender: self)
+                }
+                catch {
+                    report(errorInfo(error), errorCode: (error as NSError).code, isFatal: true, metadata: [#file, #function, #line])
+                }
+            }
+        }
+    }
+
+    func switchTeam(_ team: Team)
+    {
+        team.deSerializeParticipants { returnedUsers, errorDescriptor in
+            if returnedUsers != nil
+            {
+                if let tournament = team.associatedTournament
+                {
+                    tournament.deSerializeTeams { returnedTeams, errorDescriptor in
+                        if returnedTeams != nil
+                        {
+                            currentTeam = team
+
+                            controllersUpdatedForTeamSwitch = 1
+
+                            self.incompleteChallenges = []
+                            self.currentChallenge = nil
+
+                            self.setVisualTeamInformation()
+                            self.reloadData()
+                        }
+                        else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
+                    }
+                }
+                else
+                {
+                    currentTeam = team
+
+                    self.reloadData()
+                }
+            }
+            else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
+        }
+    }
+
+    func teamSelectionActionSheet(teams: [Team])
+    {
+        let actionSheet = UIAlertController(title: "Switch Team", message: "Select the team you would like to sign in to.", preferredStyle: .actionSheet)
+
+        for team in teams.sorted(by: { $0.name < $1.name })
+        {
+            let teamAction = UIAlertAction(title: team.name!, style: .default) { _ in
+                self.switchTeam(team)
+            }
+
+            actionSheet.addAction(teamAction)
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            // It will dismiss action sheet
+        }
+
+        actionSheet.addAction(cancelAction)
+
+        present(actionSheet, animated: true, completion: nil)
     }
 
     func toggleChallengeElements(hidden: Bool, onView: UIView)
