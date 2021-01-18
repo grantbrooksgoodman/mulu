@@ -401,8 +401,8 @@ Pull to refresh or check back later!</string>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" secondItem="jlq-PP-Yh0" secondAttribute="height" multiplier="27:17" id="Kqu-vl-EoD"/>
                                                             </constraints>
-                                                            <wkWebViewConfiguration key="configuration" allowsInlineMediaPlayback="YES">
-                                                                <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                                            <wkWebViewConfiguration key="configuration">
+                                                                <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" audio="YES" video="YES"/>
                                                                 <wkPreferences key="preferences"/>
                                                             </wkWebViewConfiguration>
                                                         </wkWebView>
@@ -681,7 +681,7 @@ Pull to refresh or check back later!</string>
                                                                     </label>
                                                                 </subviews>
                                                             </view>
-                                                            <color key="backgroundColor" cyan="0.20567812029999999" magenta="0.073716223240000003" yellow="0.47469294070000001" black="0.2838124346" alpha="1" colorSpace="custom" customColorSpace="genericCMYKColorSpace"/>
+                                                            <color key="backgroundColor" red="0.50588235294117645" green="0.54117647058823526" blue="0.36078431372549019" alpha="1" colorSpace="calibratedRGB"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="centerY" secondItem="4PF-Ds-slh" secondAttribute="centerY" id="amN-yf-mjS"/>
                                                                 <constraint firstItem="4PF-Ds-slh" firstAttribute="centerX" secondItem="hpt-Z2-S93" secondAttribute="centerX" id="vEZ-B7-6t1"/>
@@ -691,10 +691,6 @@ Pull to refresh or check back later!</string>
                                                             </connections>
                                                         </collectionViewCell>
                                                     </cells>
-                                                    <connections>
-                                                        <outlet property="ibCalendarDataSource" destination="uRl-I6-vGh" id="PTS-eF-k5Y"/>
-                                                        <outlet property="ibCalendarDelegate" destination="uRl-I6-vGh" id="8sF-2D-8YP"/>
-                                                    </connections>
                                                 </collectionView>
                                                 <label opaque="NO" userInteractionEnabled="NO" alpha="0.77000000000000002" tag="12905455" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YOUR STREAK" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wsx-O2-q16">
                                                     <rect key="frame" x="0.0" y="0.0" width="400" height="60"/>

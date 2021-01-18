@@ -35,6 +35,7 @@ class Challenge
         case gif
         case linkedVideo
         case staticImage
+        case tikTokVideo
     }
 
     //==================================================//
@@ -240,6 +241,8 @@ extension Challenge.MediaType
             return "linkedVideo"
         case .staticImage:
             return "staticImage"
+        case .tikTokVideo:
+            return "tikTokVideo"
         }
     }
 
@@ -255,6 +258,8 @@ extension Challenge.MediaType
             return "Linked video"
         case .staticImage:
             return "Static image"
+        case .tikTokVideo:
+            return "TikTok video"
         }
     }
 }

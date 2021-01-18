@@ -60,7 +60,7 @@ class UserTestingSerializer
         }
 
         group.notify(queue: .main) {
-            completion(users, !errors.isEmpty ? errors.joined(separator: "\n") : nil)
+            completion(users, !errors.isEmpty ? errors.unique().joined(separator: "\n") : nil)
         }
     }
 

@@ -50,7 +50,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use this page to manually create Challenges, Teams, Tournaments, and Users." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dST-6k-eCl">
-                                <rect key="frame" x="32" y="125" width="365" height="36"/>
+                                <rect key="frame" x="32" y="125" width="365" height="35"/>
                                 <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="15"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -141,7 +141,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fls-s4-7IY" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="655" y="531"/>
+            <point key="canvasLocation" x="654.6728971962616" y="530.66954643628515"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="T6B-op-wN3">
@@ -673,7 +673,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use this page to view and edit Challenges, Teams, Tournaments, and Users." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rB5-CB-oaC">
-                                <rect key="frame" x="32" y="125" width="365" height="36"/>
+                                <rect key="frame" x="32" y="125" width="365" height="35"/>
                                 <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="15"/>
                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -1282,13 +1282,13 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use this page to send push notifications to all users." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JUy-bx-Cta">
-                                <rect key="frame" x="32" y="125" width="365" height="36"/>
+                                <rect key="frame" x="32" y="125.00000000000001" width="365" height="17.666666666666671"/>
                                 <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="15"/>
                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="KAk-Hg-o4u">
-                                <rect key="frame" x="20" y="255" width="388" height="34"/>
+                                <rect key="frame" x="20" y="236.66666666666666" width="388" height="33.999999999999972"/>
                                 <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="9AC-JN-UGS"/>
@@ -1298,7 +1298,7 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="next"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="FkE-4Y-ntu">
-                                <rect key="frame" x="20" y="346" width="388" height="34"/>
+                                <rect key="frame" x="20" y="327.66666666666669" width="388" height="34"/>
                                 <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="vWX-1z-aRV"/>
@@ -1308,7 +1308,7 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TITLE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999403953552" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZeQ-xf-381">
-                                <rect key="frame" x="20" y="231" width="388" height="16"/>
+                                <rect key="frame" x="20" y="212.66666666666666" width="388" height="16"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="16" id="LOb-XI-Jf8"/>
                                 </constraints>
@@ -1317,7 +1317,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MESSAGE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999403953552" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Isv-nW-gXC">
-                                <rect key="frame" x="20" y="322" width="388" height="16"/>
+                                <rect key="frame" x="20" y="303.66666666666669" width="388" height="16"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="16" id="A1W-ca-Nw6"/>
                                 </constraints>
@@ -1326,7 +1326,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nGH-dh-e62" customClass="ShadowButton" customModule="Mulu" customModuleProvider="target">
-                                <rect key="frame" x="139" y="393" width="150" height="40"/>
+                                <rect key="frame" x="139" y="374.66666666666669" width="150" height="40"/>
                                 <color key="backgroundColor" red="0.37647058820000001" green="0.75686274509999996" blue="0.16078431369999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="OUB-DJ-onI"/>
@@ -1396,13 +1396,13 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use this page to set the global announcement." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fnF-Ws-wui">
-                                <rect key="frame" x="32" y="125" width="365" height="18"/>
+                                <rect key="frame" x="32" y="125.00000000000001" width="365" height="17.666666666666671"/>
                                 <fontDescription key="fontDescription" name="SFUIText-Regular" family="SF UI Text" pointSize="15"/>
                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mia-oW-OLo" customClass="ShadowButton" customModule="Mulu" customModuleProvider="target">
-                                <rect key="frame" x="239" y="359" width="169" height="40"/>
+                                <rect key="frame" x="239" y="358.66666666666669" width="169" height="40"/>
                                 <color key="backgroundColor" red="0.37647058820000001" green="0.75686274509999996" blue="0.16078431369999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="XdQ-qE-d3a"/>
@@ -1414,7 +1414,7 @@
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o8g-fd-0ma">
-                                <rect key="frame" x="20" y="151" width="388" height="200"/>
+                                <rect key="frame" x="20" y="150.66666666666666" width="388" height="199.99999999999997"/>
                                 <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="200" id="Rdf-LV-6Z7"/>
@@ -1425,7 +1425,7 @@
                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES" address="YES" calendarEvent="YES"/>
                             </textView>
                             <button opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MbT-Rg-gIg" customClass="ShadowButton" customModule="Mulu" customModuleProvider="target">
-                                <rect key="frame" x="20" y="359" width="169" height="40"/>
+                                <rect key="frame" x="20" y="358.66666666666669" width="169" height="40"/>
                                 <color key="backgroundColor" red="0.91372549020000005" green="0.35294117650000001" blue="0.32549019610000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="iZP-S7-dDC"/>
@@ -1437,7 +1437,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="✅ Up to Date" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999999999998" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ov6-QX-Ija">
-                                <rect key="frame" x="20" y="359" width="169" height="40"/>
+                                <rect key="frame" x="20" y="358.66666666666669" width="169" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="Af8-Rd-A6V"/>
                                 </constraints>

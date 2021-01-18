@@ -43,14 +43,14 @@ class TournamentSerializer
 
                     if index == toTournaments.count - 1
                     {
-                        completion(errors.joined(separator: "\n"))
+                        completion(errors.unique().joined(separator: "\n"))
                     }
                 }
                 else
                 {
                     if index == toTournaments.count - 1
                     {
-                        completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                        completion(errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
                     }
                 }
             }
@@ -185,7 +185,7 @@ class TournamentSerializer
                     }
                     else if let errors = errorDescriptors
                     {
-                        completion(nil, errors.joined(separator: "\n"))
+                        completion(nil, errors.unique().joined(separator: "\n"))
                     }
                     else { completion(nil, "An unknown error occurred.") }
                 }
@@ -447,7 +447,7 @@ class TournamentSerializer
                 }
                 else if let errors = errorDescriptors
                 {
-                    completion(nil, errors.joined(separator: "\n"))
+                    completion(nil, errors.unique().joined(separator: "\n"))
                 }
             }
         }
@@ -478,14 +478,14 @@ class TournamentSerializer
 
                     if index == teams.count - 1
                     {
-                        completion(errors.joined(separator: "\n"))
+                        completion(errors.unique().joined(separator: "\n"))
                     }
                 }
                 else
                 {
                     if index == teams.count - 1
                     {
-                        completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                        completion(errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
                     }
                 }
             }

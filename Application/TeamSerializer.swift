@@ -89,10 +89,10 @@ class TeamSerializer
             GenericSerializer().updateValue(onKey: "/allTeams/\(toTeam.associatedIdentifier!)", withData: ["participantIdentifiers": newParticipantIdentifiers.delimitedArray()]) { returnedError in
                 if let error = returnedError
                 {
-                    completion(!errors.isEmpty ? "\(errors.joined(separator: "\n"))\n\(errorInfo(error))" : nil)
+                    completion(!errors.isEmpty ? "\(errors.unique().joined(separator: "\n"))\n\(errorInfo(error))" : nil)
                 }
                 else
-                { completion(!errors.isEmpty ? errors.joined(separator: "\n") : nil) }
+                { completion(!errors.isEmpty ? errors.unique().joined(separator: "\n") : nil) }
             }
         }
     }
@@ -394,14 +394,14 @@ class TeamSerializer
 
                     if index == toTeams.count - 1
                     {
-                        completion(errors.joined(separator: "\n"))
+                        completion(errors.unique().joined(separator: "\n"))
                     }
                 }
                 else
                 {
                     if index == toTeams.count - 1
                     {
-                        completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                        completion(errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
                     }
                 }
             }
@@ -462,14 +462,14 @@ class TeamSerializer
 
                                         if index == participantIdentifiers.count - 1
                                         {
-                                            completion(nil, errors.joined(separator: "\n"))
+                                            completion(nil, errors.unique().joined(separator: "\n"))
                                         }
                                     }
                                     else
                                     {
                                         if index == participantIdentifiers.count - 1
                                         {
-                                            completion((generatedKey, code), errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                                            completion((generatedKey, code), errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
                                         }
                                     }
                                 }
@@ -676,7 +676,7 @@ class TeamSerializer
 
                         if teamArray.count + errorDescriptorArray.count == withIdentifiers.count
                         {
-                            completion(teamArray, errorDescriptorArray.isEmpty ? nil : errorDescriptorArray)
+                            completion(teamArray, errorDescriptorArray.isEmpty ? nil : errorDescriptorArray.unique())
                         }
                     }
                     else
@@ -685,7 +685,7 @@ class TeamSerializer
 
                         if teamArray.count + errorDescriptorArray.count == withIdentifiers.count
                         {
-                            completion(teamArray.isEmpty ? nil : teamArray, errorDescriptorArray)
+                            completion(teamArray.isEmpty ? nil : teamArray, errorDescriptorArray.unique())
                         }
                     }
                 }
@@ -1183,14 +1183,14 @@ class TeamSerializer
 
                     if index == users.count - 1
                     {
-                        completion(errors.joined(separator: "\n"))
+                        completion(errors.unique().joined(separator: "\n"))
                     }
                 }
                 else
                 {
                     if index == users.count - 1
                     {
-                        completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                        completion(errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
                     }
                 }
             }
@@ -1236,6 +1236,7 @@ class TeamSerializer
      - Parameter withDataBundle: The serialized **Team** whose structural integrity will be verified.
 
      - Returns: A Boolean describing whether or not the data is well-formed.
+     - Warning: Dumps errors to console.
      */
     private func validateTeamMetadata(_ withDataBundle: [String: Any]) -> Bool
     {

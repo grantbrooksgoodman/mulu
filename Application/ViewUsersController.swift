@@ -92,8 +92,6 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
     override func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(animated)
-
-        roundCorners(forViews: [tableView], withCornerType: 0)
     }
 
     override func prepare(for _: UIStoryboardSegue, sender _: Any?)
@@ -241,7 +239,7 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
             }
             else if let errors = errorDescriptors
             {
-                report(errors.joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                report(errors.unique().joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
             }
         }
     }
@@ -509,6 +507,8 @@ class ViewUsersController: UIViewController, MFMailComposeViewControllerDelegate
                     self.tableView.delegate = self
 
                     self.tableView.reloadData()
+
+                    self.tableView.layer.cornerRadius = 10
 
                     UIView.animate(withDuration: 0.2, delay: 1) {
                         self.activityIndicator.alpha = 0

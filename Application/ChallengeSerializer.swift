@@ -103,7 +103,7 @@ class ChallengeSerializer
                     }
                     else if let errors = errorDescriptors
                     {
-                        completion(nil, errors.joined(separator: "\n"))
+                        completion(nil, errors.unique().joined(separator: "\n"))
                     }
                     else { completion(nil, "An unknown error occurred.") }
                 }
@@ -373,14 +373,14 @@ class ChallengeSerializer
 
                                 if index == teams.count - 1
                                 {
-                                    completion(errors.joined(separator: "\n"))
+                                    completion(errors.unique().joined(separator: "\n"))
                                 }
                             }
                             else
                             {
                                 if index == teams.count - 1
                                 {
-                                    completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                                    completion(errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
                                 }
                             }
                         }
@@ -389,7 +389,7 @@ class ChallengeSerializer
                     {
                         if index == teams.count - 1
                         {
-                            completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                            completion(errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
                         }
                     }
                 }
@@ -468,6 +468,8 @@ class ChallengeSerializer
                     mediaType = .linkedVideo
                 case "autoPlayVideo":
                     mediaType = .autoPlayVideo
+                case "tikTokVideo":
+                    mediaType = .tikTokVideo
                 default:
                     return (nil, "Couldn't convert media type into «MediaType».")
                 }

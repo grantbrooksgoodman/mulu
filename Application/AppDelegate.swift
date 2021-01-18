@@ -647,14 +647,14 @@ func notifyAllUsers(title: String, body: String, completion: @escaping (_ errorD
 
                                 if index == users.count - 1
                                 {
-                                    completion(errors.joined(separator: "\n"))
+                                    completion(errors.unique().joined(separator: "\n"))
                                 }
                             }
                             else
                             {
                                 if index == users.count - 1
                                 {
-                                    completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                                    completion(errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
                                 }
                             }
                         }
@@ -662,7 +662,7 @@ func notifyAllUsers(title: String, body: String, completion: @escaping (_ errorD
                 }
                 else if index == users.count - 1
                 {
-                    completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                    completion(errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
                 }
             }
         }

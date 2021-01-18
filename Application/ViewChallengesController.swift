@@ -632,6 +632,8 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
                                     self.updateChallengeMedia((URL(string: string)!, nil, .staticImage))
                                 case .linkedVideo:
                                     self.updateChallengeMedia((MediaAnalyser().convertToEmbedded(linkString: string) ?? URL(string: string)!, nil, .linkedVideo))
+                                case .tikTokVideo:
+                                    self.updateChallengeMedia((URL(string: string)!, nil, .tikTokVideo))
                                 case .other:
                                     hideHUD(delay: 0.5) {
                                         AlertKit().errorAlertController(title:                       "Error",

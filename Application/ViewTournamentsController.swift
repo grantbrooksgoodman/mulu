@@ -8,6 +8,8 @@
 
 /* First-party Frameworks */
 import MessageUI
+import PKHUD
+import QuickLook
 import UIKit
 
 class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDelegate
@@ -55,8 +57,16 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
 
     var buildInstance: Build!
     var editingStartDate = true
+    var fileURL: URL?
     var previousAnnouncement: String!
-    var selectedIndexPath: IndexPath!
+
+    var selectedIndexPath: IndexPath! {
+        didSet {
+            selectedTournament = tournamentArray[selectedIndexPath.row]
+        }
+    }
+
+    var selectedTournament: Tournament!
 
     //==================================================//
 
@@ -252,7 +262,8 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
             self.tournamentTableView.alpha = 0
         } completion: { _ in
             self.setTeamArray { errorDescriptor in
-                if let error = errorDescriptor
+                if let error = errorDescriptor,
+                   error != "Improperly formatted metadata."
                 {
                     AlertKit().errorAlertController(title:                       "Couldn't Get Teams",
                                                     message:                     error,
@@ -266,7 +277,7 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
                         self.reloadData()
                     }
                 }
-                else
+                else if !self.teamArray.isEmpty
                 {
                     self.promptLabel.text = "SELECT TEAMS FOR THIS TOURNAMENT:"
 
@@ -279,6 +290,35 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
                         self.selectionTableView.scrollToRow(at: IndexPath(row: self.teamArray.count - 1, section: 0), at: .bottom, animated: false)
 
                         self.finishSelectionTableViewSetup()
+
+                        if let error = errorDescriptor
+                        {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                                AlertKit().errorAlertController(title:                       "Couldn't Get All Teams",
+                                                                message:                     "Some teams had improperly formatted metadata and were not retrieved.",
+                                                                dismissButtonTitle:          nil,
+                                                                additionalSelectors:         nil,
+                                                                preferredAdditionalSelector: nil,
+                                                                canFileReport:               true,
+                                                                extraInfo:                   error,
+                                                                metadata:                    [#file, #function, #line],
+                                                                networkDependent:            true)
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    AlertKit().errorAlertController(title:                       "Couldn't Get Teams",
+                                                    message:                     "An unknown error occurred.",
+                                                    dismissButtonTitle:          nil,
+                                                    additionalSelectors:         nil,
+                                                    preferredAdditionalSelector: nil,
+                                                    canFileReport:               true,
+                                                    extraInfo:                   nil,
+                                                    metadata:                    [#file, #function, #line],
+                                                    networkDependent:            true) {
+                        self.hideSelectionTableView()
                     }
                 }
             }
@@ -412,7 +452,6 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yyyy"
 
-        let selectedTournament = tournamentArray[selectedIndexPath.row]
         let dateReferenceString = editingStartDate ? "start" : "end"
         let sampleDateString = dateFormatter.string(from: editingStartDate ? selectedTournament.startDate : selectedTournament.endDate)
 
@@ -439,7 +478,7 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
                     if let dateString = returnedString,
                        let newDate = dateFormatter.date(from: dateString)
                     {
-                        let comparisonDate: Date! = self.editingStartDate ? selectedTournament.startDate : selectedTournament.endDate
+                        let comparisonDate: Date! = self.editingStartDate ? self.selectedTournament.startDate : self.selectedTournament.endDate
 
                         if comparisonDate.comparator == newDate.comparator
                         {
@@ -454,7 +493,7 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
                         {
                             showProgressHUD(text: "Setting \(dateReferenceString) date...", delay: nil)
 
-                            selectedTournament.update(startDate: self.editingStartDate, to: newDate) { errorDescriptor in
+                            self.selectedTournament.update(startDate: self.editingStartDate, to: newDate) { errorDescriptor in
                                 if let error = errorDescriptor
                                 {
                                     hideHUD(delay: 1) {
@@ -515,7 +554,7 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
                     {
                         showProgressHUD(text: "Setting name...", delay: nil)
 
-                        selectedTournament.updateName(newName) { errorDescriptor in
+                        self.selectedTournament.updateName(newName) { errorDescriptor in
                             if let error = errorDescriptor
                             {
                                 hideHUD(delay: 1) {
@@ -531,6 +570,43 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
                 {
                     self.reSelectRow()
                 }
+            }
+        }
+    }
+
+    func generateSpreadsheetAction()
+    {
+        showProgressHUD()
+
+        createCSV { fileURL, errorDescriptor in
+            if let url = fileURL
+            {
+                hideHUD(delay: 0.2) {
+                    let previewController = QLPreviewController()
+                    previewController.dataSource = self
+                    previewController.delegate = self
+
+                    self.fileURL = url
+                    previewController.reloadData()
+
+                    self.present(previewController, animated: true) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
+                            if Int().random(min: 1, max: 100) % 2 == 0 && Int().random(min: 1, max: 100) % 2 == 0
+                            {
+                                PKHUD.sharedHUD.contentView = PKHUDTextView(text: "Rotate device for best results")
+                                PKHUD.sharedHUD.show()
+
+                                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { hideHUD() }
+                            }
+
+                            (UIApplication.shared.delegate as! AppDelegate).restrictRotation = .all
+                        }
+                    }
+                }
+            }
+            else
+            {
+                hideHUD(delay: 0.2) { self.errorAlert(title: "Couldn't Create CSV", message: errorDescriptor!) }
             }
         }
     }
@@ -609,25 +685,162 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
     {
         hideHUD(delay: 1)
 
-        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        generateTournamentStrings { pointStrings, tournamentsString, errorDescriptor in
+            if let pointStrings = pointStrings
+            {
+                let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        let boldedString = "\(tournamentArray[selectedIndexPath.row].name!) information:\n\n\(generateTournamentStrings().tournamentsString)"
+                let boldedString = "\(self.tournamentArray[self.selectedIndexPath.row].name!) information:\n\n\(tournamentsString)"
 
-        let unboldedRange = generateTournamentStrings().pointStrings
+                let unboldedRange = pointStrings
 
-        actionSheet.setValue(attributedString(boldedString, mainAttributes: titleAttributes, alternateAttributes: subtitleAttributes, alternateAttributeRange: unboldedRange), forKey: "attributedMessage")
+                actionSheet.setValue(attributedString(boldedString, mainAttributes: self.titleAttributes, alternateAttributes: self.subtitleAttributes, alternateAttributeRange: unboldedRange), forKey: "attributedMessage")
 
-        let backAction = UIAlertAction(title: "Back", style: .default, handler: { _ in
-            self.tournamentTableView.selectRow(at: self.selectedIndexPath, animated: true, scrollPosition: .none)
-            self.tournamentTableView.delegate?.tableView!(self.tournamentTableView, didSelectRowAt: self.selectedIndexPath)
-        })
+                let backAction = UIAlertAction(title: "Back", style: .default, handler: { _ in
+                    self.tournamentTableView.selectRow(at: self.selectedIndexPath, animated: true, scrollPosition: .none)
+                    self.tournamentTableView.delegate?.tableView!(self.tournamentTableView, didSelectRowAt: self.selectedIndexPath)
+                })
 
-        let dismissAction = UIAlertAction(title: "Dismiss", style: .cancel)
+                let dismissAction = UIAlertAction(title: "Dismiss", style: .cancel)
 
-        actionSheet.addAction(backAction)
-        actionSheet.addAction(dismissAction)
+                actionSheet.addAction(backAction)
+                actionSheet.addAction(dismissAction)
 
-        present(actionSheet, animated: true)
+                self.present(actionSheet, animated: true)
+            }
+            else { self.errorAlert(title: "Couldn't Get Rankings", message: errorDescriptor!) }
+        }
+    }
+
+    //==================================================//
+
+    /* MARK: CSV Generation Functions */
+
+    func breakdownStrings(for teams: [Team], completion: @escaping (_ returnedStrings: [[String: Any]]?, _ errorDescriptor: String?) -> Void)
+    {
+        var compiledArray = [[String: Any]]()
+        var errors        = [String]()
+        var teamInfo      = [String: Any]()
+
+        for team in teams
+        {
+            team.deSerializeParticipants { returnedUsers, errorDescriptor in
+                if let users = returnedUsers
+                {
+                    var currentTeamBreakdown = ""
+
+                    for user in users.sorted(by: { $0.firstName < $1.firstName })
+                    {
+                        let stringToAppend = "\(user.firstName!) \(user.lastName!) – \(self.totalPoints(for: user, on: team))"
+
+                        if currentTeamBreakdown == ""
+                        {
+                            currentTeamBreakdown = stringToAppend
+                        }
+                        else { currentTeamBreakdown = "\(currentTeamBreakdown)\r\(stringToAppend)" }
+                    }
+
+                    if currentTeamBreakdown != ""
+                    {
+                        let totalPointsString = "\(team.getTotalPoints())"
+
+                        teamInfo["name"] = team.name!
+                        teamInfo["breakdown"] = "\"\(currentTeamBreakdown)\""
+                        teamInfo["totalPoints"] = totalPointsString
+
+                        compiledArray.append(teamInfo)
+
+                        currentTeamBreakdown = ""
+                        teamInfo = [:]
+                    }
+                    else { completion(nil, "Failed to get breakdown for Team.") }
+
+                    if compiledArray.count + errors.count == teams.count
+                    {
+                        completion(compiledArray, errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
+                    }
+                }
+                else
+                {
+                    errors.append(errorDescriptor!)
+
+                    if compiledArray.count + errors.count == teams.count
+                    {
+                        completion(compiledArray.isEmpty ? nil : compiledArray, errors.unique().joined(separator: "\n"))
+                    }
+                }
+            }
+        }
+    }
+
+    func createCSV(completion: @escaping (_ fileURL: URL?, _ errorDescriptor: String?) -> Void)
+    {
+        generateSpreadsheetStrings { returnedStrings, errorDescriptor in
+            if let strings = returnedStrings
+            {
+                var csvString = "\("Team"),\("Total Points"),\("Breakdown")\n\n"
+
+                for dictionary in strings
+                {
+                    csvString = csvString.appending("\(String(describing: dictionary["name"]!)) ,\(String(describing: dictionary["totalPoints"]!)) ,\(String(describing: dictionary["breakdown"]!))\n")
+                }
+
+                do {
+                    let filePath = try FileManager.default.url(for: .documentDirectory, in: .allDomainsMask, appropriateFor: nil, create: false)
+                    let fileURL = filePath.appendingPathComponent("\(self.selectedTournament.name!).csv")
+
+                    try csvString.write(to: fileURL, atomically: true, encoding: .utf8)
+
+                    self.fileURL = fileURL
+                    completion(fileURL, nil)
+
+                } catch { completion(nil, errorInfo(error)) }
+            }
+            else { completion(nil, errorDescriptor!) }
+        }
+    }
+
+    func generateSpreadsheetStrings(completion: @escaping (_ returnedStrings: [[String: Any]]?, _ errorDescriptor: String?) -> Void)
+    {
+        selectedTournament.deSerializeTeams { returnedTeams, errorDescriptor in
+            if let teams = returnedTeams
+            {
+                self.breakdownStrings(for: teams) { returnedStrings, errorDescriptor in
+                    if let strings = returnedStrings
+                    {
+                        completion(strings, nil)
+                    }
+                    else { completion(nil, errorDescriptor!) }
+                }
+            }
+            else { completion(nil, errorDescriptor!) }
+        }
+    }
+
+    func totalPoints(for user: User, on team: Team) -> Int
+    {
+        guard let additionalPoints = team.participantIdentifiers[user.associatedIdentifier] else
+        { report("This User is not on that Team!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return -1 }
+
+        var baseValue = additionalPoints
+
+        var knownIdentifiers = [String]()
+
+        if let completedChallenges = user.completedChallenges(on: team)
+        {
+            for challengeTuple in completedChallenges
+            {
+                if !knownIdentifiers.contains(challengeTuple.challenge.associatedIdentifier)
+                {
+                    baseValue += challengeTuple.challenge.pointValue
+                    knownIdentifiers.append(challengeTuple.challenge.associatedIdentifier)
+                }
+            }
+
+            return baseValue
+        }
+
+        return baseValue
     }
 
     //==================================================//
@@ -843,58 +1056,37 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
         return challengesString
     }
 
-    func generateTournamentStrings() -> (tournamentsString: String, pointStrings: [String])
+    func generateTournamentStrings(completion: @escaping (_ pointStrings: [String]?, _ tournamentString: String, _ errorDescriptor: String?) -> Void)
     {
         var pointStrings = [String]()
         var tournamentsString = ""
 
-        let selectedTournament = tournamentArray[selectedIndexPath.row]
-
-        guard let teams = selectedTournament.DSTeams?.sorted(by: { $0.name < $1.name }) else
-        {
-            showProgressHUD(text: "Getting tournament information...", delay: nil)
-
-            selectedTournament.deSerializeTeams { returnedTeams, errorDescriptor in
-                if returnedTeams != nil
+        selectedTournament.deSerializeTeams { returnedTeams, errorDescriptor in
+            if let teams = returnedTeams
+            {
+                for team in teams.sorted(by: { $0.getTotalPoints() > $1.getTotalPoints() })
                 {
-                    hideHUD(delay: 1) {
-                        self.viewRankingsAction()
+                    if tournamentsString == ""
+                    {
+                        tournamentsString = "1. \(team.name!), \(team.getTotalPoints()) pts."
+                        pointStrings.append("\(team.getTotalPoints()) pts.")
+                    }
+                    else
+                    {
+                        let components = tournamentsString.components(separatedBy: "\n")
+
+                        tournamentsString = "\(tournamentsString)\n\(components.isEmpty ? "2." : "\(components.count + 1).") \(team.name!), \(team.getTotalPoints()) pts."
+                        pointStrings.append("\(team.getTotalPoints()) pts.")
+                    }
+
+                    if pointStrings.count == teams.count
+                    {
+                        completion(pointStrings, tournamentsString, nil)
                     }
                 }
-                else
-                {
-                    hideHUD(delay: 1) {
-                        AlertKit().errorAlertController(title:                       "Couldn't Get Tournament Information",
-                                                        message:                     errorDescriptor!,
-                                                        dismissButtonTitle:          nil,
-                                                        additionalSelectors:         nil,
-                                                        preferredAdditionalSelector: nil,
-                                                        canFileReport:               true,
-                                                        extraInfo:                   errorDescriptor!,
-                                                        metadata:                    [#file, #function, #line],
-                                                        networkDependent:            true)
-                    }
-                }
-            }; return ("NULL", [])
-        }
-
-        for team in teams.sorted(by: { $0.getTotalPoints() > $1.getTotalPoints() })
-        {
-            if tournamentsString == ""
-            {
-                tournamentsString = "1. \(team.name!), \(team.getTotalPoints()) pts."
-                pointStrings.append("\(team.getTotalPoints()) pts.")
             }
-            else
-            {
-                let components = tournamentsString.components(separatedBy: "\n")
-
-                tournamentsString = "\(tournamentsString)\n\(components.isEmpty ? "2." : "\(components.count + 1).") \(team.name!), \(team.getTotalPoints()) pts."
-                pointStrings.append("\(team.getTotalPoints()) pts.")
-            }
+            else { completion(nil, "", errorDescriptor!) }
         }
-
-        return (tournamentsString, pointStrings)
     }
 
     func hideSelectionTableView()
@@ -1074,8 +1266,17 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
 
                 filteredTeams.append(contentsOf: sortedUnselectedTeams.sorted(by: { $0.name < $1.name }))
 
+                guard let error = errorDescriptor else
+                {
+                    guard !filteredTeams.isEmpty else
+                    { completion("An unknown error occurred."); return }
+
+                    self.teamArray = filteredTeams
+                    completion(nil); return
+                }
+
                 self.teamArray = filteredTeams
-                completion(nil)
+                completion(error)
             }
             else { completion(errorDescriptor!) }
         }
@@ -1097,6 +1298,32 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
 /* MARK: Extensions */
 
 /**/
+
+/* MARK: QLPreviewControllerDataSource,  QLPreviewControllerDelegate */
+extension ViewTournamentsController: QLPreviewControllerDataSource, QLPreviewControllerDelegate
+{
+    func numberOfPreviewItems(in _: QLPreviewController) -> Int
+    {
+        1
+    }
+
+    func previewControllerWillDismiss(_: QLPreviewController)
+    {
+        let value = UIInterfaceOrientation.portrait.rawValue
+        UIDevice.current.setValue(value, forKey: "orientation")
+
+        (UIApplication.shared.delegate as! AppDelegate).restrictRotation = .portrait
+    }
+
+    func previewController(_: QLPreviewController, previewItemAt _: Int) -> QLPreviewItem
+    {
+        guard let url = fileURL else { report("File URL not set!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]); return (URL(string: "about:blank")! as QLPreviewItem) }
+
+        return url as QLPreviewItem
+    }
+}
+
+//--------------------------------------------------//
 
 /* MARK: UITableViewDataSource, UITableViewDelegate */
 extension ViewTournamentsController: UITableViewDataSource, UITableViewDelegate
@@ -1301,6 +1528,13 @@ extension ViewTournamentsController: UITableViewDataSource, UITableViewDelegate
             self.editDateActionAlert()
         }
 
+        let generateSpreadsheetAction = UIAlertAction(title: "Generate Spreadsheet", style: .default) { _ in
+            tableView.deselectRow(at: indexPath, animated: true)
+            tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
+
+            self.generateSpreadsheetAction()
+        }
+
         let manageChallengesAction = UIAlertAction(title: "Manage Challenges", style: .default) { _ in
             tableView.deselectRow(at: indexPath, animated: true)
             tableView.delegate?.tableView!(tableView, didDeselectRowAt: indexPath)
@@ -1340,6 +1574,7 @@ extension ViewTournamentsController: UITableViewDataSource, UITableViewDelegate
         actionSheet.addAction(editNameAction)
         actionSheet.addAction(editStartEndDateAction)
 
+        actionSheet.addAction(generateSpreadsheetAction)
         actionSheet.addAction(manageChallengesAction) /*actionSheet.addAction(viewChallengesAction)*/
         actionSheet.addAction(viewRankingsAction)
 

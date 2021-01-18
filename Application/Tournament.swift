@@ -264,7 +264,7 @@ class Tournament
             TeamSerializer().getTeams(withIdentifiers: teamIdentifiers) { returnedTeams, errorDescriptors in
                 if let errors = errorDescriptors
                 {
-                    completion(nil, errors.joined(separator: "\n"))
+                    completion(nil, errors.unique().joined(separator: "\n"))
                 }
                 else if let teams = returnedTeams
                 {
@@ -316,7 +316,7 @@ class Tournament
             TeamSerializer().getTeams(withIdentifiers: teamIdentifiers) { returnedTeams, errorDescriptors in
                 if let errors = errorDescriptors
                 {
-                    report(errors.joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    report(errors.unique().joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
                 }
                 else if let teams = returnedTeams
                 {
@@ -345,14 +345,14 @@ class Tournament
 
                     if index == teams.count - 1
                     {
-                        completion(errors.joined(separator: "\n"))
+                        completion(errors.unique().joined(separator: "\n"))
                     }
                 }
                 else
                 {
                     if index == teams.count - 1
                     {
-                        completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                        completion(errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
                     }
                 }
             }

@@ -80,20 +80,7 @@ class Team
             return -1
         }
 
-        var totalValue = 0
-
-        for challenge in challenges
-        {
-            for user in challenge.metadata.users()
-            {
-                if user.associatedIdentifier == userIdentifier
-                {
-                    totalValue += challenge.challenge.pointValue
-                }
-            }
-        }
-
-        return totalValue
+        return challenges.accruedPoints(for: userIdentifier)
     }
 
     /**
@@ -183,7 +170,7 @@ class Team
             UserSerializer().getUsers(withIdentifiers: Array(participantIdentifiers.keys)) { returnedUsers, errorDescriptors in
                 if let errors = errorDescriptors
                 {
-                    completion(nil, errors.joined(separator: "\n"))
+                    completion(nil, errors.unique().joined(separator: "\n"))
                 }
                 else if let users = returnedUsers
                 {
@@ -245,7 +232,7 @@ class Team
             UserSerializer().getUsers(withIdentifiers: Array(participantIdentifiers.keys)) { returnedUsers, errorDescriptors in
                 if let errors = errorDescriptors
                 {
-                    report(errors.joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    report(errors.unique().joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
                 }
                 else if let users = returnedUsers
                 {
@@ -388,7 +375,7 @@ class Team
 
                         if index == usersToRemove.count - 1
                         {
-                            completion(errors.joined(separator: "\n"))
+                            completion(errors.unique().joined(separator: "\n"))
                         }
                     }
                     else
@@ -405,7 +392,7 @@ class Team
                                 }
                                 else { completion(nil) }
                             }
-                            else { completion(errors.joined(separator: "\n")) }
+                            else { completion(errors.unique().joined(separator: "\n")) }
                         }
                     }
                 }
@@ -488,14 +475,14 @@ class Team
 
                             if index == usersToAdd.count - 1
                             {
-                                completion(errors.joined(separator: "\n"))
+                                completion(errors.unique().joined(separator: "\n"))
                             }
                         }
                         else
                         {
                             if index == usersToAdd.count - 1
                             {
-                                completion(errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                                completion(errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
                             }
                         }
                     }

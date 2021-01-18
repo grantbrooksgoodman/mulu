@@ -81,6 +81,18 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
         NotificationCenter.default.addObserver(forName: UIWindow.didBecomeKeyNotification, object: view.window, queue: nil) { _ in
             (UIApplication.shared.delegate as! AppDelegate).restrictRotation = .portrait
+
+            if let cells = self.collectionView.visibleCells as? [ChallengeCell]
+            {
+                for cell in cells
+                {
+                    if cell.tikTokVideoLink != nil
+                    {
+                        cell.webView.alpha = 0
+                        cell.playButton.alpha = 1
+                    }
+                }
+            }
         }
 
         welcomeLabel.text = "WELCOME BACK \(currentUser.firstName!.uppercased())!"
@@ -324,8 +336,6 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
                         {
                             currentTeam = team
 
-                            controllersUpdatedForTeamSwitch = 1
-
                             self.incompleteChallenges = []
                             self.currentChallenge = nil
 
@@ -465,6 +475,8 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
             {
                 challengeCell.playButton.alpha = 0
 
+                challengeCell.webView.loadHTMLString("", baseURL: nil)
+
                 switch media.type
                 {
                 case .gif:
@@ -484,6 +496,14 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
                     challengeCell.webView.isUserInteractionEnabled = false
 
                     challengeCell.autoPlayVideoLink = media.link
+                case .tikTokVideo:
+                    challengeCell.imageView.alpha = 0
+                    challengeCell.playButton.alpha = challengeCell.webView.url != media.link ? 1 : 0
+
+                    challengeCell.webView.isOpaque = false
+                    challengeCell.webView.isUserInteractionEnabled = false
+
+                    challengeCell.tikTokVideoLink = media.link
                 }
             }
             else
@@ -528,6 +548,24 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
 /* MARK: Array Extensions */
 extension Array where Element == (challenge: Challenge, metadata: [(user: User, dateCompleted: Date)])
 {
+    func accruedPoints(for userIdentifier: String) -> Int
+    {
+        var total = 0
+
+        for challengeTuple in self
+        {
+            for user in challengeTuple.metadata.users()
+            {
+                if user.associatedIdentifier == userIdentifier
+                {
+                    total += challengeTuple.challenge.pointValue
+                }
+            }
+        }
+
+        return total
+    }
+
     func challengeIdentifiers() -> [String]
     {
         var challengeIdentifiers = [String]()

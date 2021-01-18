@@ -334,6 +334,11 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
                             self.mediaLink = MediaAnalyser().convertToEmbedded(linkString: self.mediaTextField.text!) ?? URL(string: self.mediaTextField.text!)!
 
                             self.forwardToDate()
+                        case .tikTokVideo:
+                            self.mediaType = .tikTokVideo
+                            self.mediaLink = self.mediaLink == nil ? URL(string: self.mediaTextField.text!)! : self.mediaLink
+
+                            self.forwardToDate()
                         case .other:
                             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(750)) {
                                 AlertKit().successAlertController(withTitle:             "Error",
@@ -415,7 +420,7 @@ class NewChallengeController: UIViewController, MFMailComposeViewControllerDeleg
             self.tableView.delegate = self
             self.tableView.reloadData()
 
-            roundCorners(forViews: [self.tableView], withCornerType: 0)
+            self.tableView.layer.cornerRadius = 10
 
             UIView.animate(withDuration: 0.2, delay: 0.5) {
                 self.tableView.alpha = 0.6

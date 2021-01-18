@@ -55,7 +55,7 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
         view.setBackground(withImageNamed: "Gradient.png")
 
-        setVisualTeamInformation()
+        //setVisualTeamInformation()
     }
 
     override func viewDidAppear(_ animated: Bool)
@@ -73,29 +73,17 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         let screenHeight = UIScreen.main.bounds.height
         buildInfoController?.customYOffset = (screenHeight <= 736 ? 35 : 70)
 
-        if controllersUpdatedForTeamSwitch > 0
+        if let tournament = currentTeam.associatedTournament
         {
-            if controllersUpdatedForTeamSwitch == 3
-            {
-                controllersUpdatedForTeamSwitch = 0
-            }
-            else
-            {
-                controllersUpdatedForTeamSwitch += 1
-
-                if let tournament = currentTeam.associatedTournament
+            tournament.deSerializeTeams { returnedTeams, errorDescriptor in
+                if returnedTeams != nil
                 {
-                    tournament.deSerializeTeams { returnedTeams, errorDescriptor in
-                        if returnedTeams != nil
-                        {
-                            self.setVisualTeamInformation()
-                        }
-                        else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
-                    }
+                    self.setVisualTeamInformation()
                 }
-                else { setVisualTeamInformation() }
+                else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
             }
         }
+        else { setVisualTeamInformation() }
     }
 
     override func prepare(for _: UIStoryboardSegue, sender _: Any?)
@@ -179,6 +167,20 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     {
         titleLabel.text = currentTeam.name.uppercased()
 
+        if let calendarCell = collectionView.cellForItem(at: IndexPath(row: 0, section: 0)) as? ScrollerCell,
+           let JTAppleCalendar = calendarCell.subviews[0].subviews[0] as? JTAppleCalendarView
+        {
+            JTAppleCalendar.ibCalendarDelegate = self
+            JTAppleCalendar.ibCalendarDataSource = self
+
+            JTAppleCalendar.reloadData()
+
+            for cell in JTAppleCalendar.visibleCells
+            {
+                cell.backgroundColor = UIColor(hex: 0x818A5C)
+            }
+        }
+
         calculateTeamStatistics(withRankString: currentTeam.associatedTournament == nil) { statisticsString, errorDescriptor in
             if let string = statisticsString
             {
@@ -195,8 +197,6 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
                     statisticsString.append(string)
 
                     self.statisticsTextView.attributedText = statisticsString
-                    //                    self.statisticsTextView.sizeToFit()
-                    //                    self.statisticsTextView.layoutIfNeeded()
                 }
                 else { self.statisticsTextView.attributedText = string }
             }
@@ -210,7 +210,7 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.reloadData()
+        collectionView.reloadItems(at: [IndexPath(row: 1, section: 0)])
     }
 }
 

@@ -11,6 +11,7 @@ import MessageUI
 import UIKit
 
 /* Third-party Frameworks */
+import Firebase
 import FirebaseAuth
 
 class SignInController: UIViewController, MFMailComposeViewControllerDelegate
@@ -222,6 +223,8 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
 
                                         if let associatedTournament = team.associatedTournament
                                         {
+                                            Messaging.messaging().subscribe(toTopic: associatedTournament.name!.replacingOccurrences(of: " ", with: "_"))
+
                                             associatedTournament.setDSTeams()
                                         }
                                     }

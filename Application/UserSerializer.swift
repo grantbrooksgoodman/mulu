@@ -204,7 +204,7 @@ class UserSerializer
                     }
                     else if let errors = errorDescriptors
                     {
-                        completion(nil, errors.joined(separator: "\n"))
+                        completion(nil, errors.unique().joined(separator: "\n"))
                     }
                     else { completion(nil, "An unknown error occurred.") }
                 }
@@ -526,14 +526,14 @@ class UserSerializer
 
                                 if index == teams.count - 1
                                 {
-                                    completion(nil, errors.joined(separator: "\n"))
+                                    completion(nil, errors.unique().joined(separator: "\n"))
                                 }
                             }
                             else
                             {
                                 if index == teams.count - 1
                                 {
-                                    completion(nil, errors.isEmpty ? nil : errors.joined(separator: "\n"))
+                                    completion(nil, errors.isEmpty ? nil : errors.unique().joined(separator: "\n"))
                                 }
                             }
                         }

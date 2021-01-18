@@ -232,6 +232,8 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
         tableView.delegate   = self
         tableView.reloadData()
 
+        tableView.layer.cornerRadius = 10
+
         UIView.animate(withDuration: 0.2) {
             self.tableView.alpha = 0.6
             self.promptLabel.alpha = 1
@@ -252,7 +254,7 @@ class NewTeamController: UIViewController, MFMailComposeViewControllerDelegate
             self.tableView.delegate   = self
             self.tableView.reloadData()
 
-            roundCorners(forViews: [self.tableView], withCornerType: 0)
+            self.tableView.layer.cornerRadius = 10
 
             UIView.animate(withDuration: 0.2) {
                 self.tableView.alpha = 0.6

@@ -12,30 +12,31 @@ import UIKit
 class MediaAnalyser
 {
     //==================================================//
-    
+
     /* MARK: Enumerated Type Declarations */
-    
+
     enum AnalysisResult
     {
         case autoPlayVideo
         case linkedVideo
-        
+        case tikTokVideo
+
         case gif
         case image
-        
+
         case other
         case error
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Public Functions */
-    
-    func analyseMedia(linkString: String, completion: @escaping(_ returnedResult: AnalysisResult) -> Void)
+
+    func analyseMedia(linkString: String, completion: @escaping (_ returnedResult: AnalysisResult) -> Void)
     {
         if let link = URL(string: linkString), UIApplication.shared.canOpenURL(link)
         {
-            verifyLink(link) { (returnedMetadata, errorDescriptor) in
+            verifyLink(link) { returnedMetadata, errorDescriptor in
                 if let metadata = returnedMetadata
                 {
                     if metadata.mimeType.hasSuffix("gif") && UIImage(data: metadata.data) != nil
@@ -45,6 +46,10 @@ class MediaAnalyser
                     else if metadata.mimeType.hasPrefix("image") && UIImage(data: metadata.data) != nil
                     {
                         completion(.image)
+                    }
+                    else if metadata.mimeType == "text/html" && linkString.contains("tiktok")
+                    {
+                        completion(.tikTokVideo)
                     }
                     else
                     {
@@ -63,55 +68,55 @@ class MediaAnalyser
                 else
                 {
                     report(errorDescriptor!, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
-                    
+
                     completion(.error)
                 }
             }
         }
         else { completion(.error) }
     }
-    
+
     func convertToEmbedded(linkString: String) -> URL?
     {
         var separator: String?
-        
+
         if linkString.contains("youtu.be")
         {
             separator = ".be/"
-            
+
             guard linkString.components(separatedBy: separator!).count == 2 else
             { return nil }
         }
         else if linkString.contains("youtube")
         {
             separator = "watch?v="
-            
+
             guard linkString.components(separatedBy: separator!).count == 2 else
             { return nil }
         }
-        
+
         guard let unwrappedSeparator = separator else
         { return nil }
-        
+
         let videoCode = linkString.components(separatedBy: unwrappedSeparator)[1]
         let videoLink = "https://www.youtube.com/embed/\(videoCode)"
-        
+
         if let link = URL(string: videoLink)
         {
             return link
         }
-        
+
         return nil
     }
-    
+
     //==================================================//
-    
+
     /* MARK: Private Functions */
-    
-    private func verifyLink(_ link: URL, completion: @escaping(_ returnedMetadata: (mimeType: String, data: Data)?, _ errorDescriptor: String?) -> Void)
+
+    private func verifyLink(_ link: URL, completion: @escaping (_ returnedMetadata: (mimeType: String, data: Data)?, _ errorDescriptor: String?) -> Void)
     {
-        URLSession.shared.dataTask(with: link) { (privateRetrievedData, privateUrlResponse, privateOccurredError) in
-            
+        URLSession.shared.dataTask(with: link) { privateRetrievedData, privateUrlResponse, privateOccurredError in
+
             if let urlResponse = privateUrlResponse as? HTTPURLResponse,
                urlResponse.statusCode == 200,
                let mimeType = privateUrlResponse?.mimeType,
@@ -123,11 +128,8 @@ class MediaAnalyser
                 }
                 else { completion((mimeType, retrievedData), nil) }
             }
-            else
-            {
-                completion(nil, "The URL response was malformed.")
-            }
-            
+            else { completion(nil, "The URL response was malformed.") }
+
         }.resume()
     }
 }

@@ -87,7 +87,7 @@ class ChallengeTestingSerializer
         }
 
         group.notify(queue: .main) {
-            completion(challenges, !errors.isEmpty ? errors.joined(separator: "\n") : nil)
+            completion(challenges, !errors.isEmpty ? errors.unique().joined(separator: "\n") : nil)
         }
     }
 

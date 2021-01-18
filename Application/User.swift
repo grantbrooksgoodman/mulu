@@ -233,12 +233,13 @@ class User
         {
             completion(DSAssociatedTeams, nil)
         }
-        else if let associatedTeams = associatedTeams
+        else if let associatedTeams = associatedTeams,
+                !associatedTeams.filter({ $0 != "!" }).isEmpty
         {
-            TeamSerializer().getTeams(withIdentifiers: associatedTeams) { returnedTeams, errorDescriptors in
+            TeamSerializer().getTeams(withIdentifiers: associatedTeams.filter { $0 != "!" }) { returnedTeams, errorDescriptors in
                 if let errors = errorDescriptors
                 {
-                    completion(nil, errors.joined(separator: "\n"))
+                    completion(nil, errors.unique().joined(separator: "\n"))
                 }
                 else if let teams = returnedTeams
                 {
@@ -246,10 +247,7 @@ class User
 
                     completion(teams, nil)
                 }
-                else
-                {
-                    completion(nil, "No returned Teams, but no error either.")
-                }
+                else { completion(nil, "No returned Teams, but no error either.") }
             }
         }
         else { completion(nil, "This User is not a member of any Team.") }
@@ -301,12 +299,13 @@ class User
         {
             report("«DSAssociatedTeams» already set.", errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
         }
-        else if let associatedTeams = associatedTeams
+        else if let associatedTeams = associatedTeams,
+                !associatedTeams.filter({ $0 != "!" }).isEmpty
         {
-            TeamSerializer().getTeams(withIdentifiers: associatedTeams) { returnedTeams, errorDescriptors in
+            TeamSerializer().getTeams(withIdentifiers: associatedTeams.filter { $0 != "!" }) { returnedTeams, errorDescriptors in
                 if let errors = errorDescriptors
                 {
-                    report(errors.joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                    report(errors.unique().joined(separator: "\n"), errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
                 }
                 else if let teams = returnedTeams
                 {
@@ -337,7 +336,7 @@ class User
             guard enumeratedDates.last!.comparator >= Calendar.current.date(byAdding: .day, value: -1, to: Date())!.comparator else
             { return 0 }
 
-            for (index, date) in enumeratedDates.enumerated()
+            for (index, date) in enumeratedDates.unique().enumerated()
             {
                 let nextIndex = index + 1
 
