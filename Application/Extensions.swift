@@ -318,7 +318,7 @@ extension String
     {
         var mutableSelf = self
 
-        while mutableSelf.hasPrefix(" ")
+        while mutableSelf.hasPrefix(" ") || mutableSelf.hasPrefix("\u{00A0}")
         {
             mutableSelf = mutableSelf.dropPrefix(1)
         }
@@ -340,7 +340,7 @@ extension String
     {
         var mutableSelf = self
 
-        while mutableSelf.hasSuffix(" ")
+        while mutableSelf.hasSuffix(" ") || mutableSelf.hasSuffix("\u{00A0}")
         {
             mutableSelf = mutableSelf.dropSuffix(1)
         }
@@ -355,7 +355,7 @@ extension String
 
     var whitespaceRemoved: String
     {
-        return replacingOccurrences(of: " ", with: "")
+        return replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\u{00A0}", with: "")
     }
 }
 

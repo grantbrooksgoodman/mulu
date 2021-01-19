@@ -931,15 +931,20 @@ class TeamSerializer
 
                     for string in metadata
                     {
-                        let components = string.components(separatedBy: " – ")
+                        var components = string.components(separatedBy: "–")
+
+                        if components.count == 1
+                        {
+                            components = string.components(separatedBy: "\u{2014}")
+                        }
 
                         guard components.count == 2 else
                         { completion(nil, "A Challenge's metadata array was improperly formatted."); return }
 
-                        guard let completionDate = secondaryDateFormatter.date(from: components[1]) else
+                        guard let completionDate = secondaryDateFormatter.date(from: components[1].leadingWhitespaceRemoved) else
                         { completion(nil, "Unable to convert a Challenge's completion date string to a Date."); return }
 
-                        let userIdentifier = components[0]
+                        let userIdentifier = components[0].trailingWhitespaceRemoved
 
                         UserSerializer().getUser(withIdentifier: userIdentifier) { returnedUser, errorDescriptor  in
                             if let error = errorDescriptor
@@ -1280,14 +1285,19 @@ extension Array where Element == String
 
         for element in self
         {
-            let components = element.components(separatedBy: " – ")
+            var components = element.components(separatedBy: "–")
+
+            if components.count == 1
+            {
+                components = element.components(separatedBy: "\u{2014}")
+            }
 
             guard components.count == 2 else
             { return dictionary }
 
-            let teamIdentifier = components[0]
+            let teamIdentifier = components[0].trailingWhitespaceRemoved
 
-            guard let manuallyAddedPoints = Int(components[1]) else
+            guard let manuallyAddedPoints = Int(components[1].leadingWhitespaceRemoved) else
             { return dictionary }
 
             dictionary[teamIdentifier] = manuallyAddedPoints

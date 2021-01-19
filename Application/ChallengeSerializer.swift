@@ -435,7 +435,12 @@ class ChallengeSerializer
 
         if mediaString != "!"
         {
-            let components = mediaString.components(separatedBy: " – ")
+            var components = mediaString.components(separatedBy: "–")
+
+            if components.count == 1
+            {
+                components = mediaString.components(separatedBy: "\u{2014}")
+            }
 
             var mediaTypeString: String!
             var pathString: String?
@@ -443,14 +448,14 @@ class ChallengeSerializer
 
             if components.count == 2
             {
-                mediaTypeString = components[0]
-                linkString = components[1]
+                mediaTypeString = components[0].trimmingBorderedWhitespace
+                linkString = components[1].trimmingBorderedWhitespace
             }
             else if components.count == 3
             {
-                mediaTypeString = components[0]
-                pathString = components[1]
-                linkString = components[2]
+                mediaTypeString = components[0].trimmingBorderedWhitespace
+                pathString = components[1].trimmingBorderedWhitespace
+                linkString = components[2].trimmingBorderedWhitespace
             }
             else { return (nil, "The media string was improperly formatted.") }
 
