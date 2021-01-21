@@ -74,6 +74,7 @@ class CreateController: UIViewController, MFMailComposeViewControllerDelegate
             AlertKit().confirmationAlertController(title: "Sign Out", message: "Would you like to sign out?", cancelConfirmTitles: [:], confirmationDestructive: false, confirmationPreferred: true, networkDepedent: true) { didConfirm in
                 if let confirmed = didConfirm, confirmed
                 {
+                    signedOut = true
                     self.performSegue(withIdentifier: "MainSegue", sender: self)
                 }
             }

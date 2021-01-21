@@ -43,7 +43,7 @@ class ChallengeSerializer
     {
         var dataBundle: [String: Any] = [:]
 
-        let twoWeeksFromNow = Calendar.current.date(byAdding: .day, value: 14, to: Date())!.comparator
+        let twoWeeksFromNow = currentCalendar.date(byAdding: .day, value: 14, to: Date())!.comparator
 
         dataBundle["title"] = title
         dataBundle["prompt"] = prompt

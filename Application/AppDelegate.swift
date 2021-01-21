@@ -25,6 +25,7 @@ import Reachability
 var darkMode                              = false
 var isPresentingMailComposeViewController = false
 var preReleaseApplication                 = true
+var signedOut                             = false
 var verboseFunctionExposure               = false
 
 //DateFormatters
@@ -50,7 +51,8 @@ var buildInfoController:       BuildInfoController?
 var lastInitializedController: UIViewController! = MainController()
 
 //Other Declarations
-var buildType: Build.BuildType = .beta
+var buildType: Build.BuildType = .releaseCandidate
+var currentCalendar = Calendar(identifier: .gregorian)
 var currentTeam: Team!
 var currentUser: User!
 var dataStorage: StorageReference!
@@ -92,6 +94,8 @@ var updateRecords = [AnyCancellable]()
 
         secondaryDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss zzz"
         secondaryDateFormatter.locale = Locale(identifier: "en_GB")
+
+        currentCalendar.timeZone = TimeZone(abbreviation: "GMT")!
 
         //Set the array of information.
         Build(nil)

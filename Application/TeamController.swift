@@ -55,12 +55,11 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
         view.setBackground(withImageNamed: "Gradient.png")
 
-        //setVisualTeamInformation()
-    }
-
-    override func viewDidAppear(_ animated: Bool)
-    {
-        super.viewDidAppear(animated)
+        if let tournament = currentTeam.associatedTournament
+        {
+            deserializeTeamsAndReload(tournament)
+        }
+        else { setVisualTeamInformation() }
     }
 
     override func viewWillAppear(_ animated: Bool)
@@ -75,13 +74,7 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
         if let tournament = currentTeam.associatedTournament
         {
-            tournament.deSerializeTeams { returnedTeams, errorDescriptor in
-                if returnedTeams != nil
-                {
-                    self.setVisualTeamInformation()
-                }
-                else { report(errorDescriptor!, errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
-            }
+            deserializeTeamsAndReload(tournament)
         }
         else { setVisualTeamInformation() }
     }
@@ -156,6 +149,17 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         let width = screenWidth == 375 ? 365 : (screenWidth == 390 ? 380 : 400)
 
         return CGSize(width: width, height: 356)
+    }
+
+    func deserializeTeamsAndReload(_ tournament: Tournament)
+    {
+        tournament.deSerializeTeams { returnedTeams, errorDescriptor in
+            if returnedTeams != nil
+            {
+                self.setVisualTeamInformation()
+            }
+            else { report(errorDescriptor!, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
+        }
     }
 
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?)
@@ -243,7 +247,7 @@ extension TeamController: JTAppleCalendarViewDelegate
     {
         let cell = calendar.dequeueReusableJTAppleCell(withReuseIdentifier: "dateCell", for: indexPath) as! DateCell
 
-        if let challenges = completedChallenges, challenges.dates().contains(Calendar.current.startOfDay(for: date))
+        if let challenges = completedChallenges, challenges.dates().contains(currentCalendar.startOfDay(for: date).comparator)
         {
             cell.titleLabel.text = "🔥"
         }
@@ -251,7 +255,7 @@ extension TeamController: JTAppleCalendarViewDelegate
 
         cell.layer.cornerRadius = cell.frame.width / 2
 
-        if cellState.date > Date()
+        if cellState.date.comparator > Date().comparator
         {
             cell.backgroundColor = .black
             cell.tintColor = .black
@@ -387,7 +391,7 @@ extension Array where Element == (date: Date, challenge: Challenge)
 
         for tuple in self
         {
-            dates.append(Calendar.current.startOfDay(for: tuple.date))
+            dates.append(currentCalendar.startOfDay(for: tuple.date.comparator).comparator)
         }
 
         return dates

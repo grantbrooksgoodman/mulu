@@ -86,11 +86,14 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
             view.alpha = 0
         }
 
-        usernameTextField.text = "john.appleseed@mulu.app"
-        passwordTextField.text = "123456"
-
         #warning("DEBUG ONLY!")
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) { self.signInButton(self.signInButton!) }
+        //usernameTextField.text = "admin@getmulu.com"
+        //passwordTextField.text = "123456"
+
+        if !signedOut
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) { self.signInButton(self.signInButton!) }
+        }
     }
 
     override func viewWillAppear(_ animated: Bool)
@@ -249,7 +252,11 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                             let teamAction = UIAlertAction(title: team.name!, style: .default) { _ in
                                                 currentTeam = team
 
-                                                self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
+                                                if self.usernameTextField.text == "admin@getmulu.com"
+                                                {
+                                                    self.presentAdminConsoleAlert()
+                                                }
+                                                else { self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self) }
                                             }
 
                                             actionSheet.addAction(teamAction)
@@ -267,7 +274,11 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                     {
                                         currentTeam = teams[0]
 
-                                        self.presentAdminConsoleAlert()
+                                        if self.usernameTextField.text == "admin@getmulu.com"
+                                        {
+                                            self.presentAdminConsoleAlert()
+                                        }
+                                        else { self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self) }
                                     }
                                 }
                             }
@@ -275,7 +286,14 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                             {
                                 if error == "This User is not a member of any Team."
                                 {
-                                    self.presentWaitlistAlert()
+                                    UserDefaults.standard.setValue(self.usernameTextField.text!, forKey: "email")
+                                    UserDefaults.standard.setValue(self.passwordTextField.text!, forKey: "password")
+
+                                    if self.usernameTextField.text == "admin@getmulu.com"
+                                    {
+                                        self.performSegue(withIdentifier: "CMSSegue", sender: self)
+                                    }
+                                    else { self.presentWaitlistAlert() }
                                 }
                                 else
                                 {
@@ -358,7 +376,7 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     {
         #warning("DEBUG ONLY!")
         AlertKit().optionAlertController(title: "Select User Type",
-                                         message: "Please select the console you would like to sign-in to.\n\nNote: This feature is currently enabled for testing purposes only.",
+                                         message: "Please select the console you would like to sign-in to.",
                                          cancelButtonTitle: nil,
                                          additionalButtons: [("Administrator", false), ("Layman User", false)],
                                          preferredActionIndex: nil,

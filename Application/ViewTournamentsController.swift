@@ -731,7 +731,7 @@ class ViewTournamentsController: UIViewController, MFMailComposeViewControllerDe
 
                     for user in users.sorted(by: { $0.firstName < $1.firstName })
                     {
-                        let stringToAppend = "\(user.firstName!) \(user.lastName!) – \(self.totalPoints(for: user, on: team))"
+                        let stringToAppend = "\(user.firstName!) \(user.lastName!) – \(self.totalPoints(for: user, on: team));"
 
                         if currentTeamBreakdown == ""
                         {

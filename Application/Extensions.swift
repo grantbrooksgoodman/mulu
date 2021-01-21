@@ -127,7 +127,7 @@ extension Date
 
     var comparator: Date
     {
-        return Calendar.current.date(bySettingHour: 12, minute: 00, second: 00, of: Calendar.current.startOfDay(for: self))!
+        return currentCalendar.date(bySettingHour: 12, minute: 00, second: 00, of: currentCalendar.startOfDay(for: self))!
     }
 }
 

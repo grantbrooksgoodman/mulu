@@ -333,18 +333,26 @@ class User
         {
             let enumeratedDates = challenges.dates().sorted()
 
-            guard enumeratedDates.last!.comparator >= Calendar.current.date(byAdding: .day, value: -1, to: Date())!.comparator else
+            guard enumeratedDates.last!.comparator >= currentCalendar.date(byAdding: .day, value: -1, to: Date())!.comparator else
             { return 0 }
 
-            for (index, date) in enumeratedDates.unique().enumerated()
+            if enumeratedDates.count == 1,
+               enumeratedDates[0].comparator == Date().comparator
             {
-                let nextIndex = index + 1
-
-                if nextIndex < enumeratedDates.count
+                return 1
+            }
+            else
+            {
+                for (index, date) in enumeratedDates.unique().enumerated()
                 {
-                    if date == enumeratedDates[index + 1]
+                    let nextIndex = index + 1
+
+                    if nextIndex < enumeratedDates.count
                     {
-                        total += 1
+                        if date.comparator == enumeratedDates[index + 1].comparator
+                        {
+                            total += 1
+                        }
                     }
                 }
             }

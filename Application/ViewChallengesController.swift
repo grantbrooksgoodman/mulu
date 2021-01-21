@@ -287,7 +287,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
 
     func editAppearanceDateAction()
     {
-        datePicker.date = referenceArray[selectedIndexPath.row].datePosted
+        datePicker.date = referenceArray[selectedIndexPath.row].datePosted.comparator
         datePicker.maximumDate = Calendar.current.date(byAdding: .year, value: 1, to: Date())
 
         //WARN FOR DATE BEFORE TODAY
@@ -351,7 +351,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
              .editingMode:         UITextField.ViewMode.whileEditing,
              .keyboardType:        UIKeyboardType.asciiCapableNumberPad,
              .placeholderText:     "",
-             .sampleText:          dateFormatter.string(from: selectedChallenge.datePosted),
+             .sampleText:          dateFormatter.string(from: selectedChallenge.datePosted.comparator),
              .textAlignment:       NSTextAlignment.center]
 
         AlertKit().textAlertController(title: "Editing \(selectedChallenge.title!)",
@@ -767,7 +767,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
             ChallengeSerializer().getAllChallenges { returnedChallenges, errorDescriptor in
                 if let challenges = returnedChallenges
                 {
-                    self.challengeArray = challenges.sorted(by: { $0.datePosted > $1.datePosted })
+                    self.challengeArray = challenges.sorted(by: { $0.datePosted.comparator > $1.datePosted.comparator })
 
                     self.filteredOtherPosts = self.challengeArray.filter { abs($0.datePosted.comparator.days(from: Date().comparator)) > 7 && $0.datePosted.comparator != Date().comparator }
 
@@ -775,7 +775,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
 
                     self.todaysPosts = self.challengeArray.filter { $0.datePosted.comparator == Date().comparator }
 
-                    self.upcomingThisWeek = self.challengeArray.filter { abs($0.datePosted.comparator.days(from: Date().comparator)) <= 7 && $0.datePosted.comparator > Date().comparator }.sorted(by: { $0.datePosted < $1.datePosted })
+                    self.upcomingThisWeek = self.challengeArray.filter { abs($0.datePosted.comparator.days(from: Date().comparator)) <= 7 && $0.datePosted.comparator > Date().comparator }.sorted(by: { $0.datePosted.comparator < $1.datePosted.comparator })
 
                     if let index = self.challengeArray.firstIndex(where: { $0.datePosted.comparator == Date().comparator })
                     {
@@ -1007,18 +1007,6 @@ extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
 {
     func numberOfSections(in _: UITableView) -> Int
     {
-        //today, upcoming this week, posted this week, all time
-
-        //        var sectionCount = 1
-        //
-        //        for array in [postedThisWeek, todaysPosts, upcomingThisWeek]
-        //        {
-        //            if array.count > 0
-        //            {
-        //                sectionCount += 1
-        //            }
-        //        }
-        //
         return 4
     }
 
@@ -1041,8 +1029,6 @@ extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
     {
         let currentCell = tableView.dequeueReusableCell(withIdentifier: "ChallengeCell") as! SubtitleCell
 
-        //this is gonna cause array problems
-
         switch indexPath.section
         {
         case 0:
@@ -1057,7 +1043,7 @@ extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
 
         currentCell.titleLabel.text = referenceArray[indexPath.row].title
 
-        let challengePostDate = referenceArray[indexPath.row].datePosted!
+        let challengePostDate = referenceArray[indexPath.row].datePosted!.comparator
         let mediumDateString = mediumDateFormatter.string(from: challengePostDate)
 
         if challengePostDate.comparator > Date().comparator
@@ -1137,7 +1123,7 @@ extension ViewChallengesController: UITableViewDataSource, UITableViewDelegate
 
         actionSheet.setValue(NSMutableAttributedString(string: referenceArray[indexPath.row].title, attributes: titleAttributes), forKey: "attributedTitle")
 
-        let message = "Appearance Date: \(mediumDateFormatter.string(from: referenceArray[indexPath.row].datePosted))\n\nAssociated Media: \(referenceArray[indexPath.row].media?.type.userFacingString() ?? "None")\n\nPoint Value: \(String(referenceArray[indexPath.row].pointValue))\n\nPrompt:\n\(referenceArray[indexPath.row].prompt!)"
+        let message = "Appearance Date: \(mediumDateFormatter.string(from: referenceArray[indexPath.row].datePosted.comparator))\n\nAssociated Media: \(referenceArray[indexPath.row].media?.type.userFacingString() ?? "None")\n\nPoint Value: \(String(referenceArray[indexPath.row].pointValue))\n\nPrompt:\n\(referenceArray[indexPath.row].prompt!)"
 
         let boldedRange = ["Appearance Date:",
                            "Associated Media:",

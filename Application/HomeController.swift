@@ -36,10 +36,6 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     /* MARK: Class-level Variable Declarations */
 
     //Other Declarations
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
-
     var buildInstance: Build!
     var currentChallenge: Challenge?
     var incompleteChallenges = [Challenge]()
@@ -70,7 +66,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         collectionView.alwaysBounceVertical = true
 
         let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(HomeController.reloadData), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(HomeController.setVisualTeamInformation), for: .valueChanged)
 
         self.refreshControl = refreshControl
         collectionView.addSubview(self.refreshControl!)
@@ -109,19 +105,8 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
         currentFile = #file
         buildInfoController?.view.isHidden = !preReleaseApplication
-    }
 
-    override func motionEnded(_ motion: UIEvent.EventSubtype, with _: UIEvent?)
-    {
-        if motion == .motionShake
-        {
-            AlertKit().confirmationAlertController(title: "Sign Out", message: "Would you like to sign out?", cancelConfirmTitles: [:], confirmationDestructive: false, confirmationPreferred: true, networkDepedent: true) { didConfirm in
-                if let confirmed = didConfirm, confirmed
-                {
-                    self.performSegue(withIdentifier: "SignInFromHomeSegue", sender: self)
-                }
-            }
-        }
+        setVisualTeamInformation()
     }
 
     override func prepare(for _: UIStoryboardSegue, sender _: Any?)
@@ -133,40 +118,49 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
     @IBAction func settingsButton(_: Any)
     {
-        AlertKit().optionAlertController(title: "Preferences", message: "What would you like to do?", cancelButtonTitle: nil, additionalButtons: [("Sign Out", false), ("Sign In to Different Team", false)], preferredActionIndex: nil, networkDependent: true) { selectedIndex in
-            if let index = selectedIndex
-            {
-                if index == 0
-                {
-                    self.signOut()
-                }
-                else if index == 1
-                {
-                    showProgressHUD()
+        let associatedTeams = currentUser!.associatedTeams!
 
-                    currentUser!.deSerializeAssociatedTeams { returnedTeams, errorDescriptor in
-                        if let teams = returnedTeams
-                        {
-                            if teams.count == 1
+        if associatedTeams.count == 1
+        {
+            signOut()
+        }
+        else
+        {
+            AlertKit().optionAlertController(title: "Preferences", message: "What would you like to do?", cancelButtonTitle: nil, additionalButtons: [("Sign Out", false), ("Sign In to Different Team", false)], preferredActionIndex: nil, networkDependent: true) { selectedIndex in
+                if let index = selectedIndex
+                {
+                    if index == 0
+                    {
+                        self.signOut()
+                    }
+                    else if index == 1
+                    {
+                        showProgressHUD()
+
+                        currentUser!.deSerializeAssociatedTeams { returnedTeams, errorDescriptor in
+                            if let teams = returnedTeams
                             {
-                                hideHUD(delay: 0.2) { self.errorAlert(title: "Error", message: "You are currently not a member of any other team.") }
+                                if teams.count == 1
+                                {
+                                    hideHUD(delay: 0.2) { self.errorAlert(title: "Error", message: "You are currently not a member of any other team.") }
+                                }
+                                else if teams.count > 1
+                                {
+                                    hideHUD(delay: 0.2) { self.teamSelectionActionSheet(teams: teams) }
+                                }
                             }
-                            else if teams.count > 1
+                            else
                             {
-                                hideHUD(delay: 0.2) { self.teamSelectionActionSheet(teams: teams) }
+                                hideHUD(delay: 0.2) { AlertKit().errorAlertController(title: "Couldn't Get Teams",
+                                                                                      message: errorDescriptor!,
+                                                                                      dismissButtonTitle: nil,
+                                                                                      additionalSelectors: nil,
+                                                                                      preferredAdditionalSelector: nil,
+                                                                                      canFileReport: true,
+                                                                                      extraInfo: errorDescriptor!,
+                                                                                      metadata: [#file, #function, #line],
+                                                                                      networkDependent: true) }
                             }
-                        }
-                        else
-                        {
-                            hideHUD(delay: 0.2) { AlertKit().errorAlertController(title: "Couldn't Get Teams",
-                                                                                  message: errorDescriptor!,
-                                                                                  dismissButtonTitle: nil,
-                                                                                  additionalSelectors: nil,
-                                                                                  preferredAdditionalSelector: nil,
-                                                                                  canFileReport: true,
-                                                                                  extraInfo: errorDescriptor!,
-                                                                                  metadata: [#file, #function, #line],
-                                                                                  networkDependent: true) }
                         }
                     }
                 }
@@ -250,7 +244,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         buildInstance.handleMailComposition(withController: controller, withResult: result, withError: error)
     }
 
-    @objc func reloadData()
+    func reloadData()
     {
         currentTeam.reloadData { errorDescriptor in
             self.refreshControl?.endRefreshing()
@@ -287,7 +281,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         }
     }
 
-    func setVisualTeamInformation()
+    @objc func setVisualTeamInformation()
     {
         reloadData()
 
@@ -315,6 +309,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
                     currentUser = nil
                     currentTeam = nil
 
+                    signedOut = true
                     self.performSegue(withIdentifier: "SignInFromHomeSegue", sender: self)
                 }
                 catch {
@@ -442,10 +437,10 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
 
                 if end > today
                 {
-                    let dayComponents = Calendar.current.dateComponents([.day], from: start, to: today)
+                    let dayComponents = currentCalendar.dateComponents([.day], from: start, to: today)
                     let day = dayComponents.day!
 
-                    let durationComponents = Calendar.current.dateComponents([.day], from: start, to: end)
+                    let durationComponents = currentCalendar.dateComponents([.day], from: start, to: end)
                     let duration = durationComponents.day!
 
                     challengeCell.titleLabel.text = "DAY \(day) OF \(duration)"
@@ -593,6 +588,18 @@ extension Array where Element == (challenge: Challenge, metadata: [(user: User, 
 
 extension Array where Element == (user: User, dateCompleted: Date)
 {
+    func dates() -> [Date]
+    {
+        var dates = [Date]()
+
+        for tuple in self
+        {
+            dates.append(tuple.dateCompleted)
+        }
+
+        return dates
+    }
+
     func users() -> [User]
     {
         var users = [User]()
