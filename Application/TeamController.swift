@@ -255,10 +255,19 @@ extension TeamController: JTAppleCalendarViewDelegate
 
         cell.layer.cornerRadius = cell.frame.width / 2
 
-        if cellState.date.comparator > Date().comparator
+        if let tournament = currentTeam.associatedTournament
         {
-            cell.backgroundColor = .black
-            cell.tintColor = .black
+            let tournamentRange = tournament.startDate.comparator ... tournament.endDate.comparator
+
+            if tournamentRange.contains(cellState.date.comparator)
+            {
+                cell.backgroundColor = UIColor(hex: 0x818A5C)
+            }
+            else
+            {
+                cell.backgroundColor = .black
+                cell.tintColor = .black
+            }
         }
 
         return cell
