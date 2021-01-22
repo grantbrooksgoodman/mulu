@@ -883,6 +883,7 @@ Pull to refresh or check back later!</string>
                         <segue destination="q0W-TP-J7A" kind="modal" identifier="ForgotPasswordFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="ygF-5x-KEF"/>
                         <segue destination="vkx-9d-gno" kind="modal" identifier="TabBarFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="ZkC-f4-a7K"/>
                         <segue destination="9dY-m6-vV8" kind="modal" identifier="CMSSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="KCL-zc-qqP"/>
+                        <segue destination="nL1-kH-bkU" kind="modal" identifier="LicenseFromSignInSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="KhK-5f-YHU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PHx-1a-Zlc" sceneMemberID="firstResponder"/>
@@ -1371,6 +1372,222 @@ Pull to refresh or check back later!</string>
                 </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="4142.5233644859809" y="528.72570194384457"/>
+        </scene>
+        <!--License Controller-->
+        <scene sceneID="ONn-jY-FnF">
+            <objects>
+                <viewController storyboardIdentifier="LicenseController" title="License Controller" id="nL1-kH-bkU" customClass="LicenseController" customModule="Mulu" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ROs-iu-Qkl"/>
+                        <viewControllerLayoutGuide type="bottom" id="8oO-Fo-1KZ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="huT-nI-qva">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LICENSE AGREEMENT" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999403953552" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="N1x-Hi-gIz">
+                                <rect key="frame" x="20" y="44" width="388" height="69"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="69" id="qSw-WF-PGK"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Gotham-Black" family="Gotham" pointSize="32"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view tag="14545453" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LqK-3h-bLQ">
+                                <rect key="frame" x="408" y="44" width="20" height="69"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                            <view tag="14545453" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6ZB-eb-HDO">
+                                <rect key="frame" x="0.0" y="44" width="20" height="69"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" usesAttributedText="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gfd-wz-nRe">
+                                <rect key="frame" x="20" y="146" width="388" height="660"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <attributedString key="attributedText">
+                                    <fragment>
+                                        <string key="content">General Assumption of Risk &amp; Limitation of Liability
+</string>
+                                        <attributes>
+                                            <color key="NSColor" red="0.18823999999999999" green="0.19216" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <font key="NSFont" size="12" name="Helvetica-Bold"/>
+                                            <real key="NSKern" value="0.0"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                <tabStops/>
+                                            </paragraphStyle>
+                                            <color key="NSStrokeColor" red="0.18823999999999999" green="0.19216" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment>
+                                        <string key="content" base64-UTF8="YES">
+Cg
+</string>
+                                        <attributes>
+                                            <font key="NSFont" size="12" name="Helvetica"/>
+                                            <real key="NSKern" value="0.0"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                <tabStops/>
+                                            </paragraphStyle>
+                                            <color key="NSStrokeColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment>
+                                        <mutableString key="content">By agreeing to these terms, attending classes, and/or other programs of Mulu, you hereby acknowledge and agree, on behalf of yourself, your heirs, personal representatives, and/or assigns (collectively “you” and/or “yourself”) that (a) there are certain inherent risks and dangers in the strenuous nature of the Mulu workout program, (b) you have voluntarily chosen to participate in an intense physical exercise program, (c) you understand that Mulu strongly recommends that you consult with your physician prior to commencing any workout regimen, (d) you have been fully informed of the strenuous nature of this exercise program and the possibility of adverse physiological occurrences including, but not limited to, abnormal blood pressure, fainting, heart attack, and/or death, and (e) </mutableString>
+                                        <attributes>
+                                            <color key="NSColor" red="0.18823999999999999" green="0.19216" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <font key="NSFont" size="12" name="Helvetica"/>
+                                            <real key="NSKern" value="0.0"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                <tabStops/>
+                                            </paragraphStyle>
+                                            <color key="NSStrokeColor" red="0.18823999999999999" green="0.19216" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment>
+                                        <string key="content">you assume all risk for your health and well-being, and fully release and hold harmless for any responsibility, cost, or damages Mulu, its instructors, its members, and its employees for any injury, harm, or loss you may suffer, including death, as a result of participation in any Mulu Services</string>
+                                        <attributes>
+                                            <color key="NSColor" red="0.18823999999999999" green="0.19216" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <font key="NSFont" size="12" name="Helvetica-Oblique"/>
+                                            <real key="NSKern" value="0.0"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                <tabStops/>
+                                            </paragraphStyle>
+                                            <color key="NSStrokeColor" red="0.18823999999999999" green="0.19216" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment>
+                                        <string key="content" base64-UTF8="YES">
+Cg
+</string>
+                                        <attributes>
+                                            <font key="NSFont" size="12" name="Helvetica"/>
+                                            <real key="NSKern" value="0.0"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                <tabStops/>
+                                            </paragraphStyle>
+                                            <color key="NSStrokeColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content=".">
+                                        <attributes>
+                                            <color key="NSColor" red="0.18823999999999999" green="0.19216" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <font key="NSFont" size="12" name="Helvetica-Oblique"/>
+                                            <real key="NSKern" value="0.0"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                <tabStops/>
+                                            </paragraphStyle>
+                                            <color key="NSStrokeColor" red="0.18823999999999999" green="0.19216" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment>
+                                        <string key="content" base64-UTF8="YES">
+Cg
+</string>
+                                        <attributes>
+                                            <font key="NSFont" size="12" name="Helvetica"/>
+                                            <real key="NSKern" value="0.0"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                <tabStops/>
+                                            </paragraphStyle>
+                                            <color key="NSStrokeColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment>
+                                        <string key="content">If you are enrolling a minor (15-18) years of age, or older if applicable in the minor’s state of residence, the above release applies equally to said minor. No one under 15 years of age may participate. A minor 15-18 years of age may participate only with a parent or legal guardian present.</string>
+                                        <attributes>
+                                            <color key="NSColor" red="0.18823999999999999" green="0.19216" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <font key="NSFont" size="12" name="Helvetica"/>
+                                            <real key="NSKern" value="0.0"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                <tabStops/>
+                                            </paragraphStyle>
+                                            <color key="NSStrokeColor" red="0.18823999999999999" green="0.19216" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES" address="YES" calendarEvent="YES"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gi7-rm-Fdl" customClass="ShadowButton" customModule="Mulu" customModuleProvider="target">
+                                <rect key="frame" x="239" y="844" width="169" height="40"/>
+                                <color key="backgroundColor" red="0.37647058820000001" green="0.75686274509999996" blue="0.16078431369999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="sTh-ky-osk"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="SFUIText-Bold" family="SF UI Text" pointSize="20"/>
+                                <state key="normal" title="I AGREE"/>
+                                <connections>
+                                    <action selector="agreeButton:" destination="nL1-kH-bkU" eventType="touchUpInside" id="hhM-7J-Td2"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pjQ-ya-Yoc" customClass="ShadowButton" customModule="Mulu" customModuleProvider="target">
+                                <rect key="frame" x="20" y="844" width="169" height="40"/>
+                                <color key="backgroundColor" red="0.91372549020000005" green="0.35294117650000001" blue="0.32549019610000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="zj7-Qn-0Oj"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="SFUIText-Bold" family="SF UI Text" pointSize="20"/>
+                                <state key="normal" title="I DISAGREE"/>
+                                <connections>
+                                    <action selector="disagreeButton:" destination="nL1-kH-bkU" eventType="touchUpInside" id="TfG-WW-1xb"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="N1x-Hi-gIz" firstAttribute="leading" secondItem="6ZB-eb-HDO" secondAttribute="trailing" id="1L8-Vo-sQP"/>
+                            <constraint firstItem="6ZB-eb-HDO" firstAttribute="top" secondItem="N1x-Hi-gIz" secondAttribute="top" id="1Vk-gL-ekl"/>
+                            <constraint firstItem="N1x-Hi-gIz" firstAttribute="leading" secondItem="huT-nI-qva" secondAttribute="leadingMargin" id="2u0-sI-cZW"/>
+                            <constraint firstItem="gfd-wz-nRe" firstAttribute="trailing" secondItem="huT-nI-qva" secondAttribute="trailingMargin" id="3FS-Be-uPc"/>
+                            <constraint firstItem="gfd-wz-nRe" firstAttribute="leading" secondItem="huT-nI-qva" secondAttribute="leadingMargin" id="3s1-PM-T6q"/>
+                            <constraint firstItem="gfd-wz-nRe" firstAttribute="top" secondItem="N1x-Hi-gIz" secondAttribute="bottom" constant="33" id="6D5-gh-fN9"/>
+                            <constraint firstItem="LqK-3h-bLQ" firstAttribute="top" secondItem="N1x-Hi-gIz" secondAttribute="top" id="9Eq-wc-8yz"/>
+                            <constraint firstAttribute="trailing" secondItem="LqK-3h-bLQ" secondAttribute="trailing" id="9Jg-6Z-7Ba"/>
+                            <constraint firstItem="LqK-3h-bLQ" firstAttribute="leading" secondItem="N1x-Hi-gIz" secondAttribute="trailing" id="9sQ-tn-znr"/>
+                            <constraint firstItem="gi7-rm-Fdl" firstAttribute="leading" secondItem="pjQ-ya-Yoc" secondAttribute="trailing" constant="50" id="ADX-Qq-cYx"/>
+                            <constraint firstItem="8oO-Fo-1KZ" firstAttribute="top" secondItem="pjQ-ya-Yoc" secondAttribute="bottom" constant="8" symbolic="YES" id="DzY-jq-eH9"/>
+                            <constraint firstItem="LqK-3h-bLQ" firstAttribute="leading" secondItem="N1x-Hi-gIz" secondAttribute="trailing" id="LEo-2U-Vso"/>
+                            <constraint firstItem="N1x-Hi-gIz" firstAttribute="bottom" secondItem="6ZB-eb-HDO" secondAttribute="bottom" id="MTW-vs-nMG"/>
+                            <constraint firstItem="N1x-Hi-gIz" firstAttribute="trailing" secondItem="huT-nI-qva" secondAttribute="trailingMargin" id="Mql-L2-MJi"/>
+                            <constraint firstItem="N1x-Hi-gIz" firstAttribute="bottom" secondItem="LqK-3h-bLQ" secondAttribute="bottom" id="OHT-co-FZj"/>
+                            <constraint firstItem="gi7-rm-Fdl" firstAttribute="trailing" secondItem="huT-nI-qva" secondAttribute="trailingMargin" id="TJc-Ya-Bia"/>
+                            <constraint firstItem="8oO-Fo-1KZ" firstAttribute="top" secondItem="gfd-wz-nRe" secondAttribute="bottom" constant="86" id="VPW-xg-0se"/>
+                            <constraint firstItem="N1x-Hi-gIz" firstAttribute="top" secondItem="ROs-iu-Qkl" secondAttribute="bottom" id="Wnf-bP-F6B"/>
+                            <constraint firstItem="gi7-rm-Fdl" firstAttribute="height" secondItem="pjQ-ya-Yoc" secondAttribute="height" id="ay2-xk-cOi"/>
+                            <constraint firstItem="gi7-rm-Fdl" firstAttribute="width" secondItem="pjQ-ya-Yoc" secondAttribute="width" id="c5Y-Lq-gKB"/>
+                            <constraint firstItem="N1x-Hi-gIz" firstAttribute="height" secondItem="6ZB-eb-HDO" secondAttribute="height" id="fAe-Dm-mav"/>
+                            <constraint firstItem="gi7-rm-Fdl" firstAttribute="centerY" secondItem="pjQ-ya-Yoc" secondAttribute="centerY" id="fBF-pN-uj7"/>
+                            <constraint firstItem="N1x-Hi-gIz" firstAttribute="leading" secondItem="6ZB-eb-HDO" secondAttribute="trailing" id="h99-dL-KK6"/>
+                            <constraint firstItem="8oO-Fo-1KZ" firstAttribute="top" secondItem="gi7-rm-Fdl" secondAttribute="bottom" constant="8" symbolic="YES" id="oqZ-q4-Ht8"/>
+                            <constraint firstItem="gi7-rm-Fdl" firstAttribute="leading" secondItem="pjQ-ya-Yoc" secondAttribute="trailing" constant="50" id="qdx-1h-Us9"/>
+                            <constraint firstItem="6ZB-eb-HDO" firstAttribute="leading" secondItem="huT-nI-qva" secondAttribute="leading" id="tAz-Eg-bAZ"/>
+                            <constraint firstItem="pjQ-ya-Yoc" firstAttribute="top" secondItem="gfd-wz-nRe" secondAttribute="bottom" constant="38" id="tJI-Gz-gDd"/>
+                            <constraint firstItem="gi7-rm-Fdl" firstAttribute="top" secondItem="gfd-wz-nRe" secondAttribute="bottom" constant="38" id="v3T-Ye-Ty9"/>
+                            <constraint firstItem="pjQ-ya-Yoc" firstAttribute="leading" secondItem="huT-nI-qva" secondAttribute="leadingMargin" id="vwo-tD-FwY"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="" image="Announcements" id="9I3-ry-kT4"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="428" height="926"/>
+                    <connections>
+                        <outlet property="agreeButton" destination="gi7-rm-Fdl" id="kOD-fg-nlF"/>
+                        <outlet property="disagreeButton" destination="pjQ-ya-Yoc" id="FIk-fs-6wY"/>
+                        <outlet property="textView" destination="gfd-wz-nRe" id="P1l-9m-01f"/>
+                        <outlet property="titleLabel" destination="N1x-Hi-gIz" id="JPv-nG-3NG"/>
+                        <segue destination="vkx-9d-gno" kind="modal" identifier="TabBarFromLicenseSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="z5c-pT-0SK"/>
+                        <segue destination="X61-tu-xQD" kind="modal" identifier="SignInFromLicenseSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="crossDissolve" id="Ar4-4s-0xi"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oga-G1-G6L" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="0NW-4a-dtV">
+                    <connections>
+                        <action selector="longPress:" destination="nL1-kH-bkU" id="cpc-Zy-Gza"/>
+                    </connections>
+                </pongPressGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="4142.5233644859809" y="-152.26781857451405"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>

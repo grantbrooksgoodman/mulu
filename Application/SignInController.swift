@@ -53,8 +53,6 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     {
         super.viewDidLoad()
 
-        initializeController()
-
         view.setBackground(withImageNamed: "Gradient.png")
 
         if let email = UserDefaults.standard.value(forKey: "email") as? String,
@@ -62,6 +60,11 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
         {
             usernameTextField.text = email
             passwordTextField.text = password
+        }
+
+        if let agreed = UserDefaults.standard.value(forKey: "agreedToLicense") as? Bool
+        {
+            agreedToLicense = agreed
         }
 
         usernameTextField.delegate = self
@@ -99,6 +102,8 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+
+        initializeController()
 
         currentFile = #file
         buildInfoController?.view.isHidden = !preReleaseApplication
@@ -237,6 +242,8 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                    email != self.usernameTextField.text!
                                 {
                                     UserDefaults.standard.removeObject(forKey: "skippedChallenges")
+                                    UserDefaults.standard.removeObject(forKey: "agreedToLicense")
+                                    agreedToLicense = false
                                 }
 
                                 UserDefaults.standard.setValue(self.usernameTextField.text!, forKey: "email")
@@ -256,7 +263,14 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                                 {
                                                     self.presentAdminConsoleAlert()
                                                 }
-                                                else { self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self) }
+                                                else
+                                                {
+                                                    if agreedToLicense
+                                                    {
+                                                        self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
+                                                    }
+                                                    else { self.performSegue(withIdentifier: "LicenseFromSignInSegue", sender: self) }
+                                                }
                                             }
 
                                             actionSheet.addAction(teamAction)
@@ -278,7 +292,14 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                         {
                                             self.presentAdminConsoleAlert()
                                         }
-                                        else { self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self) }
+                                        else
+                                        {
+                                            if agreedToLicense
+                                            {
+                                                self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
+                                            }
+                                            else { self.performSegue(withIdentifier: "LicenseFromSignInSegue", sender: self) }
+                                        }
                                     }
                                 }
                             }

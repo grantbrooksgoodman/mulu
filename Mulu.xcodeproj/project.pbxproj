@@ -62,6 +62,7 @@
 		A236BE2A259AD5D900162A8B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A236BE29259AD5D900162A8B /* ViewController.swift */; };
 		A24A232E257DB9900063FE87 /* TeamSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24A232D257DB9900063FE87 /* TeamSerializer.swift */; };
 		A24A2331257DC1AA0063FE87 /* UserSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24A2330257DC1AA0063FE87 /* UserSerializer.swift */; };
+		A262A62425BB4526004E9962 /* LicenseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A262A62325BB4526004E9962 /* LicenseController.swift */; };
 		A266157525A3AB4800B471F6 /* ViewTeamsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A266157425A3AB4700B471F6 /* ViewTeamsController.swift */; };
 		A26738A325A11DC800E02949 /* NotifyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26738A225A11DC800E02949 /* NotifyController.swift */; };
 		A26738A625A12A5D00E02949 /* AnnounceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26738A525A12A5D00E02949 /* AnnounceController.swift */; };
@@ -194,6 +195,7 @@
 		A236BE29259AD5D900162A8B /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A24A232D257DB9900063FE87 /* TeamSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamSerializer.swift; sourceTree = "<group>"; };
 		A24A2330257DC1AA0063FE87 /* UserSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSerializer.swift; sourceTree = "<group>"; };
+		A262A62325BB4526004E9962 /* LicenseController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LicenseController.swift; sourceTree = "<group>"; };
 		A266157425A3AB4700B471F6 /* ViewTeamsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewTeamsController.swift; sourceTree = "<group>"; };
 		A26738A225A11DC800E02949 /* NotifyController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotifyController.swift; sourceTree = "<group>"; };
 		A26738A525A12A5D00E02949 /* AnnounceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnounceController.swift; sourceTree = "<group>"; };
@@ -329,6 +331,7 @@
 				A297BFB1258E9E32006DA5F5 /* ForgotPasswordController.swift */,
 				A2D6DFB22580376900725D5C /* HomeController.swift */,
 				68D29A121DD79C8A00BFF4D5 /* InitialController.swift */,
+				A262A62325BB4526004E9962 /* LicenseController.swift */,
 				687404471CB1AB3400BD2632 /* MainController.swift */,
 				A28797EC258D663400C48A74 /* PostSignUpController.swift */,
 				68EB1C821DD7B7070074737B /* SampleController.swift */,
@@ -772,6 +775,7 @@
 				A297BFB2258E9E32006DA5F5 /* ForgotPasswordController.swift in Sources */,
 				A26738A325A11DC800E02949 /* NotifyController.swift in Sources */,
 				A278D31A25858A52008D22D1 /* UserTestingSerializer.swift in Sources */,
+				A262A62425BB4526004E9962 /* LicenseController.swift in Sources */,
 				A24A2331257DC1AA0063FE87 /* UserSerializer.swift in Sources */,
 				A289281E2593B8AD00610E48 /* NewChallengeController.swift in Sources */,
 				A2A5549D25780BDD006D3B3E /* BuildInfoController.swift in Sources */,

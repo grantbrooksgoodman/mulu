@@ -1059,22 +1059,6 @@ extension ViewTeamsController: UITableViewDataSource, UITableViewDelegate
             }
             else { selectionCell.subtitleLabel.text = "on 0 teams" }
 
-            //            for identifier in selectedUsers.identifiers()
-            //            {
-            //                let index = selectedUsers.firstIndex(where: {$0.associatedIdentifier == identifier})!
-            //
-            //                if userArray[indexPath.row].associatedIdentifier == identifier
-            //                {
-            //                    print("Selecting \(selectedUsers[index].firstName!) \(selectedUsers[index].lastName!)")
-            //                    selectionCell.radioButton.isSelected = true
-            //                }
-            //                else
-            //                {
-            //                    print("NOT Selecting \(selectedUsers[index].firstName!) \(selectedUsers[index].lastName!)")
-            //                    selectionCell.radioButton.isSelected = false
-            //                }
-            //            }
-
             selectionCell.selectionStyle = .none
             selectionCell.tag = 0; return selectionCell
         }

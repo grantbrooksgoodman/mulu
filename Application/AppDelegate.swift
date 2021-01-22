@@ -22,9 +22,10 @@ import Reachability
 /* MARK: Top-level Variable Declarations */
 
 //Booleans
+var agreedToLicense                       = false
 var darkMode                              = false
 var isPresentingMailComposeViewController = false
-var preReleaseApplication                 = true
+var preReleaseApplication                 = false
 var signedOut                             = false
 var verboseFunctionExposure               = false
 
@@ -51,7 +52,7 @@ var buildInfoController:       BuildInfoController?
 var lastInitializedController: UIViewController! = MainController()
 
 //Other Declarations
-var buildType: Build.BuildType = .releaseCandidate
+var buildType: Build.BuildType = .generalRelease
 var currentCalendar = Calendar(identifier: .gregorian)
 var currentTeam: Team!
 var currentUser: User!

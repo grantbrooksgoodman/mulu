@@ -445,7 +445,10 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
 
                     challengeCell.titleLabel.text = "DAY \(day) OF \(duration)"
                 }
-                else { report("Tournament has ended!", errorCode: nil, isFatal: true, metadata: [#file, #function, #line]) }
+                else
+                {
+                    AlertKit().optionAlertController(title: "Tournament Ended", message: "This tournament has ended.", cancelButtonTitle: "OK", additionalButtons: nil, preferredActionIndex: nil, networkDependent: true) { _ in }
+                }
             }
 
             challengeCell.promptTextView.text = incompleteChallenges[indexPath.row].prompt!

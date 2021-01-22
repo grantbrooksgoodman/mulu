@@ -51,8 +51,6 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     {
         super.viewDidLoad()
 
-        initializeController()
-
         view.setBackground(withImageNamed: "Gradient.png")
 
         if let tournament = currentTeam.associatedTournament
@@ -65,6 +63,8 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+
+        initializeController()
 
         currentFile = #file
         buildInfoController?.view.isHidden = !preReleaseApplication
@@ -330,7 +330,9 @@ extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
             {
                 var leaderboardString = ""
 
-                for (index, metadata) in leaderboard.enumerated()
+                let trueLeaderboard = leaderboard.count > 8 ? Array(leaderboard[0 ... 7]) : leaderboard
+
+                for (index, metadata) in trueLeaderboard.enumerated()
                 {
                     leaderboardString.append("\(index + 1). \(metadata.team.name!.uppercased())     \(metadata.points) PTS\n")
                 }

@@ -170,8 +170,6 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
         }
         else
         {
-            //showProgressHUD(text: "Setting appearance date...", delay: nil)
-
             UIView.animate(withDuration: 0.2) {
                 self.activityIndicator.alpha = 1
                 self.datePicker.alpha = 0
@@ -181,9 +179,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
             selectedChallenge.updateAppearanceDate(datePicker.date.comparator) { errorDescriptor in
                 if let error = errorDescriptor
                 {
-                    //hideHUD(delay: 1) {
                     self.errorAlert(title: "Couldn't Set Appearance Date", message: error)
-                    //}
                 }
                 else
                 {
@@ -261,7 +257,7 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     func deleteChallengeAction()
     {
         AlertKit().confirmationAlertController(title:                   "Deleting \(referenceArray[selectedIndexPath.row].title!.capitalized)",
-                                               message:                 "If this challenge has already been completed by some users, their total accrued points will decrease.\n\nPlease confirm you would like to delete this challenge.",
+                                               message:                 "If this challenge has already been completed by some users, their total accrued points will decrease and their streaks may be broken.\n\nPlease confirm you would like to delete this challenge.",
                                                cancelConfirmTitles:     ["confirm": "Delete Challenge"],
                                                confirmationDestructive: true,
                                                confirmationPreferred:   false,
@@ -762,6 +758,10 @@ class ViewChallengesController: UIViewController, MFMailComposeViewControllerDel
     @objc func reloadData()
     {
         tableView.isUserInteractionEnabled = false
+
+        UIView.transition(with: titleLabel, duration: 0.35, options: .transitionCrossDissolve, animations: {
+            self.titleLabel.text = "All Challenges"
+        })
 
         UIView.animate(withDuration: 0.2) { self.tableView.alpha = 0 } completion: { _ in
             ChallengeSerializer().getAllChallenges { returnedChallenges, errorDescriptor in
