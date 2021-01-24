@@ -219,8 +219,10 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
     {
         guard let tournament = currentTeam.associatedTournament else
         { completion(nil, "This Team is not currently participating in a Tournament."); return }
-
-        ChallengeSerializer().getChallenges(forTournament: tournament.associatedIdentifier, forDate: Date()) { returnedChallenges, errorDescriptor in
+        let nowUTC = Date()
+        let timeZoneOffset = Double(TimeZone.current.secondsFromGMT(for: nowUTC))
+        let localDate = Calendar.current.date(byAdding: .second, value: Int(timeZoneOffset), to: nowUTC)
+        ChallengeSerializer().getChallenges(forTournament: tournament.associatedIdentifier, forDate: localDate!) { returnedChallenges, errorDescriptor in
             if let challenges = returnedChallenges
             {
                 var filteredChallenges = [Challenge]()

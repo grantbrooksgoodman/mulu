@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		65D9229D25BD11980076BDC1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 65D9229C25BD11980076BDC1 /* GoogleService-Info.plist */; };
 		687404481CB1AB3400BD2632 /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 687404471CB1AB3400BD2632 /* MainController.swift */; };
 		6874044D1CB1AB4400BD2632 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6874044A1CB1AB4400BD2632 /* AppDelegate.swift */; };
 		6874044E1CB1AB4400BD2632 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6874044B1CB1AB4400BD2632 /* Assets.xcassets */; };
@@ -79,7 +80,6 @@
 		A28927FD2593B28000610E48 /* CMS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A28927FC2593B28000610E48 /* CMS.storyboard */; };
 		A28928012593B5A700610E48 /* CreateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28928002593B5A700610E48 /* CreateController.swift */; };
 		A289281E2593B8AD00610E48 /* NewChallengeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A289281D2593B8AD00610E48 /* NewChallengeController.swift */; };
-		A28E99B7257AA47D00D8A4F7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */; };
 		A28FF91C259AD69E000FC656 /* ViewUsersController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28FF91B259AD69E000FC656 /* ViewUsersController.swift */; };
 		A28FF920259AD834000FC656 /* SubtitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28FF91F259AD834000FC656 /* SubtitleCell.swift */; };
 		A2962CFD2594FC2A00399F50 /* words.txt in Resources */ = {isa = PBXBuildFile; fileRef = A2962CFC2594FC2A00399F50 /* words.txt */; };
@@ -135,6 +135,7 @@
 		0F2CA65021D1CC4B0CB8E9AE /* Pods-Montblanc.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Montblanc.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Montblanc/Pods-Montblanc.debug.xcconfig"; sourceTree = "<group>"; };
 		362FCE402C02DE8D09553E07 /* Pods-Gamma.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Gamma.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Gamma/Pods-Gamma.debug.xcconfig"; sourceTree = "<group>"; };
 		56382B1A97A6F96A8091E5F4 /* Pods_OneSignalNotificationServiceExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneSignalNotificationServiceExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		65D9229C25BD11980076BDC1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		682A9AFD1C8E63E900014EA5 /* Mulu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mulu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		687404471CB1AB3400BD2632 /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainController.swift; sourceTree = "<group>"; };
 		687404491CB1AB4400BD2632 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -212,7 +213,6 @@
 		A28927FC2593B28000610E48 /* CMS.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = CMS.storyboard; sourceTree = "<group>"; };
 		A28928002593B5A700610E48 /* CreateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateController.swift; sourceTree = "<group>"; };
 		A289281D2593B8AD00610E48 /* NewChallengeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewChallengeController.swift; sourceTree = "<group>"; };
-		A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A28FF91B259AD69E000FC656 /* ViewUsersController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewUsersController.swift; sourceTree = "<group>"; };
 		A28FF91F259AD834000FC656 /* SubtitleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleCell.swift; sourceTree = "<group>"; };
 		A2962CFC2594FC2A00399F50 /* words.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = words.txt; sourceTree = "<group>"; };
@@ -364,6 +364,7 @@
 		68C9FAFF1DD6F2F500E7DE4D /* Other Files */ = {
 			isa = PBXGroup;
 			children = (
+				65D9229C25BD11980076BDC1 /* GoogleService-Info.plist */,
 				6874044B1CB1AB4400BD2632 /* Assets.xcassets */,
 				A2A58FC9259156BF004DAFE0 /* ChallengeCell.swift */,
 				A2EFF34225835A590070B320 /* DateCell.swift */,
@@ -372,7 +373,6 @@
 				A28FF91F259AD834000FC656 /* SubtitleCell.swift */,
 				A278AFA8259A920800EA3443 /* SelectionCell.swift */,
 				687404491CB1AB4400BD2632 /* Info.plist */,
-				A28E99B6257AA47D00D8A4F7 /* GoogleService-Info.plist */,
 				A2962CFC2594FC2A00399F50 /* words.txt */,
 			);
 			name = "Other Files";
@@ -682,12 +682,12 @@
 				A207FFF32581B714004E70A6 /* Montserrat-Bold.ttf in Resources */,
 				A22169DE258A611D001C036D /* GothamBold.ttf in Resources */,
 				A22169D3258A611D001C036D /* Gotham-Thin.otf in Resources */,
-				A28E99B7257AA47D00D8A4F7 /* GoogleService-Info.plist in Resources */,
 				A2962CFD2594FC2A00399F50 /* words.txt in Resources */,
 				A2CA2D0F257984BF0012DB17 /* San Francisco (Semibold Italic).otf in Resources */,
 				A22169D6258A611D001C036D /* GothamLight.ttf in Resources */,
 				A207FFED2581B714004E70A6 /* Montserrat-Medium.ttf in Resources */,
 				A2CA2D0C257984BF0012DB17 /* San Francisco (Heavy).otf in Resources */,
+				65D9229D25BD11980076BDC1 /* GoogleService-Info.plist in Resources */,
 				A207FFF62581B714004E70A6 /* Montserrat-SemiBold.ttf in Resources */,
 				A207FFF52581B714004E70A6 /* Montserrat-BlackItalic.ttf in Resources */,
 			);
@@ -960,14 +960,14 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Application Icon";
 				CODE_SIGN_ENTITLEMENTS = Mulu.entitlements;
-				CURRENT_PROJECT_VERSION = 3084;
+				CURRENT_PROJECT_VERSION = 3888;
 				DEVELOPMENT_TEAM = 7R4R2FSWH9;
 				EXCLUDED_ARCHS = "";
 				INFOPLIST_FILE = Application/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = us.neotechnica.mulu;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.getmulu.muluparty;
 				PRODUCT_NAME = Mulu;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
@@ -982,14 +982,14 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Application Icon";
 				CODE_SIGN_ENTITLEMENTS = Mulu.entitlements;
-				CURRENT_PROJECT_VERSION = 3084;
+				CURRENT_PROJECT_VERSION = 3888;
 				DEVELOPMENT_TEAM = 7R4R2FSWH9;
 				EXCLUDED_ARCHS = "";
 				INFOPLIST_FILE = Application/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = us.neotechnica.mulu;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.getmulu.muluparty;
 				PRODUCT_NAME = Mulu;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;

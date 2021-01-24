@@ -338,8 +338,9 @@ extension TeamController: UICollectionViewDataSource, UICollectionViewDelegate
                let leaderboard = tournament.leaderboard()
             {
                 var leaderboardString = ""
-
-                let trueLeaderboard = leaderboard.count > 8 ? Array(leaderboard[0 ... 7]) : leaderboard
+                var truncatedLength = Float(leaderboard.count) / Float(4);
+                truncatedLength.round(.up);
+                let trueLeaderboard = leaderboard.count > 8 ? Array(leaderboard[0 ..< Int(truncatedLength)]) : leaderboard
 
                 for (index, metadata) in trueLeaderboard.enumerated()
                 {

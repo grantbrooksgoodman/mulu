@@ -115,7 +115,10 @@ class ChallengeCell: UICollectionViewCell
                 {
                     self.webView.evaluateJavaScript("document.elementFromPoint(0, 0).click();", completionHandler: nil)
                 }
-                else { self.webView.load(URLRequest(url: tikTokVideoLink)) }; return
+                else {
+                    self.webView.load(URLRequest(url: tikTokVideoLink))
+                    
+                }; return
             }
 
             self.webView.isUserInteractionEnabled = true
