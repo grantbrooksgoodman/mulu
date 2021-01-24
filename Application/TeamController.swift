@@ -105,6 +105,9 @@ class TeamController: UIViewController, MFMailComposeViewControllerDelegate, UIC
                     var points = currentTeam.getAccruedPoints(for: user.associatedIdentifier)
 
                     points = points == -1 ? 0 : points
+                    if let additionalPoints  = currentTeam.participantIdentifiers[user.associatedIdentifier] {
+                        points += additionalPoints
+                    }
 
                     rankArray.append((user, points))
                 }
