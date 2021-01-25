@@ -36,6 +36,12 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     var buildInstance: Build!
 
     //==================================================//
+    
+    /* MARK: State Variables */
+    
+    var firstTry = true
+    
+    //==================================================//
 
     /* MARK: Initializer Function */
 
@@ -147,19 +153,25 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
     {
         guard usernameTextField.text!.lowercasedTrimmingWhitespace != "" && passwordTextField.text!.lowercasedTrimmingWhitespace != "" else
         {
-            let message = "Please evaluate all fields before signing in."
+            if (self.firstTry) {
+                self.firstTry = false
+            } else {
+                let message = "Please evaluate all fields before signing in."
 
-            AlertKit().errorAlertController(title:                       "Enter Full Credentials",
-                                            message:                     message,
-                                            dismissButtonTitle:          "OK",
-                                            additionalSelectors:         nil,
-                                            preferredAdditionalSelector: nil,
-                                            canFileReport:               false,
-                                            extraInfo:                   nil,
-                                            metadata:                    [#file, #function, #line],
-                                            networkDependent:            false)
+                AlertKit().errorAlertController(title:                       "Enter Full Credentials",
+                                                message:                     message,
+                                                dismissButtonTitle:          "OK",
+                                                additionalSelectors:         nil,
+                                                preferredAdditionalSelector: nil,
+                                                canFileReport:               false,
+                                                extraInfo:                   nil,
+                                                metadata:                    [#file, #function, #line],
+                                                networkDependent:            false)
 
-            report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]); return
+                report(message, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]);
+                return
+            }
+            return
         }
 
         guard usernameTextField.text!.isValidEmail else
