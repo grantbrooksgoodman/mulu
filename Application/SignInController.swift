@@ -271,18 +271,18 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                             let teamAction = UIAlertAction(title: team.name!, style: .default) { _ in
                                                 currentTeam = team
 
-                                                if self.usernameTextField.text == "admin@getmulu.com"
+//                                                if self.usernameTextField.text == "admin@getmulu.com"
+//                                                {
+//                                                    self.presentAdminConsoleAlert()
+//                                                }
+//                                                else
+//                                                {
+                                                if agreedToLicense
                                                 {
-                                                    self.presentAdminConsoleAlert()
+                                                    self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
                                                 }
-                                                else
-                                                {
-                                                    if agreedToLicense
-                                                    {
-                                                        self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
-                                                    }
-                                                    else { self.performSegue(withIdentifier: "LicenseFromSignInSegue", sender: self) }
-                                                }
+                                                else { self.performSegue(withIdentifier: "LicenseFromSignInSegue", sender: self) }
+//                                                }
                                             }
 
                                             actionSheet.addAction(teamAction)
@@ -300,18 +300,18 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                     {
                                         currentTeam = teams[0]
 
-                                        if self.usernameTextField.text == "admin@getmulu.com"
+//                                        if self.usernameTextField.text == "admin@getmulu.com"
+//                                        {
+//                                            self.presentAdminConsoleAlert()
+//                                        }
+//                                        else
+//                                        {
+                                        if agreedToLicense
                                         {
-                                            self.presentAdminConsoleAlert()
+                                            self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
                                         }
-                                        else
-                                        {
-                                            if agreedToLicense
-                                            {
-                                                self.performSegue(withIdentifier: "TabBarFromSignInSegue", sender: self)
-                                            }
-                                            else { self.performSegue(withIdentifier: "LicenseFromSignInSegue", sender: self) }
-                                        }
+                                        else { self.performSegue(withIdentifier: "LicenseFromSignInSegue", sender: self) }
+//                                        }
                                     }
                                 }
                             }
@@ -322,11 +322,12 @@ class SignInController: UIViewController, MFMailComposeViewControllerDelegate
                                     UserDefaults.standard.setValue(self.usernameTextField.text!, forKey: "email")
                                     UserDefaults.standard.setValue(self.passwordTextField.text!, forKey: "password")
 
-                                    if self.usernameTextField.text == "admin@getmulu.com"
-                                    {
-                                        self.performSegue(withIdentifier: "CMSSegue", sender: self)
-                                    }
-                                    else { self.presentWaitlistAlert() }
+//                                    if self.usernameTextField.text == "admin@getmulu.com"
+//                                    {
+//                                        self.performSegue(withIdentifier: "CMSSegue", sender: self)
+//                                    }
+//                                    else {
+                                    self.presentWaitlistAlert() //}
                                 }
                                 else
                                 {
