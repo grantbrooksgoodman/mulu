@@ -15,4 +15,5 @@ target 'Mulu' do
     pod 'PKHUD', '~> 5.0'
     pod 'ReachabilitySwift'
     pod 'SwiftyGif'
+    pod 'Alamofire', '~> 5.2'
 end

@@ -435,7 +435,11 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
             {
                 let start = tournament.startDate.comparator
                 let end = tournament.endDate.comparator
-                let today = Date().comparator
+                let nowUTC = Date()
+                let timeZoneOffset = Double(TimeZone.current.secondsFromGMT(for: nowUTC))
+                let today = Calendar.current.date(byAdding: .second, value: Int(timeZoneOffset), to: nowUTC)!
+//                let today = localDate?.comparator
+//                let today = Date().comparator
 
                 if end > today
                 {

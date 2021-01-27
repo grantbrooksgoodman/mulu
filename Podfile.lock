@@ -1,4 +1,5 @@
 PODS:
+  - Alamofire (5.4.1)
   - Firebase/Analytics (6.23.0):
     - Firebase/Core
   - Firebase/Auth (6.23.0):
@@ -118,6 +119,7 @@ PODS:
   - SwiftyGif (5.3.0)
 
 DEPENDENCIES:
+  - Alamofire (~> 5.2)
   - Firebase/Analytics
   - Firebase/Auth
   - Firebase/Database
@@ -130,6 +132,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Alamofire
     - Firebase
     - FirebaseAnalytics
     - FirebaseAnalyticsInterop
@@ -158,6 +161,7 @@ SPEC REPOS:
     - SwiftyGif
 
 SPEC CHECKSUMS:
+  Alamofire: 2291f7d21ca607c491dd17642e5d40fdcda0e65c
   Firebase: 585ae467b3edda6a5444e788fda6888f024d8d6f
   FirebaseAnalytics: 558f7a03d19de451093032c806f39d5f9dff096e
   FirebaseAnalyticsInterop: 3f86269c38ae41f47afeb43ebf32a001f58fcdae
@@ -185,6 +189,6 @@ SPEC CHECKSUMS:
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
 
-PODFILE CHECKSUM: eda739e1396626ffd6e78c6c310d08906d608c47
+PODFILE CHECKSUM: 1c19cd15aa485965d028d4f89f9279e6d44873d9
 
 COCOAPODS: 1.10.1

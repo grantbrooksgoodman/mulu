@@ -16,6 +16,7 @@ import Firebase
 import FirebaseStorage
 import PKHUD
 import Reachability
+import Alamofire
 
 //==================================================//
 
@@ -627,9 +628,17 @@ func composeMessage(withMessage: String, withRecipients: [String], withSubject: 
 func hasConnectivity() -> Bool
 {
     let connectionReachability = try! Reachability()
-    let networkStatus = connectionReachability.connection.description
+//    let networkStatus = connectionReachability.connection.description
+    var reachable = false;
+    connectionReachability.whenReachable = { _ in
+        reachable = true
+    }
 
-    return (networkStatus != "No Connection")
+    if let _ = NetworkReachabilityManager()?.isReachable {
+        reachable = true
+    }
+//    return (networkStatus != "No Connection")
+    return reachable
 }
 
 func notifyAllUsers(title: String, body: String, completion: @escaping (_ errorDescriptor: String?) -> Void)

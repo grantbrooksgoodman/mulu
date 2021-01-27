@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="mNG-DS-geN">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="mNG-DS-geN">
     <device id="retina6_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
@@ -242,7 +242,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" text="WELCOME BACK JOHN!" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999999999998" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GSb-H6-h6A">
-                                <rect key="frame" x="20" y="44.000000000000007" width="350" height="88.666666666666686"/>
+                                <rect key="frame" x="20" y="43.999999999999993" width="350" height="93.333333333333314"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="60" id="ogC-an-BZU"/>
@@ -252,7 +252,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="249" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8fF-sy-XEp">
-                                <rect key="frame" x="15" y="140" width="398" height="70"/>
+                                <rect key="frame" x="15" y="144.66666666666666" width="398" height="70"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="70" id="SmX-Ju-MYQ"/>
                                 </constraints>
@@ -264,14 +264,14 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <view tag="14545453" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YMb-Sf-aj2">
-                                <rect key="frame" x="0.0" y="44.000000000000007" width="20" height="88.666666666666686"/>
+                                <rect key="frame" x="0.0" y="43.999999999999993" width="20" height="93.333333333333314"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
                             <view tag="14545453" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZR1-dw-21o">
-                                <rect key="frame" x="370" y="44.000000000000007" width="58" height="88.666666666666686"/>
+                                <rect key="frame" x="370" y="43.999999999999993" width="58" height="93.333333333333314"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wlr-Or-ieW">
-                                        <rect key="frame" x="4" y="19" width="50" height="50"/>
+                                        <rect key="frame" x="4" y="18.999999999999996" width="50" height="54.666666666666657"/>
                                         <color key="tintColor" systemColor="systemGrayColor"/>
                                         <state key="normal">
                                             <imageReference key="image" image="gear" catalog="system" symbolScale="large"/>
@@ -290,7 +290,7 @@
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Vhu-e3-Cpm">
-                                <rect key="frame" x="0.0" y="216" width="428" height="627"/>
+                                <rect key="frame" x="0.0" y="220.66666666666669" width="428" height="622.33333333333326"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Uwi-cl-Wqw">
                                     <size key="itemSize" width="388" height="506"/>
@@ -387,7 +387,7 @@ Wide squat stance</string>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" alpha="0.0" tag="29976557" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y76-xt-Q8g">
-                                                            <rect key="frame" x="44" y="192" width="300" height="122"/>
+                                                            <rect key="frame" x="44" y="206.33333333333334" width="300" height="93.333333333333343"/>
                                                             <string key="text">No new challenges to display.
 
 Pull to refresh or check back later!</string>
@@ -674,7 +674,7 @@ Pull to refresh or check back later!</string>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="30" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4PF-Ds-slh">
-                                                                        <rect key="frame" x="24" y="26" width="32" height="28"/>
+                                                                        <rect key="frame" x="27.333333333333329" y="26.666666666666671" width="25.666666666666671" height="27"/>
                                                                         <fontDescription key="fontDescription" name="SFUIText-Heavy" family="SF UI Text" pointSize="23"/>
                                                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
@@ -786,7 +786,7 @@ Pull to refresh or check back later!</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k9d-em-CuC">
-                                <rect key="frame" x="20" y="873" width="142" height="33"/>
+                                <rect key="frame" x="20" y="874" width="150" height="32"/>
                                 <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="17"/>
                                 <state key="normal" title="Sign up">
                                     <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -796,7 +796,7 @@ Pull to refresh or check back later!</string>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vq3-IC-Yd7">
-                                <rect key="frame" x="250" y="875" width="158" height="30"/>
+                                <rect key="frame" x="258" y="875" width="150" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="Alz-cX-t1n"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="CGU-NO-RrO"/>
@@ -1074,7 +1074,7 @@ Pull to refresh or check back later!</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9l2-6J-tK6">
-                                <rect key="frame" x="108.66666666666669" y="548" width="211" height="50"/>
+                                <rect key="frame" x="118.66666666666669" y="548" width="191" height="50"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="FO4-fU-10c"/>
@@ -1088,7 +1088,7 @@ Pull to refresh or check back later!</string>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZMl-xz-osZ">
-                                <rect key="frame" x="108.66666666666669" y="616" width="211" height="50"/>
+                                <rect key="frame" x="118.66666666666669" y="616" width="191" height="50"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="7EG-eL-RJU"/>
@@ -1111,7 +1111,7 @@ Pull to refresh or check back later!</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jOd-cv-iVP">
-                                <rect key="frame" x="144.66666666666666" y="858" width="138.99999999999997" height="20"/>
+                                <rect key="frame" x="155.66666666666666" y="858" width="116.99999999999997" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="wTF-iW-a7m"/>
                                 </constraints>
@@ -1434,7 +1434,7 @@ Cg
                                         </attributes>
                                     </fragment>
                                     <fragment>
-                                        <mutableString key="content">By agreeing to these terms, attending classes, and/or other programs of Mulu, you hereby acknowledge and agree, on behalf of yourself, your heirs, personal representatives, and/or assigns (collectively “you” and/or “yourself”) that (a) there are certain inherent risks and dangers in the strenuous nature of the Mulu workout program, (b) you have voluntarily chosen to participate in an intense physical exercise program, (c) you understand that Mulu strongly recommends that you consult with your physician prior to commencing any workout regimen, (d) you have been fully informed of the strenuous nature of this exercise program and the possibility of adverse physiological occurrences including, but not limited to, abnormal blood pressure, fainting, heart attack, and/or death, and (e) </mutableString>
+                                        <string key="content">By agreeing to these terms, attending classes, and/or other programs of Mulu, you hereby acknowledge and agree, on behalf of yourself, your heirs, personal representatives, and/or assigns (collectively “you” and/or “yourself”) that (a) there are certain inherent risks and dangers in the strenuous nature of the Mulu workout program, (b) you have voluntarily chosen to participate in an intense physical exercise program, (c) you understand that Mulu strongly recommends that you consult with your physician prior to commencing any workout regimen, (d) you have been fully informed of the strenuous nature of this exercise program and the possibility of adverse physiological occurrences including, but not limited to, abnormal blood pressure, fainting, heart attack, and/or death, and (e) </string>
                                         <attributes>
                                             <color key="NSColor" red="0.18823999999999999" green="0.19216" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <font key="NSFont" size="12" name="Helvetica"/>
@@ -1592,7 +1592,7 @@ Cg
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="hu9-pD-bfH"/>
-        <segue reference="Yvv-RL-5od"/>
+        <segue reference="ZkC-f4-a7K"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="Announcements" width="28" height="51"/>
