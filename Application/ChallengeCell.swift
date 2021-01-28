@@ -70,8 +70,10 @@ class ChallengeCell: UICollectionViewCell
     {
         Analytics.logEvent("completed_challenge", parameters: ["challengeName": titleLabel.text!])
 
-        isUserInteractionEnabled = false
-
+        self.isUserInteractionEnabled = false
+        self.doneButton.isUserInteractionEnabled = false
+        self.skippedButton.isUserInteractionEnabled = false
+        showProgressHUD()
         currentUser.completeChallenge(withIdentifier: challengeIdentifier, on: currentTeam) { errorDescriptor in
             if let error = errorDescriptor
             {
@@ -81,6 +83,8 @@ class ChallengeCell: UICollectionViewCell
                     report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
 
                     self.isUserInteractionEnabled = true
+                    self.doneButton.isUserInteractionEnabled = true
+                    self.skippedButton.isUserInteractionEnabled = true
                 }
             }
             else
@@ -88,7 +92,9 @@ class ChallengeCell: UICollectionViewCell
                 hideHUD(delay: nil) {
                     flashSuccessHUD(text: nil, for: 1.25, delay: nil) {
                         self.isUserInteractionEnabled = true
-
+                        self.doneButton.isUserInteractionEnabled = true
+                        self.skippedButton.isUserInteractionEnabled = true
+                        
                         let parent = self.parentViewController as! HomeController
                         parent.setVisualTeamInformation()
                     }
