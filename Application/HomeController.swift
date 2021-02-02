@@ -437,17 +437,22 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate
                 let end = tournament.endDate.comparator
                 let nowUTC = Date()
                 let timeZoneOffset = Double(TimeZone.current.secondsFromGMT(for: nowUTC))
-                let today = Calendar.current.date(byAdding: .second, value: Int(timeZoneOffset), to: nowUTC)!
+                let today = Calendar.current.date(byAdding: .second, value: Int(timeZoneOffset), to: nowUTC)!.comparator
+                let todayComponents = Calendar.current.dateComponents([.day, .month], from: today)
+                let todayDay = todayComponents.day!
+                let startComponents = Calendar.current.dateComponents([.day, .month], from: start)
+                let startDay = startComponents.day!
+                let day = todayDay - startDay + 1
 //                let today = localDate?.comparator
 //                let today = Date().comparator
 
-                if end > today
+                if end >= today
                 {
-                    let dayComponents = currentCalendar.dateComponents([.day], from: start, to: today)
-                    let day = dayComponents.day!
+//                    let dayComponents = currentCalendar.dateComponents([.day], from: start, to: today)
+//                    let day = dayComponents.day!
 
                     let durationComponents = currentCalendar.dateComponents([.day], from: start, to: end)
-                    let duration = durationComponents.day!
+                    let duration = durationComponents.day! + 1
 
                     challengeCell.titleLabel.text = "DAY \(day) OF \(duration)"
                 }
