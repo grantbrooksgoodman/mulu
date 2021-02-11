@@ -66,7 +66,7 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         collectionView.alwaysBounceVertical = true
 
         let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(HomeController.setVisualTeamInformation), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(HomeController.setVisualTeamInformation as (HomeController) -> () -> Void), for: .valueChanged)
 
         self.refreshControl = refreshControl
         collectionView.addSubview(self.refreshControl!)
@@ -248,12 +248,26 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
 
     func reloadData()
     {
+        reloadData(cell: nil);
+    }
+    
+    @objc func reloadData(cell: ChallengeCell?) {
         currentTeam.reloadData { errorDescriptor in
-            self.refreshControl?.endRefreshing()
+//            self.refreshControl?.endRefreshing()
 
             if let error = errorDescriptor
             {
                 report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line])
+                self.refreshControl?.endRefreshing()
+                if let cell = cell {
+                    hideHUD(delay: nil) {
+                        flashSuccessHUD(text: nil, for: 1.25, delay: nil) {
+                            cell.isUserInteractionEnabled = true
+                            cell.doneButton.isUserInteractionEnabled = true
+                            cell.skippedButton.isUserInteractionEnabled = true
+                        }
+                    }
+                }
             }
             else
             {
@@ -278,14 +292,23 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
                         }
                         else { report(error, errorCode: nil, isFatal: false, metadata: [#file, #function, #line]) }
                     }
+                    self.refreshControl?.endRefreshing()
+                    if let cell = cell {
+                        hideHUD(delay: nil) {
+                            flashSuccessHUD(text: "Completed Challenge", for: 1.25, delay: nil, viewController: cell.parentViewController!) {
+                                cell.isUserInteractionEnabled = true
+                                cell.doneButton.isUserInteractionEnabled = true
+                                cell.skippedButton.isUserInteractionEnabled = true
+                            }
+                        }
+                    }
                 }
             }
         }
     }
-
-    @objc func setVisualTeamInformation()
-    {
-        reloadData()
+    
+    @objc func setVisualTeamInformation(cell: ChallengeCell?) {
+        reloadData(cell: cell)
 
         var statisticsString = "+ \(currentTeam.name!.uppercased())\n"
 
@@ -297,6 +320,11 @@ class HomeController: UIViewController, MFMailComposeViewControllerDelegate, UIC
         let streak = currentUser.streak(on: currentTeam)
         statisticsString += "+ \(streak == 0 ? "NO" : "\(streak) DAY") STREAK"
         statisticsTextView.text = statisticsString
+    }
+    
+    @objc func setVisualTeamInformation()
+    {
+        setVisualTeamInformation(cell: nil)
     }
 
     func signOut()

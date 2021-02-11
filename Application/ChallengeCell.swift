@@ -73,7 +73,7 @@ class ChallengeCell: UICollectionViewCell
         self.isUserInteractionEnabled = false
         self.doneButton.isUserInteractionEnabled = false
         self.skippedButton.isUserInteractionEnabled = false
-        showProgressHUD()
+        showProgressHUD(viewController: self.parentViewController!)
         currentUser.completeChallenge(withIdentifier: challengeIdentifier, on: currentTeam) { errorDescriptor in
             if let error = errorDescriptor
             {
@@ -89,16 +89,16 @@ class ChallengeCell: UICollectionViewCell
             }
             else
             {
-                hideHUD(delay: nil) {
-                    flashSuccessHUD(text: nil, for: 1.25, delay: nil) {
-                        self.isUserInteractionEnabled = true
-                        self.doneButton.isUserInteractionEnabled = true
-                        self.skippedButton.isUserInteractionEnabled = true
-                        
-                        let parent = self.parentViewController as! HomeController
-                        parent.setVisualTeamInformation()
-                    }
-                }
+                let parent = self.parentViewController as! HomeController
+                parent.setVisualTeamInformation(cell: self)
+//                hideHUD(delay: nil) {
+//                    flashSuccessHUD(text: nil, for: 1.25, delay: nil) {
+//                        self.isUserInteractionEnabled = true
+//                        self.doneButton.isUserInteractionEnabled = true
+//                        self.skippedButton.isUserInteractionEnabled = true
+//
+//                    }
+//                }
             }
         }
     }

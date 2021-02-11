@@ -483,6 +483,40 @@ func flashSuccessHUD(text: String?, for: Double, delay: Double?, completion: @es
     }
 }
 
+func flashSuccessHUD(text: String?, for: Double, delay: Double?, viewController: UIViewController, completion: @escaping () -> Void)
+{
+    if let delay = delay
+    {
+        let millisecondDelay = Int(delay * 1000)
+
+        if !PKHUD.sharedHUD.isVisible
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(millisecondDelay)) {
+                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: text)
+                PKHUD.sharedHUD.show(onView: viewController.view)
+            }
+        }
+        else { completion() }
+    }
+    else
+    {
+        if !PKHUD.sharedHUD.isVisible
+        {
+            PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: nil, subtitle: text)
+            PKHUD.sharedHUD.show(onView: viewController.view)
+        }
+        else { completion() }
+    }
+
+    let flashTime = Int(`for` * 1000)
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(flashTime)) {
+        hideHUD(delay: 0) {
+            completion()
+        }
+    }
+}
+
 ///Shows the progress HUD.
 func showProgressHUD()
 {
@@ -491,6 +525,17 @@ func showProgressHUD()
         {
             PKHUD.sharedHUD.contentView = PKHUDProgressView()
             PKHUD.sharedHUD.show(onView: lastInitializedController.view)
+        }
+    }
+}
+
+func showProgressHUD(viewController: UIViewController)
+{
+    DispatchQueue.main.async {
+        if !PKHUD.sharedHUD.isVisible
+        {
+            PKHUD.sharedHUD.contentView = PKHUDProgressView()
+            PKHUD.sharedHUD.show(onView: viewController.view)
         }
     }
 }
