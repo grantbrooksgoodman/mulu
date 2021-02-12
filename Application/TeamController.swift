@@ -406,7 +406,9 @@ extension Array where Element == (date: Date, challenge: Challenge)
 
         for tuple in self
         {
-            dates.append(currentCalendar.startOfDay(for: tuple.date.comparator).comparator)
+            let timeZoneOffset = Double(TimeZone.current.secondsFromGMT(for: tuple.date))
+            let localDate = Calendar.current.date(byAdding: .second, value: Int(timeZoneOffset), to: tuple.date)!
+            dates.append(currentCalendar.startOfDay(for: localDate.comparator).comparator)
         }
 
         return dates

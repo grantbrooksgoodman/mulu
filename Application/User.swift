@@ -158,10 +158,7 @@ class User
      */
     func completeChallenge(withIdentifier: String, on team: Team, completion: @escaping (_ errorDescriptor: String?) -> Void)
     {
-        let nowUTC = Date()
-        let timeZoneOffset = Double(TimeZone.current.secondsFromGMT(for: nowUTC))
-        let localDate = Calendar.current.date(byAdding: .second, value: Int(timeZoneOffset), to: nowUTC)!
-        let serializedData = "\(associatedIdentifier!) – \(secondaryDateFormatter.string(from: localDate))"
+        let serializedData = "\(associatedIdentifier!) – \(secondaryDateFormatter.string(from: Date()))"
 
         ChallengeSerializer().getChallenge(withIdentifier: withIdentifier) { returnedChallenge, _ in
             if let challenge = returnedChallenge
