@@ -163,33 +163,41 @@ class User
         ChallengeSerializer().getChallenge(withIdentifier: withIdentifier) { returnedChallenge, _ in
             if let challenge = returnedChallenge
             {
-                var newCompletedChallenges = team.serializeCompletedChallenges()
+                TeamSerializer().getTeam(withIdentifier: team.associatedIdentifier) { returnedTeam, _ in
+                    if let returnedTeam = returnedTeam {
+                        print("returnedTeam: \(String(describing: returnedTeam.associatedIdentifier))")
+                        var newCompletedChallenges = returnedTeam.serializeCompletedChallenges()
 
-                if let completedChallenges = team.completedChallenges
-                {
-                    if let index = completedChallenges.challenges().firstIndex(where: { $0.associatedIdentifier == withIdentifier })
-                    {
-                        team.completedChallenges![index].metadata.append((self, Date()))
+                        if let completedChallenges = returnedTeam.completedChallenges
+                        {
+                            if let index = completedChallenges.challenges().firstIndex(where: { $0.associatedIdentifier == withIdentifier })
+                            {
+                                returnedTeam.completedChallenges![index].metadata.append((self, Date()))
+                            }
+                            else { returnedTeam.completedChallenges!.append((challenge, [(self, Date())])) }
+                        }
+                        else { returnedTeam.completedChallenges = [(challenge, [(self, Date())])] }
+
+                        if newCompletedChallenges[withIdentifier] != nil
+                        {
+                            newCompletedChallenges[withIdentifier]!.append(serializedData)
+                        }
+                        else { newCompletedChallenges[withIdentifier] = [serializedData] }
+                        currentTeam = returnedTeam
+                        GenericSerializer().updateValue(onKey: "/allTeams/\(team.associatedIdentifier!)/", withData: ["completedChallenges": newCompletedChallenges]) { returnedError in
+                            if let error = returnedError
+                            {
+                                completion(errorInfo(error))
+                            }
+                            else { completion(nil) }
+                        }
+                    } else {
+                        completion("Couldn't get Team.")
                     }
-                    else { team.completedChallenges!.append((challenge, [(self, Date())])) }
                 }
-                else { team.completedChallenges = [(challenge, [(self, Date())])] }
-
-                if newCompletedChallenges[withIdentifier] != nil
-                {
-                    newCompletedChallenges[withIdentifier]!.append(serializedData)
-                }
-                else { newCompletedChallenges[withIdentifier] = [serializedData] }
-
-                GenericSerializer().updateValue(onKey: "/allTeams/\(team.associatedIdentifier!)/", withData: ["completedChallenges": newCompletedChallenges]) { returnedError in
-                    if let error = returnedError
-                    {
-                        completion(errorInfo(error))
-                    }
-                    else { completion(nil) }
-                }
+            } else {
+                completion("Couldn't get Challenge.")
             }
-            else { completion("Couldn't get Challenge.") }
         }
     }
 
